@@ -1,0 +1,23 @@
+version: "3"
+services:
+    backend:
+        build:
+            context: .
+        command: cargo run
+        environment:
+            DATABASE_URL: postgres://postgres:password@postgres/ohboi
+        links:
+            - postgres
+        ports:
+            - 8888:8888
+        volumes:
+            - ./src:/app/src
+
+    postgres:
+        image: postgres:13.1
+        environment:
+            POSTGRES_DB: ohboi
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: password
+        ports:
+            - 5432:5432
