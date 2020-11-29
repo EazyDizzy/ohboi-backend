@@ -1,0 +1,29 @@
+mod user;
+
+use actix_web::{web, App, HttpServer, guard, HttpResponse};
+
+#[actix_web::main]
+pub async fn run_server() -> std::io::Result<()> {
+    HttpServer::new(|| {
+        App::new()
+            .service(user::index)
+            .default_service(
+                web::resource("")
+                    .route(web::get().to(p404))
+                    .route(
+                        web::route()
+                            .guard(guard::Not(guard::Get()))
+                            .to(HttpResponse::MethodNotAllowed),
+                    ),
+            )
+    })
+        .bind("127.0.0.1:8080")?
+        .run()
+        .await
+}
+
+async fn p404() -> HttpResponse {
+    HttpResponse::Ok()
+        .content_type("text/plain")
+        .body(format!("404 not found"))
+}

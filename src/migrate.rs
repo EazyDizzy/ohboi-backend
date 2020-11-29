@@ -7,7 +7,6 @@ mod embedded {
 
 pub fn migrate() -> Result<bool, Error> {
     let mut client = Client::connect("host=localhost user=postgres password=password", NoTls)?;
-    println!("connected");
 
     let result = embedded::migrations::runner().run(&mut client).unwrap();
     println!("{:?}", result.applied_migrations());
