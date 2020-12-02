@@ -1,19 +1,21 @@
 version: "3"
 services:
-    backend:
+    ohboi_backend:
+        networks:
+            - shopily
         build:
             context: .
-        command: cargo run
-        environment:
-            DATABASE_URL: postgres://postgres:password@postgres/ohboi
-        links:
-            - postgres
+        command: bash ./run.sh
+        env_file:
+            - .env
         ports:
             - 8888:8888
         volumes:
-            - ./src:/app/src
+            - ./:/app
 
-    postgres:
+    ohboi_postgres:
+        networks:
+            - shopily
         image: postgres:13.1
         environment:
             POSTGRES_DB: ohboi
@@ -21,3 +23,6 @@ services:
             POSTGRES_PASSWORD: password
         ports:
             - 5432:5432
+networks:
+    shopily:
+        external: false

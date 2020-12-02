@@ -2,7 +2,7 @@
 <project version="4">
   <component name="DBNavigator.Project.DataEditorManager">
     <record-view-column-sorting-type value="BY_INDEX" />
-    <value-preview-text-wrapping value="true" />
+    <value-preview-text-wrapping value="false" />
     <value-preview-pinned value="false" />
   </component>
   <component name="DBNavigator.Project.DataExportManager">
@@ -23,13 +23,7 @@
     <autoscroll-to-editor value="false" />
     <autoscroll-from-editor value="true" />
     <show-object-properties value="true" />
-    <loaded-nodes>
-      <connection connection-id="63846f70-6657-4a81-8dd7-5b9e6818ffa5">
-        <schema name="information_schema" object-types="view, table, function, sequence" />
-        <schema name="pg_catalog" object-types="table" />
-        <schema name="public" object-types="view, table, function, sequence, column" />
-      </connection>
-    </loaded-nodes>
+    <loaded-nodes />
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
     <connection id="63846f70-6657-4a81-8dd7-5b9e6818ffa5">
@@ -44,6 +38,7 @@
   </component>
   <component name="DBNavigator.Project.DatasetFilterManager">
     <filter-actions connection-id="63846f70-6657-4a81-8dd7-5b9e6818ffa5" dataset="public.source" active-filter-id="" />
+    <filter-actions connection-id="63846f70-6657-4a81-8dd7-5b9e6818ffa5" dataset="public.product" active-filter-id="" />
     <filter-actions connection-id="63846f70-6657-4a81-8dd7-5b9e6818ffa5" dataset="public.refinery_schema_history" active-filter-id="" />
   </component>
   <component name="DBNavigator.Project.EditorStateManager">
@@ -53,7 +48,7 @@
     <retain-sticky-names value="false" />
   </component>
   <component name="DBNavigator.Project.FileConnectionMappingManager">
-    <mapping file-url="file://$PROJECT_DIR$/src/migration/v1_initial.sql" connection-id="63846f70-6657-4a81-8dd7-5b9e6818ffa5" session-id="MAIN" current-schema="information_schema" />
+    <mapping file-url="file://$PROJECT_DIR$/migrations/2020-12-01-164005_initial_setup/up.sql" connection-id="63846f70-6657-4a81-8dd7-5b9e6818ffa5" session-id="MAIN" current-schema="public" />
   </component>
   <component name="DBNavigator.Project.MethodExecutionManager">
     <method-browser />

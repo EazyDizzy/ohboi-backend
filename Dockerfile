@@ -6,3 +6,5 @@ RUN apt-get update \
 
 WORKDIR /app
 COPY . /app
+
+RUN cargo install diesel_cli --no-default-features --features postgres

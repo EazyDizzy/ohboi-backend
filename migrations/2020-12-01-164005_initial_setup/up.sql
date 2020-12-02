@@ -7,8 +7,8 @@ create table source (
     logo            varchar not null,
     enabled         bool not null,
 
-    created_at      date not null default now(),
-    updated_at      date not null
+    created_at      timestamp not null default now(),
+    updated_at      timestamp not null
 );
 
 create table product (
@@ -18,16 +18,17 @@ create table product (
     lowest_price    numeric not null,
     images          varchar[] not null ,
 
-    created_at      date not null default now(),
-    updated_at      date not null
+    created_at      timestamp not null default now(),
+    updated_at      timestamp not null
 );
 
 create table source_product (
+    id              serial primary key,
     source_id      int not null,
     product_id      int not null,
     price           numeric not null,
 
-    updated_at      date not null,
+    updated_at      timestamp not null,
 
     foreign key(source_id)
 	  references source(id)
@@ -42,6 +43,6 @@ create table users (
     id              serial primary key,
     username       varchar not null,
 
-    created_at      date not null default now(),
-    updated_at      date not null
+    created_at      timestamp not null default now(),
+    updated_at      timestamp not null
 );
