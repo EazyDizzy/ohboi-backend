@@ -6,16 +6,15 @@ use bigdecimal::BigDecimal;
 use crate::schema::product;
 use diesel::RunQueryDsl;
 
-pub fn create(title: &str, price: f64) -> entity::Product {
+pub fn create(title: &str, description: &str, price: f64, images: &Vec<String>) -> entity::Product {
     let connection = &db::establish_connection();
     let now = Utc::now();
 
     let new_product = NewProduct {
         title,
-
-        description: "",
+        description,
+        images,
         lowest_price: BigDecimal::from(price),
-        images: &vec![],
         created_at: &now.naive_utc(),
         updated_at: &now.naive_utc(),
     };

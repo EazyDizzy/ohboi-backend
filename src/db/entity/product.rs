@@ -1,14 +1,14 @@
 use crate::schema::product;
 use chrono::NaiveDateTime;
 use serde::{Serialize};
-use bigdecimal::BigDecimal;
+use bigdecimal::{BigDecimal};
 
 #[derive(Serialize, Queryable)]
 pub struct Product {
     pub id: i32,
     pub title: String,
     pub description: String,
-    #[serde(skip)]
+    #[serde(rename = "price")]
     pub lowest_price: BigDecimal,
     pub images: Vec<String>,
 
