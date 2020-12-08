@@ -7,6 +7,7 @@ pub async fn run_server() -> std::io::Result<()> {
     HttpServer::new(|| {
         App::new()
             .service(user::index)
+            .service(web::resource("/user").route(web::post().to(user::create)))
             .default_service(
                 web::resource("")
                     .route(web::get().to(p404))
@@ -17,7 +18,7 @@ pub async fn run_server() -> std::io::Result<()> {
                     ),
             )
     })
-        .bind("127.0.0.1:8080")?
+        .bind("127.0.0.1:8888")?
         .run()
         .await
 }

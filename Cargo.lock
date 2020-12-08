@@ -1058,6 +1058,8 @@ dependencies = [
  "chrono",
  "diesel",
  "dotenv",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]

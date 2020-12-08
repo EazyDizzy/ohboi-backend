@@ -15,7 +15,11 @@ fn main() {
 
     create_post(&connection, "her");
 
-    http::run_server();
+    let result = http::run_server();
+    match result {
+        Ok(_) => println!("Server started."),
+        Err(e) => println!("Server failed: {}", e)
+    }
 }
 
 use self::models::{User, NewUser};
