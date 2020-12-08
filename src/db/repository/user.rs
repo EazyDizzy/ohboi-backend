@@ -1,13 +1,11 @@
-#[macro_use]
-extern crate diesel;
-extern crate dotenv;
-
-use self::diesel::prelude::*;
 use chrono::Utc;
+use crate::models::{NewUser, User};
+use crate::schema::users;
+use diesel::{RunQueryDsl};
+use crate::db;
 
-pub fn create_post(conn: &PgConnection, username: &str) -> User {
-    use schema::users;
-
+pub fn create_post(username: &str) -> User {
+    let connection = &db::establish_connection();
     let now = Utc::now();
 
     let new_post = NewUser {
@@ -18,6 +16,6 @@ pub fn create_post(conn: &PgConnection, username: &str) -> User {
 
     diesel::insert_into(users::table)
         .values(&new_post)
-        .get_result(conn)
+        .get_result(connection)
         .expect("Error saving new user")
 }
