@@ -1,2 +1,4 @@
-mod user;
-pub use user::create_post;
+pub mod user;
+pub mod product;
+
+// pub use user::create_user;

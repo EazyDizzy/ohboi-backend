@@ -1,12 +1,10 @@
-mod repository;
+pub mod repository;
 mod entity;
 
 use diesel::prelude::*;
 use diesel::pg::PgConnection;
 use dotenv::dotenv;
 use std::env;
-
-pub use self::repository::create_post;
 
 pub fn establish_connection() -> PgConnection {
     dotenv().ok();

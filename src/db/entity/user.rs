@@ -6,6 +6,7 @@ use serde::{Serialize};
 pub struct User {
     pub id: i32,
     pub username: String,
+
     #[serde(skip)]
     pub created_at: NaiveDateTime,
     #[serde(skip)]
