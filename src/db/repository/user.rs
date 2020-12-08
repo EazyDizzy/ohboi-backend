@@ -1,14 +1,14 @@
 use chrono::Utc;
-use crate::models::{NewUser, User};
 use crate::schema::users;
 use diesel::{RunQueryDsl};
 use crate::db;
+use crate::db::entity;
 
-pub fn create_post(username: &str) -> User {
+pub fn create_post(username: &str) -> entity::User {
     let connection = &db::establish_connection();
     let now = Utc::now();
 
-    let new_post = NewUser {
+    let new_post = entity::NewUser {
         username,
         created_at: &now.naive_utc(),
         updated_at: &now.naive_utc(),

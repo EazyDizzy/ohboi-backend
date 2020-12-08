@@ -1,15 +1,21 @@
-#[derive(Queryable)]
+use crate::schema::users;
+use chrono::NaiveDateTime;
+use serde::{Serialize};
+
+#[derive(Serialize, Queryable)]
 pub struct User {
     pub id: i32,
     pub username: String,
-    pub created_at: DateTime,
-    pub updated_at: DateTime,
+    #[serde(skip)]
+    pub created_at: NaiveDateTime,
+    #[serde(skip)]
+    pub updated_at: NaiveDateTime,
 }
-
-use super::schema::users;
 
 #[derive(Insertable)]
 #[table_name = "users"]
 pub struct NewUser<'a> {
     pub username: &'a str,
+    pub created_at: &'a NaiveDateTime,
+    pub updated_at: &'a NaiveDateTime,
 }

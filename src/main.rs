@@ -5,7 +5,6 @@ extern crate dotenv;
 mod http;
 mod db;
 mod schema;
-mod models;
 
 fn main() {
     let result = http::run_server();

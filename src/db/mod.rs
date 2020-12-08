@@ -1,4 +1,5 @@
 mod repository;
+mod entity;
 
 use diesel::prelude::*;
 use diesel::pg::PgConnection;
