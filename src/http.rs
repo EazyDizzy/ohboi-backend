@@ -3,7 +3,6 @@ mod product;
 
 use actix_web::{web, App, HttpServer, guard, HttpResponse};
 
-#[actix_web::main]
 pub async fn run_server() -> std::io::Result<()> {
     HttpServer::new(|| {
         App::new()
