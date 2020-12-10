@@ -1,4 +1,12 @@
 table! {
+    category (id) {
+        id -> Int4,
+        slug -> Varchar,
+        parent_id -> Nullable<Int4>,
+    }
+}
+
+table! {
     product (id) {
         id -> Int4,
         title -> Varchar,
@@ -47,6 +55,7 @@ joinable!(source_product -> product (product_id));
 joinable!(source_product -> source (source_id));
 
 allow_tables_to_appear_in_same_query!(
+    category,
     product,
     source,
     source_product,

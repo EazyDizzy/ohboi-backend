@@ -1,5 +1,5 @@
 pub mod repository;
-mod entity;
+pub mod entity;
 
 use diesel::prelude::*;
 use diesel::pg::PgConnection;

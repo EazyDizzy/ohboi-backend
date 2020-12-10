@@ -1,6 +1,7 @@
 #[macro_use]
 extern crate diesel;
 extern crate dotenv;
+// extern crate inflector;
 
 use crate::parse::crawler::mi_shop_com::MiShopComCrawler;
 

@@ -2,12 +2,27 @@ use crate::parse::crawler::crawler::Crawler;
 use scraper::{Html, Selector};
 use crate::parse::parsed_product::ParsedProduct;
 use bigdecimal::ToPrimitive;
+use crate::db::entity::CategorySlug;
 
 pub struct MiShopComCrawler {}
 
 impl Crawler for MiShopComCrawler {
-    fn get_next_page_url(&self, current_page: i32) -> String {
-        "https://mi-shop.com/ru/catalog/smartphones/page/{page}/"
+    fn get_categories(&self) -> Vec<&CategorySlug> {
+        vec![&CategorySlug::Smartphone, &CategorySlug::SmartHome, &CategorySlug::Headphones, &CategorySlug::Watches]
+    }
+
+    fn get_next_page_url(&self, category: &CategorySlug, current_page: i32) -> String {
+        let base = "https://mi-shop.com/ru/catalog/";
+        let pagination = "/page/{page}/";
+
+        let url = match category {
+            CategorySlug::Smartphone => "smartphones",
+            CategorySlug::SmartHome => "smart_devices/umnyy-dom",
+            CategorySlug::Headphones => "audio/besprovodnye-naushniki",
+            CategorySlug::Watches => "smart_devices/umnye-chasy-i-braslety"
+        };
+
+        [base, url, pagination].join("")
             .replace("{page}", (current_page + 1).to_string().as_ref())
     }
 
@@ -22,7 +37,7 @@ impl Crawler for MiShopComCrawler {
             let price_node = element.select(&price_selector).next();
             let unavailable_node = element.select(&available_selector).next();
 
-            let mut title_text = title_node.unwrap().inner_html();
+            let mut title = title_node.unwrap().inner_html();
             let price_text = price_node.unwrap()
                 .inner_html()
                 .replace("₽", "")
@@ -30,20 +45,20 @@ impl Crawler for MiShopComCrawler {
                 .trim()
                 .parse::<f32>();
 
-            let parsed_price;
+            let price;
             if price_text.is_ok() {
-                parsed_price = price_text.unwrap();
+                price = price_text.unwrap();
             } else {
-                parsed_price = -1.to_f32().unwrap();
-                println!("Price parsing failed: {}", price_text.err().unwrap());
+                price = -1.to_f32().unwrap();
+                println!("Price parsing failed: {}", price_text.err().unwrap()); // TODO not parse
             }
 
-            if title_text.contains('(') {
-                title_text = title_text.split('(').next().unwrap().trim().to_string()
+            if title.contains('(') {
+                title = title.split('(').next().unwrap().trim().to_string()
             }
             let available = unavailable_node.is_none();
 
-            all_products.push(ParsedProduct { title: title_text, price: parsed_price, available });
+            all_products.push(ParsedProduct { title, price, available });
         }
     }
 }
