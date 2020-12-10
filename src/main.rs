@@ -9,7 +9,7 @@ mod parse;
 
 #[actix_web::main]
 async fn main() {
-    let parse_result = parse::parser::parse_google().await;
+    let parse_result = parse::parser::parse().await;
 
     match parse_result {
         Ok(body) => println!("Parsed: {}", body),
