@@ -2,6 +2,8 @@
 extern crate diesel;
 extern crate dotenv;
 
+use crate::parse::crawler::mi_shop_com::MiShopComCrawler;
+
 mod http;
 mod db;
 mod schema;
@@ -9,7 +11,7 @@ mod parse;
 
 #[actix_web::main]
 async fn main() {
-    let parse_result = parse::parser::parse().await;
+    let parse_result = parse::parser::parse(&MiShopComCrawler {}).await;
 
     match parse_result {
         Ok(body) => println!("Parsed: {}", body),

@@ -24,7 +24,7 @@ create table product (
 
 create table source_product (
     id              serial primary key,
-    source_id      int not null,
+    source_id       int not null,
     product_id      int not null,
     price           numeric not null,
 
