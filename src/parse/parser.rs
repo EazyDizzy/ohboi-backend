@@ -24,13 +24,13 @@ pub async fn parse<T: Crawler>(crawler: &T) -> Result<String, reqwest::Error> {
                 break;
             }
         }
+
+        for product in &products {
+            println!("{:#?}", product);
+        }
+
         all_products_by_category.insert(category.to_string().to_snake_case(), products);
     }
-
-    // for product in all_products {
-    //     println!("{:#?}", product);
-    // }
-    // println!("Parsed: {}", all_products.len());
 
     Ok("her".to_string())
 }
