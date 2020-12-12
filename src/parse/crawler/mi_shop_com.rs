@@ -1,4 +1,3 @@
-use bigdecimal::ToPrimitive;
 use scraper::{Html, Selector};
 
 use crate::parse::crawler::crawler::Crawler;
@@ -17,19 +16,24 @@ impl Crawler for MiShopComCrawler {
         ]
     }
 
-    fn get_next_page_url(&self, category: &CategorySlug, current_page: i32) -> String {
+    fn get_next_page_urls(&self, category: &CategorySlug) -> Vec<String> {
         let base = "https://mi-shop.com/ru/catalog/";
         let pagination = "/page/{page}/";
 
-        let url = match category {
-            CategorySlug::Smartphone => "smartphones",
-            CategorySlug::SmartHome => "smart_devices/umnyy-dom",
-            CategorySlug::Headphones => "audio/besprovodnye-naushniki",
-            CategorySlug::Watches => "smart_devices/umnye-chasy-i-braslety"
+        let urls = match category {
+            CategorySlug::Smartphone => vec!["smartphones"],
+            CategorySlug::SmartHome => vec![
+                "smart_devices/umnyy-dom",
+                "smart_devices/foto-video",
+                "smart_devices/osveshchenie"
+            ],
+            CategorySlug::Headphones => vec!["audio"],
+            CategorySlug::Watches => vec!["smart_devices/umnye-chasy-i-braslety"]
         };
 
-        [base, url, pagination].join("")
-            .replace("{page}", (current_page + 1).to_string().as_ref())
+        urls.into_iter().map(|url| {
+            [base, url, pagination].join("")
+        }).collect()
     }
 
     fn extract_products(&self, document: Html, all_products: &mut Vec<ParsedProduct>) {

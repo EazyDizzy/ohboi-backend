@@ -11,17 +11,20 @@ pub async fn parse<T: Crawler>(crawler: &T) -> Result<String, reqwest::Error> {
     for category in crawler.get_categories() {
         let mut products: Vec<ParsedProduct> = vec![];
 
-        for page in 0..1000 {
-            let data = parse::requester::get_data(crawler.get_next_page_url(category, page).as_str()).await?;
-            println!("category: {}| page {}", category.to_string().to_snake_case(), page + 1);
-            let document = Html::parse_document(&data);
-            let current_length = products.len();
+        for url in crawler.get_next_page_urls(category) {
+            for page in 1..1000 {
+                let url_with_pagination = url.as_str().replace("{page}", (page).to_string().as_ref());
+                let data = parse::requester::get_data(url_with_pagination.as_ref()).await?;
+                println!("category: {}| page {}", category.to_string().to_snake_case(), page);
+                let document = Html::parse_document(&data);
+                let current_length = products.len();
 
-            crawler.extract_products(document, &mut products);
+                crawler.extract_products(document, &mut products);
 
-            if products.len() == current_length {
-                println!("total products amount: {}", products.len());
-                break;
+                if products.len() == current_length {
+                    println!("total products amount: {}", products.len());
+                    break;
+                }
             }
         }
 
