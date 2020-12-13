@@ -1,4 +1,5 @@
 use crate::schema::product;
+
 use chrono::NaiveDateTime;
 use serde::{Serialize};
 use bigdecimal::{BigDecimal};

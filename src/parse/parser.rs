@@ -31,7 +31,7 @@ pub async fn parse<T: Crawler>(crawler: &T) -> Result<String, reqwest::Error> {
         }
 
         for product in &products {
-            println!("{:#?}", product);
+            // println!("{:#?}", product);
             link_to_product(product, crawler.get_source(), &category);
         }
 

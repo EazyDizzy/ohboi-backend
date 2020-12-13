@@ -29,18 +29,16 @@ pub fn create(title: &str, price: f64, images: &Vec<String>, product_category: &
         .expect("Error saving new product")
 }
 
-pub fn create_if_not_exists(parsed_product: &ParsedProduct, product_category: &CategorySlug) -> i32 {
+pub fn create_if_not_exists(parsed_product: &ParsedProduct, product_category: &CategorySlug) -> Product {
     use crate::schema::product::dsl::*;
 
     let connection = &db::establish_connection();
 
-    let filter = title.eq(&parsed_product.title);
-    let results: Vec<Product> = product.filter(filter)
+    let target = title.eq(&parsed_product.title);
+    let results: Vec<Product> = product.filter(target)
         .limit(1)
         .load::<Product>(connection)
         .expect("Error loading products");
-
-    println!("{}", results.len());
 
     if results.len() == 0 {
         create(
@@ -48,10 +46,21 @@ pub fn create_if_not_exists(parsed_product: &ParsedProduct, product_category: &C
             parsed_product.price,
             &vec![parsed_product.image_url.to_string()],
             product_category,
-        ).id
+        )
     } else {
-        let product_to_return = &*results.first().unwrap();
-
-        product_to_return.id
+        results.into_iter().next().unwrap()
     }
+}
+
+pub fn update_lowest_price(product_id: &i32, new_price: f64) {
+    let now = Utc::now();
+    use crate::schema::product::dsl::*;
+
+    let connection = &db::establish_connection();
+    let target = product.filter(id.eq(product_id));
+
+    diesel::update(target)
+        .set((lowest_price.eq(BigDecimal::from(new_price)), updated_at.eq(&now.naive_utc())))
+        .execute(connection)
+        .expect("Failed to update product price");
 }

@@ -58,3 +58,6 @@ create table users (
     created_at      timestamp not null default now(),
     updated_at      timestamp not null
 );
+
+CREATE UNIQUE INDEX idx_source_product
+ON source_product(source_id, product_id);

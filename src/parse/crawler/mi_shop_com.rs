@@ -13,9 +13,9 @@ impl Crawler for MiShopComCrawler {
 
     fn get_categories(&self) -> Vec<&CategorySlug> {
         vec![
-            // &CategorySlug::Smartphone,
-            // &CategorySlug::SmartHome,
-            // &CategorySlug::Headphones,
+            &CategorySlug::Smartphone,
+            &CategorySlug::SmartHome,
+            &CategorySlug::Headphones,
             &CategorySlug::Watches,
         ]
     }
@@ -74,7 +74,7 @@ impl Crawler for MiShopComCrawler {
                 continue;
             }
 
-            if title.contains('(') {
+            if title.contains('(') { // TODO different color can cost different price
                 title = title.split('(').next().unwrap().trim().to_string()
             }
 
