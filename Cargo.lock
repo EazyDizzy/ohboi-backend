@@ -593,6 +593,7 @@ dependencies = [
  "num-integer",
  "num-traits",
  "pq-sys",
+ "r2d2",
 ]
 
 [[package]]
@@ -1350,6 +1351,7 @@ dependencies = [
  "chrono",
  "diesel",
  "dotenv",
+ "lazy_static",
  "r2d2",
  "reqwest",
  "scraper",

@@ -1,7 +1,8 @@
 #[macro_use]
 extern crate diesel;
 extern crate dotenv;
-// extern crate inflector;
+#[macro_use]
+extern crate lazy_static;
 
 use crate::parse::crawler::mi_shop_com::MiShopComCrawler;
 
@@ -24,4 +25,24 @@ async fn main() {
         Ok(_) => println!("Server started."),
         Err(e) => println!("Server failed: {}", e)
     }
+}
+
+use r2d2;
+use diesel::r2d2::ConnectionManager;
+use diesel::PgConnection;
+use dotenv::dotenv;
+use std::env;
+
+pub type Pool = r2d2::Pool<ConnectionManager<PgConnection>>;
+lazy_static! {
+    static ref POOL: Pool = {
+        dotenv().ok();
+        let database_url = env::var("DATABASE_URL")
+            .expect("DATABASE_URL must be set");
+        let manager = ConnectionManager::<PgConnection>::new(database_url);
+
+        r2d2::Pool::builder()
+                .build(manager)
+                .expect("Failed to create pool")
+    };
 }

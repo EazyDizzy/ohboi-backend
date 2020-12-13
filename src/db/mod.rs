@@ -1,16 +1,12 @@
 pub mod repository;
 pub mod entity;
 
-use diesel::prelude::*;
+use r2d2::{PooledConnection};
 use diesel::pg::PgConnection;
-use dotenv::dotenv;
-use std::env;
+use diesel::r2d2::ConnectionManager;
 
-pub fn establish_connection() -> PgConnection {
-    dotenv().ok();
+use crate::POOL;
 
-    let database_url = env::var("DATABASE_URL")
-        .expect("DATABASE_URL must be set");
-    PgConnection::establish(&database_url)
-        .expect(&format!("Error connecting to {}", database_url))
+pub fn establish_connection() -> PooledConnection<ConnectionManager<PgConnection>> {
+    POOL.get().unwrap()
 }
