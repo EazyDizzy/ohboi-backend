@@ -3,14 +3,15 @@ use chrono::NaiveDateTime;
 use serde::{Serialize};
 use bigdecimal::{BigDecimal};
 
-#[derive(Serialize, Queryable)]
+#[derive(Serialize, Queryable, Debug)]
 pub struct Product {
     pub id: i32,
     pub title: String,
-    pub description: String,
+    pub description: Option<String>,
     #[serde(rename = "price")]
     pub lowest_price: BigDecimal,
     pub images: Vec<String>,
+    pub category: i32,
 
     #[serde(skip)]
     pub created_at: NaiveDateTime,
@@ -21,8 +22,8 @@ pub struct Product {
 #[derive(Insertable)]
 #[table_name = "product"]
 pub struct NewProduct<'a> {
+    pub category: i32,
     pub title: &'a str,
-    pub description: &'a str,
     pub lowest_price: BigDecimal,
     pub images: &'a Vec<String>,
     pub created_at: &'a NaiveDateTime,

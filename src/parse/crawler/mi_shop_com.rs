@@ -2,16 +2,20 @@ use scraper::{Html, Selector};
 
 use crate::parse::crawler::crawler::Crawler;
 use crate::parse::parsed_product::ParsedProduct;
-use crate::db::entity::CategorySlug;
+use crate::db::entity::{CategorySlug, SourceName};
 
 pub struct MiShopComCrawler {}
 
 impl Crawler for MiShopComCrawler {
+    fn get_source(&self) -> &SourceName {
+        &SourceName::MiShopCom
+    }
+
     fn get_categories(&self) -> Vec<&CategorySlug> {
         vec![
-            &CategorySlug::Smartphone,
-            &CategorySlug::SmartHome,
-            &CategorySlug::Headphones,
+            // &CategorySlug::Smartphone,
+            // &CategorySlug::SmartHome,
+            // &CategorySlug::Headphones,
             &CategorySlug::Watches,
         ]
     }
@@ -45,7 +49,7 @@ impl Crawler for MiShopComCrawler {
 
         for element in document.select(&items_selector) {
             let mut title: String;
-            let price: f32;
+            let price: f64;
             let mut image = "";
             let available: bool;
 
@@ -61,7 +65,7 @@ impl Crawler for MiShopComCrawler {
                 .replace("₽", "")
                 .replace(" ", "")
                 .trim()
-                .parse::<f32>();
+                .parse::<f64>();
 
             if price_text.is_ok() {
                 price = price_text.unwrap();

@@ -5,7 +5,7 @@ use std::fmt;
 pub struct Category {
     pub id: i32,
     pub slug: String,
-    pub parent_od: i32,
+    pub parent_id: Option<i32>,
 }
 
 #[derive(Debug, Serialize)]

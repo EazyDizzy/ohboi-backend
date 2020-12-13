@@ -10,9 +10,10 @@ table! {
     product (id) {
         id -> Int4,
         title -> Varchar,
-        description -> Text,
+        description -> Nullable<Text>,
         lowest_price -> Numeric,
         images -> Array<Varchar>,
+        category -> Int4,
         created_at -> Timestamp,
         updated_at -> Timestamp,
     }
@@ -22,9 +23,6 @@ table! {
     source (id) {
         id -> Int4,
         site_name -> Varchar,
-        id_regex -> Varchar,
-        name_selector -> Varchar,
-        price_selector -> Varchar,
         logo -> Varchar,
         enabled -> Bool,
         created_at -> Timestamp,
@@ -51,6 +49,7 @@ table! {
     }
 }
 
+joinable!(product -> category (category));
 joinable!(source_product -> product (product_id));
 joinable!(source_product -> source (source_id));
 

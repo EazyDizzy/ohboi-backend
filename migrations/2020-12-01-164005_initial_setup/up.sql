@@ -1,9 +1,16 @@
+create table category (
+    id              serial primary key,
+    slug            varchar not null,
+    parent_id       int,
+
+    foreign key(parent_id)
+    	  references category(id)
+    	  on delete set null
+);
+
 create table source (
     id              serial primary key,
     site_name       varchar not null,
-    id_regex        varchar not null,
-    name_selector   varchar not null,
-    price_selector  varchar not null,
     logo            varchar not null,
     enabled         bool not null,
 
@@ -14,12 +21,17 @@ create table source (
 create table product (
     id              serial primary key,
     title           varchar not null,
-    description     text not null,
+    description     text,
     lowest_price    numeric not null,
     images          varchar[] not null ,
+    category        int not null,
 
     created_at      timestamp not null default now(),
-    updated_at      timestamp not null
+    updated_at      timestamp not null,
+
+     foreign key(category)
+        	  references category(id)
+        	  on delete set null
 );
 
 create table source_product (

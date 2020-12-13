@@ -1,9 +1,11 @@
 use crate::parse;
+use std::collections::HashMap;
+use inflector::Inflector;
 use scraper::Html;
+
 use crate::parse::parsed_product::ParsedProduct;
 use crate::parse::crawler::crawler::Crawler;
-use inflector::Inflector;
-use std::collections::HashMap;
+use crate::db::repository::source_product::link_to_product;
 
 pub async fn parse<T: Crawler>(crawler: &T) -> Result<String, reqwest::Error> {
     let mut all_products_by_category: HashMap<String, Vec<ParsedProduct>> = HashMap::new();
@@ -30,6 +32,7 @@ pub async fn parse<T: Crawler>(crawler: &T) -> Result<String, reqwest::Error> {
 
         for product in &products {
             println!("{:#?}", product);
+            link_to_product(product, crawler.get_source(), &category);
         }
 
         all_products_by_category.insert(category.to_string().to_snake_case(), products);
