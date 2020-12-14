@@ -40,14 +40,16 @@ impl Crawler for MiShopComCrawler {
         }).collect()
     }
 
-    fn extract_products(&self, document: Html, all_products: &mut Vec<ParsedProduct>) {
+    fn extract_products(&self, document: Html, all_products: &mut Vec<ParsedProduct>) -> bool {
         let items_selector = Selector::parse(".catalog-item").unwrap();
         let title_selector = Selector::parse(".snippet-card__title").unwrap();
         let price_selector = Selector::parse(".snippet-card__price-new").unwrap();
         let available_selector = Selector::parse(".btn-basket.disabled").unwrap();
         let image_selector = Selector::parse("picture img").unwrap();
 
+        let mut amount_of_parsed_products = 0;
         for element in document.select(&items_selector) {
+            amount_of_parsed_products = amount_of_parsed_products + 1;
             let mut title: String;
             let price: f64;
             let mut image = "";
@@ -85,5 +87,7 @@ impl Crawler for MiShopComCrawler {
 
             all_products.push(ParsedProduct { title, price, available, image_url: image.to_string() });
         }
+
+        amount_of_parsed_products > 0
     }
 }

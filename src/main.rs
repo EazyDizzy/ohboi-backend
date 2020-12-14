@@ -16,7 +16,7 @@ async fn main() {
     let parse_start = Instant::now();
 
     let parse_result = parse::parser::parse(&MiShopComCrawler {}).await;
-    println!("Parse time: {}", parse_start.elapsed().as_secs());
+    println!("Parse time: {}s", parse_start.elapsed().as_secs());
 
 
     match parse_result {

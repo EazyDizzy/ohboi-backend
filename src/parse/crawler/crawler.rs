@@ -9,5 +9,5 @@ pub trait Crawler {
 
     fn get_next_page_urls(&self, category: &CategorySlug) -> Vec<String>;
 
-    fn extract_products(&self, document: Html, all_products: &mut Vec<ParsedProduct>);
+    fn extract_products(&self, document: Html, all_products: &mut Vec<ParsedProduct>) -> bool;
 }
