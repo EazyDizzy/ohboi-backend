@@ -14,8 +14,8 @@ pub fn create_if_not_exists(parsed_product: &ParsedProduct, product_category: &C
 
     let connection = &db::establish_connection();
 
-    let target = title.eq(&parsed_product.title);
-    let results: Vec<Product> = product.filter(target)
+    let target = product.filter(title.eq(&parsed_product.title));
+    let results: Vec<Product> = target
         .limit(1)
         .load::<Product>(connection)
         .expect("Error loading product");

@@ -43,6 +43,16 @@ table! {
 }
 
 table! {
+    source_product_price_history (id) {
+        id -> Int4,
+        source_id -> Int4,
+        product_id -> Int4,
+        price -> Numeric,
+        created_at -> Timestamp,
+    }
+}
+
+table! {
     users (id) {
         id -> Int4,
         username -> Varchar,
@@ -54,11 +64,14 @@ table! {
 joinable!(product -> category (category));
 joinable!(source_product -> product (product_id));
 joinable!(source_product -> source (source_id));
+joinable!(source_product_price_history -> product (product_id));
+joinable!(source_product_price_history -> source (source_id));
 
 allow_tables_to_appear_in_same_query!(
     category,
     product,
     source,
     source_product,
+    source_product_price_history,
     users,
 );

@@ -55,6 +55,8 @@ create table source_product (
 	  on delete set null
 );
 SELECT diesel_manage_updated_at('source_product');
+CREATE UNIQUE INDEX idx_source_product
+ON source_product(source_id, product_id);
 
 create table users (
     id              serial primary key,
@@ -64,7 +66,3 @@ create table users (
     updated_at      timestamp not null
 );
 SELECT diesel_manage_updated_at('users');
-
-
-CREATE UNIQUE INDEX idx_source_product
-ON source_product(source_id, product_id);
