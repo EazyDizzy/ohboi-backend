@@ -14,6 +14,7 @@ table! {
         lowest_price -> Numeric,
         images -> Array<Varchar>,
         category -> Int4,
+        enabled -> Bool,
         created_at -> Timestamp,
         updated_at -> Timestamp,
     }
@@ -36,6 +37,7 @@ table! {
         source_id -> Int4,
         product_id -> Int4,
         price -> Numeric,
+        enabled -> Bool,
         updated_at -> Timestamp,
     }
 }

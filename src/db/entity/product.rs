@@ -13,6 +13,7 @@ pub struct Product {
     pub lowest_price: BigDecimal,
     pub images: Vec<String>,
     pub category: i32,
+    pub enabled: bool,
 
     #[serde(skip)]
     pub created_at: NaiveDateTime,
@@ -27,6 +28,8 @@ pub struct NewProduct<'a> {
     pub title: &'a str,
     pub lowest_price: BigDecimal,
     pub images: &'a Vec<String>,
+    pub enabled: bool,
+
     pub created_at: &'a NaiveDateTime,
     pub updated_at: &'a NaiveDateTime,
 }

@@ -17,14 +17,15 @@ pub async fn parse<T: Crawler>(crawler: &T) -> Result<String, reqwest::Error> {
             for page in 1..1000 {
                 let url_with_pagination = url.as_str().replace("{page}", (page).to_string().as_ref());
                 let data = parse::requester::get_data(url_with_pagination.as_ref()).await?;
-                println!("category: {}| page {}", category.to_string().to_snake_case(), page);
                 let document = Html::parse_document(&data);
                 let current_length = products.len();
 
                 crawler.extract_products(document, &mut products);
 
                 if products.len() == current_length {
-                    println!("total products amount: {}", products.len());
+                    print!("{} |", category.to_string().to_snake_case());
+                    print!(" pages: {} |", page.to_string());
+                    println!(" products: {}", products.len());
                     break;
                 }
             }

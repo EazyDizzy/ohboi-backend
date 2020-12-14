@@ -10,6 +10,7 @@ pub struct SourceProduct {
     pub source_id: i32,
     pub product_id: i32,
     pub price: BigDecimal,
+    pub enabled: bool,
 
     #[serde(skip)]
     pub updated_at: NaiveDateTime,
@@ -22,5 +23,7 @@ pub struct NewSourceProduct<'a> {
     pub source_id: i32,
     pub product_id: i32,
     pub price: BigDecimal,
+    pub enabled: bool,
+
     pub updated_at: &'a NaiveDateTime,
 }

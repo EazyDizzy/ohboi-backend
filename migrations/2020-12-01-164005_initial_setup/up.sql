@@ -17,6 +17,7 @@ create table source (
     created_at      timestamp not null default now(),
     updated_at      timestamp not null
 );
+SELECT diesel_manage_updated_at('source');
 
 create table product (
     id              serial primary key,
@@ -25,6 +26,7 @@ create table product (
     lowest_price    numeric not null,
     images          varchar[] not null ,
     category        int not null,
+    enabled         bool not null,
 
     created_at      timestamp not null default now(),
     updated_at      timestamp not null,
@@ -33,12 +35,14 @@ create table product (
         	  references category(id)
         	  on delete set null
 );
+SELECT diesel_manage_updated_at('product');
 
 create table source_product (
     id              serial primary key,
     source_id       int not null,
     product_id      int not null,
     price           numeric not null,
+    enabled         bool not null,
 
     updated_at      timestamp not null,
 
@@ -50,6 +54,7 @@ create table source_product (
 	  references product(id)
 	  on delete set null
 );
+SELECT diesel_manage_updated_at('source_product');
 
 create table users (
     id              serial primary key,
@@ -58,6 +63,8 @@ create table users (
     created_at      timestamp not null default now(),
     updated_at      timestamp not null
 );
+SELECT diesel_manage_updated_at('users');
+
 
 CREATE UNIQUE INDEX idx_source_product
 ON source_product(source_id, product_id);

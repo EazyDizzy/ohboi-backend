@@ -18,13 +18,18 @@ pub fn link_to_product(parsed_product: &ParsedProduct, source: &SourceName, prod
     let new_link = NewSourceProduct {
         source_id: source.id,
         product_id: product.id,
+        enabled: parsed_product.available,
         price: BigDecimal::from(parsed_product.price),
         updated_at: &now.naive_utc(),
     };
 
     create_if_not_exists(new_link);
 
-    if parsed_product.price.lt(product.lowest_price.to_f64().unwrap().borrow()) {
+    let fresh_product_is_cheaper = parsed_product.price.lt(
+        product.lowest_price.to_f64().unwrap().borrow()
+    );
+    let current_product_has_zero_price = product.lowest_price.to_f64().unwrap().eq(0.to_f64().unwrap().borrow());
+    if fresh_product_is_cheaper || current_product_has_zero_price {
         update_lowest_price(&product.id, parsed_product.price);
     }
 }
@@ -37,8 +42,9 @@ fn create_if_not_exists(new_product: NewSourceProduct) {
         .on_conflict((source_product::source_id, source_product::product_id))
         .do_update()
         .set((
-            source_product::price.eq(&new_product.price)
-            , source_product::updated_at.eq(&new_product.updated_at)
+            source_product::price.eq(&new_product.price),
+            source_product::updated_at.eq(&new_product.updated_at),
+            source_product::enabled.eq(&new_product.enabled)
         ))
         .execute(connection)
         .expect("Error saving new source product");
