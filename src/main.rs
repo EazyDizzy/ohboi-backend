@@ -13,7 +13,11 @@ mod parse;
 
 #[actix_web::main]
 async fn main() {
+    let parse_start = Instant::now();
+
     let parse_result = parse::parser::parse(&MiShopComCrawler {}).await;
+    println!("Parse time: {}", parse_start.elapsed().as_secs());
+
 
     match parse_result {
         Ok(body) => println!("Parsed: {}", body),
@@ -32,6 +36,7 @@ use diesel::r2d2::ConnectionManager;
 use diesel::PgConnection;
 use dotenv::dotenv;
 use std::env;
+use std::time::Instant;
 
 pub type Pool = r2d2::Pool<ConnectionManager<PgConnection>>;
 lazy_static! {
