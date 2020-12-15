@@ -10,6 +10,7 @@ pub struct SourceProductPriceHistory {
     pub source_id: i32,
     pub product_id: i32,
     pub price: BigDecimal,
+    pub external_id: String,
 
     #[serde(skip)]
     pub created_at: NaiveDateTime,
@@ -22,6 +23,7 @@ pub struct NewSourceProductPriceHistory<'a> {
     pub source_id: i32,
     pub product_id: i32,
     pub price: BigDecimal,
+    pub external_id: &'a str,
 
     pub created_at: &'a NaiveDateTime,
 }

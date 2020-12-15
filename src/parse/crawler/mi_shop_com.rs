@@ -42,10 +42,12 @@ impl Crawler for MiShopComCrawler {
 
     fn extract_products(&self, document: Html, all_products: &mut Vec<ParsedProduct>) -> bool {
         let items_selector = Selector::parse(".catalog-item").unwrap();
+
         let title_selector = Selector::parse(".snippet-card__title").unwrap();
         let price_selector = Selector::parse(".snippet-card__price-new").unwrap();
         let available_selector = Selector::parse(".btn-basket.disabled").unwrap();
         let image_selector = Selector::parse("picture img").unwrap();
+        let id_selector = Selector::parse("a.snippet-card__media").unwrap();
 
         let mut amount_of_parsed_products = 0;
         for element in document.select(&items_selector) {
@@ -54,13 +56,17 @@ impl Crawler for MiShopComCrawler {
             let price: f64;
             let mut image = "";
             let available: bool;
+            let external_id: String;
 
             let title_node = element.select(&title_selector).next();
             let price_node = element.select(&price_selector).next();
             let unavailable_node = element.select(&available_selector).next();
             let image_node = element.select(&image_selector).next();
+            let id_node = element.select(&id_selector).next();
 
             let image_option = image_node.unwrap().value().attr("src");
+            external_id = id_node.unwrap().value().attr("href").unwrap()
+                .rsplit("/").collect::<Vec<&str>>()[1].to_string();
             title = title_node.unwrap().inner_html();
             let price_text = price_node.unwrap()
                 .inner_html()
@@ -85,7 +91,13 @@ impl Crawler for MiShopComCrawler {
             }
             available = unavailable_node.is_none();
 
-            all_products.push(ParsedProduct { title, price, available, image_url: image.to_string() });
+            all_products.push(ParsedProduct {
+                title,
+                price,
+                available,
+                image_url: image.to_string(),
+                external_id,
+            });
         }
 
         amount_of_parsed_products > 0

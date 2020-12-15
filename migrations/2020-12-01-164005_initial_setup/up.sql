@@ -41,6 +41,7 @@ create table source_product (
     id              serial primary key,
     source_id       int not null,
     product_id      int not null,
+    external_id     varchar not null,
     price           numeric not null,
     enabled         bool not null,
 
@@ -56,7 +57,7 @@ create table source_product (
 );
 SELECT diesel_manage_updated_at('source_product');
 CREATE UNIQUE INDEX idx_source_product
-ON source_product(source_id, product_id);
+ON source_product(source_id, product_id, external_id);
 
 create table users (
     id              serial primary key,

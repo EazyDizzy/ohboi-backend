@@ -36,6 +36,7 @@ table! {
         id -> Int4,
         source_id -> Int4,
         product_id -> Int4,
+        external_id -> Varchar,
         price -> Numeric,
         enabled -> Bool,
         updated_at -> Timestamp,
@@ -48,6 +49,7 @@ table! {
         source_id -> Int4,
         product_id -> Int4,
         price -> Numeric,
+        external_id -> Varchar,
         created_at -> Timestamp,
     }
 }

@@ -13,6 +13,7 @@ pub fn add_to_history_if_not_exists(source_product: &NewSourceProduct) {
     let target = source_product_price_history.filter(
         product_id.eq(&source_product.product_id)
             .and(source_id.eq(&source_product.source_id))
+            .and(external_id.eq(&source_product.external_id))
     );
 
     let results: Vec<SourceProductPriceHistory> = target
@@ -39,6 +40,7 @@ fn create(source_product: &NewSourceProduct) {
     let new_price_history = NewSourceProductPriceHistory {
         source_id: source_product.source_id,
         product_id: source_product.product_id,
+        external_id: source_product.external_id,
         price: BigDecimal::from(source_product.price.to_f64().unwrap()),
         created_at: &now.naive_utc(),
     };

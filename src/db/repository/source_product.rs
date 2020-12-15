@@ -22,6 +22,7 @@ pub fn link_to_product(parsed_product: &ParsedProduct, source: &SourceName, prod
         enabled: parsed_product.available,
         price: BigDecimal::from(parsed_product.price),
         updated_at: &now.naive_utc(),
+        external_id: &parsed_product.external_id,
     };
 
     create_if_not_exists(&new_link);
@@ -42,7 +43,7 @@ fn create_if_not_exists(new_product: &NewSourceProduct) {
 
     diesel::insert_into(source_product::table)
         .values(new_product)
-        .on_conflict((source_product::source_id, source_product::product_id))
+        .on_conflict((source_product::source_id, source_product::product_id, source_product::external_id))
         .do_update()
         .set((
             source_product::price.eq(&new_product.price),
