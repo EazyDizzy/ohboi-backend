@@ -7,13 +7,13 @@ use crate::parse::parsed_product::ParsedProduct;
 use crate::parse::crawler::crawler::Crawler;
 use crate::parse::requester::get_data;
 use crate::db::repository::source_product::link_to_product;
+use termion::{color, style};
 
 pub async fn parse<T: Crawler>(crawler: &T) -> Result<(), reqwest::Error> {
     let mut all_products_by_category: HashMap<String, Vec<ParsedProduct>> = HashMap::new();
 
     for category in crawler.get_categories() {
         let mut products: Vec<ParsedProduct> = vec![];
-        let current_length = products.len();
 
         for url in crawler.get_next_page_urls(category) {
             for page in (1..1000).step_by(5) {
@@ -42,7 +42,21 @@ pub async fn parse<T: Crawler>(crawler: &T) -> Result<(), reqwest::Error> {
                 }
             }
         }
-        println!("{}: {}", category.to_string().to_snake_case(), products.len() - current_length);
+        products.dedup_by(|a, b| {
+            if a.title == b.title && a.price != b.price {
+                println!(
+                    "{}Warning! Same title, different prices.{} Parser: {}, title: {}, price1: {}, price2: {}",
+                    color::Fg(color::Yellow),
+                    style::Reset,
+                    crawler.get_source().to_string().to_snake_case(),
+                    a.title,
+                    a.price.to_string(),
+                    b.price.to_string()
+                );
+            }
+
+            a.title == b.title
+        });
 
         for product in &products {
             link_to_product(product, crawler.get_source(), &category);

@@ -18,9 +18,8 @@ async fn main() {
     let parse_result = parse::parser::parse(&MiShopComCrawler {}).await;
     println!("Parse time: {}s", parse_start.elapsed().as_secs());
 
-
     match parse_result {
-        Ok(body) => println!("Parsed: {}", body),
+        Ok(_) => println!("Parsed"),
         Err(e) => println!("Parsing failed: {}", e)
     }
 
