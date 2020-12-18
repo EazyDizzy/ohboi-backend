@@ -1,4 +1,4 @@
-use bigdecimal::BigDecimal;
+use bigdecimal::{BigDecimal};
 use chrono::Utc;
 use diesel::{RunQueryDsl, QueryDsl};
 
@@ -8,6 +8,19 @@ use crate::schema::product;
 use crate::parse::parsed_product::ParsedProduct;
 use crate::diesel::prelude::*;
 use crate::db::repository::category::get_category;
+
+pub fn get_all_products_of_category(product_category: &i32, page: &i32) -> Vec<Product> {
+    use crate::schema::product::dsl::*;
+
+    let connection = &db::establish_connection();
+
+    let targets = product.filter(category.eq(product_category));
+
+    targets.limit(20)
+        .offset((page * 20).into())
+        .load::<Product>(connection)
+        .expect("Error loading products")
+}
 
 pub fn create_if_not_exists(parsed_product: &ParsedProduct, product_category: &CategorySlug) -> Product {
     use crate::schema::product::dsl::*;

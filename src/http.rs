@@ -1,12 +1,13 @@
 mod user;
+mod product;
 
 use actix_web::{web, App, HttpServer, guard, HttpResponse};
 
 pub async fn run_server() -> std::io::Result<()> {
     HttpServer::new(|| {
         App::new()
-            .service(user::index)
             .service(web::resource("/user").route(web::post().to(user::create)))
+            .service(web::resource("/products").route(web::post().to(product::get_products)))
             .default_service(
                 web::resource("")
                     .route(web::get().to(p404))
