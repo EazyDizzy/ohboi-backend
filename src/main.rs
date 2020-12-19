@@ -13,15 +13,15 @@ mod parse;
 
 #[actix_web::main]
 async fn main() {
-    let parse_start = Instant::now();
-
-    let parse_result = parse::parser::parse(&MiShopComCrawler {}).await;
-    println!("Parse time: {}s", parse_start.elapsed().as_secs());
-
-    match parse_result {
-        Ok(_) => println!("Parsed"),
-        Err(e) => println!("Parsing failed: {}", e)
-    }
+    // let parse_start = Instant::now();
+    //
+    // let parse_result = parse::parser::parse(&MiShopComCrawler {});
+    // println!("Parse time: {}s", parse_start.elapsed().as_secs());
+    //
+    // match parse_result {
+    //     Ok(_) => println!("Parsed"),
+    //     Err(e) => println!("Parsing failed: {}", e)
+    // }
 
     let result = http::run_server().await;
     match result {
@@ -36,6 +36,7 @@ use diesel::PgConnection;
 use dotenv::dotenv;
 use std::env;
 use std::time::Instant;
+// use std::time::Instant;
 
 pub type Pool = r2d2::Pool<ConnectionManager<PgConnection>>;
 lazy_static! {

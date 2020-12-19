@@ -2,7 +2,7 @@ use crate::schema::product;
 
 use chrono::NaiveDateTime;
 use serde::{Serialize};
-use bigdecimal::{BigDecimal};
+use bigdecimal::BigDecimal;
 
 #[derive(Serialize, Queryable, Debug)]
 pub struct Product {
@@ -13,6 +13,7 @@ pub struct Product {
     pub lowest_price: BigDecimal,
     pub images: Vec<String>,
     pub category: i32,
+    #[serde(skip)]
     pub enabled: bool,
 
     #[serde(skip)]

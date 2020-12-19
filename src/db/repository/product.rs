@@ -14,7 +14,10 @@ pub fn get_all_products_of_category(product_category: &i32, page: &i32) -> Vec<P
 
     let connection = &db::establish_connection();
 
-    let targets = product.filter(category.eq(product_category));
+    let targets = product.filter(
+        category.eq(product_category)
+            .and(enabled.eq(true))
+    );
 
     targets.limit(20)
         .offset((page * 20).into())

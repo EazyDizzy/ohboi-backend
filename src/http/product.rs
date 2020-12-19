@@ -7,7 +7,6 @@ pub async fn get_products(filters: web::Json<ProductFilters>) -> HttpResponse {
     HttpResponse::Ok().json(products)
 }
 
-
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ProductFilters {
     category: i32,

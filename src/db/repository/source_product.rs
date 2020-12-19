@@ -1,15 +1,31 @@
 use bigdecimal::{BigDecimal, ToPrimitive};
 use chrono::Utc;
-use diesel::{RunQueryDsl, ExpressionMethods};
+use std::borrow::Borrow;
+use diesel::{RunQueryDsl, QueryDsl, ExpressionMethods, BoolExpressionMethods};
 use crate::db;
 
 use crate::parse::parsed_product::ParsedProduct;
-use crate::db::entity::{SourceName, CategorySlug, NewSourceProduct};
+use crate::db::entity::{SourceName, CategorySlug, NewSourceProduct, SourceProduct};
 use crate::db::repository::product::{create_if_not_exists as create_product, update_lowest_price};
 use crate::db::repository::source::get_source;
 use crate::schema::source_product;
-use std::borrow::Borrow;
 use crate::db::repository::source_product_price_history::add_to_history_if_not_exists;
+
+pub fn get_all_for_product(requested_product_id: &i32) -> Vec<SourceProduct> {
+    use crate::schema::source_product::dsl::*;
+
+    let connection = &db::establish_connection();
+    let targets = source_product.filter(
+        product_id.eq(requested_product_id)
+            .and(enabled.eq(true))
+    );
+
+    let products: Vec<_> = targets
+        .load::<SourceProduct>(connection)
+        .expect("Error loading source products");
+
+    products
+}
 
 pub fn link_to_product(parsed_product: &ParsedProduct, source: &SourceName, product_category: &CategorySlug) {
     let product = create_product(parsed_product, product_category);

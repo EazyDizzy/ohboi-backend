@@ -8,15 +8,17 @@ use bigdecimal::BigDecimal;
 pub struct SourceProduct {
     pub id: i32,
     pub source_id: i32,
+    #[serde(skip)]
     pub product_id: i32,
-    pub price: BigDecimal,
-    pub enabled: bool,
+    #[serde(skip)]
     pub external_id: String,
+    pub price: BigDecimal,
+    #[serde(skip)]
+    pub enabled: bool,
 
     #[serde(skip)]
     pub updated_at: NaiveDateTime,
 }
-
 
 #[derive(Insertable)]
 #[table_name = "source_product"]
