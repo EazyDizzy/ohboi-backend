@@ -4,6 +4,16 @@ use crate::diesel::prelude::*;
 use crate::db::entity::{CategorySlug, Category};
 use crate::db;
 
+pub fn get_all() -> Vec<Category> {
+    use crate::schema::category::dsl::*;
+
+    let connection = &db::establish_connection();
+
+    category
+        .load(connection)
+        .expect("Error loading source products")
+}
+
 pub fn get_category(name: &CategorySlug) -> Category {
     use crate::schema::category::dsl::*;
     let connection = &db::establish_connection();

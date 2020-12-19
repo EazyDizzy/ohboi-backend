@@ -13,10 +13,10 @@ impl Crawler for MiShopComCrawler {
 
     fn get_categories(&self) -> Vec<&CategorySlug> {
         vec![
-            &CategorySlug::Smartphone,
-            &CategorySlug::SmartHome,
-            &CategorySlug::Headphones,
-            &CategorySlug::Watches,
+            // &CategorySlug::Smartphone,
+            // &CategorySlug::SmartHome,
+            // &CategorySlug::Headphones,
+            // &CategorySlug::Watches,
         ]
     }
 

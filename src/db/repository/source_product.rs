@@ -20,11 +20,9 @@ pub fn get_all_for_product(requested_product_id: &i32) -> Vec<SourceProduct> {
             .and(enabled.eq(true))
     );
 
-    let products: Vec<_> = targets
+    targets
         .load::<SourceProduct>(connection)
-        .expect("Error loading source products");
-
-    products
+        .expect("Error loading source products")
 }
 
 pub fn link_to_product(parsed_product: &ParsedProduct, source: &SourceName, product_category: &CategorySlug) {
