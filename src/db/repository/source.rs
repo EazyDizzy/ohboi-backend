@@ -4,6 +4,16 @@ use crate::db::entity::{Source, SourceName};
 use crate::diesel::prelude::*;
 use crate::db;
 
+pub fn get_all_enabled() -> Vec<Source> {
+    use crate::schema::source::dsl::*;
+    let connection = &db::establish_connection();
+
+    source
+        .filter(enabled.eq(true))
+        .load(connection)
+        .expect("Cannot load sources")
+}
+
 pub fn get_source(name: &SourceName) -> Source {
     use crate::schema::source::dsl::*;
     let connection = &db::establish_connection();

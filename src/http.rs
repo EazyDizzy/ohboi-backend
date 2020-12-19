@@ -2,6 +2,7 @@ mod user;
 mod product;
 mod source_product;
 mod category;
+mod source;
 
 use actix_web::{web, App, HttpServer, guard, HttpResponse};
 
@@ -9,7 +10,8 @@ pub async fn run_server() -> std::io::Result<()> {
     HttpServer::new(|| {
         App::new()
             .service(web::resource("/user").route(web::post().to(user::create)))
-            .service(web::resource("/categories").route(web::post().to(category::get_all_categories)))
+            .service(web::resource("/categories").route(web::get().to(category::get_all_categories)))
+            .service(web::resource("/sources").route(web::get().to(source::get_all_sources)))
             .service(web::resource("/products").route(web::post().to(product::get_products)))
             .service(web::resource("/source_products").route(web::post().to(source_product::get_source_products)))
             .default_service(
