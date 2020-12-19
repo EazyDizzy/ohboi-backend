@@ -1,10 +1,14 @@
 use scraper::{Html, Selector};
 
 use crate::parse::crawler::crawler::Crawler;
-use crate::parse::parsed_product::ParsedProduct;
+use crate::parse::parsed_product::{ParsedProduct, AdditionalParsedProductInfo};
 use crate::db::entity::{CategorySlug, SourceName};
 
 pub struct MiShopComCrawler {}
+
+fn get_base() -> &'static str {
+    "https://mi-shop.com"
+}
 
 impl Crawler for MiShopComCrawler {
     fn get_source(&self) -> &SourceName {
@@ -13,15 +17,16 @@ impl Crawler for MiShopComCrawler {
 
     fn get_categories(&self) -> Vec<&CategorySlug> {
         vec![
-            // &CategorySlug::Smartphone,
-            // &CategorySlug::SmartHome,
-            // &CategorySlug::Headphones,
-            // &CategorySlug::Watches,
+            &CategorySlug::Smartphone,
+            &CategorySlug::SmartHome,
+            &CategorySlug::Headphones,
+            &CategorySlug::Watches,
         ]
     }
 
     fn get_next_page_urls(&self, category: &CategorySlug) -> Vec<String> {
-        let base = "https://mi-shop.com/ru/catalog/";
+        let host = get_base().to_string();
+        let base = [host, "/ru/catalog/".to_string()].concat();
         let pagination = "/page/{page}/";
 
         let urls = match category {
@@ -36,7 +41,7 @@ impl Crawler for MiShopComCrawler {
         };
 
         urls.into_iter().map(|url| {
-            [base, url, pagination].join("")
+            [base.clone(), url.to_string(), pagination.to_string()].concat()
         }).collect()
     }
 
@@ -46,7 +51,6 @@ impl Crawler for MiShopComCrawler {
         let title_selector = Selector::parse(".snippet-card__title").unwrap();
         let price_selector = Selector::parse(".snippet-card__price-new").unwrap();
         let available_selector = Selector::parse(".btn-basket.disabled").unwrap();
-        let image_selector = Selector::parse("picture img").unwrap();
         let id_selector = Selector::parse("a.snippet-card__media").unwrap();
 
         let mut amount_of_parsed_products = 0;
@@ -54,19 +58,15 @@ impl Crawler for MiShopComCrawler {
             amount_of_parsed_products = amount_of_parsed_products + 1;
             let mut title: String;
             let price: f64;
-            let mut image = "";
             let available: bool;
             let external_id: String;
 
             let title_node = element.select(&title_selector).next();
             let price_node = element.select(&price_selector).next();
             let unavailable_node = element.select(&available_selector).next();
-            let image_node = element.select(&image_selector).next();
             let id_node = element.select(&id_selector).next();
 
-            let image_option = image_node.unwrap().value().attr("src");
-            external_id = id_node.unwrap().value().attr("href").unwrap()
-                .rsplit("/").collect::<Vec<&str>>()[1].to_string();
+            external_id = id_node.unwrap().value().attr("href").unwrap().to_string();
             title = title_node.unwrap().inner_html();
             let price_text = price_node.unwrap()
                 .inner_html()
@@ -86,20 +86,28 @@ impl Crawler for MiShopComCrawler {
                 title = title.split('(').next().unwrap().trim().to_string()
             }
 
-            if image_option.is_some() {
-                image = image_option.unwrap();
-            }
             available = unavailable_node.is_none();
 
             all_products.push(ParsedProduct {
                 title,
                 price,
                 available,
-                image_url: image.to_string(),
                 external_id,
             });
         }
 
         amount_of_parsed_products > 0
+    }
+
+    fn get_additional_info_url(&self, external_id: String) -> String {
+        format!("{}{}", get_base(), external_id)
+    }
+
+    fn extract_additional_info(&self, document: Html) -> AdditionalParsedProductInfo {
+        AdditionalParsedProductInfo {
+            image_url: "her".to_string(),
+            description: "da".to_string(),
+            available: true,
+        }
     }
 }

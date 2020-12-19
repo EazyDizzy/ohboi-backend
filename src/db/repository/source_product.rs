@@ -5,8 +5,8 @@ use diesel::{RunQueryDsl, QueryDsl, ExpressionMethods, BoolExpressionMethods};
 use crate::db;
 
 use crate::parse::parsed_product::ParsedProduct;
-use crate::db::entity::{SourceName, CategorySlug, NewSourceProduct, SourceProduct};
-use crate::db::repository::product::{create_if_not_exists as create_product, update_lowest_price};
+use crate::db::entity::{SourceName, NewSourceProduct, SourceProduct, Product};
+use crate::db::repository::product::{update_lowest_price};
 use crate::db::repository::source::get_source;
 use crate::schema::source_product;
 use crate::db::repository::source_product_price_history::add_to_history_if_not_exists;
@@ -25,8 +25,7 @@ pub fn get_all_for_product(requested_product_id: &i32) -> Vec<SourceProduct> {
         .expect("Error loading source products")
 }
 
-pub fn link_to_product(parsed_product: &ParsedProduct, source: &SourceName, product_category: &CategorySlug) {
-    let product = create_product(parsed_product, product_category);
+pub fn link_to_product(product: &Product, parsed_product: &ParsedProduct, source: &SourceName) {
     let source = get_source(source);
 
     let now = Utc::now();

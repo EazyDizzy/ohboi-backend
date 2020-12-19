@@ -12,7 +12,7 @@ table! {
         title -> Varchar,
         description -> Nullable<Text>,
         lowest_price -> Numeric,
-        images -> Array<Varchar>,
+        images -> Nullable<Array<Varchar>>,
         category -> Int4,
         enabled -> Bool,
         created_at -> Timestamp,

@@ -1,13 +1,14 @@
 use std::collections::HashMap;
 use inflector::Inflector;
 use scraper::Html;
-use futures::join;
+use futures::{join};
 
-use crate::parse::parsed_product::ParsedProduct;
+use crate::parse::parsed_product::{ParsedProduct, AdditionalParsedProductInfo};
 use crate::parse::crawler::crawler::Crawler;
 use crate::parse::requester::get_data;
 use crate::db::repository::source_product::link_to_product;
 use termion::{color, style};
+use crate::db::repository::product::{create_if_not_exists, update_details};
 
 pub async fn parse<T: Crawler>(crawler: &T) -> Result<(), reqwest::Error> {
     let mut all_products_by_category: HashMap<String, Vec<ParsedProduct>> = HashMap::new();
@@ -61,8 +62,15 @@ pub async fn parse<T: Crawler>(crawler: &T) -> Result<(), reqwest::Error> {
 
         println!("{}: {}", category.to_string().to_snake_case(), products.len() - current_length);
 
-        for product in &products {
-            link_to_product(product, crawler.get_source(), &category);
+        for parsed_product in &products {
+            let product = create_if_not_exists(parsed_product, &category);
+
+            if product.description.is_none() || product.images.is_none() {
+                let details = extract_additional_info(parsed_product.external_id.to_string(), crawler).await;
+                update_details(&product, &details);
+            }
+
+            link_to_product(&product, parsed_product, crawler.get_source());
         }
 
         all_products_by_category.insert(category.to_string().to_snake_case(), products);
@@ -75,4 +83,11 @@ fn parse_html<T: Crawler>(data: String, mut products: &mut Vec<ParsedProduct>, c
     let document = Html::parse_document(&data);
 
     crawler.extract_products(document, &mut products)
+}
+
+async fn extract_additional_info<T: Crawler>(external_id: String, crawler: &T) -> AdditionalParsedProductInfo {
+    let url = crawler.get_additional_info_url(external_id);
+    let data = get_data(url.as_ref()).await;
+
+    crawler.extract_additional_info(Html::parse_document(&data.unwrap()))
 }

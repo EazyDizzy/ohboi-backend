@@ -5,7 +5,7 @@ use diesel::{RunQueryDsl, QueryDsl};
 use crate::db;
 use crate::db::entity::{NewProduct, Product, CategorySlug};
 use crate::schema::product;
-use crate::parse::parsed_product::ParsedProduct;
+use crate::parse::parsed_product::{ParsedProduct, AdditionalParsedProductInfo};
 use crate::diesel::prelude::*;
 use crate::db::repository::category::get_category;
 
@@ -23,6 +23,22 @@ pub fn get_all_products_of_category(product_category: &i32, page: &i32) -> Vec<P
         .offset((page * 20).into())
         .load::<Product>(connection)
         .expect("Error loading products")
+}
+
+pub fn update_details(existent_product: &Product, additional_info: &AdditionalParsedProductInfo) {
+    use crate::schema::product::dsl::*;
+
+    let connection = &db::establish_connection();
+    let target = product.filter(id.eq(existent_product.id));
+
+    diesel::update(target)
+        .set((
+            description.eq(&additional_info.description),
+            images.eq(&vec![&additional_info.image_url]),
+            enabled.eq(existent_product.enabled || additional_info.available)
+        ))
+        .execute(connection)
+        .expect("Failed to update product price");
 }
 
 pub fn create_if_not_exists(parsed_product: &ParsedProduct, product_category: &CategorySlug) -> Product {
@@ -72,8 +88,7 @@ fn create(parsed_product: &ParsedProduct, product_category: &CategorySlug) -> Pr
     let new_product = NewProduct {
         category: category.id,
         title: &parsed_product.title,
-        images: &vec![parsed_product.image_url.to_string()],
-        enabled: parsed_product.available,
+        enabled: false,
         lowest_price: BigDecimal::from(parsed_product.price),
         created_at: &now.naive_utc(),
         updated_at: &now.naive_utc(),

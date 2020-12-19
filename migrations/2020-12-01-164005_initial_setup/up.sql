@@ -24,7 +24,7 @@ create table product (
     title           varchar not null,
     description     text,
     lowest_price    numeric not null,
-    images          varchar[] not null ,
+    images          varchar[],
     category        int not null,
     enabled         bool not null,
 
