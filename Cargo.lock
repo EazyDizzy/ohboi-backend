@@ -1372,6 +1372,7 @@ dependencies = [
  "futures",
  "lazy_static",
  "r2d2",
+ "regex",
  "reqwest",
  "scraper",
  "serde",

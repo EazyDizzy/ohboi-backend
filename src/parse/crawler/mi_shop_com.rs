@@ -1,8 +1,9 @@
+use regex::Regex;
 use scraper::{Html, Selector};
 
-use crate::parse::crawler::crawler::Crawler;
-use crate::parse::parsed_product::{ParsedProduct, AdditionalParsedProductInfo};
 use crate::db::entity::{CategorySlug, SourceName};
+use crate::parse::crawler::crawler::Crawler;
+use crate::parse::parsed_product::{AdditionalParsedProductInfo, ParsedProduct};
 
 pub struct MiShopComCrawler {}
 
@@ -104,9 +105,33 @@ impl Crawler for MiShopComCrawler {
     }
 
     fn extract_additional_info(&self, document: Html) -> AdditionalParsedProductInfo {
+        lazy_static! {
+            static ref RE: Regex = Regex::new(r"(?ms)<p>.*?</p>|<h2>.*?</h2>|<ul>.*?</ul>").unwrap();
+        }
+        let description_selector = Selector::parse(".detail__tab-description").unwrap();
+        let description_node = document.select(&description_selector).next();
+        let description: String = description_node.unwrap().inner_html();
+
+        let mut description_sanitized: Vec<&str> = vec![];
+        let matches = RE.captures_iter(description.as_str());
+
+        for capture in matches {
+            for text in capture.iter() {
+                if text.is_some() {
+                    description_sanitized.push(text.unwrap().as_str());
+                }
+            }
+        }
+
+        if description_sanitized.is_empty() {
+            description_sanitized.push(r"<p>");
+            description_sanitized.push(description.trim());
+            description_sanitized.push(r"<\p>");
+        }
+
         AdditionalParsedProductInfo {
-            image_url: "her".to_string(),
-            description: "da".to_string(),
+            image_urls: vec!["her".to_string()],
+            description: description_sanitized.concat(),
             available: true,
         }
     }

@@ -10,7 +10,7 @@ pub struct ParsedProduct {
 
 #[derive(Serialize, Debug, PartialEq)]
 pub struct AdditionalParsedProductInfo {
-    pub image_url: String,
+    pub image_urls: Vec<String>,
     pub description: String,
     pub available: bool,
 }

@@ -34,7 +34,7 @@ pub fn update_details(existent_product: &Product, additional_info: &AdditionalPa
     diesel::update(target)
         .set((
             description.eq(&additional_info.description),
-            images.eq(&vec![&additional_info.image_url]),
+            images.eq(&additional_info.image_urls),
             enabled.eq(existent_product.enabled || additional_info.available)
         ))
         .execute(connection)
