@@ -3,7 +3,7 @@ use rusoto_s3::{PutObjectRequest, S3, S3Client, StreamingBody};
 
 use crate::parse::requester::get_bytes;
 
-pub async fn upload_image_to_cloud(file_path: String, image_url: &str) -> bool {
+pub async fn upload_image_to_cloud(file_path: String, image_url: String) -> bool {
     let data = get_bytes(&image_url).await;
     let mut success = data.is_ok();
 
@@ -21,8 +21,10 @@ pub async fn upload_image_to_cloud(file_path: String, image_url: &str) -> bool {
         success = result.is_ok();
 
         if !success {
-            println!("s3 upload rror: {:?}", result.err().unwrap());
+            println!("s3 upload error: {:?}", result.err().unwrap());
         }
+    } else {
+        println!("Cannot get image: {} {:?}", image_url, data.err().unwrap());
     }
 
     success
