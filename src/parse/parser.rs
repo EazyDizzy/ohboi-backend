@@ -89,5 +89,5 @@ async fn extract_additional_info<T: Crawler>(external_id: String, crawler: &T) -
     let url = crawler.get_additional_info_url(external_id);
     let data = get_data(url.as_ref()).await;
 
-    crawler.extract_additional_info(Html::parse_document(&data.unwrap()))
+    crawler.extract_additional_info(Html::parse_document(&data.unwrap())).await
 }

@@ -1,5 +1,6 @@
-use serde::{Serialize};
 use std::fmt;
+
+use serde::Serialize;
 
 #[derive(Serialize, Queryable)]
 pub struct Category {
@@ -8,6 +9,7 @@ pub struct Category {
     pub parent_id: Option<i32>,
 }
 
+#[allow(dead_code)]
 #[derive(Debug, Serialize)]
 pub enum CategorySlug {
     SmartHome,

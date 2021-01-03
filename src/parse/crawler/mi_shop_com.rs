@@ -1,7 +1,10 @@
+use async_trait::async_trait;
+use inflector::Inflector;
 use regex::Regex;
 use scraper::{Html, Selector};
 
 use crate::db::entity::{CategorySlug, SourceName};
+use crate::parse::cloud_uploader::upload_image_to_cloud;
 use crate::parse::crawler::crawler::Crawler;
 use crate::parse::parsed_product::{AdditionalParsedProductInfo, ParsedProduct};
 
@@ -11,6 +14,7 @@ fn get_base() -> &'static str {
     "https://mi-shop.com"
 }
 
+#[async_trait(? Send)]
 impl Crawler for MiShopComCrawler {
     fn get_source(&self) -> &SourceName {
         &SourceName::MiShopCom
@@ -18,9 +22,9 @@ impl Crawler for MiShopComCrawler {
 
     fn get_categories(&self) -> Vec<&CategorySlug> {
         vec![
-            &CategorySlug::Smartphone,
-            &CategorySlug::SmartHome,
-            &CategorySlug::Headphones,
+            // &CategorySlug::Smartphone,
+            // &CategorySlug::SmartHome,
+            // &CategorySlug::Headphones,
             &CategorySlug::Watches,
         ]
     }
@@ -104,35 +108,74 @@ impl Crawler for MiShopComCrawler {
         format!("{}{}", get_base(), external_id)
     }
 
-    fn extract_additional_info(&self, document: Html) -> AdditionalParsedProductInfo {
-        lazy_static! {
-            static ref RE: Regex = Regex::new(r"(?ms)<p>.*?</p>|<h2>.*?</h2>|<ul>.*?</ul>").unwrap();
+    async fn extract_additional_info(&self, document: Html) -> AdditionalParsedProductInfo {
+        let images_selector = Selector::parse(".detail__slides img").unwrap();
+        let image_nodes = document.select(&images_selector);
+        let mut images_urls: Vec<String> = vec![];
+
+        for image in image_nodes.into_iter() {
+            let url_path: String;
+            let src_tag = image.value().attr("src");
+            if src_tag.is_some() {
+                url_path = src_tag.unwrap().to_string();
+            } else {
+                let lazy_tag = image.value().attr("data-lazy");
+                url_path = lazy_tag.unwrap().to_string();
+            }
+
+            images_urls.push(url_path);
         }
-        let description_selector = Selector::parse(".detail__tab-description").unwrap();
-        let description_node = document.select(&description_selector).next();
-        let description: String = description_node.unwrap().inner_html();
 
-        let mut description_sanitized: Vec<&str> = vec![];
-        let matches = RE.captures_iter(description.as_str());
+        let mut uploaded_urls: Vec<String> = vec![];
+        for image_url in images_urls {
+            let filename = [
+                "product_images/".to_string(),
+                SourceName::MiShopCom.to_string().to_snake_case(),
+                image_url.clone()
+            ].concat();
 
-        for capture in matches {
-            for text in capture.iter() {
-                if text.is_some() {
-                    description_sanitized.push(text.unwrap().as_str());
-                }
+            let uploaded = upload_image_to_cloud(
+                filename.clone(),
+                [get_base().to_string(), image_url.clone()].concat().as_str(),
+            ).await;
+
+            if uploaded {
+                uploaded_urls.push(filename);
             }
         }
 
-        if description_sanitized.is_empty() {
-            description_sanitized.push(r"<p>");
-            description_sanitized.push(description.trim());
-            description_sanitized.push(r"<\p>");
-        }
-
         AdditionalParsedProductInfo {
-            image_urls: vec!["her".to_string()],
-            description: description_sanitized.concat(),
+            image_urls: uploaded_urls,
+            description: extract_description(document),
             available: true,
         }
     }
+}
+
+fn extract_description(document: Html) -> String {
+    lazy_static! {
+            static ref RE: Regex = Regex::new(r"(?ms)<p>.*?</p>|<h2>.*?</h2>|<ul>.*?</ul>").unwrap();
+        }
+    let description_selector = Selector::parse(".detail__tab-description").unwrap();
+    let description_node = document.select(&description_selector).next();
+    let description: String = description_node.unwrap().inner_html();
+
+    let mut description_sanitized: Vec<&str> = vec![];
+    let matches = RE.captures_iter(description.as_str());
+
+    for capture in matches {
+        for text in capture.iter() {
+            if text.is_some() {
+                description_sanitized.push(text.unwrap().as_str());
+            }
+        }
+    }
+
+    if description_sanitized.is_empty() {
+        description_sanitized.push(r"<p>");
+        description_sanitized.push(description.trim());
+        description_sanitized.push(r"<\p>");
+    }
+
+    description_sanitized.concat()
 }

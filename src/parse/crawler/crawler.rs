@@ -1,7 +1,10 @@
-use crate::parse::parsed_product::{ParsedProduct, AdditionalParsedProductInfo};
 use scraper::Html;
-use crate::db::entity::{CategorySlug, SourceName};
+use async_trait::async_trait;
 
+use crate::db::entity::{CategorySlug, SourceName};
+use crate::parse::parsed_product::{AdditionalParsedProductInfo, ParsedProduct};
+
+#[async_trait(?Send)]
 pub trait Crawler {
     fn get_source(&self) -> &SourceName;
 
@@ -13,5 +16,5 @@ pub trait Crawler {
 
     fn get_additional_info_url(&self, external_id: String) -> String;
 
-    fn extract_additional_info(&self, document: Html) -> AdditionalParsedProductInfo;
+    async fn extract_additional_info(&self, document: Html) -> AdditionalParsedProductInfo;
 }

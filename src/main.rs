@@ -4,6 +4,14 @@ extern crate dotenv;
 #[macro_use]
 extern crate lazy_static;
 
+use std::env;
+use std::time::Instant;
+
+use diesel::PgConnection;
+use diesel::r2d2::ConnectionManager;
+use dotenv::dotenv;
+use r2d2;
+
 use crate::parse::crawler::mi_shop_com::MiShopComCrawler;
 
 mod http;
@@ -30,13 +38,6 @@ async fn main() {
     }
 }
 
-use r2d2;
-use diesel::r2d2::ConnectionManager;
-use diesel::PgConnection;
-use dotenv::dotenv;
-use std::env;
-use std::time::Instant;
-// use std::time::Instant;
 
 pub type Pool = r2d2::Pool<ConnectionManager<PgConnection>>;
 lazy_static! {
