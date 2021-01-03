@@ -62,37 +62,37 @@ impl Crawler for MiShopComCrawler {
         let mut amount_of_parsed_products = 0;
         for element in document.select(&items_selector) {
             amount_of_parsed_products = amount_of_parsed_products + 1;
-            let mut title: String;
-            let price: f64;
-            let available: bool;
-            let external_id: String;
 
-            let title_node = element.select(&title_selector).next();
-            let price_node = element.select(&price_selector).next();
-            let unavailable_node = element.select(&available_selector).next();
-            let id_node = element.select(&id_selector).next();
+            let title: String = {
+                let title_node = element.select(&title_selector).next();
+                let mut title_value = title_node.unwrap().inner_html();
+                if title_value.contains('(') {
+                    title_value = title_value.split('(').next().unwrap().trim().to_string();
+                }
 
-            external_id = id_node.unwrap().value().attr("href").unwrap().to_string();
-            title = title_node.unwrap().inner_html();
-            let price_text = price_node.unwrap()
-                .inner_html()
-                .replace("₽", "")
-                .replace(" ", "")
-                .trim()
-                .parse::<f64>();
+                title_value
+            };
+            let price: f64 = {
+                let price_node = element.select(&price_selector).next();
+                let price_text = price_node.unwrap()
+                    .inner_html()
+                    .replace("₽", "")
+                    .replace(" ", "")
+                    .trim()
+                    .parse::<f64>();
 
-            if price_text.is_ok() {
-                price = price_text.unwrap();
-            } else {
-                println!("Price parsing failed: {}", price_text.err().unwrap()); // TODO error tracking
-                continue;
-            }
+                price_text.unwrap()
+            };
+            let available: bool = {
+                let unavailable_node = element.select(&available_selector).next();
 
-            if title.contains('(') { // TODO different color can cost different price
-                title = title.split('(').next().unwrap().trim().to_string()
-            }
+                unavailable_node.is_none()
+            };
+            let external_id: String = {
+                let id_node = element.select(&id_selector).next();
 
-            available = unavailable_node.is_none();
+                id_node.unwrap().value().attr("href").unwrap().to_string()
+            };
 
             all_products.push(ParsedProduct {
                 title,
@@ -147,7 +147,7 @@ fn extract_description(document: &Html) -> String {
 }
 
 async fn extract_images(document: &Html) -> Vec<String> {
-    let images_selector = Selector::parse(".detail__slides img").unwrap();
+    let images_selector = Selector::parse(".detail-modal .detail__slides img").unwrap();
     let image_nodes = document.select(&images_selector);
     let mut images_urls: Vec<String> = vec![];
 
