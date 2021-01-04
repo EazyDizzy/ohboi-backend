@@ -51,7 +51,7 @@ impl Crawler for MiShopComCrawler {
         }).collect()
     }
 
-    fn extract_products(&self, document: Html, all_products: &mut Vec<ParsedProduct>) -> bool {
+    fn extract_products(&self, document: &Html, all_products: &mut Vec<ParsedProduct>) -> bool {
         let items_selector = Selector::parse(".catalog-item").unwrap();
 
         let title_selector = Selector::parse(".snippet-card__title").unwrap();
@@ -109,11 +109,11 @@ impl Crawler for MiShopComCrawler {
         format!("{}{}", get_base(), external_id)
     }
 
-    async fn extract_additional_info(&self, document: Html) -> AdditionalParsedProductInfo {
+    async fn extract_additional_info(&self, document: &Html) -> AdditionalParsedProductInfo {
         AdditionalParsedProductInfo {
-            image_urls: extract_images(&document).await,
-            description: extract_description(&document),
-            available: parse_availability(&document),
+            image_urls: extract_images(document).await,
+            description: extract_description(document),
+            available: parse_availability(document),
         }
     }
 }
@@ -199,6 +199,7 @@ async fn extract_images(document: &Html) -> Vec<String> {
 }
 
 fn parse_availability(document: &Html) -> bool {
+    // TODO check another button too
     let buy_button_selector = Selector::parse(".btn-primary.buy-btns__buy").unwrap();
     let button_nodes = document.select(&buy_button_selector);
 

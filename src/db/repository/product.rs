@@ -1,13 +1,13 @@
-use bigdecimal::{BigDecimal};
+use bigdecimal::BigDecimal;
 use chrono::Utc;
-use diesel::{RunQueryDsl, QueryDsl};
+use diesel::{QueryDsl, RunQueryDsl};
 
 use crate::db;
-use crate::db::entity::{NewProduct, Product, CategorySlug};
-use crate::schema::product;
-use crate::parse::parsed_product::{ParsedProduct, AdditionalParsedProductInfo};
-use crate::diesel::prelude::*;
+use crate::db::entity::{CategorySlug, NewProduct, Product};
 use crate::db::repository::category::get_category;
+use crate::diesel::prelude::*;
+use crate::parse::parsed_product::{AdditionalParsedProductInfo, ParsedProduct};
+use crate::schema::product;
 
 pub fn get_all_products_of_category(product_category: &i32, page: &i32) -> Vec<Product> {
     use crate::schema::product::dsl::*;
@@ -42,23 +42,15 @@ pub fn update_details(existent_product: &Product, additional_info: &AdditionalPa
 }
 
 pub fn create_if_not_exists(parsed_product: &ParsedProduct, product_category: &CategorySlug) -> Product {
-    use crate::schema::product::dsl::*;
+    let existed_product = get_product_by_title(parsed_product.title.as_str());
 
-    let connection = &db::establish_connection();
-
-    let target = product.filter(title.eq(&parsed_product.title));
-    let results: Vec<Product> = target
-        .limit(1)
-        .load::<Product>(connection)
-        .expect("Error loading product");
-
-    if results.len() == 0 {
+    if existed_product.is_none() {
         create(
             &parsed_product,
             product_category,
         )
     } else {
-        let current_product = results.into_iter().next().unwrap();
+        let current_product = existed_product.unwrap();
         if parsed_product.available && !current_product.enabled {
             enable_product(&current_product.id);
         }
@@ -94,10 +86,15 @@ fn create(parsed_product: &ParsedProduct, product_category: &CategorySlug) -> Pr
         updated_at: &now.naive_utc(),
     };
 
-    diesel::insert_into(product::table)
+    let insert_result = diesel::insert_into(product::table)
         .values(&new_product)
-        .get_result(connection)
-        .expect("Error saving new product")
+        .get_result(connection);
+
+    if insert_result.is_err() {
+        get_product_by_title(parsed_product.title.as_str()).unwrap()
+    } else {
+        insert_result.unwrap()
+    }
 }
 
 fn enable_product(product_id: &i32) {
@@ -111,4 +108,22 @@ fn enable_product(product_id: &i32) {
         .set((enabled.eq(true), updated_at.eq(&now.naive_utc())))
         .execute(connection)
         .expect("Failed to enable product");
+}
+
+fn get_product_by_title(product_title: &str) -> Option<Product> {
+    use crate::schema::product::dsl::*;
+
+    let connection = &db::establish_connection();
+
+    let target = product.filter(title.eq(product_title));
+    let results: Vec<Product> = target
+        .limit(1)
+        .load::<Product>(connection)
+        .expect("Error loading product");
+
+    if results.len() == 0 {
+        None
+    } else {
+        results.into_iter().next()
+    }
 }

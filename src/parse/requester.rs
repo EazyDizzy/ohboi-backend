@@ -1,7 +1,7 @@
 use actix_web::web::Bytes;
 
-pub async fn get_data(url: &str) -> Result<String, reqwest::Error> {
-    let resp = reqwest::get(url)
+pub async fn get_data(url: String) -> Result<String, reqwest::Error> {
+    let resp = reqwest::get(url.as_str())
         .await?;
 
     Ok(resp.text().await?)

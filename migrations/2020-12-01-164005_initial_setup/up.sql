@@ -35,6 +35,8 @@ create table product (
         	  references category(id)
         	  on delete set null
 );
+CREATE UNIQUE INDEX idx_product_title
+ON product(title);
 SELECT diesel_manage_updated_at('product');
 
 create table source_product (

@@ -1,49 +1,48 @@
-use std::collections::HashMap;
+use futures::future::*;
 use inflector::Inflector;
 use scraper::Html;
-use futures::{join};
-
-use crate::parse::parsed_product::{ParsedProduct, AdditionalParsedProductInfo};
-use crate::parse::crawler::crawler::Crawler;
-use crate::parse::requester::get_data;
-use crate::db::repository::source_product::link_to_product;
 use termion::{color, style};
+
+use crate::db::entity::CategorySlug;
 use crate::db::repository::product::{create_if_not_exists, update_details};
+use crate::db::repository::source_product::link_to_product;
+use crate::parse::crawler::crawler::Crawler;
+use crate::parse::parsed_product::{AdditionalParsedProductInfo, ParsedProduct};
+use crate::parse::requester::get_data;
 
 pub async fn parse<T: Crawler>(crawler: &T) -> Result<(), reqwest::Error> {
-    let mut all_products_by_category: HashMap<String, Vec<ParsedProduct>> = HashMap::new();
-
     for category in crawler.get_categories() {
         let mut products: Vec<ParsedProduct> = vec![];
         let current_length = products.len();
+        let concurrent_pages = 5;
 
         for url in crawler.get_next_page_urls(category) {
-            for page in (1..1000).step_by(5) {
-                let page1 = url.replace("{page}", (page).to_string().as_ref());
-                let page2 = url.replace("{page}", (page + 1).to_string().as_ref());
-                let page3 = url.replace("{page}", (page + 2).to_string().as_ref());
-                let page4 = url.replace("{page}", (page + 3).to_string().as_ref());
-                let page5 = url.replace("{page}", (page + 4).to_string().as_ref());
+            for page in (1..1000).step_by(concurrent_pages) {
+                let mut page_requests = vec![];
+                for page in page..page + concurrent_pages {
+                    let url = url.replace("{page}", (page).to_string().as_ref());
 
-                let next_pages = join!(
-                     get_data(page1.as_ref()),
-                     get_data(page2.as_ref()),
-                     get_data(page3.as_ref()),
-                     get_data(page4.as_ref()),
-                     get_data(page5.as_ref()),
-                );
+                    page_requests.push(get_data(url));
+                }
 
-                let parsed1 = parse_html(next_pages.0.unwrap(), &mut products, crawler);
-                let parsed2 = parse_html(next_pages.1.unwrap(), &mut products, crawler);
-                let parsed3 = parse_html(next_pages.2.unwrap(), &mut products, crawler);
-                let parsed4 = parse_html(next_pages.3.unwrap(), &mut products, crawler);
-                let parsed5 = parse_html(next_pages.4.unwrap(), &mut products, crawler);
+                let next_pages = join_all(page_requests).await;
+                let mut all_successful = true;
 
-                if !(parsed1 && parsed2 && parsed3 && parsed4 && parsed5) {
+                for response in next_pages {
+                    // TODO what if one requests failed? like middle one just because of network error
+                    if response.is_ok() {
+                        let parsed = parse_html(response.unwrap(), &mut products, crawler);
+
+                        all_successful = all_successful && parsed;
+                    }
+                }
+
+                if !all_successful {
                     break;
                 }
             }
         }
+
         products.dedup_by(|a, b| {
             if a.external_id == b.external_id && a.price != b.price {
                 println!(
@@ -62,32 +61,47 @@ pub async fn parse<T: Crawler>(crawler: &T) -> Result<(), reqwest::Error> {
 
         println!("{}: {}", category.to_string().to_snake_case(), products.len() - current_length);
 
+        let mut savings_in_progress = vec![];
+
         for parsed_product in &products {
-            let product = create_if_not_exists(parsed_product, &category);
+            savings_in_progress.push(save_parsed_product(crawler, &parsed_product, category));
 
-            if product.description.is_none() || product.images.is_none() {
-                let details = extract_additional_info(parsed_product.external_id.to_string(), crawler).await;
-                update_details(&product, &details);
+            if savings_in_progress.len() == 20 {
+                join_all(savings_in_progress).await;
+                savings_in_progress = vec![];
             }
-
-            link_to_product(&product, parsed_product, crawler.get_source());
         }
 
-        all_products_by_category.insert(category.to_string().to_snake_case(), products);
+        join_all(savings_in_progress).await;
     }
 
     Ok(())
 }
 
+async fn save_parsed_product<T: Crawler>(crawler: &T, parsed_product: &ParsedProduct, category: &CategorySlug) {
+    let product = create_if_not_exists(parsed_product, &category);
+
+    if product.description.is_none() || product.images.is_none() {
+        let details = extract_additional_info(
+            parsed_product.external_id.to_string(),
+            crawler,
+        ).await;
+        update_details(&product, &details);
+    }
+
+    link_to_product(&product, parsed_product, crawler.get_source());
+}
+
 fn parse_html<T: Crawler>(data: String, mut products: &mut Vec<ParsedProduct>, crawler: &T) -> bool {
     let document = Html::parse_document(&data);
 
-    crawler.extract_products(document, &mut products)
+    crawler.extract_products(&document, &mut products)
 }
 
 async fn extract_additional_info<T: Crawler>(external_id: String, crawler: &T) -> AdditionalParsedProductInfo {
     let url = crawler.get_additional_info_url(external_id);
-    let data = get_data(url.as_ref()).await;
+    let data = get_data(url).await;
+    let document = Html::parse_document(&data.unwrap());
 
-    crawler.extract_additional_info(Html::parse_document(&data.unwrap())).await
+    crawler.extract_additional_info(&document).await
 }
