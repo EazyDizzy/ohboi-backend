@@ -16,5 +16,5 @@ pub trait Crawler {
 
     fn get_additional_info_url(&self, external_id: String) -> String;
 
-    async fn extract_additional_info(&self, document: &Html) -> AdditionalParsedProductInfo;
+    async fn extract_additional_info(&self, document: &Html) -> Option<AdditionalParsedProductInfo>;
 }

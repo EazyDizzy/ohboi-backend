@@ -51,6 +51,8 @@ pub fn create_if_not_exists(parsed_product: &ParsedProduct, product_category: &C
         )
     } else {
         let current_product = existed_product.unwrap();
+
+        // TODO what if all sub products were disabled
         if parsed_product.available && !current_product.enabled {
             enable_product(&current_product.id);
         }

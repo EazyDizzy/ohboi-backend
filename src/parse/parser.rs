@@ -1,6 +1,7 @@
 use futures::future::*;
 use inflector::Inflector;
 use scraper::Html;
+use sentry::{add_breadcrumb, Breadcrumb};
 use termion::{color, style};
 
 use crate::db::entity::CategorySlug;
@@ -11,7 +12,11 @@ use crate::parse::parsed_product::{AdditionalParsedProductInfo, ParsedProduct};
 use crate::parse::requester::get_data;
 
 pub async fn parse<T: Crawler>(crawler: &T) -> Result<(), reqwest::Error> {
+    add_parse_breadcrumb(format!("Parser {} started", crawler.get_source().to_string()));
+
     for category in crawler.get_categories() {
+        add_parse_breadcrumb(format!("Parsing {} category", category.to_string()));
+
         let mut products: Vec<ParsedProduct> = vec![];
         let current_length = products.len();
         let concurrent_pages = 5;
@@ -34,6 +39,8 @@ pub async fn parse<T: Crawler>(crawler: &T) -> Result<(), reqwest::Error> {
                         let parsed = parse_html(response.unwrap(), &mut products, crawler);
 
                         all_successful = all_successful && parsed;
+                    } else {
+                        println!("request failed: {:?}", response.err());
                     }
                 }
 
@@ -63,17 +70,20 @@ pub async fn parse<T: Crawler>(crawler: &T) -> Result<(), reqwest::Error> {
 
         let mut savings_in_progress = vec![];
 
+        add_parse_breadcrumb(format!("Saving {} category products", category.to_string()));
         for parsed_product in &products {
             savings_in_progress.push(save_parsed_product(crawler, &parsed_product, category));
 
-            if savings_in_progress.len() == 20 {
+            if savings_in_progress.len() == 15 {
                 join_all(savings_in_progress).await;
                 savings_in_progress = vec![];
             }
         }
 
         join_all(savings_in_progress).await;
+        add_parse_breadcrumb(format!("Saved {} category products", category.to_string()));
     }
+    add_parse_breadcrumb(format!("Parser {} finished", crawler.get_source().to_string()));
 
     Ok(())
 }
@@ -86,7 +96,10 @@ async fn save_parsed_product<T: Crawler>(crawler: &T, parsed_product: &ParsedPro
             parsed_product.external_id.to_string(),
             crawler,
         ).await;
-        update_details(&product, &details);
+
+        if details.is_some() {
+            update_details(&product, &details.unwrap());
+        }
     }
 
     link_to_product(&product, parsed_product, crawler.get_source());
@@ -98,10 +111,20 @@ fn parse_html<T: Crawler>(data: String, mut products: &mut Vec<ParsedProduct>, c
     crawler.extract_products(&document, &mut products)
 }
 
-async fn extract_additional_info<T: Crawler>(external_id: String, crawler: &T) -> AdditionalParsedProductInfo {
+async fn extract_additional_info<T: Crawler>(external_id: String, crawler: &T) -> Option<AdditionalParsedProductInfo> {
+    add_parse_breadcrumb(format!("Extracting additional info for: {}", external_id));
+
     let url = crawler.get_additional_info_url(external_id);
     let data = get_data(url).await;
     let document = Html::parse_document(&data.unwrap());
 
     crawler.extract_additional_info(&document).await
+}
+
+fn add_parse_breadcrumb(message: String) {
+    add_breadcrumb(Breadcrumb {
+        category: Some("parse".into()),
+        message: Some(message),
+        ..Default::default()
+    });
 }

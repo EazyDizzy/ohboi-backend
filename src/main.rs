@@ -5,6 +5,7 @@ extern crate dotenv;
 extern crate lazy_static;
 
 use std::env;
+use std::sync::Arc;
 use std::time::Instant;
 
 use diesel::PgConnection;
@@ -21,8 +22,27 @@ mod parse;
 
 #[actix_web::main]
 async fn main() {
-    let parse_start = Instant::now();
+    dotenv().ok();
 
+    let _guard = sentry::init(
+        sentry::ClientOptions {
+            attach_stacktrace: true,
+            send_default_pii: true,
+            auto_session_tracking: true,
+            release: Some(env::var("CARGO_PKG_VERSION").unwrap().into()),
+
+            before_send: Some(Arc::new(|event| {
+                if event.message.is_some() {
+                    println!("sentry: {:?}", event.message.clone().unwrap());
+                }
+
+                Some(event)
+            })),
+            ..Default::default()
+        }
+    );
+
+    let parse_start = Instant::now();
     let parse_result = parse::parser::parse(&MiShopComCrawler {}).await;
     println!("Parse time: {}s", parse_start.elapsed().as_secs());
 
@@ -42,7 +62,6 @@ async fn main() {
 pub type Pool = r2d2::Pool<ConnectionManager<PgConnection>>;
 lazy_static! {
     static ref POOL: Pool = {
-        dotenv().ok();
         let database_url = env::var("DATABASE_URL")
             .expect("DATABASE_URL must be set");
         let manager = ConnectionManager::<PgConnection>::new(database_url);

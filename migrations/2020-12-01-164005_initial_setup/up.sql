@@ -33,7 +33,7 @@ create table product (
 
      foreign key(category)
         	  references category(id)
-        	  on delete set null
+        	  on delete cascade
 );
 CREATE UNIQUE INDEX idx_product_title
 ON product(title);
@@ -51,11 +51,11 @@ create table source_product (
 
     foreign key(source_id)
 	  references source(id)
-	  on delete set null,
+	  on delete cascade,
 
     foreign key(product_id)
 	  references product(id)
-	  on delete set null
+	  on delete cascade
 );
 SELECT diesel_manage_updated_at('source_product');
 CREATE UNIQUE INDEX idx_source_product
