@@ -3,6 +3,8 @@ extern crate diesel;
 extern crate dotenv;
 #[macro_use]
 extern crate lazy_static;
+extern crate log;
+extern crate maplit;
 
 use std::env;
 use std::sync::Arc;
@@ -11,7 +13,9 @@ use std::time::Instant;
 use diesel::PgConnection;
 use diesel::r2d2::ConnectionManager;
 use dotenv::dotenv;
+use log::{debug, error, info};
 use r2d2;
+use termion::{color, style};
 
 use crate::parse::crawler::mi_shop_com::MiShopComCrawler;
 
@@ -33,31 +37,55 @@ async fn main() {
 
             before_send: Some(Arc::new(|event| {
                 if event.message.is_some() {
-                    println!("sentry: {:?}", event.message.clone().unwrap());
+                    error!(
+                        "sentry: {}{:#?}{}",
+                        color::Fg(color::Red),
+                        event.message.clone().unwrap(),
+                        style::Reset
+                    );
                 }
 
                 Some(event)
             })),
+            before_breadcrumb: Some(Arc::new(|breadcrumb| {
+                if breadcrumb.message.is_some() {
+                    info!(
+                        "sentry: {}{}{} {}{}{} {}{:?}{}",
+                        color::Fg(color::Magenta),
+                        breadcrumb.category.clone().unwrap(),
+                        style::Reset,
+                        //
+                        color::Fg(color::Yellow),
+                        breadcrumb.message.clone().unwrap(),
+                        style::Reset,
+                        //
+                        color::Fg(color::LightBlue),
+                        breadcrumb.data,
+                        style::Reset,
+                    );
+                }
+
+                Some(breadcrumb)
+            })),
             ..Default::default()
         }
     );
+    env_logger::init();
 
     let parse_start = Instant::now();
     let parse_result = parse::parser::parse(&MiShopComCrawler {}).await;
-    println!("Parse time: {}s", parse_start.elapsed().as_secs());
+    debug!("Parse time: {}s", parse_start.elapsed().as_secs());
 
-    match parse_result {
-        Ok(_) => println!("Parsed"),
-        Err(e) => println!("Parsing failed: {}", e)
+    if parse_result.is_err() {
+        error!("Parsing failed: {:?}", parse_result.err())
     }
 
     let result = http::run_server().await;
     match result {
-        Ok(_) => println!("Server started."),
-        Err(e) => println!("Server failed: {}", e)
+        Ok(_) => info!("Server started."),
+        Err(e) => error!("Server failed: {:?}", e)
     }
 }
-
 
 pub type Pool = r2d2::Pool<ConnectionManager<PgConnection>>;
 lazy_static! {

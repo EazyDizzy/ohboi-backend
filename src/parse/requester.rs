@@ -4,8 +4,6 @@ use reqwest::Response;
 pub async fn get_data(url: String) -> Result<String, reqwest::Error> {
     let response = get_request(url).await?;
 
-    // println!("{:?}", response.headers());
-
     let text = response.text().await?;
 
     Ok(text)

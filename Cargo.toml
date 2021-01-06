@@ -5,22 +5,29 @@ authors = ["e33 <vitaliy.svinchyak@gmail.com>"]
 edition = "2018"
 
 [dependencies]
+# http
 actix-web = "3.3.0"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+# db
 diesel = { version = "1.4.5", features = ["postgres", "chrono", "numeric", "r2d2"] }
 dotenv = "0.15.0"
 chrono = "0.4.19"
-serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0"
 bigdecimal = { version = "0.1.2", features = ["serde"] }
+r2d2 = "0.8.9" # connection pool
+# parsing
 scraper = "0.12.0"
 reqwest = { version = "0.10.9", features = ["gzip", "gzip"] }
-Inflector = "0.11.4"
-r2d2 = "0.8.9"
-lazy_static = "1.4.0"
-futures = "0.3.8"
-termion = "1.5.5"
-regex = "1.4.2"
 rusoto_core = "0.45.0"
 rusoto_s3 = "0.45.0"
+# util
+Inflector = "0.11.4" # string manipulations
+lazy_static = "1.4.0"
+futures = "0.3.8"
+termion = "1.5.5" # terminal colors etc
+regex = "1.4.2"
 async-trait = "0.1.42"
 sentry = "0.21.0"
+log = "0.4.0"
+env_logger = "0.8.2"
+maplit = "1.0.2"
