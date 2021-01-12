@@ -1,8 +1,9 @@
-use crate::schema::users;
+use chrono::Utc;
+use diesel::{ExpressionMethods, QueryDsl, RunQueryDsl};
+
 use crate::db;
 use crate::db::entity;
-use chrono::Utc;
-use diesel::{RunQueryDsl};
+use crate::schema::users;
 
 pub fn create(username: &str) -> entity::User {
     let connection = &db::establish_connection();
@@ -18,4 +19,21 @@ pub fn create(username: &str) -> entity::User {
         .values(&new_user)
         .get_result(connection)
         .expect("Error saving new user")
+}
+
+pub fn get_by_id(user_id: &i32) -> entity::User {
+    use crate::schema::users::dsl::*;
+
+    let connection = &db::establish_connection();
+
+    let target = users.filter(id.eq(user_id));
+    let results: Vec<entity::User> = target
+        .limit(1)
+        .load::<entity::User>(connection)
+        .expect("Error loading product");
+
+    // TODO what?
+    let user = results.into_iter().next();
+
+    user.unwrap()
 }

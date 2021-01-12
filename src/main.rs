@@ -12,7 +12,6 @@ use std::time::Instant;
 
 use diesel::PgConnection;
 use diesel::r2d2::ConnectionManager;
-use dotenv::dotenv;
 use log::{debug, error, info};
 use r2d2;
 use termion::{color, style};
@@ -23,11 +22,10 @@ mod http;
 mod db;
 mod schema;
 mod parse;
+mod my_enum;
 
 #[actix_web::main]
 async fn main() {
-    dotenv().ok();
-
     let _guard = sentry::init(
         sentry::ClientOptions {
             attach_stacktrace: true,

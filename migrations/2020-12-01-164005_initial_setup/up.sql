@@ -61,6 +61,7 @@ SELECT diesel_manage_updated_at('source_product');
 CREATE UNIQUE INDEX idx_source_product
 ON source_product(source_id, product_id, external_id);
 
+-- user is a reserved word
 create table users (
     id              serial primary key,
     username       varchar not null,

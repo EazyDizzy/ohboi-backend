@@ -1,14 +1,21 @@
+use actix_web::{App, guard, HttpResponse, HttpServer, middleware, web};
+use actix_web_httpauth::middleware::HttpAuthentication;
+
+mod auth;
 mod user;
 mod product;
 mod source_product;
 mod category;
 mod source;
 
-use actix_web::{web, App, HttpServer, guard, HttpResponse};
-
 pub async fn run_server() -> std::io::Result<()> {
     HttpServer::new(|| {
+        let auth = HttpAuthentication::bearer(auth::google::validator);
+
         App::new()
+            .wrap(middleware::Logger::default())
+            .wrap(middleware::DefaultHeaders::new().header("content-type", "application/json; charset=utf-8"))
+            .wrap(auth)
             .service(web::resource("/user").route(web::post().to(user::create)))
             .service(web::resource("/categories").route(web::get().to(category::get_all_categories)))
             .service(web::resource("/sources").route(web::get().to(source::get_all_sources)))
@@ -24,7 +31,7 @@ pub async fn run_server() -> std::io::Result<()> {
                     ),
             )
     })
-        .bind("127.0.0.1:8888")?
+        .bind("0.0.0.0:8888")?
         .run()
         .await
 }

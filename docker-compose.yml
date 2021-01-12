@@ -18,6 +18,8 @@ services:
         networks:
             - shopily
         image: postgres:13.1
+        logging:
+            driver: "none"
         environment:
             POSTGRES_DB: ohboi
             POSTGRES_USER: postgres
