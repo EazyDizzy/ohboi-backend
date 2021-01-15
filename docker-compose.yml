@@ -1,17 +1,27 @@
 version: "3"
 services:
-    ohboi_backend:
+    #    ohboi_backend:
+    #        networks:
+    #            - shopily
+    #        build:
+    #            context: .
+    #        command: bash ./run.sh
+    #        env_file:
+    #            - .env
+    #        ports:
+    #            - 8888:8888
+    #        volumes:
+    #            - ./:/app
+    ohboi_rabbitmq:
         networks:
             - shopily
-        build:
-            context: .
-        command: bash ./run.sh
-        env_file:
-            - .env
+        image: library/rabbitmq:3.8.9-management
         ports:
-            - 8888:8888
-        volumes:
-            - ./:/app
+            - 15672:15672
+            - 5672:5672
+        environment:
+            RABBITMQ_DEFAULT_USER: root
+            RABBITMQ_DEFAULT_PASS: root
 
     ohboi_postgres:
         command: ["postgres", "-c", "log_statement=all", "-c", "log_destination=stderr"]

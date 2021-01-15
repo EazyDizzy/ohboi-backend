@@ -1,6 +1,5 @@
 table! {
     use diesel::sql_types::*;
-    use crate::my_enum::*;
 
     category (id) {
         id -> Int4,
@@ -11,7 +10,6 @@ table! {
 
 table! {
     use diesel::sql_types::*;
-    use crate::my_enum::*;
 
     product (id) {
         id -> Int4,
@@ -28,7 +26,6 @@ table! {
 
 table! {
     use diesel::sql_types::*;
-    use crate::my_enum::*;
 
     source (id) {
         id -> Int4,
@@ -42,7 +39,6 @@ table! {
 
 table! {
     use diesel::sql_types::*;
-    use crate::my_enum::*;
 
     source_product (id) {
         id -> Int4,
@@ -57,7 +53,6 @@ table! {
 
 table! {
     use diesel::sql_types::*;
-    use crate::my_enum::*;
 
     source_product_price_history (id) {
         id -> Int4,
@@ -84,7 +79,6 @@ table! {
 
 table! {
     use diesel::sql_types::*;
-    use crate::my_enum::*;
 
     users (id) {
         id -> Int4,

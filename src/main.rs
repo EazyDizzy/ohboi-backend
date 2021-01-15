@@ -69,6 +69,10 @@ async fn main() {
         }
     );
     env_logger::init();
+    let res = parse::producer::crawler_category::start().await;
+    println!("producer result: {:?}", res);
+    let res2 = parse::consumer::crawler_category::start().await;
+    println!("consumer result: {:?}", res2);
 
     let parse_start = Instant::now();
     let parse_result = parse::parser::parse(&MiShopComCrawler {}).await;
