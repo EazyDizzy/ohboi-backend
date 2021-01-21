@@ -4,16 +4,24 @@ use maplit::*;
 use sentry::{add_breadcrumb, Breadcrumb};
 use sentry::protocol::map::BTreeMap;
 use sentry::protocol::Value;
+use serde::{Deserialize, Serialize};
 
+use crate::db::entity::{CategorySlug, SourceName};
 use crate::parse::crawler::crawler::Crawler;
 use crate::parse::crawler::mi_shop_com::MiShopComCrawler;
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct CrawlerCategoryMessage {
+    pub category: CategorySlug,
+    pub source: SourceName,
+}
 
 pub async fn start() -> Result<()> {
     let address = std::env::var("AMQP_ADDR").expect("AMQP_ADDR should be set");
 
     let conn = Connection::connect(
         &address,
-        ConnectionProperties::default().with_default_executor(8),
+        ConnectionProperties::default(),
     )
         .await?;
 
@@ -37,10 +45,10 @@ pub async fn start() -> Result<()> {
 
     for crawler in crawlers {
         for category in crawler.get_categories() {
-            let payload = hashmap! {
-            "category" => category.to_string(),
-            "source" => crawler.get_source().to_string()
-        };
+            let payload = CrawlerCategoryMessage {
+                category: *category,
+                source: *crawler.get_source(),
+            };
             add_producer_breadcrumb(
                 "creating",
                 btreemap! {

@@ -1,17 +1,18 @@
 version: "3"
 services:
-    #    ohboi_backend:
-    #        networks:
-    #            - shopily
-    #        build:
-    #            context: .
-    #        command: bash ./run.sh
-    #        env_file:
-    #            - .env
-    #        ports:
-    #            - 8888:8888
-    #        volumes:
-    #            - ./:/app
+#    ohboi_backend:
+#        networks:
+#            - shopily
+#        build:
+#            context: .
+#        command: bash ./run.sh
+#        env_file:
+#            - .env
+#        ports:
+#            - 8888:8888
+#        volumes:
+#            - ./:/app
+
     ohboi_rabbitmq:
         networks:
             - shopily
