@@ -7,19 +7,14 @@ extern crate log;
 extern crate maplit;
 
 use std::env;
-use std::sync::Arc;
-use std::time::Instant;
 
 use diesel::PgConnection;
 use diesel::r2d2::ConnectionManager;
-use log::{debug, error, info};
+use log::{error, info};
 use r2d2;
-use termion::{color, style};
 
 mod http;
-mod db;
 mod schema;
-mod parse;
 mod my_enum;
 mod local_sentry;
 

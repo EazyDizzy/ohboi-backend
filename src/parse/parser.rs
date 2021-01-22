@@ -6,12 +6,12 @@ use sentry::{add_breadcrumb, Breadcrumb};
 use sentry::protocol::Value;
 use sentry::types::protocol::latest::map::BTreeMap;
 
-use crate::db::entity::CategorySlug;
-use crate::db::repository::product::{create_if_not_exists, update_details};
-use crate::db::repository::source_product::link_to_product;
+use crate::parse::db::repository::product::{create_if_not_exists, update_details};
+use crate::parse::db::repository::source_product::link_to_product;
 use crate::parse::crawler::crawler::Crawler;
 use crate::parse::parsed_product::{AdditionalParsedProductInfo, ParsedProduct};
 use crate::parse::requester::get_data;
+use crate::parse::db::entity::CategorySlug;
 
 pub async fn parse<T: Crawler>(crawler: &T, category: &CategorySlug) -> Result<(), reqwest::Error> {
     add_parse_breadcrumb(

@@ -1,8 +1,8 @@
 use chrono::Utc;
 use diesel::{ExpressionMethods, QueryDsl, RunQueryDsl};
 
-use crate::db;
-use crate::db::entity;
+use crate::http::db;
+use crate::http::db::entity;
 use crate::schema::users;
 
 pub fn create(username: &str) -> entity::User {

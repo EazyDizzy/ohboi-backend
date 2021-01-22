@@ -1,6 +1,6 @@
 use actix_web::{web, HttpResponse};
 use serde::{Deserialize, Serialize};
-use crate::db::repository;
+use crate::http::db::repository;
 
 pub async fn create(item: web::Json<User>) -> HttpResponse {
     let created_user = repository::user::create(&item.username);

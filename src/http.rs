@@ -2,6 +2,7 @@ use actix_web::{App, guard, HttpResponse, HttpServer, middleware, web};
 use actix_web_httpauth::middleware::HttpAuthentication;
 
 mod auth;
+mod db;
 mod user;
 mod product;
 mod source_product;

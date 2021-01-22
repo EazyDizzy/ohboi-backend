@@ -1,29 +1,16 @@
+use std::borrow::Borrow;
+
 use bigdecimal::{BigDecimal, ToPrimitive};
 use chrono::Utc;
-use std::borrow::Borrow;
-use diesel::{RunQueryDsl, QueryDsl, ExpressionMethods, BoolExpressionMethods};
-use crate::db;
+use diesel::{ExpressionMethods, RunQueryDsl};
 
+use crate::parse::db;
+use crate::parse::db::entity::{NewSourceProduct, Product, SourceName};
+use crate::parse::db::repository::product::update_lowest_price;
+use crate::parse::db::repository::source::get_source;
+use crate::parse::db::repository::source_product_price_history::add_to_history_if_not_exists;
 use crate::parse::parsed_product::ParsedProduct;
-use crate::db::entity::{SourceName, NewSourceProduct, SourceProduct, Product};
-use crate::db::repository::product::{update_lowest_price};
-use crate::db::repository::source::get_source;
 use crate::schema::source_product;
-use crate::db::repository::source_product_price_history::add_to_history_if_not_exists;
-
-pub fn get_all_for_product(requested_product_id: &i32) -> Vec<SourceProduct> {
-    use crate::schema::source_product::dsl::*;
-
-    let connection = &db::establish_connection();
-    let targets = source_product.filter(
-        product_id.eq(requested_product_id)
-            .and(enabled.eq(true))
-    );
-
-    targets
-        .load::<SourceProduct>(connection)
-        .expect("Error loading source products")
-}
 
 pub fn link_to_product(product: &Product, parsed_product: &ParsedProduct, source: &SourceName) {
     let source = get_source(source);

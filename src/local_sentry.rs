@@ -1,11 +1,10 @@
 use std::env;
 use std::sync::Arc;
 
-use sentry::{add_breadcrumb, Breadcrumb, ClientInitGuard};
-use sentry::protocol::map::BTreeMap;
+use sentry::ClientInitGuard;
 use termion::{color, style};
 
-pub fn init_sentry() -> ClientInitGuard{
+pub fn init_sentry() -> ClientInitGuard {
     sentry::init(
         sentry::ClientOptions {
             attach_stacktrace: true,
@@ -26,8 +25,6 @@ pub fn init_sentry() -> ClientInitGuard{
                 Some(event)
             })),
             before_breadcrumb: Some(Arc::new(|breadcrumb| {
-                println!("before_breadcrumb");
-
                 if breadcrumb.message.is_some() {
                     log::info!(
                         "sentry: {}{}{} {}{}{} {}{:?}{}",

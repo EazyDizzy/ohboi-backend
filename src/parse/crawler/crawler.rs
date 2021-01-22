@@ -1,7 +1,7 @@
 use scraper::Html;
 use async_trait::async_trait;
 
-use crate::db::entity::{CategorySlug, SourceName};
+use crate::parse::db::entity::{CategorySlug, SourceName};
 use crate::parse::parsed_product::{AdditionalParsedProductInfo, ParsedProduct};
 
 #[async_trait(?Send)]

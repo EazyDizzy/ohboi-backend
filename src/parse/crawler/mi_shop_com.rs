@@ -4,7 +4,7 @@ use inflector::Inflector;
 use regex::Regex;
 use scraper::{Html, Selector};
 
-use crate::db::entity::{CategorySlug, SourceName};
+use crate::parse::db::entity::{CategorySlug, SourceName};
 use crate::parse::cloud_uploader::upload_image_to_cloud;
 use crate::parse::crawler::crawler::Crawler;
 use crate::parse::parsed_product::{AdditionalParsedProductInfo, ParsedProduct};

@@ -5,7 +5,7 @@ use sentry::{add_breadcrumb, Breadcrumb};
 use sentry::protocol::map::BTreeMap;
 use sentry::protocol::Value;
 
-use crate::db::entity::SourceName;
+use crate::parse::db::entity::SourceName;
 use crate::parse::crawler::mi_shop_com::MiShopComCrawler;
 use crate::parse::parser::parse;
 use crate::parse::producer::crawler_category::CrawlerCategoryMessage;
@@ -33,17 +33,12 @@ pub async fn start() -> Result<()> {
     while let Some(delivery) = consumer.next().await {
         let (_, delivery) = delivery.expect("error in consumer");
 
-        delivery
-            .ack(BasicAckOptions::default())
-            .await
-            .expect("ack");
-
         add_consumer_breadcrumb(
             "acknowledged message",
             btreemap! {},
         );
 
-        let decoded_data = String::from_utf8(delivery.data);
+        let decoded_data = String::from_utf8(delivery.data.clone());
 
         if decoded_data.is_err() {
             let message = format!(
@@ -51,6 +46,7 @@ pub async fn start() -> Result<()> {
                 decoded_data.err()
             );
             sentry::capture_message(message.as_str(), sentry::Level::Warning);
+            delivery.nack(BasicNackOptions { requeue: true, multiple: false }).await.expect("nack");
             continue;
         }
 
@@ -62,6 +58,7 @@ pub async fn start() -> Result<()> {
                 data.clone()
             );
             sentry::capture_message(message.as_str(), sentry::Level::Warning);
+            delivery.nack(BasicNackOptions { requeue: true, multiple: false }).await.expect("nack");
             continue;
         }
         let message: CrawlerCategoryMessage = parsed_json.unwrap();
@@ -86,6 +83,9 @@ pub async fn start() -> Result<()> {
                 message.category
             );
             sentry::capture_message(message.as_str(), sentry::Level::Warning);
+            delivery.nack(BasicNackOptions { requeue: true, multiple: false }).await.expect("nack");
+        } else {
+            delivery.ack(BasicAckOptions { multiple: false }).await.expect("ack");
         }
     }
 
@@ -105,6 +105,4 @@ pub fn add_consumer_breadcrumb(message: &str, data: BTreeMap<&str, String>) {
         message: Some(message.to_string()),
         ..Default::default()
     });
-
-    println!("added");
 }

@@ -1,9 +1,9 @@
 use diesel::{BoolExpressionMethods, ExpressionMethods, QueryDsl, RunQueryDsl};
 
-use crate::db;
-use crate::db::entity;
-use crate::db::entity::UserRegistration;
-use crate::db::repository::user::{create, get_by_id};
+use crate::http::db;
+use crate::http::db::entity;
+use crate::http::db::entity::UserRegistration;
+use crate::http::db::repository::user::{create, get_by_id};
 use crate::schema::user_registration;
 use crate::my_enum::UserRegistrationType;
 

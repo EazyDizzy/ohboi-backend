@@ -14,7 +14,6 @@ use diesel::r2d2::ConnectionManager;
 use r2d2;
 use structopt::StructOpt;
 
-mod db;
 mod schema;
 mod parse;
 mod my_enum;

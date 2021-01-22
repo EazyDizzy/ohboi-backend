@@ -2,28 +2,12 @@ use bigdecimal::BigDecimal;
 use chrono::Utc;
 use diesel::{QueryDsl, RunQueryDsl};
 
-use crate::db;
-use crate::db::entity::{CategorySlug, NewProduct, Product};
-use crate::db::repository::category::get_category;
 use crate::diesel::prelude::*;
+use crate::parse::db;
+use crate::parse::db::entity::{CategorySlug, NewProduct, Product};
+use crate::parse::db::repository::category::get_category;
 use crate::parse::parsed_product::{AdditionalParsedProductInfo, ParsedProduct};
 use crate::schema::product;
-
-pub fn get_all_products_of_category(product_category: &i32, page: &i32) -> Vec<Product> {
-    use crate::schema::product::dsl::*;
-
-    let connection = &db::establish_connection();
-
-    let targets = product.filter(
-        category.eq(product_category)
-            .and(enabled.eq(true))
-    );
-
-    targets.limit(20)
-        .offset((page * 20).into())
-        .load::<Product>(connection)
-        .expect("Error loading products")
-}
 
 pub fn update_details(existent_product: &Product, additional_info: &AdditionalParsedProductInfo) {
     use crate::schema::product::dsl::*;

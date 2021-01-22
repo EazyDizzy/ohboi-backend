@@ -6,7 +6,7 @@ use sentry::protocol::map::BTreeMap;
 use sentry::protocol::Value;
 use serde::{Deserialize, Serialize};
 
-use crate::db::entity::{CategorySlug, SourceName};
+use crate::parse::db::entity::{CategorySlug, SourceName};
 use crate::parse::crawler::crawler::Crawler;
 use crate::parse::crawler::mi_shop_com::MiShopComCrawler;
 
