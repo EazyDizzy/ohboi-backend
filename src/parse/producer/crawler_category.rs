@@ -6,9 +6,10 @@ use sentry::protocol::map::BTreeMap;
 use sentry::protocol::Value;
 use serde::{Deserialize, Serialize};
 
-use crate::parse::db::entity::{CategorySlug, SourceName};
 use crate::parse::crawler::crawler::Crawler;
 use crate::parse::crawler::mi_shop_com::MiShopComCrawler;
+use crate::parse::db::entity::{CategorySlug, SourceName};
+use crate::SETTINGS;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct CrawlerCategoryMessage {
@@ -17,7 +18,7 @@ pub struct CrawlerCategoryMessage {
 }
 
 pub async fn start() -> Result<()> {
-    let address = std::env::var("AMQP_ADDR").expect("AMQP_ADDR should be set");
+    let address = &SETTINGS.amqp.url;
 
     let conn = Connection::connect(
         &address,
@@ -31,7 +32,7 @@ pub async fn start() -> Result<()> {
     let channel = conn.create_channel().await?;
     let queue = channel
         .queue_declare(
-            "crawler_category",
+            &SETTINGS.amqp.queues.crawler_category.name,
             QueueDeclareOptions {
                 passive: false,
                 durable: true,

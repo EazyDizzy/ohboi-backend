@@ -6,13 +6,13 @@ extern crate lazy_static;
 extern crate log;
 extern crate maplit;
 
-use std::env;
-
 use clap::arg_enum;
 use diesel::PgConnection;
 use diesel::r2d2::ConnectionManager;
 use r2d2;
 use structopt::StructOpt;
+
+use parse::settings::Settings;
 
 mod schema;
 mod parse;
@@ -73,11 +73,14 @@ async fn main() {
     }
 }
 
+lazy_static! {
+	static ref SETTINGS: Settings = Settings::new().unwrap();
+}
+
 pub type Pool = r2d2::Pool<ConnectionManager<PgConnection>>;
 lazy_static! {
     static ref POOL: Pool = {
-        let database_url = env::var("DATABASE_URL")
-            .expect("DATABASE_URL must be set");
+        let database_url = &SETTINGS.database.url;
         let manager = ConnectionManager::<PgConnection>::new(database_url);
 
         r2d2::Pool::builder()

@@ -7,3 +7,4 @@ mod cloud_uploader;
 pub mod producer;
 pub mod consumer;
 pub mod db;
+pub mod settings;

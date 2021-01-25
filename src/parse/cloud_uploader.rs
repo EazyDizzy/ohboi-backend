@@ -1,9 +1,8 @@
-use std::env;
-
 use rusoto_core::Region;
 use rusoto_s3::{PutObjectRequest, S3, S3Client, StreamingBody};
 
 use crate::parse::requester::get_bytes;
+use crate::SETTINGS;
 
 pub async fn upload_image_to_cloud(file_path: String, image_url: String) -> bool {
     let data = get_bytes(image_url.clone()).await;
@@ -22,7 +21,7 @@ pub async fn upload_image_to_cloud(file_path: String, image_url: String) -> bool
     let client = S3Client::new(Region::EuWest2);
 
     let request: PutObjectRequest = PutObjectRequest {
-        bucket: env::var("S3_BUCKET").unwrap(),
+        bucket: { &SETTINGS.s3.bucket }.to_string(),
         key: file_path,
         // TODO stream directly from http
         body: Some(StreamingBody::from(data.unwrap().to_vec())),

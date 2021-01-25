@@ -5,13 +5,14 @@ use sentry::{add_breadcrumb, Breadcrumb};
 use sentry::protocol::map::BTreeMap;
 use sentry::protocol::Value;
 
-use crate::parse::db::entity::SourceName;
 use crate::parse::crawler::mi_shop_com::MiShopComCrawler;
+use crate::parse::db::entity::SourceName;
 use crate::parse::parser::parse;
 use crate::parse::producer::crawler_category::CrawlerCategoryMessage;
+use crate::SETTINGS;
 
 pub async fn start() -> Result<()> {
-    let address = std::env::var("AMQP_ADDR").expect("AMQP_ADDR should be set");
+    let address = &SETTINGS.amqp.url;
     let conn = Connection::connect(
         &address,
         ConnectionProperties::default(),
@@ -19,11 +20,14 @@ pub async fn start() -> Result<()> {
         .await?;
 
     let channel = conn.create_channel().await?;
-    channel.basic_qos(2, BasicQosOptions { global: true }).await?;
+    channel.basic_qos(
+        SETTINGS.amqp.queues.crawler_category.prefetch,
+        BasicQosOptions { global: true },
+    ).await?;
 
     let mut consumer = channel
         .basic_consume(
-            "crawler_category",
+            &SETTINGS.amqp.queues.crawler_category.name,
             "crawler_category_consumer",
             BasicConsumeOptions::default(),
             FieldTable::default(),
@@ -34,7 +38,7 @@ pub async fn start() -> Result<()> {
         let (_, delivery) = delivery.expect("error in consumer");
 
         add_consumer_breadcrumb(
-            "acknowledged message",
+            "got message",
             btreemap! {},
         );
 
