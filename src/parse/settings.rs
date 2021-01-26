@@ -16,7 +16,8 @@ pub struct AmqpQueueSettings {
 
 #[derive(Debug, Deserialize)]
 pub struct AmqpQueues {
-    pub crawler_category: AmqpQueueSettings
+    pub crawler_category: AmqpQueueSettings,
+    pub image_upload: AmqpQueueSettings,
 }
 
 #[derive(Debug, Deserialize)]
@@ -67,8 +68,22 @@ impl Settings {
                 })
                 .unwrap().parse().unwrap(),
         };
+        let image_upload_settings = AmqpQueueSettings {
+            name: env::var("AMQP_IMAGE_UPLOAD_QUEUE_NAME")
+                .or_else::<String, _>(|_| {
+                    Ok(String::from("image_upload"))
+                }).unwrap(),
+            prefetch: env::var("AMQP_IMAGE_UPLOAD_QUEUE_PREFETCH_SIZE")
+                .or_else::<String, _>(|_| {
+                    Ok(String::from("2"))
+                })
+                .unwrap().parse().unwrap(),
+        };
 
-        let queue_settings = AmqpQueues { crawler_category: crawler_category_settings };
+        let queue_settings = AmqpQueues {
+            crawler_category: crawler_category_settings,
+            image_upload: image_upload_settings,
+        };
         Amqp {
             url: env::var("AMQP_ADDR")
                 .expect("AMQP_ADDR must be set"),

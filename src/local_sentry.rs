@@ -15,7 +15,7 @@ pub fn init_sentry() -> ClientInitGuard {
             before_send: Some(Arc::new(|event| {
                 if event.message.is_some() {
                     log::error!(
-                        "sentry: {}{:#?}{}",
+                        "{}{:#?}{}",
                         color::Fg(color::Red),
                         event.message.clone().unwrap(),
                         style::Reset
@@ -27,7 +27,7 @@ pub fn init_sentry() -> ClientInitGuard {
             before_breadcrumb: Some(Arc::new(|breadcrumb| {
                 if breadcrumb.message.is_some() {
                     log::info!(
-                        "sentry: {}{}{} {}{}{} {}{:?}{}",
+                        "{}{}{} {}{}{} {}{:?}{}",
                         color::Fg(color::Magenta),
                         breadcrumb.category.clone().unwrap(),
                         style::Reset,

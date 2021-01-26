@@ -6,12 +6,12 @@ use sentry::{add_breadcrumb, Breadcrumb};
 use sentry::protocol::Value;
 use sentry::types::protocol::latest::map::BTreeMap;
 
+use crate::parse::crawler::crawler::Crawler;
+use crate::parse::db::entity::CategorySlug;
 use crate::parse::db::repository::product::{create_if_not_exists, update_details};
 use crate::parse::db::repository::source_product::link_to_product;
-use crate::parse::crawler::crawler::Crawler;
 use crate::parse::parsed_product::{AdditionalParsedProductInfo, ParsedProduct};
 use crate::parse::requester::get_data;
-use crate::parse::db::entity::CategorySlug;
 
 pub async fn parse<T: Crawler>(crawler: &T, category: &CategorySlug) -> Result<(), reqwest::Error> {
     add_parse_breadcrumb(
@@ -135,7 +135,7 @@ async fn extract_additional_info<T: Crawler>(external_id: String, crawler: &T) -
                 },
     );
 
-    let url = crawler.get_additional_info_url(external_id);
+    let url = crawler.get_additional_info_url(external_id.clone());
     let data = get_data(url).await;
 
     if data.is_err() {
@@ -151,7 +151,7 @@ async fn extract_additional_info<T: Crawler>(external_id: String, crawler: &T) -
 
     let document = Html::parse_document(&data.unwrap());
 
-    crawler.extract_additional_info(&document).await
+    crawler.extract_additional_info(&document, external_id).await
 }
 
 fn add_parse_breadcrumb(message: &str, data: BTreeMap<&str, String>) {

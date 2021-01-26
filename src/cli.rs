@@ -14,6 +14,8 @@ use structopt::StructOpt;
 
 use parse::settings::Settings;
 
+use crate::parse::queue::{declare_crawler_category_queue, declare_image_upload_queue};
+
 mod schema;
 mod parse;
 mod my_enum;
@@ -21,9 +23,8 @@ mod local_sentry;
 
 #[derive(StructOpt, Debug)]
 struct Cli {
-    #[structopt(possible_values = & ["consumer", "producer"], case_insensitive = true)]
+    #[structopt(possible_values = & ["consumer", "producer", "queue_config"], case_insensitive = true)]
     worker_type: String,
-    worker_amount: i32,
     #[structopt(short, possible_values = & ConsumerName::variants(), case_insensitive = true, required_if("worker-type", "consumer"))]
     consumer_name: Option<ConsumerName>,
     #[structopt(short, possible_values = & ProducerName::variants(), case_insensitive = true, required_if("worker-type", "producer"))]
@@ -34,6 +35,7 @@ arg_enum! {
     #[derive(Debug)]
     enum ConsumerName {
         CrawlerCategory,
+        ImageUpload,
     }
 }
 
@@ -58,6 +60,16 @@ async fn main() {
 
     let args: Cli = Cli::from_args();
 
+    if args.worker_type == "queue_config" {
+        let declare1 = declare_crawler_category_queue().await;
+        let declare2 = declare_image_upload_queue().await;
+
+        if declare1.is_err() || declare2.is_err() {
+            log::error!("Queue declaration failed");
+        }
+        return;
+    }
+
     if args.worker_type == "producer" {
         match args.producer_name.unwrap() {
             ProducerName::CrawlerCategory => {
@@ -68,6 +80,9 @@ async fn main() {
         match args.consumer_name.unwrap() {
             ConsumerName::CrawlerCategory => {
                 let _res = parse::consumer::crawler_category::start().await;
+            }
+            ConsumerName::ImageUpload => {
+                let _res = parse::consumer::image_upload::start().await;
             }
         }
     }

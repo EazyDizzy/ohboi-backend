@@ -1,5 +1,5 @@
 use futures::StreamExt;
-use lapin::{Connection, ConnectionProperties, options::*, Result, types::FieldTable};
+use lapin::{options::*, Result, types::FieldTable};
 use maplit::*;
 use sentry::{add_breadcrumb, Breadcrumb};
 use sentry::protocol::map::BTreeMap;
@@ -9,17 +9,11 @@ use crate::parse::crawler::mi_shop_com::MiShopComCrawler;
 use crate::parse::db::entity::SourceName;
 use crate::parse::parser::parse;
 use crate::parse::producer::crawler_category::CrawlerCategoryMessage;
+use crate::parse::queue::get_channel;
 use crate::SETTINGS;
 
 pub async fn start() -> Result<()> {
-    let address = &SETTINGS.amqp.url;
-    let conn = Connection::connect(
-        &address,
-        ConnectionProperties::default(),
-    )
-        .await?;
-
-    let channel = conn.create_channel().await?;
+    let channel = get_channel().await?;
     channel.basic_qos(
         SETTINGS.amqp.queues.crawler_category.prefetch,
         BasicQosOptions { global: true },
@@ -66,11 +60,6 @@ pub async fn start() -> Result<()> {
             continue;
         }
         let message: CrawlerCategoryMessage = parsed_json.unwrap();
-
-        add_consumer_breadcrumb(
-            "parsed message",
-            btreemap! {},
-        );
         let crawler = match message.source {
             SourceName::MiShopCom => {
                 MiShopComCrawler {}

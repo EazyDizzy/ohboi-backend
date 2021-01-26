@@ -1,5 +1,5 @@
-use lapin::{BasicProperties, Connection, ConnectionProperties, options::*, Result, types::FieldTable};
-use log::info;
+use lapin::{BasicProperties, Result};
+use lapin::options::BasicPublishOptions;
 use maplit::*;
 use sentry::{add_breadcrumb, Breadcrumb};
 use sentry::protocol::map::BTreeMap;
@@ -9,6 +9,7 @@ use serde::{Deserialize, Serialize};
 use crate::parse::crawler::crawler::Crawler;
 use crate::parse::crawler::mi_shop_com::MiShopComCrawler;
 use crate::parse::db::entity::{CategorySlug, SourceName};
+use crate::parse::queue::get_channel;
 use crate::SETTINGS;
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -18,33 +19,13 @@ pub struct CrawlerCategoryMessage {
 }
 
 pub async fn start() -> Result<()> {
-    let address = &SETTINGS.amqp.url;
-
-    let conn = Connection::connect(
-        &address,
-        ConnectionProperties::default(),
-    )
-        .await?;
-
-    let crawlers = vec![
+    let crawlers = [
         MiShopComCrawler {},
     ];
-    let channel = conn.create_channel().await?;
-    let queue = channel
-        .queue_declare(
-            &SETTINGS.amqp.queues.crawler_category.name,
-            QueueDeclareOptions {
-                passive: false,
-                durable: true,
-                exclusive: false,
-                auto_delete: false,
-                nowait: false,
-            },
-            FieldTable::default(),
-        )
-        .await?;
 
-    for crawler in crawlers {
+    let channel = get_channel().await?;
+
+    for crawler in crawlers.iter() {
         for category in crawler.get_categories() {
             let payload = CrawlerCategoryMessage {
                 category: *category,
@@ -73,7 +54,7 @@ pub async fn start() -> Result<()> {
             let confirm = channel
                 .basic_publish(
                     "",
-                    queue.name().as_str(),
+                    &SETTINGS.amqp.queues.crawler_category.name,
                     BasicPublishOptions::default(),
                     payload_json.unwrap().into_bytes(),
                     BasicProperties::default(),
@@ -88,7 +69,7 @@ pub async fn start() -> Result<()> {
                 );
                 sentry::capture_message(message.as_str(), sentry::Level::Warning);
             } else {
-                info!("Message acknowledged");
+                log::info!("Message acknowledged");
             }
         }
     }
