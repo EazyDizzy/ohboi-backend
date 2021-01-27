@@ -13,8 +13,14 @@ pub fn add_image_to_product_details(existent_product_id: i32, file_path: String)
     let connection = &db::establish_connection();
 
     sql_query(
-        format!("UPDATE product SET images = array_append(images, '{}') WHERE id = {}", file_path, existent_product_id)
-    ).execute(connection).expect("Failed pushing new image to the list");
+        format!(
+            "UPDATE product SET images = array_append(images, '{}') WHERE id = {}",
+            file_path,
+            existent_product_id
+        )
+    ).execute(connection)
+     .expect("Failed pushing new image to the list");
+    // TODO enable?
 }
 
 pub fn update_details(existent_product: &Product, additional_info: &AdditionalParsedProductInfo) {
@@ -27,7 +33,11 @@ pub fn update_details(existent_product: &Product, additional_info: &AdditionalPa
         .set((
             description.eq(&additional_info.description),
             images.eq(&additional_info.image_urls),
-            enabled.eq(existent_product.enabled || additional_info.available)
+            enabled.eq(
+                (existent_product.enabled || additional_info.available)
+                    && !additional_info.image_urls.is_empty()
+                    && !additional_info.description.is_empty()
+            )
         ))
         .execute(connection)
         .expect("Failed to update product price");

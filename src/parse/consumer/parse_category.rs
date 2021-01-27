@@ -7,21 +7,21 @@ use crate::local_sentry::add_category_breadcrumb;
 use crate::parse::crawler::mi_shop_com::MiShopComCrawler;
 use crate::parse::db::entity::SourceName;
 use crate::parse::parser::parse;
-use crate::parse::producer::crawler_category::CrawlerCategoryMessage;
+use crate::parse::producer::parse_category::CrawlerCategoryMessage;
 use crate::parse::queue::get_channel;
 use crate::SETTINGS;
 
 pub async fn start() -> Result<()> {
     let channel = get_channel().await?;
     channel.basic_qos(
-        SETTINGS.amqp.queues.crawler_category.prefetch,
+        SETTINGS.amqp.queues.parse_category.prefetch,
         BasicQosOptions { global: true },
     ).await?;
 
     let mut consumer = channel
         .basic_consume(
-            &SETTINGS.amqp.queues.crawler_category.name,
-            [&SETTINGS.amqp.queues.crawler_category.name, "_consumer"].join("").as_str(),
+            &SETTINGS.amqp.queues.parse_category.name,
+            [&SETTINGS.amqp.queues.parse_category.name, "_consumer"].join("").as_str(),
             BasicConsumeOptions::default(),
             FieldTable::default(),
         )
@@ -70,6 +70,6 @@ fn add_consumer_breadcrumb(message: &str, data: BTreeMap<&str, String>) {
     add_category_breadcrumb(
         message,
         data,
-        ["consumer.", &SETTINGS.amqp.queues.crawler_category.name].join("").into(),
+        ["consumer.", &SETTINGS.amqp.queues.parse_category.name].join("").into(),
     );
 }

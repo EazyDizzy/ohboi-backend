@@ -8,7 +8,7 @@ pub async fn declare_image_upload_queue() -> Result<Queue> {
 
     let queue = channel
         .queue_declare(
-            &SETTINGS.amqp.queues.image_upload.name,
+            &SETTINGS.amqp.queues.parse_image.name,
             QueueDeclareOptions {
                 passive: false,
                 durable: true,
@@ -27,7 +27,7 @@ pub async fn declare_crawler_category_queue() -> Result<Queue> {
 
     let queue = channel
         .queue_declare(
-            &SETTINGS.amqp.queues.crawler_category.name,
+            &SETTINGS.amqp.queues.parse_category.name,
             QueueDeclareOptions {
                 passive: false,
                 durable: true,

@@ -32,7 +32,6 @@ pub fn get_by_id(user_id: &i32) -> entity::User {
         .load::<entity::User>(connection)
         .expect("Error loading product");
 
-    // TODO what?
     let user = results.into_iter().next();
 
     user.unwrap()

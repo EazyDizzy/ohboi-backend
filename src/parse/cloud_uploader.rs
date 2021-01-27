@@ -4,14 +4,13 @@ use lapin::Result;
 use maplit::*;
 use rusoto_core::Region;
 use rusoto_s3::{PutObjectRequest, S3, S3Client, StreamingBody};
-use serde::{Deserialize, Serialize};
+use sentry::protocol::map::BTreeMap;
 
 use crate::local_sentry::add_category_breadcrumb;
-use crate::parse::db::entity::SourceName;
 use crate::parse::queue::get_channel;
 use crate::parse::requester::get_bytes;
 use crate::SETTINGS;
-use sentry::protocol::map::BTreeMap;
+use crate::parse::consumer::parse_image::UploadImageMessage;
 
 pub async fn upload_image_to_cloud(file_path: String, image_url: String) -> bool {
     let breadcrumb_data = btreemap! {
@@ -58,13 +57,6 @@ pub async fn upload_image_to_cloud(file_path: String, image_url: String) -> bool
     success
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct UploadImageMessage {
-    pub file_path: String,
-    pub image_url: String,
-    pub external_id: String,
-    pub source: SourceName,
-}
 
 pub async fn upload_image_later(message: UploadImageMessage) -> Result<()> {
     let breadcrumb_data = btreemap! {
@@ -77,21 +69,10 @@ pub async fn upload_image_later(message: UploadImageMessage) -> Result<()> {
     let channel = get_channel().await?;
 
     let payload_json = serde_json::to_string(&message);
-
-    if payload_json.is_err() {
-        let message = format!(
-            "Can't transform payload to json! {:?} [{:?}]",
-            payload_json.err(),
-            message
-        );
-        sentry::capture_message(message.as_str(), sentry::Level::Warning);
-        return Ok(());
-    }
-
     let confirm = channel
         .basic_publish(
             "",
-            &SETTINGS.amqp.queues.image_upload.name,
+            &SETTINGS.amqp.queues.parse_image.name,
             BasicPublishOptions::default(),
             payload_json.unwrap().into_bytes(),
             BasicProperties::default(),
@@ -100,9 +81,9 @@ pub async fn upload_image_later(message: UploadImageMessage) -> Result<()> {
         .await?;
 
     if confirm.is_nack() {
-        // TODO what?
         let message = format!(
-            "Message is not acknowledged!"
+            "Message is not acknowledged! Queue: {}",
+            SETTINGS.amqp.queues.parse_image.name
         );
         sentry::capture_message(message.as_str(), sentry::Level::Warning);
     } else {

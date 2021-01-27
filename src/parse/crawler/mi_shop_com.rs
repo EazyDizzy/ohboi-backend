@@ -6,10 +6,11 @@ use inflector::Inflector;
 use regex::Regex;
 use scraper::{Html, Selector};
 
-use crate::parse::cloud_uploader::{upload_image_later, upload_image_to_cloud, UploadImageMessage};
+use crate::parse::cloud_uploader::{upload_image_later, upload_image_to_cloud};
 use crate::parse::crawler::crawler::Crawler;
 use crate::parse::db::entity::{CategorySlug, SourceName};
 use crate::parse::parsed_product::{AdditionalParsedProductInfo, ParsedProduct};
+use crate::parse::consumer::parse_image::UploadImageMessage;
 
 pub struct MiShopComCrawler {}
 
@@ -278,7 +279,6 @@ impl MiShopComCrawler {
         }
         for message in upload_later.lock().unwrap().to_vec() {
             let _schedule_result = upload_image_later(message).await;
-            // TODO what?
         }
 
         uploaded_urls

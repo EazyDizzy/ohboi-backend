@@ -34,15 +34,16 @@ struct Cli {
 arg_enum! {
     #[derive(Debug)]
     enum ConsumerName {
-        CrawlerCategory,
-        ImageUpload,
+        ParseCategory,
+        ParseImage,
+        ParseProduct,
     }
 }
 
 arg_enum! {
     #[derive(Debug)]
     enum ProducerName {
-        CrawlerCategory,
+        ParseCategory,
     }
 }
 arg_enum! {
@@ -72,17 +73,20 @@ async fn main() {
 
     if args.worker_type == "producer" {
         match args.producer_name.unwrap() {
-            ProducerName::CrawlerCategory => {
-                let _res = parse::producer::crawler_category::start().await;
+            ProducerName::ParseCategory => {
+                let _res = parse::producer::parse_category::start().await;
             }
         }
     } else {
         match args.consumer_name.unwrap() {
-            ConsumerName::CrawlerCategory => {
-                let _res = parse::consumer::crawler_category::start().await;
+            ConsumerName::ParseCategory => {
+                let _res = parse::consumer::parse_category::start().await;
             }
-            ConsumerName::ImageUpload => {
-                let _res = parse::consumer::image_upload::start().await;
+            ConsumerName::ParseImage => {
+                let _res = parse::consumer::parse_image::start().await;
+            }
+            ConsumerName::ParseProduct => {
+                let _res = parse::consumer::parse_product::start().await;
             }
         }
     }

@@ -54,7 +54,7 @@ pub async fn start() -> Result<()> {
             let confirm = channel
                 .basic_publish(
                     "",
-                    &SETTINGS.amqp.queues.crawler_category.name,
+                    &SETTINGS.amqp.queues.parse_category.name,
                     BasicPublishOptions::default(),
                     payload_json.unwrap().into_bytes(),
                     BasicProperties::default(),

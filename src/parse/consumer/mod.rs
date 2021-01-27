@@ -1,2 +1,3 @@
-pub mod crawler_category;
-pub mod image_upload;
+pub mod parse_category;
+pub mod parse_image;
+pub mod parse_product;

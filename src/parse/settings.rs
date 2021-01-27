@@ -16,8 +16,9 @@ pub struct AmqpQueueSettings {
 
 #[derive(Debug, Deserialize)]
 pub struct AmqpQueues {
-    pub crawler_category: AmqpQueueSettings,
-    pub image_upload: AmqpQueueSettings,
+    pub parse_category: AmqpQueueSettings,
+    pub parse_image: AmqpQueueSettings,
+    pub parse_product: AmqpQueueSettings,
 }
 
 #[derive(Debug, Deserialize)]
@@ -57,23 +58,34 @@ impl Settings {
     }
 
     fn get_amqp_settings() -> Amqp {
-        let crawler_category_settings = AmqpQueueSettings {
-            name: env::var("AMQP_CRAWLER_CATEGORY_QUEUE_NAME")
+        let parse_category_settings = AmqpQueueSettings {
+            name: env::var("AMQP_PARSE_CATEGORY_QUEUE_NAME")
                 .or_else::<String, _>(|_| {
-                    Ok(String::from("crawler_category"))
+                    Ok(String::from("parse.category"))
                 }).unwrap(),
-            prefetch: env::var("AMQP_CRAWLER_CATEGORY_QUEUE_PREFETCH_SIZE")
+            prefetch: env::var("AMQP_PARSE_CATEGORY_QUEUE_PREFETCH_SIZE")
                 .or_else::<String, _>(|_| {
                     Ok(String::from("2"))
                 })
                 .unwrap().parse().unwrap(),
         };
-        let image_upload_settings = AmqpQueueSettings {
-            name: env::var("AMQP_IMAGE_UPLOAD_QUEUE_NAME")
+        let parse_upload_settings = AmqpQueueSettings {
+            name: env::var("AMQP_PARSE_IMAGE_QUEUE_NAME")
                 .or_else::<String, _>(|_| {
-                    Ok(String::from("image_upload"))
+                    Ok(String::from("parse.image"))
                 }).unwrap(),
-            prefetch: env::var("AMQP_IMAGE_UPLOAD_QUEUE_PREFETCH_SIZE")
+            prefetch: env::var("AMQP_PARSE_IMAGE_QUEUE_PREFETCH_SIZE")
+                .or_else::<String, _>(|_| {
+                    Ok(String::from("2"))
+                })
+                .unwrap().parse().unwrap(),
+        };
+        let parse_product_settings = AmqpQueueSettings {
+            name: env::var("AMQP_PARSE_PRODUCT_QUEUE_NAME")
+                .or_else::<String, _>(|_| {
+                    Ok(String::from("parse.product"))
+                }).unwrap(),
+            prefetch: env::var("AMQP_PARSE_PRODUCT_QUEUE_PREFETCH_SIZE")
                 .or_else::<String, _>(|_| {
                     Ok(String::from("2"))
                 })
@@ -81,8 +93,9 @@ impl Settings {
         };
 
         let queue_settings = AmqpQueues {
-            crawler_category: crawler_category_settings,
-            image_upload: image_upload_settings,
+            parse_category: parse_category_settings,
+            parse_image: parse_upload_settings,
+            parse_product: parse_product_settings,
         };
         Amqp {
             url: env::var("AMQP_ADDR")
