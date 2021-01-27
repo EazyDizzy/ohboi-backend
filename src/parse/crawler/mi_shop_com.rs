@@ -252,8 +252,7 @@ impl MiShopComCrawler {
             uploads.push(
                 upload_image_to_cloud(file_path.clone(), url.clone(),
                 ).then(|success| {
-                    // todo remove debug
-                    if success && false {
+                    if success {
                         ok(file_path)
                     } else {
                         upload_later
@@ -261,8 +260,9 @@ impl MiShopComCrawler {
                             .unwrap()
                             .push(UploadImageMessage {
                                 file_path: file_path.clone(),
-                                image_url,
+                                image_url: url,
                                 external_id: external_id.clone(),
+                                source: SourceName::MiShopCom,
                             });
                         err(file_path)
                     }

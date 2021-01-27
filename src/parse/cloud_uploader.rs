@@ -4,14 +4,14 @@ use lapin::Result;
 use maplit::*;
 use rusoto_core::Region;
 use rusoto_s3::{PutObjectRequest, S3, S3Client, StreamingBody};
-use sentry::{add_breadcrumb, Breadcrumb};
-use sentry::protocol::map::BTreeMap;
-use sentry::protocol::Value;
 use serde::{Deserialize, Serialize};
 
+use crate::local_sentry::add_category_breadcrumb;
+use crate::parse::db::entity::SourceName;
 use crate::parse::queue::get_channel;
 use crate::parse::requester::get_bytes;
 use crate::SETTINGS;
+use sentry::protocol::map::BTreeMap;
 
 pub async fn upload_image_to_cloud(file_path: String, image_url: String) -> bool {
     let breadcrumb_data = btreemap! {
@@ -63,6 +63,7 @@ pub struct UploadImageMessage {
     pub file_path: String,
     pub image_url: String,
     pub external_id: String,
+    pub source: SourceName,
 }
 
 pub async fn upload_image_later(message: UploadImageMessage) -> Result<()> {
@@ -112,16 +113,5 @@ pub async fn upload_image_later(message: UploadImageMessage) -> Result<()> {
 }
 
 fn add_uploader_breadcrumb(message: &str, data: BTreeMap<&str, String>) {
-    let mut btree_data = BTreeMap::new();
-
-    for pair in data {
-        btree_data.insert(pair.0.to_string(), Value::from(pair.1));
-    }
-
-    add_breadcrumb(Breadcrumb {
-        category: Some("cloud.upload".into()),
-        data: btree_data,
-        message: Some(message.to_string()),
-        ..Default::default()
-    });
+    add_category_breadcrumb(message, data, "cloud.upload".into());
 }

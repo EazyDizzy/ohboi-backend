@@ -1,6 +1,6 @@
 use bigdecimal::BigDecimal;
 use chrono::Utc;
-use diesel::{QueryDsl, RunQueryDsl};
+use diesel::{QueryDsl, RunQueryDsl, sql_query};
 
 use crate::diesel::prelude::*;
 use crate::parse::db;
@@ -8,6 +8,14 @@ use crate::parse::db::entity::{CategorySlug, NewProduct, Product};
 use crate::parse::db::repository::category::get_category;
 use crate::parse::parsed_product::{AdditionalParsedProductInfo, ParsedProduct};
 use crate::schema::product;
+
+pub fn add_image_to_product_details(existent_product_id: i32, file_path: String) {
+    let connection = &db::establish_connection();
+
+    sql_query(
+        format!("UPDATE product SET images = array_append(images, '{}') WHERE id = {}", file_path, existent_product_id)
+    ).execute(connection).expect("Failed pushing new image to the list");
+}
 
 pub fn update_details(existent_product: &Product, additional_info: &AdditionalParsedProductInfo) {
     use crate::schema::product::dsl::*;
@@ -107,9 +115,5 @@ fn get_product_by_title(product_title: &str) -> Option<Product> {
         .load::<Product>(connection)
         .expect("Error loading product");
 
-    if results.len() == 0 {
-        None
-    } else {
-        results.into_iter().next()
-    }
+    results.into_iter().next()
 }

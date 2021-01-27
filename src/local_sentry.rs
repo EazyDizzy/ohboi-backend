@@ -1,7 +1,9 @@
 use std::env;
 use std::sync::Arc;
 
-use sentry::ClientInitGuard;
+use sentry::{add_breadcrumb, Breadcrumb, ClientInitGuard};
+use sentry::protocol::map::BTreeMap;
+use sentry::protocol::Value;
 use termion::{color, style};
 
 pub fn init_sentry() -> ClientInitGuard {
@@ -47,4 +49,19 @@ pub fn init_sentry() -> ClientInitGuard {
             ..Default::default()
         }
     )
+}
+
+pub fn add_category_breadcrumb(message: &str, data: BTreeMap<&str, String>, category: String) {
+    let mut btree_data = BTreeMap::new();
+
+    for pair in data {
+        btree_data.insert(pair.0.to_string(), Value::from(pair.1));
+    }
+
+    add_breadcrumb(Breadcrumb {
+        category: Some(category),
+        data: btree_data,
+        message: Some(message.to_string()),
+        ..Default::default()
+    });
 }

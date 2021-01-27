@@ -2,10 +2,9 @@ use futures::future::*;
 use inflector::Inflector;
 use maplit::*;
 use scraper::Html;
-use sentry::{add_breadcrumb, Breadcrumb};
-use sentry::protocol::Value;
 use sentry::types::protocol::latest::map::BTreeMap;
 
+use crate::local_sentry::add_category_breadcrumb;
 use crate::parse::crawler::crawler::Crawler;
 use crate::parse::db::entity::CategorySlug;
 use crate::parse::db::repository::product::{create_if_not_exists, update_details};
@@ -155,15 +154,5 @@ async fn extract_additional_info<T: Crawler>(external_id: String, crawler: &T) -
 }
 
 fn add_parse_breadcrumb(message: &str, data: BTreeMap<&str, String>) {
-    let mut btree_data = BTreeMap::new();
-    for pair in data {
-        btree_data.insert(pair.0.to_string(), Value::from(pair.1));
-    }
-
-    add_breadcrumb(Breadcrumb {
-        category: Some("parse".into()),
-        data: btree_data,
-        message: Some(message.to_string()),
-        ..Default::default()
-    });
+    add_category_breadcrumb(message, data, "parse".into());
 }

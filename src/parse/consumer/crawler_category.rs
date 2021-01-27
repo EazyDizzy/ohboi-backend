@@ -1,10 +1,9 @@
 use futures::StreamExt;
 use lapin::{options::*, Result, types::FieldTable};
 use maplit::*;
-use sentry::{add_breadcrumb, Breadcrumb};
 use sentry::protocol::map::BTreeMap;
-use sentry::protocol::Value;
 
+use crate::local_sentry::add_category_breadcrumb;
 use crate::parse::crawler::mi_shop_com::MiShopComCrawler;
 use crate::parse::db::entity::SourceName;
 use crate::parse::parser::parse;
@@ -22,7 +21,7 @@ pub async fn start() -> Result<()> {
     let mut consumer = channel
         .basic_consume(
             &SETTINGS.amqp.queues.crawler_category.name,
-            "crawler_category_consumer",
+            [&SETTINGS.amqp.queues.crawler_category.name, "_consumer"].join("").as_str(),
             BasicConsumeOptions::default(),
             FieldTable::default(),
         )
@@ -37,29 +36,11 @@ pub async fn start() -> Result<()> {
         );
 
         let decoded_data = String::from_utf8(delivery.data.clone());
-
-        if decoded_data.is_err() {
-            let message = format!(
-                "Can't decode payload to string! {:?}",
-                decoded_data.err()
-            );
-            sentry::capture_message(message.as_str(), sentry::Level::Warning);
-            delivery.nack(BasicNackOptions { requeue: true, multiple: false }).await.expect("nack");
-            continue;
-        }
-
         let data = decoded_data.unwrap();
+
         let parsed_json = serde_json::from_str(data.as_str());
-        if parsed_json.is_err() {
-            let message = format!(
-                "Can't decode json from string! {:?}",
-                data.clone()
-            );
-            sentry::capture_message(message.as_str(), sentry::Level::Warning);
-            delivery.nack(BasicNackOptions { requeue: true, multiple: false }).await.expect("nack");
-            continue;
-        }
         let message: CrawlerCategoryMessage = parsed_json.unwrap();
+
         let crawler = match message.source {
             SourceName::MiShopCom => {
                 MiShopComCrawler {}
@@ -85,17 +66,10 @@ pub async fn start() -> Result<()> {
     Ok(())
 }
 
-pub fn add_consumer_breadcrumb(message: &str, data: BTreeMap<&str, String>) {
-    let mut btree_data = BTreeMap::new();
-
-    for pair in data {
-        btree_data.insert(pair.0.to_string(), Value::from(pair.1));
-    }
-
-    add_breadcrumb(Breadcrumb {
-        category: Some("consumer.crawler_category".into()),
-        data: btree_data,
-        message: Some(message.to_string()),
-        ..Default::default()
-    });
+fn add_consumer_breadcrumb(message: &str, data: BTreeMap<&str, String>) {
+    add_category_breadcrumb(
+        message,
+        data,
+        ["consumer.", &SETTINGS.amqp.queues.crawler_category.name].join("").into(),
+    );
 }
