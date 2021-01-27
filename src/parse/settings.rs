@@ -18,7 +18,7 @@ pub struct AmqpQueueSettings {
 pub struct AmqpQueues {
     pub parse_category: AmqpQueueSettings,
     pub parse_image: AmqpQueueSettings,
-    pub parse_product: AmqpQueueSettings,
+    pub parse_page: AmqpQueueSettings,
 }
 
 #[derive(Debug, Deserialize)]
@@ -80,12 +80,12 @@ impl Settings {
                 })
                 .unwrap().parse().unwrap(),
         };
-        let parse_product_settings = AmqpQueueSettings {
-            name: env::var("AMQP_PARSE_PRODUCT_QUEUE_NAME")
+        let parse_page_settings = AmqpQueueSettings {
+            name: env::var("AMQP_PARSE_PAGE_QUEUE_NAME")
                 .or_else::<String, _>(|_| {
-                    Ok(String::from("parse.product"))
+                    Ok(String::from("parse.page"))
                 }).unwrap(),
-            prefetch: env::var("AMQP_PARSE_PRODUCT_QUEUE_PREFETCH_SIZE")
+            prefetch: env::var("AMQP_PARSE_PAGE_QUEUE_PREFETCH_SIZE")
                 .or_else::<String, _>(|_| {
                     Ok(String::from("2"))
                 })
@@ -95,7 +95,7 @@ impl Settings {
         let queue_settings = AmqpQueues {
             parse_category: parse_category_settings,
             parse_image: parse_upload_settings,
-            parse_product: parse_product_settings,
+            parse_page: parse_page_settings,
         };
         Amqp {
             url: env::var("AMQP_ADDR")

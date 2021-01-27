@@ -5,14 +5,62 @@ use scraper::Html;
 use sentry::types::protocol::latest::map::BTreeMap;
 
 use crate::local_sentry::add_category_breadcrumb;
+use crate::parse::consumer::parse_page::ParsePageMessage;
 use crate::parse::crawler::crawler::Crawler;
-use crate::parse::db::entity::CategorySlug;
+use crate::parse::crawler::mi_shop_com::MiShopComCrawler;
+use crate::parse::db::entity::{CategorySlug, SourceName};
 use crate::parse::db::repository::product::{create_if_not_exists, update_details};
 use crate::parse::db::repository::source_product::link_to_product;
 use crate::parse::parsed_product::{AdditionalParsedProductInfo, ParsedProduct};
+use crate::parse::queue::postpone_page_parsing;
 use crate::parse::requester::get_data;
 
-pub async fn parse<T: Crawler>(crawler: &T, category: &CategorySlug) -> Result<(), reqwest::Error> {
+pub async fn parse_page(url: String, source: &SourceName, category: &CategorySlug) -> Result<(), reqwest::Error> {
+    let crawler = get_crawler(source);
+    add_parse_breadcrumb(
+        "in progress",
+        btreemap! {
+                    "crawler" => crawler.get_source().to_string(),
+                    "category" => category.to_string(),
+                },
+    );
+
+    let response = get_data(url).await?;
+    let mut products: Vec<ParsedProduct> = vec![];
+    let _parsed = parse_html(response, &mut products, crawler.clone());
+
+    products.dedup_by(|a, b| {
+        if a.external_id == b.external_id && a.price != b.price {
+            let message = format!(
+                "Warning! Same external_id, different prices. Parser: {}, id: {}, price1: {}, price2: {}",
+                crawler.get_source().to_string().to_snake_case(),
+                a.external_id,
+                a.price.to_string(),
+                b.price.to_string()
+            );
+            sentry::capture_message(message.as_str(), sentry::Level::Warning);
+        }
+
+        a.external_id == b.external_id
+    });
+
+    add_parse_breadcrumb(
+        "parsed",
+        btreemap! {
+                    "crawler" => crawler.get_source().to_string(),
+                    "category" => category.to_string(),
+                    "length" => products.len().to_string()
+                },
+    );
+
+    save_parsed_products(crawler, products, category).await;
+
+    Ok(())
+}
+
+pub async fn parse_category(source: &SourceName, category: &CategorySlug) -> Result<(), reqwest::Error> {
+    let crawler = get_crawler(source);
+
     add_parse_breadcrumb(
         "in progress",
         btreemap! {
@@ -37,15 +85,22 @@ pub async fn parse<T: Crawler>(crawler: &T, category: &CategorySlug) -> Result<(
             let next_pages = join_all(page_requests).await;
             let mut all_successful = true;
 
+            let mut current_page = page;
             for response in next_pages {
-                if response.is_ok() {
-                    let parsed = parse_html(response.unwrap(), &mut products, crawler);
+                if response.is_ok() && false {
+                    let parsed = parse_html(response.unwrap(), &mut products, crawler.clone());
 
                     all_successful = all_successful && parsed;
                 } else {
-                    // TODO push to queue message to parse this product later
                     println!("request failed: {:?}", response.err());
+                    let _result = postpone_page_parsing(ParsePageMessage {
+                        url: url.replace("{page}", (current_page).to_string().as_ref()),
+                        source: source.clone(),
+                        category: category.clone(),
+                    }).await;
                 }
+
+                current_page = current_page + 1;
             }
 
             if !all_successful {
@@ -78,10 +133,16 @@ pub async fn parse<T: Crawler>(crawler: &T, category: &CategorySlug) -> Result<(
                 },
     );
 
+    save_parsed_products(crawler, products, category).await;
+
+    Ok(())
+}
+
+async fn save_parsed_products(crawler: &dyn Crawler, products: Vec<ParsedProduct>, category: &CategorySlug) {
     let mut savings_in_progress = vec![];
 
     for parsed_product in &products {
-        savings_in_progress.push(save_parsed_product(crawler, &parsed_product, category));
+        savings_in_progress.push(save_parsed_product(crawler.clone(), &parsed_product, category));
 
         if savings_in_progress.len() == 15 {
             join_all(savings_in_progress).await;
@@ -95,14 +156,11 @@ pub async fn parse<T: Crawler>(crawler: &T, category: &CategorySlug) -> Result<(
         btreemap! {
                     "crawler" => crawler.get_source().to_string(),
                     "category" => category.to_string(),
-                    "length" => (products.len() - current_length).to_string()
                 },
     );
-
-    Ok(())
 }
 
-async fn save_parsed_product<T: Crawler>(crawler: &T, parsed_product: &ParsedProduct, category: &CategorySlug) {
+async fn save_parsed_product(crawler: &dyn Crawler, parsed_product: &ParsedProduct, category: &CategorySlug) {
     let product = create_if_not_exists(parsed_product, &category);
 
     if product.description.is_none() || product.images.is_none() {
@@ -119,13 +177,13 @@ async fn save_parsed_product<T: Crawler>(crawler: &T, parsed_product: &ParsedPro
     link_to_product(&product, parsed_product, crawler.get_source());
 }
 
-fn parse_html<T: Crawler>(data: String, mut products: &mut Vec<ParsedProduct>, crawler: &T) -> bool {
+fn parse_html(data: String, mut products: &mut Vec<ParsedProduct>, crawler: &dyn Crawler) -> bool {
     let document = Html::parse_document(&data);
 
     crawler.extract_products(&document, &mut products)
 }
 
-async fn extract_additional_info<T: Crawler>(external_id: String, crawler: &T) -> Option<AdditionalParsedProductInfo> {
+async fn extract_additional_info(external_id: String, crawler: &dyn Crawler) -> Option<AdditionalParsedProductInfo> {
     add_parse_breadcrumb(
         "extracting additional info",
         btreemap! {
@@ -155,4 +213,12 @@ async fn extract_additional_info<T: Crawler>(external_id: String, crawler: &T) -
 
 fn add_parse_breadcrumb(message: &str, data: BTreeMap<&str, String>) {
     add_category_breadcrumb(message, data, "parse".into());
+}
+
+fn get_crawler(source: &SourceName) -> &dyn Crawler {
+    match source {
+        SourceName::MiShopCom => {
+            &MiShopComCrawler {}
+        }
+    }
 }

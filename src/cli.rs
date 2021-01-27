@@ -14,7 +14,7 @@ use structopt::StructOpt;
 
 use parse::settings::Settings;
 
-use crate::parse::queue::{declare_crawler_category_queue, declare_image_upload_queue};
+use crate::parse::queue::{declare_crawler_category_queue, declare_image_upload_queue, declare_parse_page_queue};
 
 mod schema;
 mod parse;
@@ -36,7 +36,7 @@ arg_enum! {
     enum ConsumerName {
         ParseCategory,
         ParseImage,
-        ParseProduct,
+        ParsePage,
     }
 }
 
@@ -64,8 +64,9 @@ async fn main() {
     if args.worker_type == "queue_config" {
         let declare1 = declare_crawler_category_queue().await;
         let declare2 = declare_image_upload_queue().await;
+        let declare3 = declare_parse_page_queue().await;
 
-        if declare1.is_err() || declare2.is_err() {
+        if declare1.is_err() || declare2.is_err() || declare3.is_err() {
             log::error!("Queue declaration failed");
         }
         return;
@@ -85,8 +86,8 @@ async fn main() {
             ConsumerName::ParseImage => {
                 let _res = parse::consumer::parse_image::start().await;
             }
-            ConsumerName::ParseProduct => {
-                let _res = parse::consumer::parse_product::start().await;
+            ConsumerName::ParsePage => {
+                let _res = parse::consumer::parse_page::start().await;
             }
         }
     }

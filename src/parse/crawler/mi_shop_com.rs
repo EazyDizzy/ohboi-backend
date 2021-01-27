@@ -6,12 +6,14 @@ use inflector::Inflector;
 use regex::Regex;
 use scraper::{Html, Selector};
 
-use crate::parse::cloud_uploader::{upload_image_later, upload_image_to_cloud};
+use crate::parse::cloud_uploader::upload_image_to_cloud;
+use crate::parse::consumer::parse_image::UploadImageMessage;
 use crate::parse::crawler::crawler::Crawler;
 use crate::parse::db::entity::{CategorySlug, SourceName};
 use crate::parse::parsed_product::{AdditionalParsedProductInfo, ParsedProduct};
-use crate::parse::consumer::parse_image::UploadImageMessage;
+use crate::parse::queue::postpone_image_parsing;
 
+#[derive(Clone)]
 pub struct MiShopComCrawler {}
 
 fn get_base() -> String {
@@ -267,7 +269,8 @@ impl MiShopComCrawler {
                             });
                         err(file_path)
                     }
-                }));
+                })
+            );
         }
 
         let uploaded_images = join_all(uploads).await;
@@ -278,7 +281,7 @@ impl MiShopComCrawler {
             }
         }
         for message in upload_later.lock().unwrap().to_vec() {
-            let _schedule_result = upload_image_later(message).await;
+            let _schedule_result = postpone_image_parsing(message).await;
         }
 
         uploaded_urls

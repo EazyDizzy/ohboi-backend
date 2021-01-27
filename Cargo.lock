@@ -976,6 +976,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "dyn-clone"
+version = "1.0.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ee2626afccd7561a06cf1367e2950c4718ea04565e20fb5029b6c7d8ad09abcf"
+
+[[package]]
 name = "ego-tree"
 version = "0.6.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2009,6 +2015,7 @@ dependencies = [
  "diesel",
  "diesel-derive-enum",
  "dotenv",
+ "dyn-clone",
  "env_logger",
  "futures",
  "google-jwt-verify",
