@@ -6,6 +6,7 @@ use serde::Deserialize;
 #[derive(Debug, Deserialize)]
 pub struct Database {
     pub url: String,
+    pub product_save_concurrency: u8,
 }
 
 #[derive(Debug, Deserialize)]
@@ -43,7 +44,12 @@ impl Settings {
     pub fn new() -> Result<Self, ConfigError> {
         let database_settings = Database {
             url: env::var("DATABASE_URL")
-                .expect("DATABASE_URL must be set")
+                .expect("DATABASE_URL must be set"),
+            product_save_concurrency: env::var("DATABASE_PRODUCT_SAVE_CONCURRENCY")
+                .or_else::<String, _>(|_| {
+                    Ok(String::from("15"))
+                })
+                .unwrap().parse().unwrap(),
         };
         let s3_settings = S3 {
             bucket: env::var("S3_BUCKET")

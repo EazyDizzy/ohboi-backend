@@ -15,6 +15,7 @@ use crate::parse::db::repository::source_product::link_to_product;
 use crate::parse::parsed_product::{AdditionalParsedProductInfo, ParsedProduct};
 use crate::parse::queue::postpone_page_parsing;
 use crate::parse::requester::get_data;
+use crate::SETTINGS;
 
 pub async fn parse_page(url: String, source: &SourceName, category: &CategorySlug) -> Result<(), reqwest::Error> {
     let crawler = get_crawler(source);
@@ -130,7 +131,7 @@ async fn save_parsed_products(crawler: &dyn Crawler, products: Vec<ParsedProduct
     for parsed_product in &products {
         savings_in_progress.push(save_parsed_product(crawler.clone(), parsed_product, category));
 
-        if savings_in_progress.len() == 15 { // TODO move concurrency to env config
+        if savings_in_progress.len() == SETTINGS.database.product_save_concurrency {
             join_all(savings_in_progress).await;
             savings_in_progress = vec![];
         }

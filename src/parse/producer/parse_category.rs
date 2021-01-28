@@ -26,6 +26,7 @@ pub async fn start() -> Result<()> {
     let channel = get_channel().await?;
 
     for crawler in crawlers.iter() {
+        // TODO check if crawler is enabled
         for category in crawler.get_categories() {
             let payload = CrawlerCategoryMessage {
                 category: *category,
@@ -39,17 +40,7 @@ pub async fn start() -> Result<()> {
                 },
             );
 
-            let payload_json = serde_json::to_string(&payload);
-
-            if payload_json.is_err() {
-                let message = format!(
-                    "Can't transform payload to json! {:?} [{:?}]",
-                    payload_json.err(),
-                    payload
-                );
-                sentry::capture_message(message.as_str(), sentry::Level::Warning);
-                continue;
-            }
+            let payload_json = serde_json::to_string(&payload)?;
 
             let confirm = channel
                 .basic_publish(
@@ -63,9 +54,9 @@ pub async fn start() -> Result<()> {
                 .await?;
 
             if confirm.is_nack() {
-                // TODO what?
                 let message = format!(
-                    "Message is not acknowledged!"
+                    "Message is not acknowledged! Queue: {}",
+                    SETTINGS.amqp.queues.parse_category.name
                 );
                 sentry::capture_message(message.as_str(), sentry::Level::Warning);
             } else {
