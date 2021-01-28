@@ -1,6 +1,6 @@
 use serde::{Serialize};
 
-#[derive(Serialize, Debug, PartialEq)]
+#[derive(Serialize, Debug, PartialEq, Clone)]
 pub struct ParsedProduct {
     pub title: String,
     pub price: f64,

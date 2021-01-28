@@ -56,7 +56,8 @@ impl Crawler for MiShopComCrawler {
         }).collect()
     }
 
-    fn extract_products(&self, document: &Html, all_products: &mut Vec<ParsedProduct>) -> bool {
+    fn extract_products(&self, document: &Html) -> Vec<ParsedProduct> {
+        let mut parsed_products = vec![];
         let items_selector = Selector::parse(".catalog-item").unwrap();
         let title_selector = Selector::parse(".snippet-card__title").unwrap();
         let price_selector = Selector::parse(".snippet-card__price-new").unwrap();
@@ -164,7 +165,7 @@ impl Crawler for MiShopComCrawler {
                 id_href.unwrap().to_string()
             };
 
-            all_products.push(ParsedProduct {
+            parsed_products.push(ParsedProduct {
                 title,
                 price,
                 available,
@@ -172,7 +173,7 @@ impl Crawler for MiShopComCrawler {
             });
         }
 
-        amount_of_parsed_products > 0
+        parsed_products
     }
 
     fn get_additional_info_url(&self, external_id: String) -> String {
