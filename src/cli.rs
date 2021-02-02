@@ -15,7 +15,7 @@ use structopt::StructOpt;
 
 use parse::settings::Settings;
 
-use crate::parse::queue::{declare_crawler_category_queue, declare_image_upload_queue, declare_parse_page_queue};
+use crate::parse::queue::{declare_parse_category_queue, declare_parse_image_queue, declare_parse_page_queue};
 
 mod schema;
 mod parse;
@@ -64,12 +64,15 @@ async fn main() {
     let args: Cli = Cli::from_args();
 
     if args.worker_type == "queue_config" {
-        let declare1 = declare_crawler_category_queue().await;
-        let declare2 = declare_image_upload_queue().await;
+        let declare1 = declare_parse_category_queue().await;
+        let declare2 = declare_parse_image_queue().await;
         let declare3 = declare_parse_page_queue().await;
 
         if declare1.is_err() || declare2.is_err() || declare3.is_err() {
-            log::error!("Queue declaration failed");
+            log::error!("Queue declaration failed.");
+            log::error!("parse_category: {:?}", declare1);
+            log::error!("parse_image: {:?}", declare2);
+            log::error!("parse_page: {:?}", declare3);
         }
         return;
     }

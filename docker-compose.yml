@@ -1,6 +1,9 @@
 version: "3"
 services:
     ohboi_backend:
+        depends_on:
+            - ohboi_postgres
+            - ohboi_rabbitmq
         networks:
             - shopily
         build:

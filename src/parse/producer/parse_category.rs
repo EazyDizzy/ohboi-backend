@@ -64,8 +64,6 @@ pub async fn start() -> Result<()> {
         }
     }
 
-    panic!("her");
-
     Ok(())
 }
 

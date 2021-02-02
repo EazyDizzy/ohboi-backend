@@ -27,8 +27,6 @@ pub fn init_sentry() -> ClientInitGuard {
             shutdown_timeout: Duration::from_secs(10),
 
             before_send: Some(Arc::new(|event| {
-                println!("Wow!!! {:?}", event.stacktrace);
-
                 if event.message.is_some() {
                     log::error!(
                         "{}{:#?}{}",

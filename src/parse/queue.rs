@@ -26,7 +26,7 @@ pub async fn declare_parse_page_queue() -> Result<Queue> {
     Ok(queue)
 }
 
-pub async fn declare_image_upload_queue() -> Result<Queue> {
+pub async fn declare_parse_image_queue() -> Result<Queue> {
     let channel = get_channel().await?;
 
     let queue = channel
@@ -45,7 +45,7 @@ pub async fn declare_image_upload_queue() -> Result<Queue> {
     Ok(queue)
 }
 
-pub async fn declare_crawler_category_queue() -> Result<Queue> {
+pub async fn declare_parse_category_queue() -> Result<Queue> {
     let channel = get_channel().await?;
 
     let queue = channel
