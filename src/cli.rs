@@ -10,6 +10,7 @@ use clap::arg_enum;
 use diesel::PgConnection;
 use diesel::r2d2::ConnectionManager;
 use r2d2;
+use sentry::Envelope;
 use structopt::StructOpt;
 
 use parse::settings::Settings;
@@ -56,6 +57,7 @@ arg_enum! {
 
 #[actix_web::main]
 async fn main() {
+    std::env::set_var("RUST_LOG", "daemon");
     env_logger::init();
     let _guard = local_sentry::init_sentry();
 
@@ -91,6 +93,9 @@ async fn main() {
             }
         }
     }
+
+    let close_result = _guard.close(None);
+    println!("sentry closed {}", close_result);
 }
 
 lazy_static! {

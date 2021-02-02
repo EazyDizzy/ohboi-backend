@@ -1,7 +1,5 @@
 use futures::future::*;
-use inflector::Inflector;
 use maplit::*;
-use reqwest::Error;
 use scraper::Html;
 use sentry::types::protocol::latest::map::BTreeMap;
 

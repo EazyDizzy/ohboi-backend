@@ -1,11 +1,10 @@
 use lapin::{BasicProperties, Result};
 use lapin::options::BasicPublishOptions;
 use maplit::*;
-use sentry::{add_breadcrumb, Breadcrumb};
 use sentry::protocol::map::BTreeMap;
-use sentry::protocol::Value;
 use serde::{Deserialize, Serialize};
 
+use crate::local_sentry::add_category_breadcrumb;
 use crate::parse::crawler::crawler::Crawler;
 use crate::parse::crawler::mi_shop_com::MiShopComCrawler;
 use crate::parse::db::entity::{CategorySlug, SourceName};
@@ -40,14 +39,14 @@ pub async fn start() -> Result<()> {
                 },
             );
 
-            let payload_json = serde_json::to_string(&payload)?;
+            let payload_json = serde_json::to_string(&payload).unwrap();
 
             let confirm = channel
                 .basic_publish(
                     "",
                     &SETTINGS.amqp.queues.parse_category.name,
                     BasicPublishOptions::default(),
-                    payload_json.unwrap().into_bytes(),
+                    payload_json.into_bytes(),
                     BasicProperties::default(),
                 )
                 .await?
@@ -65,20 +64,15 @@ pub async fn start() -> Result<()> {
         }
     }
 
+    panic!("her");
+
     Ok(())
 }
 
 fn add_producer_breadcrumb(message: &str, data: BTreeMap<&str, String>) {
-    let mut btree_data = BTreeMap::new();
-
-    for pair in data {
-        btree_data.insert(pair.0.to_string(), Value::from(pair.1));
-    }
-
-    add_breadcrumb(Breadcrumb {
-        category: Some("producer.crawler_category".into()),
-        data: btree_data,
-        message: Some(message.to_string()),
-        ..Default::default()
-    });
+    add_category_breadcrumb(
+        message,
+        data,
+        ["producer.", &SETTINGS.amqp.queues.parse_category.name].join("").into(),
+    );
 }

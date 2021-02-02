@@ -1,12 +1,10 @@
-use std::env;
-
 use config::ConfigError;
 use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
 pub struct Database {
     pub url: String,
-    pub product_save_concurrency: u8,
+    pub product_save_concurrency: usize,
 }
 
 #[derive(Debug, Deserialize)]
@@ -43,16 +41,16 @@ pub struct Settings {
 impl Settings {
     pub fn new() -> Result<Self, ConfigError> {
         let database_settings = Database {
-            url: env::var("DATABASE_URL")
+            url: dotenv::var("DATABASE_URL")
                 .expect("DATABASE_URL must be set"),
-            product_save_concurrency: env::var("DATABASE_PRODUCT_SAVE_CONCURRENCY")
+            product_save_concurrency: dotenv::var("DATABASE_PRODUCT_SAVE_CONCURRENCY")
                 .or_else::<String, _>(|_| {
                     Ok(String::from("15"))
                 })
                 .unwrap().parse().unwrap(),
         };
         let s3_settings = S3 {
-            bucket: env::var("S3_BUCKET")
+            bucket: dotenv::var("S3_BUCKET")
                 .expect("S3_BUCKET must be set")
         };
 
@@ -65,33 +63,33 @@ impl Settings {
 
     fn get_amqp_settings() -> Amqp {
         let parse_category_settings = AmqpQueueSettings {
-            name: env::var("AMQP_PARSE_CATEGORY_QUEUE_NAME")
+            name: dotenv::var("AMQP_PARSE_CATEGORY_QUEUE_NAME")
                 .or_else::<String, _>(|_| {
                     Ok(String::from("parse.category"))
                 }).unwrap(),
-            prefetch: env::var("AMQP_PARSE_CATEGORY_QUEUE_PREFETCH_SIZE")
+            prefetch: dotenv::var("AMQP_PARSE_CATEGORY_QUEUE_PREFETCH_SIZE")
                 .or_else::<String, _>(|_| {
                     Ok(String::from("2"))
                 })
                 .unwrap().parse().unwrap(),
         };
         let parse_upload_settings = AmqpQueueSettings {
-            name: env::var("AMQP_PARSE_IMAGE_QUEUE_NAME")
+            name: dotenv::var("AMQP_PARSE_IMAGE_QUEUE_NAME")
                 .or_else::<String, _>(|_| {
                     Ok(String::from("parse.image"))
                 }).unwrap(),
-            prefetch: env::var("AMQP_PARSE_IMAGE_QUEUE_PREFETCH_SIZE")
+            prefetch: dotenv::var("AMQP_PARSE_IMAGE_QUEUE_PREFETCH_SIZE")
                 .or_else::<String, _>(|_| {
                     Ok(String::from("2"))
                 })
                 .unwrap().parse().unwrap(),
         };
         let parse_page_settings = AmqpQueueSettings {
-            name: env::var("AMQP_PARSE_PAGE_QUEUE_NAME")
+            name: dotenv::var("AMQP_PARSE_PAGE_QUEUE_NAME")
                 .or_else::<String, _>(|_| {
                     Ok(String::from("parse.page"))
                 }).unwrap(),
-            prefetch: env::var("AMQP_PARSE_PAGE_QUEUE_PREFETCH_SIZE")
+            prefetch: dotenv::var("AMQP_PARSE_PAGE_QUEUE_PREFETCH_SIZE")
                 .or_else::<String, _>(|_| {
                     Ok(String::from("2"))
                 })
@@ -104,7 +102,7 @@ impl Settings {
             parse_page: parse_page_settings,
         };
         Amqp {
-            url: env::var("AMQP_ADDR")
+            url: dotenv::var("AMQP_ADDR")
                 .expect("AMQP_ADDR must be set"),
             queues: queue_settings,
         }

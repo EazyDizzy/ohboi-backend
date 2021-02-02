@@ -1,7 +1,11 @@
-sleep 5
 diesel migration run
+cargo build --release
 
-cargo run --bin daemon producer 1 -p CrawlerCategory
-cargo run --bin daemon consumer 1 -c CrawlerCategory
+./target/release/daemon producer -p ParseCategory 2>&1 | tee logs/ParseCategoryConsumer.log &
+#./target/release/daemon consumer -c ParseCategory 2>&1 | tee logs/ParseCategoryConsumer.log &
+#./target/release/daemon consumer -c ParsePage 2>&1 | tee logs/ParsePageConsumer.log &
+#./target/release/daemon consumer -c ParseImage 2>&1 | tee logs/ParseImageConsumer.log &
 # TODO auto restart panicky and died processes
-cargo run --bin http
+
+#./target/release/http
+# 2>&1 | tee logs/http.log &

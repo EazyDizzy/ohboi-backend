@@ -12,14 +12,22 @@ path = "src/cli.rs"
 name = "http"
 path = "src/main.rs"
 
+[profile.dev]
+codegen-units = 1256
+
+[profile.release]
+#codegen-units = 1
+#lto = "fat"
+
 [dependencies]
 # http
-actix-web = { version = "3.3.0", features = ["compress"] }
+actix-web = { version = "3.3.2", features = ["compress", "openssl"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 google-jwt-verify = { version = "0.3.0", features = ["async"] }
 actix-web-httpauth = "0.5.0"
-# http.db
+sentry-actix = "0.22.0"
+# db
 diesel = { version = "1.4.5", features = ["postgres", "chrono", "numeric", "r2d2"] }
 diesel-derive-enum = { version = "1.1", features = ["postgres"] }
 dotenv = "0.15.0"
@@ -41,8 +49,9 @@ futures = "0.3.8"
 termion = "1.5.5" # terminal colors etc
 regex = "1.4.2"
 async-trait = "0.1.42"
-sentry = { version = "0.22.0" }
+sentry = { version = "0.22.0", features = ["debug-images"] }
 log = "0.4.13"
 env_logger = "0.8.2"
 maplit = "1.0.2"
 config = { version = "0.10.1", features = ["yaml"] }
+rusoto_logs = "0.46.0"
