@@ -1,16 +1,14 @@
-use std::env;
-
 use actix_web::dev::ServiceRequest;
 use actix_web::Error;
 use actix_web_httpauth::extractors::AuthenticationError;
 use actix_web_httpauth::extractors::bearer::{BearerAuth, Config};
 use google_jwt_verify::Client;
 
-use crate::db::repository::user_registration::get_user_by_auth;
+use crate::http::db::repository::user_registration::get_user_by_auth;
 use crate::my_enum::UserRegistrationType;
 
 pub async fn validator(req: ServiceRequest, credentials: BearerAuth) -> Result<ServiceRequest, Error> {
-    let client_id = env::var("GOOGLE_CLIENT_ID").unwrap();
+    let client_id = dotenv::var("GOOGLE_CLIENT_ID").unwrap();
     let client = Client::new(&client_id);
 
     match client.verify_id_token_async(credentials.token()).await {

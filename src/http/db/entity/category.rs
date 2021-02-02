@@ -1,6 +1,6 @@
 use std::fmt;
 
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Queryable)]
 pub struct Category {
@@ -10,7 +10,7 @@ pub struct Category {
 }
 
 #[allow(dead_code)]
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize, Copy, Clone)]
 pub enum CategorySlug {
     SmartHome,
     Smartphone,

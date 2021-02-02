@@ -1,7 +1,7 @@
 use crate::schema::source_product_price_history;
-use crate::db;
+use crate::parse::db;
 use diesel::{ExpressionMethods, QueryDsl, BoolExpressionMethods, RunQueryDsl};
-use crate::db::entity::{NewSourceProductPriceHistory, NewSourceProduct, SourceProductPriceHistory};
+use crate::parse::db::entity::{NewSourceProductPriceHistory, NewSourceProduct, SourceProductPriceHistory};
 use chrono::Utc;
 use bigdecimal::{BigDecimal, ToPrimitive};
 

@@ -2,6 +2,7 @@ use actix_web::{App, guard, HttpResponse, HttpServer, middleware, web};
 use actix_web_httpauth::middleware::HttpAuthentication;
 
 mod auth;
+mod db;
 mod user;
 mod product;
 mod source_product;
@@ -13,6 +14,7 @@ pub async fn run_server() -> std::io::Result<()> {
         let auth = HttpAuthentication::bearer(auth::google::validator);
 
         App::new()
+            .wrap(sentry_actix::Sentry::new())
             .wrap(middleware::Logger::default())
             .wrap(middleware::DefaultHeaders::new().header("content-type", "application/json; charset=utf-8"))
             .wrap(auth)

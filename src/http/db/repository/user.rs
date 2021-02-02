@@ -1,8 +1,8 @@
 use chrono::Utc;
 use diesel::{ExpressionMethods, QueryDsl, RunQueryDsl};
 
-use crate::db;
-use crate::db::entity;
+use crate::http::db;
+use crate::http::db::entity;
 use crate::schema::users;
 
 pub fn create(username: &str) -> entity::User {
@@ -32,7 +32,6 @@ pub fn get_by_id(user_id: &i32) -> entity::User {
         .load::<entity::User>(connection)
         .expect("Error loading product");
 
-    // TODO what?
     let user = results.into_iter().next();
 
     user.unwrap()

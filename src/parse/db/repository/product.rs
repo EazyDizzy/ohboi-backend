@@ -1,28 +1,26 @@
 use bigdecimal::BigDecimal;
 use chrono::Utc;
-use diesel::{QueryDsl, RunQueryDsl};
+use diesel::{QueryDsl, RunQueryDsl, sql_query};
 
-use crate::db;
-use crate::db::entity::{CategorySlug, NewProduct, Product};
-use crate::db::repository::category::get_category;
 use crate::diesel::prelude::*;
+use crate::parse::db;
+use crate::parse::db::entity::{CategorySlug, NewProduct, Product};
+use crate::parse::db::repository::category::get_category;
 use crate::parse::parsed_product::{AdditionalParsedProductInfo, ParsedProduct};
 use crate::schema::product;
 
-pub fn get_all_products_of_category(product_category: &i32, page: &i32) -> Vec<Product> {
-    use crate::schema::product::dsl::*;
-
+pub fn add_image_to_product_details(existent_product_id: i32, file_path: String) {
     let connection = &db::establish_connection();
 
-    let targets = product.filter(
-        category.eq(product_category)
-            .and(enabled.eq(true))
-    );
-
-    targets.limit(20)
-        .offset((page * 20).into())
-        .load::<Product>(connection)
-        .expect("Error loading products")
+    sql_query(
+        format!(
+            "UPDATE product SET images = array_append(images, '{}') WHERE id = {}",
+            file_path,
+            existent_product_id
+        )
+    ).execute(connection)
+     .expect("Failed pushing new image to the list");
+    // TODO enable?
 }
 
 pub fn update_details(existent_product: &Product, additional_info: &AdditionalParsedProductInfo) {
@@ -35,7 +33,11 @@ pub fn update_details(existent_product: &Product, additional_info: &AdditionalPa
         .set((
             description.eq(&additional_info.description),
             images.eq(&additional_info.image_urls),
-            enabled.eq(existent_product.enabled || additional_info.available)
+            enabled.eq(
+                (existent_product.enabled || additional_info.available)
+                    && !additional_info.image_urls.is_empty()
+                    && !additional_info.description.is_empty()
+            )
         ))
         .execute(connection)
         .expect("Failed to update product price");
@@ -123,9 +125,5 @@ fn get_product_by_title(product_title: &str) -> Option<Product> {
         .load::<Product>(connection)
         .expect("Error loading product");
 
-    if results.len() == 0 {
-        None
-    } else {
-        results.into_iter().next()
-    }
+    results.into_iter().next()
 }

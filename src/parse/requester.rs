@@ -17,6 +17,8 @@ pub async fn get_bytes(url: String) -> Result<Bytes, reqwest::Error> {
 
 pub async fn get_request(url: String) -> Result<Response, reqwest::Error> {
     // TODO preconnect, zip header
+    // TODO random headers
+    // TODO proxy
 
     reqwest::Client::new()
         .get(url.as_str())

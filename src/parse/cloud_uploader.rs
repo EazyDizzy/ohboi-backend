@@ -1,11 +1,19 @@
-use std::env;
-
+use maplit::*;
 use rusoto_core::Region;
 use rusoto_s3::{PutObjectRequest, S3, S3Client, StreamingBody};
+use sentry::protocol::map::BTreeMap;
 
+use crate::local_sentry::add_category_breadcrumb;
 use crate::parse::requester::get_bytes;
+use crate::SETTINGS;
 
 pub async fn upload_image_to_cloud(file_path: String, image_url: String) -> bool {
+    let breadcrumb_data = btreemap! {
+                    "file_path" => file_path.clone(),
+                    "image_url" => image_url.clone()
+                };
+    add_uploader_breadcrumb("downloading image", breadcrumb_data.clone());
+
     let data = get_bytes(image_url.clone()).await;
 
     if data.is_err() {
@@ -20,9 +28,9 @@ pub async fn upload_image_to_cloud(file_path: String, image_url: String) -> bool
     }
 
     let client = S3Client::new(Region::EuWest2);
-
+    add_uploader_breadcrumb("uploading image", breadcrumb_data.clone());
     let request: PutObjectRequest = PutObjectRequest {
-        bucket: env::var("S3_BUCKET").unwrap(),
+        bucket: { &SETTINGS.s3.bucket }.to_string(),
         key: file_path,
         // TODO stream directly from http
         body: Some(StreamingBody::from(data.unwrap().to_vec())),
@@ -39,6 +47,11 @@ pub async fn upload_image_to_cloud(file_path: String, image_url: String) -> bool
         );
         sentry::capture_message(message.as_str(), sentry::Level::Error);
     }
+    add_uploader_breadcrumb("uploaded image", breadcrumb_data.clone());
 
     success
+}
+
+pub fn add_uploader_breadcrumb(message: &str, data: BTreeMap<&str, String>) {
+    add_category_breadcrumb(message, data, "cloud.upload".into());
 }

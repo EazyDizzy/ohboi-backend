@@ -1,6 +1,7 @@
-use chrono::NaiveDateTime;
-use serde::{Serialize};
 use std::fmt;
+
+use chrono::NaiveDateTime;
+use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Queryable, Debug)]
 pub struct Source {
@@ -15,7 +16,7 @@ pub struct Source {
     pub updated_at: NaiveDateTime,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize, Copy, Clone)]
 pub enum SourceName {
     MiShopCom
 }

@@ -1,14 +1,19 @@
+use std::sync::Mutex;
+
 use async_trait::async_trait;
 use futures::future::*;
 use inflector::Inflector;
 use regex::Regex;
 use scraper::{Html, Selector};
 
-use crate::db::entity::{CategorySlug, SourceName};
 use crate::parse::cloud_uploader::upload_image_to_cloud;
+use crate::parse::consumer::parse_image::UploadImageMessage;
 use crate::parse::crawler::crawler::Crawler;
+use crate::parse::db::entity::{CategorySlug, SourceName};
 use crate::parse::parsed_product::{AdditionalParsedProductInfo, ParsedProduct};
+use crate::parse::queue::postpone_image_parsing;
 
+#[derive(Clone)]
 pub struct MiShopComCrawler {}
 
 fn get_base() -> String {
@@ -23,9 +28,9 @@ impl Crawler for MiShopComCrawler {
 
     fn get_categories(&self) -> Vec<&CategorySlug> {
         vec![
-            //&CategorySlug::Smartphone,
-            //&CategorySlug::SmartHome,
-            //&CategorySlug::Headphones,
+            &CategorySlug::Smartphone,
+            &CategorySlug::SmartHome,
+            &CategorySlug::Headphones,
             &CategorySlug::Watches,
         ]
     }
@@ -51,7 +56,8 @@ impl Crawler for MiShopComCrawler {
         }).collect()
     }
 
-    fn extract_products(&self, document: &Html, all_products: &mut Vec<ParsedProduct>) -> bool {
+    fn extract_products(&self, document: &Html) -> Vec<ParsedProduct> {
+        let mut parsed_products = vec![];
         let items_selector = Selector::parse(".catalog-item").unwrap();
         let title_selector = Selector::parse(".snippet-card__title").unwrap();
         let price_selector = Selector::parse(".snippet-card__price-new").unwrap();
@@ -97,11 +103,11 @@ impl Crawler for MiShopComCrawler {
                 }
 
                 let price_text = price_node.unwrap()
-                    .inner_html()
-                    .replace("₽", "")
-                    .replace(" ", "")
-                    .trim()
-                    .parse::<f64>();
+                                           .inner_html()
+                                           .replace("₽", "")
+                                           .replace(" ", "")
+                                           .trim()
+                                           .parse::<f64>();
 
                 if price_text.is_err() {
                     let message = format!(
@@ -159,7 +165,7 @@ impl Crawler for MiShopComCrawler {
                 id_href.unwrap().to_string()
             };
 
-            all_products.push(ParsedProduct {
+            parsed_products.push(ParsedProduct {
                 title,
                 price,
                 available,
@@ -167,15 +173,15 @@ impl Crawler for MiShopComCrawler {
             });
         }
 
-        amount_of_parsed_products > 0
+        parsed_products
     }
 
     fn get_additional_info_url(&self, external_id: String) -> String {
         format!("{}{}", get_base(), external_id)
     }
 
-    async fn extract_additional_info(&self, document: &Html) -> Option<AdditionalParsedProductInfo> {
-        let image_urls = self.extract_images(document).await;
+    async fn extract_additional_info(&self, document: &Html, external_id: String) -> Option<AdditionalParsedProductInfo> {
+        let image_urls = self.extract_images(document, external_id).await;
         let description = self.extract_description(document);
         let available = self.parse_availability(document);
 
@@ -231,15 +237,16 @@ impl MiShopComCrawler {
         Some(description_sanitized.concat())
     }
 
-    async fn extract_images(&self, document: &Html) -> Vec<String> {
+    async fn extract_images(&self, document: &Html, external_id: String) -> Vec<String> {
         let images_urls = self.extract_image_urls(document);
 
         let mut uploaded_urls: Vec<String> = vec![];
         let mut uploads: Vec<_> = vec![];
 
         let base = get_base();
+        let upload_later = Mutex::new(vec![]);
         for image_url in images_urls {
-            let filename = [
+            let file_path = [
                 "product_images/".to_string(),
                 SourceName::MiShopCom.to_string().to_snake_case(),
                 image_url.clone()
@@ -247,24 +254,35 @@ impl MiShopComCrawler {
             let url: String = [base.clone(), image_url.to_string()].concat();
 
             uploads.push(
-                upload_image_to_cloud(filename.clone(), url,
+                upload_image_to_cloud(file_path.clone(), url.clone(),
                 ).then(|success| {
                     if success {
-                        ok(filename)
+                        ok(file_path)
                     } else {
-                        err(filename)
+                        upload_later
+                            .lock()
+                            .unwrap()
+                            .push(UploadImageMessage {
+                                file_path: file_path.clone(),
+                                image_url: url,
+                                external_id: external_id.clone(),
+                                source: SourceName::MiShopCom,
+                            });
+                        err(file_path)
                     }
-                }));
+                })
+            );
         }
 
-        let result = join_all(uploads).await;
+        let uploaded_images = join_all(uploads).await;
 
-        for filename in result {
+        for filename in uploaded_images {
             if filename.is_ok() {
                 uploaded_urls.push(filename.unwrap());
-            } else {
-                // TODO upload later
             }
+        }
+        for message in upload_later.lock().unwrap().to_vec() {
+            let _schedule_result = postpone_image_parsing(message).await;
         }
 
         uploaded_urls

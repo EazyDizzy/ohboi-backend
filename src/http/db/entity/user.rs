@@ -1,6 +1,7 @@
-use crate::schema::users;
 use chrono::NaiveDateTime;
-use serde::{Serialize};
+use serde::Serialize;
+
+use crate::schema::users;
 
 #[derive(Serialize, Queryable, Debug)]
 pub struct User {

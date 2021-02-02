@@ -4,13 +4,29 @@ version = "0.1.0"
 authors = ["e33 <vitaliy.svinchyak@gmail.com>"]
 edition = "2018"
 
+[[bin]]
+name = "daemon"
+path = "src/cli.rs"
+
+[[bin]]
+name = "http"
+path = "src/main.rs"
+
+[profile.dev]
+codegen-units = 1256
+
+[profile.release]
+#codegen-units = 1
+#lto = "fat"
+
 [dependencies]
 # http
-actix-web = "3.3.0"
+actix-web = { version = "3.3.2", features = ["compress", "openssl"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 google-jwt-verify = { version = "0.3.0", features = ["async"] }
 actix-web-httpauth = "0.5.0"
+sentry-actix = "0.22.0"
 # db
 diesel = { version = "1.4.5", features = ["postgres", "chrono", "numeric", "r2d2"] }
 diesel-derive-enum = { version = "1.1", features = ["postgres"] }
@@ -19,8 +35,11 @@ chrono = "0.4.19"
 bigdecimal = { version = "0.1.2", features = ["serde"] }
 r2d2 = "0.8.9" # connection pool
 # parsing
+structopt = { version = "0.3" }
+clap = "2.33.3"
+lapin = "1.6.6" # rabbitmq
 scraper = "0.12.0"
-reqwest = { version = "0.10.9", features = ["gzip", "gzip"] }
+reqwest = { version = "0.10.9", features = ["gzip"] }
 rusoto_core = "0.45.0"
 rusoto_s3 = "0.45.0"
 # util
@@ -30,7 +49,9 @@ futures = "0.3.8"
 termion = "1.5.5" # terminal colors etc
 regex = "1.4.2"
 async-trait = "0.1.42"
-sentry = "0.21.0"
-log = "0.4.0"
+sentry = { version = "0.22.0", features = ["debug-images"] }
+log = "0.4.13"
 env_logger = "0.8.2"
 maplit = "1.0.2"
+config = { version = "0.10.1", features = ["yaml"] }
+rusoto_logs = "0.46.0"
