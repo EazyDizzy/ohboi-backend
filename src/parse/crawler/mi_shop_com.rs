@@ -16,10 +16,6 @@ use crate::parse::queue::postpone_image_parsing;
 #[derive(Clone)]
 pub struct MiShopComCrawler {}
 
-fn get_base() -> String {
-    "https://mi-shop.com".to_string()
-}
-
 #[async_trait(? Send)]
 impl Crawler for MiShopComCrawler {
     fn get_source(&self) -> &SourceName {
@@ -36,7 +32,7 @@ impl Crawler for MiShopComCrawler {
     }
 
     fn get_next_page_urls(&self, category: &CategorySlug) -> Vec<String> {
-        let host = get_base();
+        let host = self.get_base();
         let base = [host, "/ru/catalog/".to_string()].concat();
         let pagination = "/page/{page}/";
 
@@ -65,17 +61,14 @@ impl Crawler for MiShopComCrawler {
         let unavailable_selector = Selector::parse(".btn-basket.disabled").unwrap();
         let id_selector = Selector::parse("a.snippet-card__media").unwrap();
 
-        let mut amount_of_parsed_products = 0;
         for element in document.select(&items_selector) {
-            amount_of_parsed_products = amount_of_parsed_products + 1;
-
             let title: String = {
                 let title_node = element.select(&title_selector).next();
 
                 if title_node.is_none() {
                     let message = format!(
                         "title_node not found! [{}]",
-                        self.get_source().to_string().to_snake_case()
+                        self.get_source()
                     );
                     sentry::capture_message(message.as_str(), sentry::Level::Warning);
                     continue;
@@ -96,7 +89,7 @@ impl Crawler for MiShopComCrawler {
                 if price_node.is_none() {
                     let message = format!(
                         "price_node not found! [{}]",
-                        self.get_source().to_string().to_snake_case()
+                        self.get_source()
                     );
                     sentry::capture_message(message.as_str(), sentry::Level::Warning);
                     continue;
@@ -114,7 +107,7 @@ impl Crawler for MiShopComCrawler {
                         "price_text({}) can't be parsed! {:?} [{}]",
                         price_node.unwrap().inner_html(),
                         price_text.err(),
-                        self.get_source().to_string().to_snake_case()
+                        self.get_source()
                     );
                     sentry::capture_message(message.as_str(), sentry::Level::Warning);
                     continue;
@@ -130,7 +123,7 @@ impl Crawler for MiShopComCrawler {
                 if available_node.is_none() && unavailable_node.is_none() {
                     let message = format!(
                         "both available_node & unavailable_node not found! [{}]",
-                        self.get_source().to_string().to_snake_case()
+                        self.get_source()
                     );
                     sentry::capture_message(message.as_str(), sentry::Level::Warning);
                     continue;
@@ -145,7 +138,7 @@ impl Crawler for MiShopComCrawler {
                 if id_node.is_none() {
                     let message = format!(
                         "id_node not found! [{}]",
-                        self.get_source().to_string().to_snake_case()
+                        self.get_source()
                     );
                     sentry::capture_message(message.as_str(), sentry::Level::Warning);
                     continue;
@@ -156,7 +149,7 @@ impl Crawler for MiShopComCrawler {
                 if id_href.is_none() {
                     let message = format!(
                         "id_node doesn't have href! [{}]",
-                        self.get_source().to_string().to_snake_case()
+                        self.get_source()
                     );
                     sentry::capture_message(message.as_str(), sentry::Level::Warning);
                     continue;
@@ -177,7 +170,7 @@ impl Crawler for MiShopComCrawler {
     }
 
     fn get_additional_info_url(&self, external_id: String) -> String {
-        format!("{}{}", get_base(), external_id)
+        format!("{}{}", self.get_base(), external_id)
     }
 
     async fn extract_additional_info(&self, document: &Html, external_id: String) -> Option<AdditionalParsedProductInfo> {
@@ -198,6 +191,10 @@ impl Crawler for MiShopComCrawler {
 }
 
 impl MiShopComCrawler {
+    fn get_base(&self) -> String {
+        "https://mi-shop.com".to_string()
+    }
+
     fn extract_description(&self, document: &Html) -> Option<String> {
         lazy_static! {
             static ref RE: Regex = Regex::new(r"(?ms)<p>.*?</p>|<h2>.*?</h2>|<ul>.*?</ul>").unwrap();
@@ -208,7 +205,7 @@ impl MiShopComCrawler {
         if description_node.is_none() {
             let message = format!(
                 "description_node not found! [{}]",
-                self.get_source().to_string().to_snake_case()
+                self.get_source()
             );
             sentry::capture_message(message.as_str(), sentry::Level::Warning);
 
@@ -243,7 +240,7 @@ impl MiShopComCrawler {
         let mut uploaded_urls: Vec<String> = vec![];
         let mut uploads: Vec<_> = vec![];
 
-        let base = get_base();
+        let base = self.get_base();
         let upload_later = Mutex::new(vec![]);
         for image_url in images_urls {
             let file_path = [
@@ -304,7 +301,7 @@ impl MiShopComCrawler {
                 if lazy_tag.is_none() {
                     let message = format!(
                         "both src & data-lazy tags not found! [{}]",
-                        self.get_source().to_string().to_snake_case()
+                        self.get_source()
                     );
                     sentry::capture_message(message.as_str(), sentry::Level::Warning);
                     continue;
@@ -327,7 +324,7 @@ impl MiShopComCrawler {
         if buy_button_node.is_none() && unavailable_button_node.is_none() {
             let message = format!(
                 "both buy_button_node & unavailable_button_node not found! [{}]",
-                self.get_source().to_string().to_snake_case()
+                self.get_source()
             );
             sentry::capture_message(message.as_str(), sentry::Level::Warning);
 

@@ -7,6 +7,7 @@ use crate::local_sentry::add_category_breadcrumb;
 use crate::parse::consumer::parse_page::ParsePageMessage;
 use crate::parse::crawler::crawler::Crawler;
 use crate::parse::crawler::mi_shop_com::MiShopComCrawler;
+use crate::parse::crawler::samsung_shop_com_ua::SamsungShopComUaCrawler;
 use crate::parse::db::entity::{CategorySlug, SourceName};
 use crate::parse::db::repository::product::{create_if_not_exists, update_details};
 use crate::parse::db::repository::source_product::link_to_product;
@@ -236,6 +237,9 @@ fn get_crawler(source: &SourceName) -> &dyn Crawler {
     match source {
         SourceName::MiShopCom => {
             &MiShopComCrawler {}
+        }
+        SourceName::SamsungShopComUa => {
+            &SamsungShopComUaCrawler {}
         }
     }
 }
