@@ -20,8 +20,8 @@ pub struct CrawlerCategoryMessage {
 
 pub async fn start() -> Result<()> {
     let crawlers = [
-        //MiShopComCrawler {},
-        SamsungShopComUaCrawler {},
+        MiShopComCrawler {},
+        //SamsungShopComUaCrawler {},
     ];
 
     let channel = get_channel().await?;

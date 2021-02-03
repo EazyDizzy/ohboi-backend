@@ -8,7 +8,7 @@ use scraper::{Html, Selector};
 
 use crate::parse::cloud_uploader::upload_image_to_cloud;
 use crate::parse::consumer::parse_image::UploadImageMessage;
-use crate::parse::crawler::crawler::Crawler;
+use crate::parse::crawler::crawler::{Crawler, get_html_nodes, ProductHtmlSelectors};
 use crate::parse::db::entity::{CategorySlug, SourceName};
 use crate::parse::parsed_product::{AdditionalParsedProductInfo, ParsedProduct};
 use crate::parse::queue::postpone_image_parsing;
@@ -55,26 +55,26 @@ impl Crawler for MiShopComCrawler {
     fn extract_products(&self, document: &Html) -> Vec<ParsedProduct> {
         let mut parsed_products = vec![];
         let items_selector = Selector::parse(".catalog-item").unwrap();
-        let title_selector = Selector::parse(".snippet-card__title").unwrap();
-        let price_selector = Selector::parse(".snippet-card__price-new").unwrap();
-        let available_selector = Selector::parse(".btn-basket").unwrap();
-        let unavailable_selector = Selector::parse(".btn-basket.disabled").unwrap();
-        let id_selector = Selector::parse("a.snippet-card__media").unwrap();
+
+        let selectors = ProductHtmlSelectors {
+            id: Selector::parse("a.snippet-card__media[href]").unwrap(),
+            title: Selector::parse(".snippet-card__title").unwrap(),
+            price: Selector::parse(".snippet-card__price-new").unwrap(),
+            available: Selector::parse(".btn-basket").unwrap(),
+            unavailable: Selector::parse(".btn-basket.disabled").unwrap(),
+        };
 
         for element in document.select(&items_selector) {
+            let nodes = get_html_nodes(&selectors, &element, &self.get_source());
+
+            if nodes.is_none() {
+                continue;
+            }
+
+            let product_nodes = nodes.unwrap();
+
             let title: String = {
-                let title_node = element.select(&title_selector).next();
-
-                if title_node.is_none() {
-                    let message = format!(
-                        "title_node not found! [{}]",
-                        self.get_source()
-                    );
-                    sentry::capture_message(message.as_str(), sentry::Level::Warning);
-                    continue;
-                }
-
-                let mut title_value = title_node.unwrap().inner_html();
+                let mut title_value = product_nodes.title.inner_html();
                 if title_value.contains('(') {
                     // removing color information from title
                     title_value = title_value.split('(').next().unwrap().trim().to_string();
@@ -84,28 +84,17 @@ impl Crawler for MiShopComCrawler {
             };
 
             let price: f64 = {
-                let price_node = element.select(&price_selector).next();
-
-                if price_node.is_none() {
-                    let message = format!(
-                        "price_node not found! [{}]",
-                        self.get_source()
-                    );
-                    sentry::capture_message(message.as_str(), sentry::Level::Warning);
-                    continue;
-                }
-
-                let price_text = price_node.unwrap()
-                                           .inner_html()
-                                           .replace("₽", "")
-                                           .replace(" ", "")
-                                           .trim()
-                                           .parse::<f64>();
+                let price_html = product_nodes.price.inner_html();
+                let price_text = price_html
+                    .replace("₽", "")
+                    .replace(" ", "")
+                    .trim()
+                    .parse::<f64>();
 
                 if price_text.is_err() {
                     let message = format!(
                         "price_text({}) can't be parsed! {:?} [{}]",
-                        price_node.unwrap().inner_html(),
+                        price_html,
                         price_text.err(),
                         self.get_source()
                     );
@@ -116,48 +105,19 @@ impl Crawler for MiShopComCrawler {
                 price_text.unwrap()
             };
 
-            let available: bool = {
-                let available_node = element.select(&available_selector).next();
-                let unavailable_node = element.select(&unavailable_selector).next();
+            let available = product_nodes.available.is_some() && product_nodes.unavailable.is_none();
+            let external_id = product_nodes.id.value().attr("href").unwrap().to_string();
 
-                if available_node.is_none() && unavailable_node.is_none() {
-                    let message = format!(
-                        "both available_node & unavailable_node not found! [{}]",
-                        self.get_source()
-                    );
-                    sentry::capture_message(message.as_str(), sentry::Level::Warning);
-                    continue;
-                }
-
-                available_node.is_some() && unavailable_node.is_none()
-            };
-
-            let external_id: String = {
-                let id_node = element.select(&id_selector).next();
-
-                if id_node.is_none() {
-                    let message = format!(
-                        "id_node not found! [{}]",
-                        self.get_source()
-                    );
-                    sentry::capture_message(message.as_str(), sentry::Level::Warning);
-                    continue;
-                }
-
-                let id_href = id_node.unwrap().value().attr("href");
-
-                if id_href.is_none() {
-                    let message = format!(
-                        "id_node doesn't have href! [{}]",
-                        self.get_source()
-                    );
-                    sentry::capture_message(message.as_str(), sentry::Level::Warning);
-                    continue;
-                }
-
-                id_href.unwrap().to_string()
-            };
-
+            if title.is_empty() || external_id.is_empty() {
+                let message = format!(
+                    "Some param is invalid ({}): title - {}, external_id - {}",
+                    self.get_source(),
+                    title,
+                    external_id,
+                );
+                sentry::capture_message(message.as_str(), sentry::Level::Warning);
+                continue;
+            }
             parsed_products.push(ParsedProduct {
                 title,
                 price,
