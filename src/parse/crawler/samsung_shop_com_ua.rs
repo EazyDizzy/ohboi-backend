@@ -106,11 +106,12 @@ impl Crawler for SamsungShopComUaCrawler {
             }
 
             parsed_products.push(ParsedProduct {
-                title,
+                title: title.clone(),
                 price,
                 available,
                 external_id,
             });
+            log::info!("{}", title);
         }
 
         parsed_products
@@ -119,13 +120,45 @@ impl Crawler for SamsungShopComUaCrawler {
     fn get_additional_info_url(&self, external_id: String) -> String {
         format!("{}{}", self.get_base(), external_id)
     }
+
     async fn extract_additional_info(&self, document: &Html, external_id: String) -> Option<AdditionalParsedProductInfo> {
-        unimplemented!()
+        let image_urls = self.extract_images(document, external_id).await;
+        let description = self.abstract_extract_description(
+            &document,
+            Selector::parse(".acardeon-item-content-main").unwrap(),
+            &DESCRIPTION_RE,
+        );
+        let available = self.abstract_parse_availability(
+            document,
+            Selector::parse(".product-button_buy").unwrap(),
+            Selector::parse(".product-button_buy.null").unwrap(),
+        );
+
+        if description.is_none() || available.is_none() {
+            None
+        } else {
+            Some(AdditionalParsedProductInfo {
+                image_urls,
+                description: description.unwrap(),
+                available: available.unwrap(),
+            })
+        }
     }
 }
 
+lazy_static! {
+    static ref DESCRIPTION_RE: Regex = Regex::new(r"(?ms)<big>.*?</big>|<h3>.*?</h3>").unwrap();
+}
 impl SamsungShopComUaCrawler {
     fn get_base(&self) -> String {
         "https://samsungshop.com.ua".to_string()
+    }
+
+    async fn extract_images(&self, document: &Html, external_id: String) -> Vec<String> {
+        let images_selector = Selector::parse(".sp-slide img.sp-image").unwrap();
+        let image_nodes = document.select(&images_selector);
+        let images_urls = self.abstract_extract_image_urls(image_nodes, "data-src");
+
+        self.abstract_extract_images(images_urls, external_id, self.get_base()).await
     }
 }

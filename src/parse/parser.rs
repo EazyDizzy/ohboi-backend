@@ -80,9 +80,23 @@ pub async fn parse_category(source: &SourceName, category: &CategorySlug) -> Res
                 match response {
                     Ok(response_data) => {
                         let parsed = parse_html(response_data, crawler.clone());
+                        let mut amount_of_duplicates = 0;
 
-                        parsed.iter().for_each(|x| products.push(x.clone()));
-                        all_successful = all_successful && !parsed.is_empty();
+                        parsed.iter().for_each(|x| {
+                            let will_be_duplicated = products
+                                .iter()
+                                .filter(|p| p.external_id == x.external_id)
+                                .next().is_some();
+
+                            if will_be_duplicated {
+                                amount_of_duplicates = amount_of_duplicates + 1;
+                            } else {
+                                products.push(x.clone());
+                            }
+                        });
+                        all_successful = all_successful
+                            && !parsed.is_empty() // Some sites return empty page
+                            && amount_of_duplicates != parsed.len(); // But some return the last page (samsung)
                     }
                     Err(e) => {
                         amount_of_fails = amount_of_fails + 1;
