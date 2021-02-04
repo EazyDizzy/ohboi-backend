@@ -7,37 +7,29 @@ use crate::parse::db::entity::{CategorySlug, SourceName};
 use crate::parse::parsed_product::{AdditionalParsedProductInfo, ParsedProduct};
 
 #[derive(Clone)]
-pub struct MiShopComCrawler {}
+pub struct SamsungShopComUaCrawler {}
 
 #[async_trait(? Send)]
-impl Crawler for MiShopComCrawler {
-    fn get_source(&self) -> &SourceName {
-        &SourceName::MiShopCom
-    }
+impl Crawler for SamsungShopComUaCrawler {
+    fn get_source(&self) -> &SourceName { &SourceName::SamsungShopComUa }
 
     fn get_categories(&self) -> Vec<&CategorySlug> {
         vec![
-            &CategorySlug::Smartphone,
-            &CategorySlug::SmartHome,
-            &CategorySlug::Headphones,
             &CategorySlug::Watches,
         ]
     }
 
     fn get_next_page_urls(&self, category: &CategorySlug) -> Vec<String> {
         let host = self.get_base();
-        let base = [host, "/ru/catalog/".to_string()].concat();
-        let pagination = "/page/{page}/";
+
+        let base = [host, "/ru/".to_string()].concat();
+        let pagination = "?page={page}";
 
         let urls = match category {
-            CategorySlug::Smartphone => vec!["smartphones"],
-            CategorySlug::SmartHome => vec![
-                "smart_devices/umnyy-dom",
-                "smart_devices/foto-video",
-                "smart_devices/osveshchenie"
-            ],
-            CategorySlug::Headphones => vec!["audio"],
-            CategorySlug::Watches => vec!["smart_devices/umnye-chasy-i-braslety"]
+            CategorySlug::Watches => vec!["wearables"],
+            c => {
+                panic!(format!("Unsupported category {}", c));
+            }
         };
 
         urls.into_iter().map(|url| {
@@ -46,15 +38,19 @@ impl Crawler for MiShopComCrawler {
     }
 
     fn extract_products(&self, document: &Html) -> Vec<ParsedProduct> {
+        // to not include russian words in title
+        let title_re: Regex = Regex::new(r"[a-zA-Z0-9 \-+()]{2,}").unwrap();
+        let price_re: Regex = Regex::new(r"[0-9][0-9 ]*[0-9]").unwrap();
+
         let mut parsed_products = vec![];
-        let items_selector = Selector::parse(".catalog-item").unwrap();
+        let items_selector = Selector::parse(".catalog-product-item").unwrap();
 
         let selectors = ProductHtmlSelectors {
-            id: Selector::parse("a.snippet-card__media[href]").unwrap(),
-            title: Selector::parse(".snippet-card__title").unwrap(),
-            price: Selector::parse(".snippet-card__price-new").unwrap(),
-            available: Selector::parse(".btn-basket").unwrap(),
-            unavailable: Selector::parse(".btn-basket.disabled").unwrap(),
+            id: Selector::parse(".catalog-product-item_name a[href]").unwrap(),
+            title: Selector::parse(".catalog-product-item_name a").unwrap(),
+            price: Selector::parse(".catalog-product-item_price").unwrap(),
+            available: Selector::parse(".product-button_buy").unwrap(),
+            unavailable: Selector::parse(".product-button_buy.null").unwrap(),
         };
 
         for element in document.select(&items_selector) {
@@ -67,26 +63,23 @@ impl Crawler for MiShopComCrawler {
             let product_nodes = nodes.unwrap();
 
             let title: String = {
-                let mut title_value = product_nodes.title.inner_html();
-                if title_value.contains('(') {
-                    // removing color information from title
-                    title_value = title_value.split('(').next().unwrap().trim().to_string();
-                }
+                let title_value = product_nodes.title.inner_html();
+                let english_text = title_re.find(title_value.as_str()).unwrap();
 
-                title_value
+                english_text.as_str().trim().to_string()
             };
 
             let price: f64 = {
                 let price_html = product_nodes.price.inner_html();
-                let price_text = price_html
-                    .replace("₽", "")
-                    .replace(" ", "")
-                    .trim()
-                    .parse::<f64>();
+
+                let price_text = price_re.find(price_html.as_str()).unwrap()
+                                         .as_str().to_string()
+                                         .replace(" ", "")
+                                         .parse::<f64>();
 
                 if price_text.is_err() {
                     let message = format!(
-                        "price_text({}) can't be parsed! {:?} [{}]",
+                        "price_text ({}) can't be parsed! {:?} [{}]",
                         price_html,
                         price_text.err(),
                         self.get_source()
@@ -111,12 +104,14 @@ impl Crawler for MiShopComCrawler {
                 sentry::capture_message(message.as_str(), sentry::Level::Warning);
                 continue;
             }
+
             parsed_products.push(ParsedProduct {
-                title,
+                title: title.clone(),
                 price,
                 available,
                 external_id,
             });
+            log::info!("{}", title);
         }
 
         parsed_products
@@ -127,24 +122,21 @@ impl Crawler for MiShopComCrawler {
     }
 
     async fn extract_additional_info(&self, document: &Html, external_id: String) -> Option<AdditionalParsedProductInfo> {
-        // TODO replace tags to some standard
         let description = self.abstract_extract_description(
             &document,
-            Selector::parse(".detail__tab-description").unwrap(),
+            Selector::parse(".acardeon-item-content-main").unwrap(),
             &DESCRIPTION_RE,
         );
         let available = self.abstract_parse_availability(
             document,
-            Selector::parse(".btn-primary.buy-btns__buy").unwrap(),
-            Selector::parse(".btn-primary.detail-subscribe__btn").unwrap(),
+            Selector::parse(".product-button_buy").unwrap(),
+            Selector::parse(".product-button_buy.null").unwrap(),
         );
 
         if description.is_none() || available.is_none() {
             None
         } else {
-            // We should not upload images if it is not valid product
             let image_urls = self.extract_images(document, external_id).await;
-
             Some(AdditionalParsedProductInfo {
                 image_urls,
                 description: description.unwrap(),
@@ -155,20 +147,18 @@ impl Crawler for MiShopComCrawler {
 }
 
 lazy_static! {
-    static ref DESCRIPTION_RE: Regex = Regex::new(r"(?ms)<p>.*?</p>|<h2>.*?</h2>|<ul>.*?</ul>").unwrap();
+    static ref DESCRIPTION_RE: Regex = Regex::new(r"(?ms)<big>.*?</big>|<h3>.*?</h3>").unwrap();
 }
-
-impl MiShopComCrawler {
+impl SamsungShopComUaCrawler {
     fn get_base(&self) -> String {
-        "https://mi-shop.com".to_string()
+        "https://samsungshop.com.ua".to_string()
     }
 
     async fn extract_images(&self, document: &Html, external_id: String) -> Vec<String> {
-        let images_selector = Selector::parse(".detail-modal .detail__slides img").unwrap();
+        let images_selector = Selector::parse(".sp-slide img.sp-image").unwrap();
         let image_nodes = document.select(&images_selector);
-        let images_urls = self.abstract_extract_image_urls(image_nodes, "data-lazy");
+        let images_urls = self.abstract_extract_image_urls(image_nodes, "data-src");
 
         self.abstract_extract_images(images_urls, external_id, self.get_base()).await
     }
 }
-

@@ -18,7 +18,8 @@ pub struct Source {
 
 #[derive(Debug, Serialize, Deserialize, Copy, Clone)]
 pub enum SourceName {
-    MiShopCom
+    MiShopCom,
+    SamsungShopComUa,
 }
 
 impl fmt::Display for SourceName {
