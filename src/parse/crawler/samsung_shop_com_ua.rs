@@ -122,7 +122,6 @@ impl Crawler for SamsungShopComUaCrawler {
     }
 
     async fn extract_additional_info(&self, document: &Html, external_id: String) -> Option<AdditionalParsedProductInfo> {
-        let image_urls = self.extract_images(document, external_id).await;
         let description = self.abstract_extract_description(
             &document,
             Selector::parse(".acardeon-item-content-main").unwrap(),
@@ -137,6 +136,7 @@ impl Crawler for SamsungShopComUaCrawler {
         if description.is_none() || available.is_none() {
             None
         } else {
+            let image_urls = self.extract_images(document, external_id).await;
             Some(AdditionalParsedProductInfo {
                 image_urls,
                 description: description.unwrap(),

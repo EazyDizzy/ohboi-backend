@@ -20,7 +20,7 @@ pub struct CrawlerCategoryMessage {
 
 pub async fn start() -> Result<()> {
     let crawlers = [
-        //MiShopComCrawler {},
+        MiShopComCrawler {},
         SamsungShopComUaCrawler {},
     ];
 
