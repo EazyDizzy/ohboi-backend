@@ -11,13 +11,13 @@ mod source;
 
 pub async fn run_server() -> std::io::Result<()> {
     HttpServer::new(|| {
-        let auth = HttpAuthentication::bearer(auth::google::validator);
+        let google_auth = HttpAuthentication::bearer(auth::google::validator);
 
         App::new()
             .wrap(sentry_actix::Sentry::new())
             .wrap(middleware::Logger::default())
             .wrap(middleware::DefaultHeaders::new().header("content-type", "application/json; charset=utf-8"))
-            .wrap(auth)
+            .wrap(google_auth)
             .service(web::resource("/user").route(web::post().to(user::create)))
             .service(web::resource("/categories").route(web::get().to(category::get_all_categories)))
             .service(web::resource("/sources").route(web::get().to(source::get_all_sources)))

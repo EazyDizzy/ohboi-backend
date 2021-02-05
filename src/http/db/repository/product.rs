@@ -1,5 +1,7 @@
 use diesel::{QueryDsl, RunQueryDsl};
 use diesel::associations::HasTable;
+use diesel::dsl::IntoBoxed;
+use diesel::query_dsl::boxed_dsl::BoxedDsl;
 use inflector::Inflector;
 
 use crate::diesel::prelude::*;
@@ -8,28 +10,35 @@ use crate::http::db::entity::lower;
 use crate::http::db::entity::Product;
 use crate::http::product::ProductFilters;
 use crate::schema::product;
-use crate::schema::product::dsl::{category, enabled, title};
+use crate::schema::product::dsl::{category, enabled, id, title};
 
-pub fn get_all_products_of_category(requested_filters: &ProductFilters) -> Vec<Product> {
+pub fn get_all_products_of_category(filters: &ProductFilters) -> Vec<Product> {
     let connection = &db::establish_connection();
 
-    let mut sql_filters = product::table.into_boxed();
-    let basic_filters = category.eq(requested_filters.category)
-                                .and(enabled.eq(true));
+    let mut query = product::table
+        .into_boxed();
 
-    if requested_filters.title.is_some() {
-        let requested_title = requested_filters.title.clone().unwrap().to_lowercase();
-        sql_filters = sql_filters.filter(
-            basic_filters.and(
-                lower(title).like(
-                    ["%", requested_title.as_str(), "%"].join("")
-                )
+    query = query.filter(enabled.eq(true));
+
+    if filters.title.is_some() {
+        let requested_title = filters.title.clone().unwrap().to_lowercase();
+        query = query.filter(
+            lower(title).like(
+                ["%", requested_title.as_str(), "%"].join("")
             )
         );
     }
 
-    sql_filters.limit(20)
-               .offset((requested_filters.page * 20).into())
-               .load::<Product>(connection)
-               .expect("Error loading products")
+    if filters.category.is_some() {
+        query = query.filter(
+            category.eq_any(filters.category.clone().unwrap())
+        );
+    }
+
+    query
+        .limit(20)
+        .offset((filters.page * 20).into())
+        .order(id.asc())
+        .load::<Product>(connection)
+        .expect("Error loading products")
 }

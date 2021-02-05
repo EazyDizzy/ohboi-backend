@@ -11,6 +11,6 @@ pub async fn get_products(filters: web::Json<ProductFilters>) -> HttpResponse {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ProductFilters {
     pub title: Option<String>,
-    pub category: i32,
+    pub category: Option<Vec<i32>>,
     pub page: i32,
 }
