@@ -10,7 +10,6 @@ use clap::arg_enum;
 use diesel::PgConnection;
 use diesel::r2d2::ConnectionManager;
 use r2d2;
-use sentry::Envelope;
 use structopt::StructOpt;
 
 use parse::settings::Settings;
