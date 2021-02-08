@@ -20,7 +20,7 @@ mod local_sentry;
 
 #[actix_web::main]
 async fn main() {
-    std::env::set_var("RUST_LOG", "http");
+    std::env::set_var("RUST_LOG", "http,actix_web=debug");
     env_logger::init();
     let _guard = local_sentry::init_sentry();
 
