@@ -2,8 +2,8 @@ use diesel::{QueryDsl, RunQueryDsl};
 
 use crate::diesel::prelude::*;
 use crate::http::db;
-use crate::http::db::entity::lower;
-use crate::http::db::entity::Product;
+use crate::http::db::lower;
+use crate::http::db::product::entity::Product;
 use crate::http::product::ProductFilters;
 use crate::schema::product;
 use crate::schema::product::dsl::{category, enabled, id, title};

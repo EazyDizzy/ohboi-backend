@@ -2,14 +2,14 @@ use chrono::Utc;
 use diesel::{ExpressionMethods, QueryDsl, RunQueryDsl};
 
 use crate::http::db;
-use crate::http::db::entity;
+use crate::http::db::user::entity::{NewUser, User};
 use crate::schema::users;
 
-pub fn create(username: &str) -> entity::User {
+pub fn create(username: &str) -> User {
     let connection = &db::establish_connection();
     let now = Utc::now();
 
-    let new_user = entity::NewUser {
+    let new_user = NewUser {
         username,
         created_at: &now.naive_utc(),
         updated_at: &now.naive_utc(),
@@ -21,15 +21,15 @@ pub fn create(username: &str) -> entity::User {
         .expect("Error saving new user")
 }
 
-pub fn get_by_id(user_id: &i32) -> entity::User {
+pub fn get_by_id(user_id: &i32) -> User {
     use crate::schema::users::dsl::*;
 
     let connection = &db::establish_connection();
 
     let target = users.filter(id.eq(user_id));
-    let results: Vec<entity::User> = target
+    let results: Vec<User> = target
         .limit(1)
-        .load::<entity::User>(connection)
+        .load::<User>(connection)
         .expect("Error loading product");
 
     let user = results.into_iter().next();
