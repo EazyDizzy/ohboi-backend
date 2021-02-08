@@ -1,3 +1,4 @@
+use actix_web::http::header::{ACCEPT, ACCEPT_ENCODING, ACCEPT_LANGUAGE, CONNECTION};
 use actix_web::web::Bytes;
 use rand::distributions::Uniform;
 use rand::prelude::Distribution;
@@ -6,7 +7,6 @@ use reqwest::Response;
 
 pub async fn get_data(url: String) -> Result<String, reqwest::Error> {
     let response = get_request(url).await?;
-    println!("response headers {:?}", response.headers());
 
     let text = response.text().await?;
 
@@ -20,20 +20,21 @@ pub async fn get_bytes(url: String) -> Result<Bytes, reqwest::Error> {
 }
 
 pub async fn get_request(url: String) -> Result<Response, reqwest::Error> {
-    let client = reqwest::Client::new();
+    let client = reqwest::Client::builder()
+        .gzip(true)
+        .brotli(true)
+        .build().unwrap();
 
     let req = client
         .get(url.as_str())
         .header(USER_AGENT, get_random_user_agent())
-        .header("Accept-Language", "en-gb")
-        .header("Accept-Encoding", "gzip, deflate, br")
-        .header("Accept", "*/*")
+        .header(ACCEPT_LANGUAGE, "en-gb")
+        .header(ACCEPT_ENCODING, "*")
+        .header(ACCEPT, "*/*")
+        .header(CONNECTION, "keep-alive")
         .header("Referer", get_random_referer())
         ;
-    // TODO preconnect, zip header
     // TODO proxy
-    println!("request headers {:?}", req.try_clone().unwrap().build().unwrap().headers());
-
     req
         .send()
         .await
