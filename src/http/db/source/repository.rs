@@ -1,6 +1,7 @@
+use diesel::prelude::*;
+
 use crate::http::db;
-use crate::http::db::entity::Source;
-use crate::diesel::prelude::*;
+use crate::http::db::source::entity::Source;
 
 pub fn get_all_enabled() -> Vec<Source> {
     use crate::schema::source::dsl::*;

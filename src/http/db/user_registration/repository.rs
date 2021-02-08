@@ -1,15 +1,15 @@
 use diesel::{BoolExpressionMethods, ExpressionMethods, QueryDsl, RunQueryDsl};
 
 use crate::http::db;
-use crate::http::db::entity;
-use crate::http::db::entity::UserRegistration;
-use crate::http::db::repository::user::{create, get_by_id};
-use crate::schema::user_registration;
+use crate::http::db::user::entity::User;
+use crate::http::db::user::repository::{create, get_by_id};
+use crate::http::db::user_registration::entity::{UserRegistration, NewUserRegistration};
 use crate::my_enum::UserRegistrationType;
+use crate::schema::user_registration;
 
 pub fn get_user_by_auth(expected_registration_type: &UserRegistrationType,
                         expected_email: &str,
-                        expected_full_name: &str) -> entity::User {
+                        expected_full_name: &str) -> User {
     use crate::schema::user_registration::dsl::*;
 
     let connection = &db::establish_connection();
@@ -36,10 +36,10 @@ pub fn get_user_by_auth(expected_registration_type: &UserRegistrationType,
 fn create_registration(new_user_id: &i32,
                        registration_type: &UserRegistrationType,
                        email: &str,
-                       full_name: &str) -> entity::UserRegistration {
+                       full_name: &str) -> UserRegistration {
     let connection = &db::establish_connection();
 
-    let new_user_registration = entity::NewUserRegistration {
+    let new_user_registration = NewUserRegistration {
         user_id: new_user_id,
         registration_type,
         email,
