@@ -2,7 +2,7 @@ use actix_web::HttpResponse;
 use actix_web_validator::{Json, Validate};
 use serde::{Deserialize, Serialize};
 
-use crate::http::db::repository::product::get_all_products_of_category;
+use crate::http::db::product::repository::get_all_products_of_category;
 
 pub async fn get_products(filters: Json<ProductFilters>) -> HttpResponse {
     let products = get_all_products_of_category(&filters);
