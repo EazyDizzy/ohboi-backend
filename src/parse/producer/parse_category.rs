@@ -1,4 +1,4 @@
-use lapin::{BasicProperties, Result};
+use lapin::{BasicProperties, Channel, Result};
 use lapin::options::BasicPublishOptions;
 use maplit::*;
 use sentry::protocol::map::BTreeMap;
@@ -19,50 +19,51 @@ pub struct CrawlerCategoryMessage {
 }
 
 pub async fn start() -> Result<()> {
-    let crawlers = [
-        MiShopComCrawler {},
-        SamsungShopComUaCrawler {},
-    ];
-
     let channel = get_channel().await?;
+    start_crawler(MiShopComCrawler {}, &channel).await?;
+    start_crawler(SamsungShopComUaCrawler {}, &channel).await?;
 
-    for crawler in crawlers.iter() {
-        // TODO check if crawler is enabled
-        for category in crawler.get_categories() {
-            let payload = CrawlerCategoryMessage {
-                category: *category,
-                source: *crawler.get_source(),
-            };
-            add_producer_breadcrumb(
-                "creating",
-                btreemap! {
+    Ok(())
+}
+
+async fn start_crawler<T>(crawler: T, channel: &Channel) -> Result<()>
+    where T: Crawler {
+
+    // TODO check if crawler is enabled
+    for category in crawler.get_categories() {
+        let payload = CrawlerCategoryMessage {
+            category: *category,
+            source: *crawler.get_source(),
+        };
+        add_producer_breadcrumb(
+            "creating",
+            btreemap! {
                     "category" => category.to_string(),
                     "source" => crawler.get_source().to_string()
                 },
+        );
+
+        let payload_json = serde_json::to_string(&payload).unwrap();
+
+        let confirm = channel
+            .basic_publish(
+                "",
+                &SETTINGS.amqp.queues.parse_category.name,
+                BasicPublishOptions::default(),
+                payload_json.into_bytes(),
+                BasicProperties::default(),
+            )
+            .await?
+            .await?;
+
+        if confirm.is_nack() {
+            let message = format!(
+                "Message is not acknowledged! Queue: {}",
+                SETTINGS.amqp.queues.parse_category.name
             );
-
-            let payload_json = serde_json::to_string(&payload).unwrap();
-
-            let confirm = channel
-                .basic_publish(
-                    "",
-                    &SETTINGS.amqp.queues.parse_category.name,
-                    BasicPublishOptions::default(),
-                    payload_json.into_bytes(),
-                    BasicProperties::default(),
-                )
-                .await?
-                .await?;
-
-            if confirm.is_nack() {
-                let message = format!(
-                    "Message is not acknowledged! Queue: {}",
-                    SETTINGS.amqp.queues.parse_category.name
-                );
-                sentry::capture_message(message.as_str(), sentry::Level::Warning);
-            } else {
-                log::info!("Message acknowledged");
-            }
+            sentry::capture_message(message.as_str(), sentry::Level::Warning);
+        } else {
+            log::info!("Message acknowledged");
         }
     }
 
