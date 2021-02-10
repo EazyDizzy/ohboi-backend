@@ -9,11 +9,11 @@ use regex::Regex;
 use scraper::{ElementRef, Html, Selector};
 use scraper::html::Select;
 
-use crate::parse::cloud_uploader::upload_image_to_cloud;
+use crate::parse::service::cloud_uploader::upload_image_to_cloud;
 use crate::parse::consumer::parse_image::UploadImageMessage;
 use crate::parse::db::entity::{CategorySlug, SourceName};
 use crate::parse::parsed_product::{AdditionalParsedProductInfo, ParsedProduct};
-use crate::parse::queue::postpone_image_parsing;
+use crate::parse::service::queue::postpone_image_parsing;
 
 #[async_trait(? Send)]
 pub trait Crawler {

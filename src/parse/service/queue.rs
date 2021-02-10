@@ -2,7 +2,7 @@ use lapin::{BasicProperties, Channel, Connection, ConnectionProperties, Queue, R
 use lapin::options::{BasicPublishOptions, QueueDeclareOptions};
 use maplit::*;
 
-use crate::parse::cloud_uploader::add_uploader_breadcrumb;
+use crate::parse::service::cloud_uploader::add_uploader_breadcrumb;
 use crate::parse::consumer::parse_image::UploadImageMessage;
 use crate::parse::consumer::parse_page::ParsePageMessage;
 use crate::SETTINGS;

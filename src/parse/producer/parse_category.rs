@@ -9,7 +9,7 @@ use crate::parse::crawler::crawler::Crawler;
 use crate::parse::crawler::mi_shop_com::MiShopComCrawler;
 use crate::parse::crawler::samsung_shop_com_ua::SamsungShopComUaCrawler;
 use crate::parse::db::entity::{CategorySlug, SourceName};
-use crate::parse::queue::get_channel;
+use crate::parse::service::queue::get_channel;
 use crate::SETTINGS;
 
 #[derive(Serialize, Deserialize, Debug)]

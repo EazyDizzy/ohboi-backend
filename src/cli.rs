@@ -12,9 +12,10 @@ use diesel::r2d2::ConnectionManager;
 use r2d2;
 use structopt::StructOpt;
 
+use parse::service::queue::{declare_parse_category_queue, declare_parse_image_queue, declare_parse_page_queue};
 use parse::settings::Settings;
 
-use crate::parse::queue::{declare_parse_category_queue, declare_parse_image_queue, declare_parse_page_queue};
+use crate::parse::service::proxy::cache_list_of_proxies;
 
 mod schema;
 mod parse;
@@ -23,7 +24,7 @@ mod local_sentry;
 
 #[derive(StructOpt, Debug)]
 struct Cli {
-    #[structopt(possible_values = & ["consumer", "producer", "queue_config"], case_insensitive = true)]
+    #[structopt(possible_values = & ["consumer", "producer", "queue_config", "proxy_puller"], case_insensitive = true)]
     worker_type: String,
     #[structopt(short, possible_values = & ConsumerName::variants(), case_insensitive = true, required_if("worker-type", "consumer"))]
     consumer_name: Option<ConsumerName>,
@@ -62,6 +63,13 @@ async fn main() {
 
     let args: Cli = Cli::from_args();
 
+    if args.worker_type == "proxy_puller" {
+        let r = cache_list_of_proxies().await;
+        if r.is_err() {
+            log::error!("Proxy pulling failed: {:?}", r.err());
+        }
+        return;
+    }
     if args.worker_type == "queue_config" {
         let declare1 = declare_parse_category_queue().await;
         let declare2 = declare_parse_image_queue().await;
@@ -79,7 +87,9 @@ async fn main() {
     if args.worker_type == "producer" {
         match args.producer_name.unwrap() {
             ProducerName::ParseCategory => {
-                let _res = parse::producer::parse_category::start().await;
+                let res = parse::producer::parse_category::start().await;
+                // TODO sentry
+                if res.is_err() { log::error!("{:?}", res.err()) }
             }
         }
     } else {

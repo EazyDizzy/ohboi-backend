@@ -12,8 +12,8 @@ use crate::parse::db::entity::{CategorySlug, SourceName};
 use crate::parse::db::repository::product::{create_if_not_exists, update_details};
 use crate::parse::db::repository::source_product::link_to_product;
 use crate::parse::parsed_product::{AdditionalParsedProductInfo, ParsedProduct};
-use crate::parse::queue::postpone_page_parsing;
-use crate::parse::requester::get_data;
+use crate::parse::service::queue::postpone_page_parsing;
+use crate::parse::service::requester::get_data;
 use crate::SETTINGS;
 
 pub async fn parse_page(url: String, source: &SourceName, category: &CategorySlug) -> Result<(), reqwest::Error> {
