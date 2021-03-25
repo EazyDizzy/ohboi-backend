@@ -1,10 +1,9 @@
 FROM rust:1.49
 
-RUN apt-get update \
+RUN apt update \
+    && apt-get update \
     && apt-get install -y postgresql \
     && apt-get install -y cmake \
-    && apt-get install -y pthreads \
-    && apt-get install -y zlib \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
