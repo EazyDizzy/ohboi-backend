@@ -13,6 +13,7 @@ pub async fn run_server() -> std::io::Result<()> {
     HttpServer::new(|| {
         let google_auth = HttpAuthentication::bearer(auth::google::validator);
 
+        log::info!("Starting server");
         App::new()
             .wrap(sentry_actix::Sentry::new())
             .wrap(middleware::Logger::default())
