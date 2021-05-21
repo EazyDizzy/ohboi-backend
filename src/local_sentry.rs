@@ -29,10 +29,10 @@ pub fn init_sentry() -> ClientInitGuard {
             before_send: Some(Arc::new(|event| {
                 if event.message.is_some() {
                     log::error!(
-                        "{}{:#?}{}",
-                        color::Fg(color::Red),
-                        event.message.clone().unwrap(),
-                        style::Reset
+                        "{c}{message:#?}{c_end}",
+                        c = color::Fg(color::Red),
+                        message = event.message.clone().unwrap(),
+                        c_end = style::Reset
                     );
                 }
 
@@ -60,25 +60,21 @@ pub fn add_category_breadcrumb(message: &str, data: BTreeMap<&str, String>, cate
 
     if cfg!(debug_assertions) {
         log::info!(
-            "{}{}{} {}{}{} {}{:?}{}",
-            color::Fg(color::Magenta),
-            breadcrumb.category.clone().unwrap(),
-            style::Reset,
-            //
-            color::Fg(color::Yellow),
-            breadcrumb.message.clone().unwrap(),
-            style::Reset,
-            //
-            color::Fg(color::LightBlue),
-            breadcrumb.data,
-            style::Reset,
+            "{c1}{category}{r} {c2}{message}{r} {c3}{data:?}{r}",
+            c1 = color::Fg(color::Magenta),
+            c2 = color::Fg(color::Yellow),
+            c3 = color::Fg(color::LightBlue),
+            r = style::Reset,
+            category = breadcrumb.category.clone().unwrap(),
+            message = breadcrumb.message.clone().unwrap(),
+            data = breadcrumb.data,
         );
     } else {
         log::info!(
-            "{} {} {:?}",
-            breadcrumb.category.clone().unwrap(),
-            breadcrumb.message.clone().unwrap(),
-            breadcrumb.data,
+            "{category} {message} {data:?}",
+            category = breadcrumb.category.clone().unwrap(),
+            message = breadcrumb.message.clone().unwrap(),
+            data = breadcrumb.data,
         );
     }
 }
