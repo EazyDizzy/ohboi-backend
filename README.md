@@ -1,8 +1,8 @@
-# Migrations
+### Migrations
  - Generate: `diesel migration generate <name>`
  - Run: `diesel migration run`
  
-# DB Pool testing
+### DB Pool testing
 ```
 SELECT  pid         as process_id,
         usename     as username,
@@ -13,4 +13,9 @@ SELECT  pid         as process_id,
         state,
         state_change
 FROM pg_stat_activity;
+```
+
+### To clear the docker cache mount:
+```
+docker builder prune --filter type=exec.cachemount
 ```

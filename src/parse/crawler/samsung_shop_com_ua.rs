@@ -28,7 +28,7 @@ impl Crawler for SamsungShopComUaCrawler {
         let urls = match category {
             CategorySlug::Watches => vec!["wearables"],
             c => {
-                panic!(format!("Unsupported category {}", c));
+                panic!("Unsupported category {}", c);
             }
         };
 

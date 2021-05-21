@@ -135,8 +135,8 @@ impl Crawler for MiShopComCrawler {
         );
         let available = self.abstract_parse_availability(
             document,
-            Selector::parse(".btn-primary.buy-btns__buy").unwrap(),
-            Selector::parse(".btn-primary.detail-subscribe__btn").unwrap(),
+            Selector::parse(".btn-primary.js-buy").unwrap(),
+            Selector::parse("#subscribe-product").unwrap(),
         );
 
         if description.is_none() || available.is_none() {

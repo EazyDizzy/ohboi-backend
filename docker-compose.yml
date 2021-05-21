@@ -15,6 +15,7 @@ services:
             - 8888:8888
         volumes:
             - ./:/app
+            - /app/target
 
     ohboi_rabbitmq:
         networks:
@@ -33,10 +34,11 @@ services:
             - shopily
         image: postgres:13.3
         logging:
-            driver: "json-file"
-            options:
-                max-size: "200k"
-                max-file: "10"
+            driver: "none"
+#            driver: "json-file"
+#            options:
+#                max-size: "200k"
+#                max-file: "10"
         environment:
             POSTGRES_DB: ohboi
             POSTGRES_USER: postgres
