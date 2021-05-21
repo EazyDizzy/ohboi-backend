@@ -43,10 +43,10 @@ pub async fn start() -> Result<()> {
 
         if parse_result.is_err() {
             let message = format!(
-                "Parsing failed! {:?} {} {}",
-                parse_result.err(),
-                message.source,
-                message.category
+                "Parsing failed! [{source}]({category}) {error:?}",
+                error = parse_result.err(),
+                source = message.source,
+                category = message.category
             );
             sentry::capture_message(message.as_str(), sentry::Level::Warning);
             delivery.nack(BasicNackOptions { requeue: true, multiple: false }).await.expect("nack");

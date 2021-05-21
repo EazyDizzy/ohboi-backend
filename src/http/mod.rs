@@ -45,5 +45,5 @@ pub async fn run_server() -> std::io::Result<()> {
 async fn p404() -> HttpResponse {
     HttpResponse::Ok()
         .content_type("text/plain")
-        .body(format!("404 not found"))
+        .body(String::from("404 not found"))
 }

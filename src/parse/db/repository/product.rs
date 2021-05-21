@@ -14,9 +14,9 @@ pub fn add_image_to_product_details(existent_product_id: i32, file_path: String)
 
     sql_query(
         format!(
-            "UPDATE product SET images = array_append(images, '{}') WHERE id = {}",
-            file_path,
-            existent_product_id
+            "UPDATE product SET images = array_append(images, '{file_path}') WHERE id = {id}",
+            file_path = file_path,
+            id = existent_product_id
         )
     ).execute(connection)
      .expect("Failed pushing new image to the list");

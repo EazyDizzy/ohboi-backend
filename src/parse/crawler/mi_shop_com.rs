@@ -86,10 +86,10 @@ impl Crawler for MiShopComCrawler {
 
                 if price_text.is_err() {
                     let message = format!(
-                        "price_text({}) can't be parsed! {:?} [{}]",
-                        price_html,
-                        price_text.err(),
-                        self.get_source()
+                        "price_text({html}) can't be parsed![{source}] {error:?}",
+                        html = price_html,
+                        source = self.get_source(),
+                        error = price_text.err(),
                     );
                     sentry::capture_message(message.as_str(), sentry::Level::Warning);
                     continue;
@@ -103,10 +103,10 @@ impl Crawler for MiShopComCrawler {
 
             if title.is_empty() || external_id.is_empty() {
                 let message = format!(
-                    "Some param is invalid ({}): title - {}, external_id - {}",
-                    self.get_source(),
-                    title,
-                    external_id,
+                    "Some param is invalid [{source}]: title - {title}, external_id - {id}",
+                    source = self.get_source(),
+                    title = title,
+                    id = external_id,
                 );
                 sentry::capture_message(message.as_str(), sentry::Level::Warning);
                 continue;
@@ -123,7 +123,7 @@ impl Crawler for MiShopComCrawler {
     }
 
     fn get_additional_info_url(&self, external_id: String) -> String {
-        format!("{}{}", self.get_base(), external_id)
+        self.get_base() + &external_id
     }
 
     async fn extract_additional_info(&self, document: &Html, external_id: String) -> Option<AdditionalParsedProductInfo> {

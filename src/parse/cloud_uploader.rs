@@ -18,9 +18,9 @@ pub async fn upload_image_to_cloud(file_path: String, image_url: String) -> bool
 
     if data.is_err() {
         let message = format!(
-            "Cannot get image: {} {:?}",
-            image_url,
-            data.err().unwrap()
+            "Cannot get image: {url} {error:?}",
+            url = image_url,
+            error = data.err().unwrap()
         );
         sentry::capture_message(message.as_str(), sentry::Level::Error);
 
@@ -42,8 +42,9 @@ pub async fn upload_image_to_cloud(file_path: String, image_url: String) -> bool
 
     if !success {
         let message = format!(
-            "Image can't be uploaded to cloud! {:?}",
-            result.err()
+            "Image can't be uploaded to cloud! {url} {error:?}",
+            url = image_url,
+            error = result.err()
         );
         sentry::capture_message(message.as_str(), sentry::Level::Error);
     }

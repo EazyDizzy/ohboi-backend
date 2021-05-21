@@ -56,8 +56,8 @@ pub async fn start() -> Result<()> {
 
             if confirm.is_nack() {
                 let message = format!(
-                    "Message is not acknowledged! Queue: {}",
-                    SETTINGS.amqp.queues.parse_category.name
+                    "Message is not acknowledged! Queue: {queue_name}",
+                    queue_name = SETTINGS.amqp.queues.parse_category.name
                 );
                 sentry::capture_message(message.as_str(), sentry::Level::Warning);
             } else {

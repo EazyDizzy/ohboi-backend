@@ -92,8 +92,8 @@ pub trait Crawler {
                 let lazy_tag = image.value().attr(lazy_attribute);
                 if lazy_tag.is_none() {
                     let message = format!(
-                        "both src & lazy tags not found! [{}]",
-                        self.get_source()
+                        "both src & lazy tags not found! [{source}]",
+                        source = self.get_source()
                     );
                     sentry::capture_message(message.as_str(), sentry::Level::Warning);
                     continue;
@@ -111,8 +111,8 @@ pub trait Crawler {
 
         if description_node.is_none() {
             let message = format!(
-                "description_node not found! [{}]",
-                self.get_source()
+                "description_node not found! [{source}]",
+                source = self.get_source()
             );
             sentry::capture_message(message.as_str(), sentry::Level::Warning);
 
@@ -152,8 +152,8 @@ pub trait Crawler {
 
         if buy_button_node.is_none() && unavailable_button_node.is_none() {
             let message = format!(
-                "both buy_button_node & unavailable_button_node not found! [{}]",
-                self.get_source()
+                "both buy_button_node & unavailable_button_node not found! [{source}]",
+                source = self.get_source()
             );
             sentry::capture_message(message.as_str(), sentry::Level::Warning);
 
@@ -173,24 +173,24 @@ pub fn get_html_nodes<'a>(selectors: &'a ProductHtmlSelectors, element: &'a Elem
     let mut valid = true;
 
     if id_node.is_none() {
-        let message = format!("id_node not found! [{}]", source);
+        let message = format!("id_node not found! [{source}]", source = source);
         sentry::capture_message(message.as_str(), sentry::Level::Warning);
         valid = false;
     }
 
     if title_node.is_none() {
-        let message = format!("title_node not found! [{}]", source);
+        let message = format!("title_node not found! [{source}]", source = source);
         sentry::capture_message(message.as_str(), sentry::Level::Warning);
         valid = false;
     }
     if price_node.is_none() {
-        let message = format!("price_node not found! [{}]", source);
+        let message = format!("price_node not found! [{source}]", source = source);
         sentry::capture_message(message.as_str(), sentry::Level::Warning);
         valid = false;
     }
 
     if available_node.is_none() && unavailable_node.is_none() {
-        let message = format!("both available_node & unavailable_node not found! [{}]", source);
+        let message = format!("both available_node & unavailable_node not found! [{source}]", source = source);
         sentry::capture_message(message.as_str(), sentry::Level::Warning);
         valid = false;
     }

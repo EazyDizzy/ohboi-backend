@@ -101,7 +101,11 @@ pub async fn parse_category(source: &SourceName, category: &CategorySlug) -> Res
                     Err(e) => {
                         amount_of_fails = amount_of_fails + 1;
                         sentry::capture_message(
-                            format!("Request for page failed[{}]: {:?}", source, e).as_str(),
+                            format!(
+                                "Request for page failed[{source}]: {error:?}",
+                                source = source,
+                                error = e
+                            ).as_str(),
                             sentry::Level::Warning,
                         );
 
@@ -173,9 +177,9 @@ async fn save_parsed_product(crawler: &dyn Crawler, parsed_product: &ParsedProdu
             None => {
                 sentry::capture_message(
                     format!(
-                        "No additional info found [{}] for: {}",
-                        crawler.get_source().to_string(),
-                        parsed_product.external_id.to_string()
+                        "No additional info found [{source}] for: {id}",
+                        source = crawler.get_source().to_string(),
+                        id = parsed_product.external_id.to_string()
                     ).as_str(),
                     sentry::Level::Warning,
                 );
@@ -215,9 +219,9 @@ async fn extract_additional_info(external_id: String, crawler: &dyn Crawler) -> 
         }
         Err(e) => {
             let message = format!(
-                "Request for additional data failed! {:?} [{}]",
-                e,
-                crawler.get_source().to_string()
+                "Request for additional data failed! [{source}] {error:?}",
+                source = crawler.get_source().to_string(),
+                error = e,
             );
             sentry::capture_message(message.as_str(), sentry::Level::Warning);
 
@@ -230,11 +234,11 @@ fn dedup_products(products: &mut Vec<ParsedProduct>, source: &SourceName) {
     products.dedup_by(|a, b| {
         if a.external_id == b.external_id && a.price != b.price {
             let message = format!(
-                "Warning! Same external_id, different prices. Parser: {}, id: {}, price1: {}, price2: {}",
-                source.to_string(),
-                a.external_id,
-                a.price.to_string(),
-                b.price.to_string()
+                "Warning! Same external_id, different prices. Parser: {source}, id: {id}, price1: {price1}, price2: {price2}",
+                source = source.to_string(),
+                id = a.external_id,
+                price1 = a.price.to_string(),
+                price2 = b.price.to_string()
             );
             sentry::capture_message(message.as_str(), sentry::Level::Warning);
         }

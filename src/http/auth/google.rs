@@ -23,7 +23,7 @@ pub async fn validator(req: ServiceRequest, credentials: BearerAuth) -> Result<S
             Ok(req)
         }
         Err(e) => {
-            let message = format!("google auth failed: {:?}", e);
+            let message = format!("google auth failed: {error:?}", error = e);
             sentry::capture_message(message.as_str(), sentry::Level::Warning);
 
             let config = req

@@ -103,8 +103,8 @@ pub async fn postpone_page_parsing(message: ParsePageMessage) -> Result<()> {
 
     if confirm.is_nack() {
         let message = format!(
-            "Message is not acknowledged! Queue: {}",
-            SETTINGS.amqp.queues.parse_page.name
+            "Message is not acknowledged! Queue: {queue_name}",
+            queue_name = SETTINGS.amqp.queues.parse_page.name
         );
         sentry::capture_message(message.as_str(), sentry::Level::Warning);
     } else {
@@ -138,8 +138,8 @@ pub async fn postpone_image_parsing(message: UploadImageMessage) -> Result<()> {
 
     if confirm.is_nack() {
         let message = format!(
-            "Message is not acknowledged! Queue: {}",
-            SETTINGS.amqp.queues.parse_image.name
+            "Message is not acknowledged! Queue: {queue_name}",
+            queue_name = SETTINGS.amqp.queues.parse_image.name
         );
         sentry::capture_message(message.as_str(), sentry::Level::Warning);
     } else {
