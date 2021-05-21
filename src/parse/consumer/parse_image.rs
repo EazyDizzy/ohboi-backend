@@ -60,7 +60,7 @@ pub async fn start() -> Result<()> {
                     "id" => source_product.product_id.to_string(),
                 },
             );
-            add_image_to_product_details(source_product.product_id, message.file_path);
+            add_image_to_product_details(source_product.product_id, &message.file_path);
 
             delivery.ack(BasicAckOptions { multiple: false }).await.expect("ack");
         } else {
