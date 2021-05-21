@@ -25,11 +25,11 @@ pub trait Crawler {
 
     fn extract_products(&self, document: &Html) -> Vec<ParsedProduct>;
 
-    fn get_additional_info_url(&self, external_id: String) -> String;
+    fn get_additional_info_url(&self, external_id: &str) -> String;
 
-    async fn extract_additional_info(&self, document: &Html, external_id: String) -> Option<AdditionalParsedProductInfo>;
+    async fn extract_additional_info(&self, document: &Html, external_id: &str) -> Option<AdditionalParsedProductInfo>;
 
-    async fn abstract_extract_images(&self, image_urls: Vec<String>, external_id: String, base: String) -> Vec<String> {
+    async fn abstract_extract_images(&self, image_urls: Vec<String>, external_id: &str, base: String) -> Vec<String> {
         let mut uploaded_urls: Vec<String> = vec![];
         let mut uploads: Vec<_> = vec![];
 
@@ -55,7 +55,7 @@ pub trait Crawler {
                             .push(UploadImageMessage {
                                 file_path: file_path.clone(),
                                 image_url: url,
-                                external_id: external_id.clone(),
+                                external_id: external_id.to_string(),
                                 source: *self.get_source(),
                             });
                         err(file_path)

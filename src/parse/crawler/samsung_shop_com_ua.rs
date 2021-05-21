@@ -117,11 +117,11 @@ impl Crawler for SamsungShopComUaCrawler {
         parsed_products
     }
 
-    fn get_additional_info_url(&self, external_id: String) -> String {
-        self.get_base() + &external_id
+    fn get_additional_info_url(&self, external_id: &str) -> String {
+        self.get_base() + external_id
     }
 
-    async fn extract_additional_info(&self, document: &Html, external_id: String) -> Option<AdditionalParsedProductInfo> {
+    async fn extract_additional_info(&self, document: &Html, external_id: &str) -> Option<AdditionalParsedProductInfo> {
         let description = self.abstract_extract_description(
             &document,
             Selector::parse(".acardeon-item-content-main").unwrap(),
@@ -154,7 +154,7 @@ impl SamsungShopComUaCrawler {
         "https://samsungshop.com.ua".to_string()
     }
 
-    async fn extract_images(&self, document: &Html, external_id: String) -> Vec<String> {
+    async fn extract_images(&self, document: &Html, external_id: &str) -> Vec<String> {
         let images_selector = Selector::parse(".sp-slide img.sp-image").unwrap();
         let image_nodes = document.select(&images_selector);
         let images_urls = self.abstract_extract_image_urls(image_nodes, "data-src");
