@@ -9,7 +9,7 @@ use crate::parse::db::repository::category::get_category;
 use crate::parse::parsed_product::{AdditionalParsedProductInfo, ParsedProduct};
 use crate::schema::product;
 
-pub fn add_image_to_product_details(existent_product_id: i32, file_path: String) {
+pub fn add_image_to_product_details(existent_product_id: i32, file_path: &str) {
     let connection = &db::establish_connection();
 
     sql_query(
