@@ -13,9 +13,8 @@ services:
             - .env
         ports:
             - 8888:8888
-        volumes:
-            - ./:/app
-            - /app/target
+#        volumes:
+#            - ./:/app
 
     ohboi_rabbitmq:
         networks:

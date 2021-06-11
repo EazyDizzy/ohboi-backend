@@ -82,7 +82,7 @@ pub trait Crawler {
     fn abstract_extract_image_urls(&self, image_nodes: Select, lazy_attribute: &str) -> Vec<String> {
         let mut images_urls: Vec<String> = vec![];
 
-        for image in image_nodes.into_iter() {
+        for image in image_nodes {
             let url_path: String;
             let src_tag = image.value().attr("src");
 

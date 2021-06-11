@@ -27,7 +27,7 @@ pub async fn parse_page(url: String, source: &SourceName, category: &CategorySlu
     );
 
     let response = get_data(url).await?;
-    let mut products = parse_html(response, crawler.clone());
+    let mut products = parse_html(response, crawler);
 
     dedup_products(&mut products, source);
 
@@ -79,7 +79,7 @@ pub async fn parse_category(source: &SourceName, category: &CategorySlug) -> Res
             for response in page_responses {
                 match response {
                     Ok(response_data) => {
-                        let parsed = parse_html(response_data, crawler.clone());
+                        let parsed = parse_html(response_data, crawler);
                         let mut amount_of_duplicates = 0;
 
                         parsed.iter().for_each(|x| {
@@ -146,7 +146,7 @@ async fn save_parsed_products(crawler: &dyn Crawler, products: Vec<ParsedProduct
     let mut savings_in_progress = vec![];
 
     for parsed_product in &products {
-        savings_in_progress.push(save_parsed_product(crawler.clone(), parsed_product, category));
+        savings_in_progress.push(save_parsed_product(crawler, parsed_product, category));
 
         if savings_in_progress.len() == SETTINGS.database.product_save_concurrency {
             join_all(savings_in_progress).await;
