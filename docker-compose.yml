@@ -1,6 +1,7 @@
 version: "3"
 services:
     ohboi_backend:
+        container_name: ohboi
         depends_on:
             - ohboi_postgres
             - ohboi_rabbitmq
@@ -13,8 +14,8 @@ services:
             - .env
         ports:
             - 8888:8888
-        volumes:
-            - ./:/app
+#        volumes:
+#            - ./:/app
 
     ohboi_rabbitmq:
         networks:

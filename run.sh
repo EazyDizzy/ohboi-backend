@@ -1,6 +1,7 @@
-sleep 20
-diesel migration run
+#sleep 20
+#cd /app && diesel migration run
 
+/app/target/release/daemon
 /app/target/release/daemon queue_config
 /app/target/release/daemon producer -p ParseCategory 2>&1 | tee /app/logs/ParseCategoryProducer.log &
 /app/target/release/daemon consumer -c ParseCategory 2>&1 | tee /app/logs/ParseCategoryConsumer.log &
@@ -9,6 +10,7 @@ diesel migration run
 # TODO auto restart panicky and died processes
 
 /app/target/release/http 2>&1 | tee /app/logs/http.log
+echo "scripts launched"
 #cargo build
 #
 #./target/debug/daemon queue_config
@@ -19,4 +21,4 @@ diesel migration run
 ## TODO auto restart panicky and died processes
 #
 #./target/debug/http 2>&1 | tee logs/http.log
-sleep 2000
+sleep infinity
