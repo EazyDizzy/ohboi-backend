@@ -16,6 +16,7 @@ services:
             - 8888:8888
         volumes:
             - ./logs:/app/logs
+            - ./migrations:/app/migrations
             - ./run.sh:/app/run.sh
 
     ohboi_rabbitmq:

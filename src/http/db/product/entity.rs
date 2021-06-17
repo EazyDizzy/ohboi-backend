@@ -7,8 +7,8 @@ pub struct Product {
     pub id: i32,
     pub title: String,
     pub description: Option<String>,
-    #[serde(rename = "price")]
     pub lowest_price: BigDecimal,
+    pub highest_price: BigDecimal,
     pub images: Option<Vec<String>>,
     pub category: i32,
     #[serde(skip)]

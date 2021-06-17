@@ -11,6 +11,7 @@ pub struct Product {
     pub description: Option<String>,
     #[serde(rename = "price")]
     pub lowest_price: BigDecimal,
+    pub highest_price: BigDecimal,
     pub images: Option<Vec<String>>,
     pub category: i32,
     #[serde(skip)]
@@ -28,6 +29,7 @@ pub struct NewProduct<'a> {
     pub category: i32,
     pub title: &'a str,
     pub lowest_price: BigDecimal,
+    pub highest_price: BigDecimal,
     pub enabled: bool,
 
     pub created_at: &'a NaiveDateTime,
