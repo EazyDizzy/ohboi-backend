@@ -18,6 +18,7 @@ table! {
         title -> Varchar,
         description -> Nullable<Text>,
         lowest_price -> Numeric,
+        highest_price -> Numeric,
         images -> Nullable<Array<Varchar>>,
         category -> Int4,
         enabled -> Bool,
