@@ -12,6 +12,6 @@ pub async fn create(item: Json<User>) -> HttpResponse {
 
 #[derive(Debug, Serialize, Deserialize, Validate)]
 pub struct User {
-    #[validate(length(min = 1, max = 1000, message = "Username should have length from 1 to 1000"))]
+    #[validate(length(min = 1, max = 1000, message = "should have length from 1 to 1000"))]
     username: String,
 }

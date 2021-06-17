@@ -23,7 +23,7 @@ codegen-units = 1256
 # http
 actix-web = { version = "3.3.2", features = ["compress", "rustls"] }
 actix-web-httpauth = "0.5.0"
-actix-web-validator = "2.1.1"
+actix-web-validator = { git = "https://github.com/Vitaliy-Svinchyak/actix-web-validator", branch = "custom-message-fix" }
 validator = { version = "0.12", features = ["derive"] }
 serde = { version = "1.0.126", features = ["derive"] }
 sentry-actix = "0.22.0"

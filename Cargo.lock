@@ -295,9 +295,8 @@ dependencies = [
 
 [[package]]
 name = "actix-web-validator"
-version = "2.1.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ccc12baceaa6262daa4f00ce1cb60ddb0cab262474595af1993900f1c0fc53eb"
+version = "2.1.2-alpha.0"
+source = "git+https://github.com/Vitaliy-Svinchyak/actix-web-validator?branch=custom-message-fix#b90e7f5664419264c625ee6ff20d1086143a0b03"
 dependencies = [
  "actix-router",
  "actix-web",

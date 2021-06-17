@@ -13,6 +13,6 @@ pub async fn get_source_products(filters: Json<SourceProductFilters>) -> HttpRes
 
 #[derive(Debug, Serialize, Deserialize, Validate)]
 pub struct SourceProductFilters {
-    #[validate(range(min = 1, message = "Id should be bigger than zero"), range(max = 4294967295, message = "Id should be less than 4294967295"))]
+    #[validate(range(min = 1, message = "should be bigger than zero"), range(max = 4294967295, message = "should be less than 4294967295"))]
     id: i32
 }
