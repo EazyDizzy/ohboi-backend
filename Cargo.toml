@@ -21,7 +21,7 @@ codegen-units = 1256
 
 [dependencies]
 # http
-actix-web = { version = "3.3.2", features = ["compress", "openssl"] }
+actix-web = { version = "3.3.2", features = ["compress", "rustls"] }
 actix-web-httpauth = "0.5.0"
 actix-web-validator = "2.0.3"
 validator = { version = "0.12", features = ["derive"] }
@@ -41,7 +41,7 @@ structopt = { version = "0.3" }
 clap = "2.33.3"
 lapin = "1.6.6" # rabbitmq
 scraper = "0.12.0"
-reqwest = { version = "0.10.9", features = ["gzip"] }
+reqwest = { version = "0.10.9", features = ["gzip", "rustls-tls"] }
 rusoto_core = "0.45.0"
 rusoto_s3 = "0.45.0"
 # util

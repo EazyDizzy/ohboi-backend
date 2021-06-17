@@ -9,13 +9,14 @@ services:
             - shopily
         build:
             context: .
-        command: bash /app/run.sh
+        command: bash run.sh
         env_file:
             - .env
         ports:
             - 8888:8888
-#        volumes:
-#            - ./:/app
+        volumes:
+            - ./logs:/app/logs
+            - ./run.sh:/app/run.sh
 
     ohboi_rabbitmq:
         networks:

@@ -19,3 +19,10 @@ FROM pg_stat_activity;
 ```
 docker builder prune --filter type=exec.cachemount
 ```
+
+### TO clear docker dead things
+```
+docker rm $(docker ps -qa --no-trunc --filter "status=exited")
+docker volume ls -qf "dangling=true" | xargs docker volume rm
+docker rmi $(docker images --filter "dangling=true" -q --no-trunc)
+```
