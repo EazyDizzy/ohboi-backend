@@ -23,7 +23,6 @@ pub async fn run_server() -> std::io::Result<()> {
             .service(web::resource("/user").route(web::post().to(user::create)))
             .service(web::resource("/categories").route(web::get().to(category::get_all_categories)))
             .service(web::resource("/sources").route(web::get().to(source::get_all_sources)))
-            // TODO return images
             .service(web::resource("/products").route(web::post().to(product::get_products)))
             // TODO return dates
             .service(web::resource("/source_products").route(web::post().to(source_product::get_source_products)))

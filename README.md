@@ -26,3 +26,6 @@ docker rm $(docker ps -qa --no-trunc --filter "status=exited")
 docker volume ls -qf "dangling=true" | xargs docker volume rm
 docker rmi $(docker images --filter "dangling=true" -q --no-trunc)
 ```
+
+### To check image security
+https://aquasecurity.github.io/trivy/v0.18.3/
