@@ -1,48 +1,41 @@
-FROM rust:1.52
+ARG BASE_IMAGE=rust:1.52.1
 
+# Computes the recipe file
+FROM $BASE_IMAGE as planner
 WORKDIR /app
-COPY . /app
+RUN cargo install cargo-chef --version 0.1.21
+COPY . .
+RUN cargo chef prepare --recipe-path recipe.json
 
+# Caches dependencies
+FROM $BASE_IMAGE as cacher
+WORKDIR /app
+RUN cargo install cargo-chef --version 0.1.21
+COPY --from=planner /app/recipe.json recipe.json
 RUN cargo install diesel_cli --no-default-features --features postgres
+RUN cargo chef cook --release --recipe-path recipe.json
+
+# Builds the binary
+FROM $BASE_IMAGE as builder
+WORKDIR /app
+COPY . .
+# Copy compiled dependencies
+COPY --from=cacher /app/target /app/target
+# Copy cached dependencies
+COPY --from=cacher $CARGO_HOME $CARGO_HOME
 RUN cargo build --release
 
-## Dockerfile.distroless
-#
-#ARG BASE_IMAGE=rust:1.52.1
-#
-#FROM $BASE_IMAGE as planner
-#WORKDIR app
-#RUN cargo install cargo-chef --version 0.1.20
-#COPY . .
-#RUN cargo chef prepare  --recipe-path recipe.json
-#
-#FROM $BASE_IMAGE as cacher
-#WORKDIR app
-#RUN cargo install diesel_cli --no-default-features --features postgres
-#RUN cargo install cargo-chef --version 0.1.20
-#COPY --from=planner /app/recipe.json recipe.json
-#RUN cargo chef cook --release --recipe-path recipe.json
-#
-#FROM $BASE_IMAGE as builder
-#WORKDIR app
-#COPY . .
-## Copy over the cached dependencies
-#COPY --from=cacher /app/target target
-#COPY --from=cacher $CARGO_HOME $CARGO_HOME
-#RUN cargo build --release
-#
-#FROM gcr.io/distroless/cc-debian10
-#COPY --from=builder /app/target/release/ohboi_backend /
-
-#
-# syntax=docker/dockerfile:1.2
-#FROM rust:1.52 AS builder
-#
-#WORKDIR /app
-#COPY . .
-#RUN cargo install diesel_cli --no-default-features --features postgres
-## Copy executable out of the cache so it is available in the final image.
-#RUN cp target/debug/ohboi_backend ./ohboi_backend
-##
-#FROM rust:1.52
-#COPY --from=builder /home/rust/src/ohboi_backend .
+FROM debian:buster-slim as runtime
+WORKDIR /app
+COPY run.sh .
+COPY migrations ./migrations
+# Copying only compiled binaries
+COPY --from=builder /app/target/release/daemon ./daemon
+COPY --from=builder /app/target/release/http ./http
+# Copying diesel to have opportunity execute migrations before server start
+COPY --from=cacher /usr/local/cargo/bin/diesel ./bin/diesel
+# libpq-dev is a postgresl client
+# ca-certificates are for ssl certificate resolution
+RUN apt-get update \
+    && apt-get install -y libpq-dev ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
