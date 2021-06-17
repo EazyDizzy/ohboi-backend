@@ -1,5 +1,3 @@
-use std::borrow::Borrow;
-
 use bigdecimal::{BigDecimal, ToPrimitive};
 use chrono::Utc;
 use diesel::{QueryDsl, RunQueryDsl, sql_query};
@@ -71,18 +69,20 @@ pub fn update_price_range_if_needed(product_id: &i32, new_price: f64) {
 
     let connection = &db::establish_connection();
     let existing_product = get_product_by_id(product_id).unwrap();
+    let current_lowest_price = existing_product.lowest_price.to_f64().unwrap();
+    let current_highest_price = existing_product.highest_price.to_f64().unwrap();
 
     let fresh_product_is_cheaper = new_price.lt(
-        existing_product.lowest_price.to_f64().unwrap().borrow()
+        &current_lowest_price
     );
-    let current_product_has_zero_price = existing_product.lowest_price.to_f64().unwrap().eq(0.to_f64().unwrap().borrow());
+    let current_product_has_zero_price = current_lowest_price.eq(&0.to_f64().unwrap());
     let should_update_lowest_price = fresh_product_is_cheaper || current_product_has_zero_price;
     let should_update_highest_price = new_price.gt(
-        existing_product.highest_price.to_f64().unwrap().borrow()
+        &current_highest_price
     );
 
-    let mut new_lowest_price = existing_product.lowest_price.to_f64().unwrap();
-    let mut new_highest_price = existing_product.highest_price.to_f64().unwrap();
+    let mut new_lowest_price = current_lowest_price;
+    let mut new_highest_price = current_highest_price;
     if should_update_lowest_price {
         new_lowest_price = new_price;
     }
