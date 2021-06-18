@@ -8,6 +8,7 @@ pub struct Source {
     pub id: i32,
     pub site_name: String,
     pub logo: String,
+    pub currency: String,
     pub enabled: bool,
 
     #[serde(skip)]

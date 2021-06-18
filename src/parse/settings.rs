@@ -16,6 +16,7 @@ pub struct AmqpQueueSettings {
 #[derive(Debug, Deserialize)]
 pub struct AmqpQueues {
     pub parse_category: AmqpQueueSettings,
+    pub pull_exchange_rates: AmqpQueueSettings,
     pub parse_image: AmqpQueueSettings,
     pub parse_page: AmqpQueueSettings,
 }
@@ -96,8 +97,21 @@ impl Settings {
                 .unwrap().parse().unwrap(),
         };
 
+        let pull_exchange_rates_settings = AmqpQueueSettings {
+            name: dotenv::var("AMQP_PULL_EXCHANGE_RATES_QUEUE_NAME")
+                .or_else::<String, _>(|_| {
+                    Ok(String::from("pull.exchange_rates"))
+                }).unwrap(),
+            prefetch: dotenv::var("AMQP_PULL_EXCHANGE_RATES_QUEUE_PREFETCH_SIZE")
+                .or_else::<String, _>(|_| {
+                    Ok(String::from("1"))
+                })
+                .unwrap().parse().unwrap(),
+        };
+
         let queue_settings = AmqpQueues {
             parse_category: parse_category_settings,
+            pull_exchange_rates: pull_exchange_rates_settings,
             parse_image: parse_upload_settings,
             parse_page: parse_page_settings,
         };

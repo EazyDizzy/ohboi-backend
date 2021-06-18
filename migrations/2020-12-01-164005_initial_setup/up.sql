@@ -12,6 +12,7 @@ create table source (
     id              serial primary key,
     site_name       varchar not null,
     logo            varchar not null,
+    currency        varchar not null,
     enabled         bool not null,
 
     created_at      timestamp not null default now(),

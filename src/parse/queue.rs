@@ -7,12 +7,12 @@ use crate::parse::consumer::parse_image::UploadImageMessage;
 use crate::parse::consumer::parse_page::ParsePageMessage;
 use crate::SETTINGS;
 
-pub async fn declare_parse_page_queue() -> Result<Queue> {
+pub async fn declare_queue(name: &String) -> Result<Queue> {
     let channel = get_channel().await?;
 
     let queue = channel
         .queue_declare(
-            &SETTINGS.amqp.queues.parse_page.name,
+            name,
             QueueDeclareOptions {
                 passive: false,
                 durable: true,
@@ -23,45 +23,6 @@ pub async fn declare_parse_page_queue() -> Result<Queue> {
             FieldTable::default(),
         )
         .await?;
-    Ok(queue)
-}
-
-pub async fn declare_parse_image_queue() -> Result<Queue> {
-    let channel = get_channel().await?;
-
-    let queue = channel
-        .queue_declare(
-            &SETTINGS.amqp.queues.parse_image.name,
-            QueueDeclareOptions {
-                passive: false,
-                durable: true,
-                exclusive: false,
-                auto_delete: false,
-                nowait: false,
-            },
-            FieldTable::default(),
-        )
-        .await?;
-    Ok(queue)
-}
-
-pub async fn declare_parse_category_queue() -> Result<Queue> {
-    let channel = get_channel().await?;
-
-    let queue = channel
-        .queue_declare(
-            &SETTINGS.amqp.queues.parse_category.name,
-            QueueDeclareOptions {
-                passive: false,
-                durable: true,
-                exclusive: false,
-                auto_delete: false,
-                nowait: false,
-            },
-            FieldTable::default(),
-        )
-        .await?;
-
     Ok(queue)
 }
 
