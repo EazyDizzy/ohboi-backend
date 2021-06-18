@@ -28,9 +28,12 @@ docker rmi $(docker images --filter "dangling=true" -q --no-trunc)
 ```
 
 ### To check image security
-https://aquasecurity.github.io/trivy/v0.18.3/
+install https://aquasecurity.github.io/trivy/v0.18.3/
+```
+trivy ohboi_backend_ohboi_backend > trivy_security.txt
+```
 
 ### To start parse job manually
 ```
-docker exec -ti ohboi `/app/daemon producer -p ParseCategory 2>&1 | tee /app/logs/ParseCategoryProducer.log &`
+/app/daemon producer -p ParseCategory 2>&1 | tee /app/logs/ParseCategoryProducer.log &
 ```

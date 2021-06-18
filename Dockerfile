@@ -39,8 +39,8 @@ COPY --from=cacher /usr/local/cargo/bin/diesel ./bin/diesel
 # cron for queue producers
 RUN apt-get update \
     && apt-get install -y libpq-dev ca-certificates cron
-
+RUN apt-get remove -y aptitude aptitude-common mailutils mailutils-common mariadb-common mysql-common guile-2.2-libs:amd64
 RUN rm -rf /var/lib/apt/lists/* \
-    && apt-get clean \
-    && apt-get autoclean \
-    && apt-get autoremove
+    && apt-get autoremove -y \
+    && apt-get clean -y \
+    && apt-get autoclean -y
