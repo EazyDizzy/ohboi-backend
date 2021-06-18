@@ -36,6 +36,7 @@ COPY --from=builder /app/target/release/http ./http
 COPY --from=cacher /usr/local/cargo/bin/diesel ./bin/diesel
 # libpq-dev is a postgresl client
 # ca-certificates are for ssl certificate resolution
+# cron for queue producers
 RUN apt-get update \
-    && apt-get install -y libpq-dev ca-certificates \
+    && apt-get install -y libpq-dev ca-certificates cron \
     && rm -rf /var/lib/apt/lists/*

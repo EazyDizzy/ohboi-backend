@@ -31,16 +31,16 @@ services:
             RABBITMQ_DEFAULT_PASS: root
 
     ohboi_postgres:
-        command: ["postgres", "-c", "log_statement=all", "-c", "log_destination=stderr"]
+        command: [ "postgres", "-c", "log_statement=all", "-c", "log_destination=stderr" ]
         networks:
             - shopily
         image: postgres:13.3
         logging:
-            driver: "none"
-#            driver: "json-file"
-#            options:
-#                max-size: "200k"
-#                max-file: "10"
+            #            driver: "none"
+            driver: "json-file"
+            options:
+                max-size: "200k"
+                max-file: "10"
         environment:
             POSTGRES_DB: ohboi
             POSTGRES_USER: postgres
