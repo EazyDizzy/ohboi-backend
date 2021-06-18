@@ -38,8 +38,9 @@ COPY --from=cacher /usr/local/cargo/bin/diesel ./bin/diesel
 # ca-certificates are for ssl certificate resolution
 # cron for queue producers
 RUN apt-get update \
-    && apt-get install -y libpq-dev ca-certificates cron \
-    && rm -rf /var/lib/apt/lists/*
-RUN apt-get clean \
+    && apt-get install -y libpq-dev ca-certificates cron
+
+RUN rm -rf /var/lib/apt/lists/* \
+    && apt-get clean \
     && apt-get autoclean \
     && apt-get autoremove

@@ -32,5 +32,5 @@ https://aquasecurity.github.io/trivy/v0.18.3/
 
 ### To start parse job manually
 ```
-/app/daemon producer -p ParseCategory 2>&1 | tee /app/logs/ParseCategoryProducer.log &
+docker exec -ti ohboi `/app/daemon producer -p ParseCategory 2>&1 | tee /app/logs/ParseCategoryProducer.log &`
 ```
