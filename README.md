@@ -29,3 +29,8 @@ docker rmi $(docker images --filter "dangling=true" -q --no-trunc)
 
 ### To check image security
 https://aquasecurity.github.io/trivy/v0.18.3/
+
+### To start parse job manually
+```
+/app/daemon producer -p ParseCategory 2>&1 | tee /app/logs/ParseCategoryProducer.log &
+```
