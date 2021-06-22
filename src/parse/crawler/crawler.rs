@@ -19,6 +19,8 @@ use crate::parse::queue::postpone_image_parsing;
 pub trait Crawler {
     fn get_source(&self) -> &SourceName;
 
+    fn get_currency(&self) -> &str;
+
     fn get_categories(&self) -> Vec<&CategorySlug>;
 
     fn get_next_page_urls(&self, category: &CategorySlug) -> Vec<String>;

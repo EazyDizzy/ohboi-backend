@@ -165,7 +165,7 @@ async fn save_parsed_products(crawler: &dyn Crawler, products: Vec<ParsedProduct
 }
 
 async fn save_parsed_product(crawler: &dyn Crawler, parsed_product: &ParsedProduct, category: &CategorySlug) {
-    let product = create_if_not_exists(parsed_product, &category);
+    let product = create_if_not_exists(parsed_product, &category, crawler.get_currency());
 
     if product.description.is_none() || product.images.is_none() {
         let details = extract_additional_info(
@@ -190,7 +190,7 @@ async fn save_parsed_product(crawler: &dyn Crawler, parsed_product: &ParsedProdu
         }
     }
 
-    link_to_product(&product, parsed_product, crawler.get_source());
+    link_to_product(&product, parsed_product, crawler.get_source(), crawler.get_currency());
 }
 
 fn parse_html(data: String, crawler: &dyn Crawler) -> Vec<ParsedProduct> {

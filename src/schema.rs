@@ -63,6 +63,7 @@ table! {
         source_id -> Int4,
         product_id -> Int4,
         external_id -> Varchar,
+        original_price -> Numeric,
         price -> Numeric,
         enabled -> Bool,
         updated_at -> Timestamp,

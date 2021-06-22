@@ -15,6 +15,10 @@ impl Crawler for MiShopComCrawler {
         &SourceName::MiShopCom
     }
 
+    fn get_currency(&self) -> &str {
+        "RUB"
+    }
+
     fn get_categories(&self) -> Vec<&CategorySlug> {
         vec![
             &CategorySlug::Smartphone,

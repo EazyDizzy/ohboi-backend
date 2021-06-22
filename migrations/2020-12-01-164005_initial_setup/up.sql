@@ -46,6 +46,7 @@ create table source_product (
     source_id       int not null,
     product_id      int not null,
     external_id     varchar not null,
+    original_price  numeric not null,
     price           numeric not null,
     enabled         bool not null,
 

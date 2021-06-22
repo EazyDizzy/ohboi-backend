@@ -13,6 +13,10 @@ pub struct SamsungShopComUaCrawler {}
 impl Crawler for SamsungShopComUaCrawler {
     fn get_source(&self) -> &SourceName { &SourceName::SamsungShopComUa }
 
+    fn get_currency(&self) -> &str {
+        "UAH"
+    }
+
     fn get_categories(&self) -> Vec<&CategorySlug> {
         vec![
             &CategorySlug::Watches,
@@ -73,9 +77,9 @@ impl Crawler for SamsungShopComUaCrawler {
                 let price_html = product_nodes.price.inner_html();
 
                 let price_text = price_re.find(price_html.as_str()).unwrap()
-                                         .as_str().to_string()
-                                         .replace(" ", "")
-                                         .parse::<f64>();
+                    .as_str().to_string()
+                    .replace(" ", "")
+                    .parse::<f64>();
 
                 if price_text.is_err() {
                     let message = format!(

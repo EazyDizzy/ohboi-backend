@@ -7,6 +7,7 @@ use crate::parse::db;
 use crate::parse::db::entity::{CategorySlug, NewProduct, Product};
 use crate::parse::db::repository::category::get_category;
 use crate::parse::parsed_product::{AdditionalParsedProductInfo, ParsedProduct};
+use crate::parse::service::currency_converter::convert_from;
 use crate::schema::product;
 
 pub fn add_image_to_product_details(existent_product_id: i32, file_path: &str) {
@@ -43,12 +44,17 @@ pub fn update_details(existent_product: &Product, additional_info: &AdditionalPa
         .expect("Failed to update product price");
 }
 
-pub fn create_if_not_exists(parsed_product: &ParsedProduct, product_category: &CategorySlug) -> Product {
+pub fn create_if_not_exists(parsed_product: &ParsedProduct, product_category: &CategorySlug, currency: &str) -> Product {
     let existed_product = get_product_by_title(parsed_product.title.as_str());
 
     if existed_product.is_none() {
         create(
-            &parsed_product,
+            &ParsedProduct {
+                title: parsed_product.title.clone(),
+                price: convert_from(parsed_product.price, currency),
+                available: parsed_product.available,
+                external_id: parsed_product.external_id.clone()
+            },
             product_category,
         )
     } else {

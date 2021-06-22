@@ -77,7 +77,9 @@ pub async fn start() -> Result<()> {
 
         let save_result = create_or_update("RUB", response.rates.rub)
             && create_or_update("UAH", response.rates.uah)
-            && create_or_update("USD", response.rates.usd);
+            && create_or_update("USD", response.rates.usd)
+            && create_or_update("EUR", 1.0)
+            ;
 
         if !save_result {
             sentry::capture_message("Saving of exchange rate failed!", sentry::Level::Warning);

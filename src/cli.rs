@@ -66,7 +66,7 @@ async fn main() {
 
     if args.worker_type == "queue_config" {
         let queues = [
-            &SETTINGS.amqp.queues.parse_page.name,
+            &SETTINGS.amqp.queues.parse_category.name,
             &SETTINGS.amqp.queues.parse_image.name,
             &SETTINGS.amqp.queues.parse_page.name,
             &SETTINGS.amqp.queues.pull_exchange_rates.name,
@@ -77,16 +77,6 @@ async fn main() {
                 log::error!("Queue declaration failed. {} {:?}", queue_name, declare);
             }
         }
-        // let declare1 = declare_queue(&SETTINGS.amqp.queues.parse_page.name).await;
-        // let declare2 = declare_queue(&SETTINGS.amqp.queues.parse_image.name).await;
-        // let declare3 = declare_queue(&SETTINGS.amqp.queues.parse_page.name).await;
-        //
-        // if declare1.is_err() || declare2.is_err() || declare3.is_err() {
-        //     log::error!("Queue declaration failed.");
-        //     log::error!("parse_category: {:?}", declare1);
-        //     log::error!("parse_image: {:?}", declare2);
-        //     log::error!("parse_page: {:?}", declare3);
-        // }
         return;
     }
 
@@ -112,7 +102,6 @@ async fn main() {
             }
             ConsumerName::PullExchangeRates => {
                 let _res = parse::consumer::pull_exchange_rates::start().await;
-
             }
         }
     }
