@@ -5,7 +5,7 @@ use scraper::{Html, Selector};
 use crate::my_enum::CurrencyEnum;
 use crate::parse::crawler::crawler::{Crawler, get_html_nodes, ProductHtmlSelectors};
 use crate::parse::db::entity::{CategorySlug, SourceName};
-use crate::parse::parsed_product::{AdditionalParsedProductInfo, ParsedProduct};
+use crate::parse::parsed_product::{AdditionalParsedProductInfo, LocalParsedProduct};
 
 #[derive(Clone)]
 pub struct SamsungShopComUaCrawler {}
@@ -42,7 +42,7 @@ impl Crawler for SamsungShopComUaCrawler {
         }).collect()
     }
 
-    fn extract_products(&self, document: &Html) -> Vec<ParsedProduct> {
+    fn extract_products(&self, document: &Html) -> Vec<LocalParsedProduct> {
         // to not include russian words in title
         let title_re: Regex = Regex::new(r"[a-zA-Z0-9 \-+()]{2,}").unwrap();
         let price_re: Regex = Regex::new(r"[0-9][0-9 ]*[0-9]").unwrap();
@@ -110,7 +110,7 @@ impl Crawler for SamsungShopComUaCrawler {
                 continue;
             }
 
-            parsed_products.push(ParsedProduct {
+            parsed_products.push(LocalParsedProduct {
                 title: title.clone(),
                 price,
                 available,

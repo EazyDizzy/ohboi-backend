@@ -2,14 +2,12 @@ use bigdecimal::BigDecimal;
 use chrono::Utc;
 use diesel::{BoolExpressionMethods, ExpressionMethods, QueryDsl, RunQueryDsl};
 
-use crate::my_enum::CurrencyEnum;
 use crate::parse::db;
 use crate::parse::db::entity::{NewSourceProduct, Product, SourceName, SourceProduct};
 use crate::parse::db::repository::product::update_price_range_if_needed;
 use crate::parse::db::repository::source::get_source;
 use crate::parse::db::repository::source_product_price_history::add_to_history_if_not_exists;
-use crate::parse::parsed_product::ParsedProduct;
-use crate::parse::service::currency_converter::convert_from;
+use crate::parse::parsed_product::InternationalParsedProduct;
 use crate::schema::source_product;
 
 pub fn get_by_source_and_external_id(source: &SourceName, expected_external_id: String) -> Option<SourceProduct> {
@@ -31,7 +29,7 @@ pub fn get_by_source_and_external_id(source: &SourceName, expected_external_id: 
     results.into_iter().next()
 }
 
-pub fn link_to_product(product: &Product, parsed_product: &ParsedProduct, source: &SourceName, currency: &CurrencyEnum) {
+pub fn link_to_product(product: &Product, parsed_product: &InternationalParsedProduct, source: &SourceName) {
     let source = get_source(source);
 
     let now = Utc::now();
@@ -39,8 +37,8 @@ pub fn link_to_product(product: &Product, parsed_product: &ParsedProduct, source
         source_id: source.id,
         product_id: product.id,
         enabled: parsed_product.available,
-        original_price: BigDecimal::from(parsed_product.price),
-        price: BigDecimal::from(convert_from(parsed_product.price, currency)),
+        original_price: BigDecimal::from(parsed_product.original_price),
+        price: BigDecimal::from(parsed_product.price),
         updated_at: &now.naive_utc(),
         external_id: &parsed_product.external_id,
     };

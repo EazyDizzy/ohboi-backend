@@ -5,7 +5,7 @@ use scraper::{Html, Selector};
 use crate::my_enum::CurrencyEnum;
 use crate::parse::crawler::crawler::{Crawler, get_html_nodes, ProductHtmlSelectors};
 use crate::parse::db::entity::{CategorySlug, SourceName};
-use crate::parse::parsed_product::{AdditionalParsedProductInfo, ParsedProduct};
+use crate::parse::parsed_product::{AdditionalParsedProductInfo, LocalParsedProduct};
 
 #[derive(Clone)]
 pub struct MiShopComCrawler {}
@@ -50,7 +50,7 @@ impl Crawler for MiShopComCrawler {
         }).collect()
     }
 
-    fn extract_products(&self, document: &Html) -> Vec<ParsedProduct> {
+    fn extract_products(&self, document: &Html) -> Vec<LocalParsedProduct> {
         let mut parsed_products = vec![];
         let items_selector = Selector::parse(".catalog-item").unwrap();
 
@@ -116,7 +116,7 @@ impl Crawler for MiShopComCrawler {
                 sentry::capture_message(message.as_str(), sentry::Level::Warning);
                 continue;
             }
-            parsed_products.push(ParsedProduct {
+            parsed_products.push(LocalParsedProduct {
                 title,
                 price,
                 available,

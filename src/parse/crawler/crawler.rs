@@ -12,7 +12,7 @@ use scraper::html::Select;
 use crate::parse::cloud_uploader::upload_image_to_cloud;
 use crate::parse::consumer::parse_image::UploadImageMessage;
 use crate::parse::db::entity::{CategorySlug, SourceName};
-use crate::parse::parsed_product::{AdditionalParsedProductInfo, ParsedProduct};
+use crate::parse::parsed_product::{AdditionalParsedProductInfo, LocalParsedProduct};
 use crate::parse::queue::postpone_image_parsing;
 use crate::my_enum::CurrencyEnum;
 
@@ -26,7 +26,7 @@ pub trait Crawler {
 
     fn get_next_page_urls(&self, category: &CategorySlug) -> Vec<String>;
 
-    fn extract_products(&self, document: &Html) -> Vec<ParsedProduct>;
+    fn extract_products(&self, document: &Html) -> Vec<LocalParsedProduct>;
 
     fn get_additional_info_url(&self, external_id: &str) -> String;
 
