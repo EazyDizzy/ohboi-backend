@@ -35,6 +35,7 @@ trivy ohboi_backend_ohboi_backend > trivy_security.txt
 
 ### To start parse job manually
 ```
+docker exec -ti ohboi bash
 /app/daemon producer -p PullExchangeRates
 /app/daemon producer -p ParseCategory
 ```
