@@ -15,7 +15,7 @@ table! {
 
     exchange_rate (id) {
         id -> Int4,
-        currency_code -> Varchar,
+        currency -> Currency_enum,
         rate -> Numeric,
         updated_at -> Timestamp,
     }
@@ -47,7 +47,7 @@ table! {
         id -> Int4,
         site_name -> Varchar,
         logo -> Varchar,
-        currency -> Varchar,
+        currency -> Currency_enum,
         enabled -> Bool,
         created_at -> Timestamp,
         updated_at -> Timestamp,

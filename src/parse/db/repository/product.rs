@@ -3,6 +3,7 @@ use chrono::Utc;
 use diesel::{QueryDsl, RunQueryDsl, sql_query};
 
 use crate::diesel::prelude::*;
+use crate::my_enum::CurrencyEnum;
 use crate::parse::db;
 use crate::parse::db::entity::{CategorySlug, NewProduct, Product};
 use crate::parse::db::repository::category::get_category;
@@ -44,7 +45,7 @@ pub fn update_details(existent_product: &Product, additional_info: &AdditionalPa
         .expect("Failed to update product price");
 }
 
-pub fn create_if_not_exists(parsed_product: &ParsedProduct, product_category: &CategorySlug, currency: &str) -> Product {
+pub fn create_if_not_exists(parsed_product: &ParsedProduct, product_category: &CategorySlug, currency: &CurrencyEnum) -> Product {
     let existed_product = get_product_by_title(parsed_product.title.as_str());
 
     if existed_product.is_none() {
@@ -53,7 +54,7 @@ pub fn create_if_not_exists(parsed_product: &ParsedProduct, product_category: &C
                 title: parsed_product.title.clone(),
                 price: convert_from(parsed_product.price, currency),
                 available: parsed_product.available,
-                external_id: parsed_product.external_id.clone()
+                external_id: parsed_product.external_id.clone(),
             },
             product_category,
         )

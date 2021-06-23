@@ -2,6 +2,7 @@ use async_trait::async_trait;
 use regex::Regex;
 use scraper::{Html, Selector};
 
+use crate::my_enum::CurrencyEnum;
 use crate::parse::crawler::crawler::{Crawler, get_html_nodes, ProductHtmlSelectors};
 use crate::parse::db::entity::{CategorySlug, SourceName};
 use crate::parse::parsed_product::{AdditionalParsedProductInfo, ParsedProduct};
@@ -13,8 +14,8 @@ pub struct SamsungShopComUaCrawler {}
 impl Crawler for SamsungShopComUaCrawler {
     fn get_source(&self) -> &SourceName { &SourceName::SamsungShopComUa }
 
-    fn get_currency(&self) -> &str {
-        "UAH"
+    fn get_currency(&self) -> &CurrencyEnum {
+        &CurrencyEnum::UAH
     }
 
     fn get_categories(&self) -> Vec<&CategorySlug> {

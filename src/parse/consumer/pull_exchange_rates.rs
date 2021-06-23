@@ -6,6 +6,7 @@ use serde::Deserialize;
 use serde_json::error::Result as SerdeResult;
 
 use crate::local_sentry::add_category_breadcrumb;
+use crate::my_enum::CurrencyEnum;
 use crate::parse::db::repository::exchange_rate::create_or_update;
 use crate::parse::queue::get_channel;
 use crate::parse::requester::get_data;
@@ -75,10 +76,10 @@ pub async fn start() -> Result<()> {
             continue;
         }
 
-        let save_result = create_or_update("RUB", response.rates.rub)
-            && create_or_update("UAH", response.rates.uah)
-            && create_or_update("USD", response.rates.usd)
-            && create_or_update("EUR", 1.0)
+        let save_result = create_or_update(&CurrencyEnum::RUB, response.rates.rub)
+            && create_or_update(&CurrencyEnum::UAH, response.rates.uah)
+            && create_or_update(&CurrencyEnum::USD, response.rates.usd)
+            && create_or_update(&CurrencyEnum::EUR, 1.0)
             ;
 
         if !save_result {

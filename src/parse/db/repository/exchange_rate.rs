@@ -3,16 +3,17 @@ use chrono::Utc;
 use diesel::{QueryDsl, RunQueryDsl};
 
 use crate::diesel::prelude::*;
+use crate::my_enum::CurrencyEnum;
 use crate::parse::db;
 use crate::parse::db::entity::{ExchangeRate, NewExchangeRate};
 use crate::schema::exchange_rate;
 
-pub fn get_exchange_rate_by_code(sought_currency_code: &str) -> Option<ExchangeRate> {
+pub fn get_exchange_rate_by_code(sought_currency: &CurrencyEnum) -> Option<ExchangeRate> {
     use crate::schema::exchange_rate::dsl::*;
 
     let connection = &db::establish_connection();
 
-    let target = exchange_rate.filter(currency_code.eq(sought_currency_code));
+    let target = exchange_rate.filter(currency.eq(sought_currency));
     let results: Vec<ExchangeRate> = target
         .limit(1)
         .load::<ExchangeRate>(connection)
@@ -21,28 +22,28 @@ pub fn get_exchange_rate_by_code(sought_currency_code: &str) -> Option<ExchangeR
     results.into_iter().next()
 }
 
-pub fn create_or_update(currency_code: &str, rate: f32) -> bool {
-    let existed_rate = get_exchange_rate_by_code(currency_code);
+pub fn create_or_update(currency: &CurrencyEnum, rate: f32) -> bool {
+    let existed_rate = get_exchange_rate_by_code(currency);
 
     if existed_rate.is_none() {
         create(
-            currency_code,
+            currency,
             rate,
         )
     } else {
         update(
-            currency_code,
+            currency,
             rate,
         )
     }
 }
 
-fn create(currency_code: &str, rate: f32) -> bool {
+fn create(currency: &CurrencyEnum, rate: f32) -> bool {
     let connection = &db::establish_connection();
     let now = Utc::now();
 
     let new_rate = NewExchangeRate {
-        currency_code,
+        currency,
         rate: BigDecimal::from(rate),
         updated_at: &now.naive_utc(),
     };
@@ -54,13 +55,13 @@ fn create(currency_code: &str, rate: f32) -> bool {
     insert_result.is_ok()
 }
 
-fn update(sought_currency_code: &str, new_rate: f32) -> bool {
+fn update(sought_currency: &CurrencyEnum, new_rate: f32) -> bool {
     use crate::schema::exchange_rate::dsl::*;
 
     let connection = &db::establish_connection();
     let now = Utc::now();
 
-    let target = exchange_rate.filter(currency_code.eq(sought_currency_code));
+    let target = exchange_rate.filter(currency.eq(sought_currency));
 
     let update_result = diesel::update(target)
         .set((

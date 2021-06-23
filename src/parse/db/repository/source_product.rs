@@ -2,6 +2,7 @@ use bigdecimal::BigDecimal;
 use chrono::Utc;
 use diesel::{BoolExpressionMethods, ExpressionMethods, QueryDsl, RunQueryDsl};
 
+use crate::my_enum::CurrencyEnum;
 use crate::parse::db;
 use crate::parse::db::entity::{NewSourceProduct, Product, SourceName, SourceProduct};
 use crate::parse::db::repository::product::update_price_range_if_needed;
@@ -30,7 +31,7 @@ pub fn get_by_source_and_external_id(source: &SourceName, expected_external_id: 
     results.into_iter().next()
 }
 
-pub fn link_to_product(product: &Product, parsed_product: &ParsedProduct, source: &SourceName, currency: &str) {
+pub fn link_to_product(product: &Product, parsed_product: &ParsedProduct, source: &SourceName, currency: &CurrencyEnum) {
     let source = get_source(source);
 
     let now = Utc::now();

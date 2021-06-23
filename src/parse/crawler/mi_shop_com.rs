@@ -2,6 +2,7 @@ use async_trait::async_trait;
 use regex::Regex;
 use scraper::{Html, Selector};
 
+use crate::my_enum::CurrencyEnum;
 use crate::parse::crawler::crawler::{Crawler, get_html_nodes, ProductHtmlSelectors};
 use crate::parse::db::entity::{CategorySlug, SourceName};
 use crate::parse::parsed_product::{AdditionalParsedProductInfo, ParsedProduct};
@@ -15,8 +16,8 @@ impl Crawler for MiShopComCrawler {
         &SourceName::MiShopCom
     }
 
-    fn get_currency(&self) -> &str {
-        "RUB"
+    fn get_currency(&self) -> &CurrencyEnum {
+        &CurrencyEnum::RUB
     }
 
     fn get_categories(&self) -> Vec<&CategorySlug> {

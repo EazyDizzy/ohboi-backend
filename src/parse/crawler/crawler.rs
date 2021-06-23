@@ -14,12 +14,13 @@ use crate::parse::consumer::parse_image::UploadImageMessage;
 use crate::parse::db::entity::{CategorySlug, SourceName};
 use crate::parse::parsed_product::{AdditionalParsedProductInfo, ParsedProduct};
 use crate::parse::queue::postpone_image_parsing;
+use crate::my_enum::CurrencyEnum;
 
 #[async_trait(? Send)]
 pub trait Crawler {
     fn get_source(&self) -> &SourceName;
 
-    fn get_currency(&self) -> &str;
+    fn get_currency(&self) -> &CurrencyEnum;
 
     fn get_categories(&self) -> Vec<&CategorySlug>;
 
