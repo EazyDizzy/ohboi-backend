@@ -43,6 +43,7 @@ pub fn init_sentry() -> ClientInitGuard {
     )
 }
 
+#[allow(dead_code)]
 pub fn add_category_breadcrumb(message: &str, data: BTreeMap<&str, String>, category: String) {
     let mut btree_data = BTreeMap::new();
 

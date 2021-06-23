@@ -20,6 +20,7 @@ mod schema;
 mod parse;
 mod my_enum;
 mod local_sentry;
+mod common;
 
 #[derive(StructOpt, Debug)]
 struct Cli {

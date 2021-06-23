@@ -1,7 +1,7 @@
 use inflector::Inflector;
 
 use crate::diesel::prelude::*;
-use crate::parse::db;
+use crate::common::db;
 use crate::parse::db::entity::{Category, CategorySlug};
 
 pub fn get_category(name: &CategorySlug) -> Category {

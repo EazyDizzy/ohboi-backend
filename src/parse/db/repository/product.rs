@@ -3,7 +3,7 @@ use chrono::Utc;
 use diesel::{QueryDsl, RunQueryDsl, sql_query};
 
 use crate::diesel::prelude::*;
-use crate::parse::db;
+use crate::common::db;
 use crate::parse::db::entity::{CategorySlug, NewProduct, Product};
 use crate::parse::db::repository::category::get_category;
 use crate::parse::parsed_product::{AdditionalParsedProductInfo, InternationalParsedProduct};

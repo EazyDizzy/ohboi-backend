@@ -1,7 +1,7 @@
 use inflector::Inflector;
 
 use crate::diesel::prelude::*;
-use crate::parse::db;
+use crate::common::db;
 use crate::parse::db::entity::{Source, SourceName};
 
 pub fn get_source(name: &SourceName) -> Source {

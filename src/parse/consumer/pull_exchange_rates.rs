@@ -5,9 +5,9 @@ use sentry::protocol::map::BTreeMap;
 use serde::Deserialize;
 use serde_json::error::Result as SerdeResult;
 
+use crate::parse::db::repository::exchange_rate::create_or_update;
 use crate::local_sentry::add_category_breadcrumb;
 use crate::my_enum::CurrencyEnum;
-use crate::parse::db::repository::exchange_rate::create_or_update;
 use crate::parse::queue::get_channel;
 use crate::parse::requester::get_data;
 use crate::SETTINGS;

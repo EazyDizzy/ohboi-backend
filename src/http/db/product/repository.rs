@@ -1,7 +1,7 @@
 use diesel::{QueryDsl, RunQueryDsl};
 
 use crate::diesel::prelude::*;
-use crate::http::db;
+use crate::common::db;
 use crate::http::db::lower;
 use crate::http::db::product::entity::Product;
 use crate::http::product::ProductFilters;

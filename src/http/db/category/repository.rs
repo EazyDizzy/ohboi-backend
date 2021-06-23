@@ -1,5 +1,5 @@
 use crate::diesel::prelude::*;
-use crate::http::db;
+use crate::common::db;
 use crate::http::db::category::entity::Category;
 
 pub fn get_all() -> Vec<Category> {

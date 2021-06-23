@@ -1,6 +1,6 @@
 use diesel::{BoolExpressionMethods, ExpressionMethods, QueryDsl, RunQueryDsl};
 
-use crate::http::db;
+use crate::common::db;
 use crate::http::db::source_product::entity::SourceProduct;
 
 pub fn get_all_for_product(requested_product_id: &i32) -> Vec<SourceProduct> {

@@ -2,7 +2,7 @@ use bigdecimal::BigDecimal;
 use chrono::Utc;
 use diesel::{BoolExpressionMethods, ExpressionMethods, QueryDsl, RunQueryDsl};
 
-use crate::parse::db;
+use crate::common::db;
 use crate::parse::db::entity::{NewSourceProduct, Product, SourceName, SourceProduct};
 use crate::parse::db::repository::product::update_price_range_if_needed;
 use crate::parse::db::repository::source::get_source;
