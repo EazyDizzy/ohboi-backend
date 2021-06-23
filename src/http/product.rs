@@ -1,12 +1,29 @@
 use actix_web::HttpResponse;
 use actix_web_validator::Json;
+use bigdecimal::{BigDecimal, ToPrimitive};
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
+use crate::common::db::repository::exchange_rate::get_exchange_rate_by_code;
+use crate::common::service::currency_converter::convert_to_with_rate;
 use crate::http::db::product::repository::get_all_products_of_category;
+use crate::my_enum::CurrencyEnum;
 
 pub async fn get_products(filters: Json<ProductFilters>) -> HttpResponse {
-    let products = get_all_products_of_category(&filters);
+    let mut products = get_all_products_of_category(&filters);
+    let rate = get_exchange_rate_by_code(&filters.currency).unwrap().rate.to_f64().unwrap();
+
+    for mut product in &mut products {
+        product.highest_price = BigDecimal::from(convert_to_with_rate(
+            product.highest_price.to_f64().unwrap(),
+            rate,
+        ));
+        product.lowest_price = BigDecimal::from(convert_to_with_rate(
+            product.lowest_price.to_f64().unwrap(),
+            rate,
+        ));
+    }
+
     HttpResponse::Ok().json(products)
 }
 
@@ -14,6 +31,8 @@ pub async fn get_products(filters: Json<ProductFilters>) -> HttpResponse {
 pub struct ProductFilters {
     #[validate(length(min = 1, max = 1000, message = "should have length from 1 to 1000"))]
     pub title: Option<String>,
+
+    pub currency: CurrencyEnum,
     #[validate(length(min = 1, max = 1000, message = "should be an array of 1-1000 elements"))]
     pub category: Option<Vec<i32>>,
     #[validate(range(min = 0, message = "should be bigger than or equal to zero"), range(max = 4294967295, message = "should be less than 4294967295"))]

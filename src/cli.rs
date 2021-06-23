@@ -14,12 +14,13 @@ use structopt::StructOpt;
 
 use parse::settings::Settings;
 
-use crate::parse::queue::{declare_parse_category_queue, declare_parse_image_queue, declare_parse_page_queue};
+use crate::parse::queue::declare_queue;
 
 mod schema;
 mod parse;
 mod my_enum;
 mod local_sentry;
+mod common;
 
 #[derive(StructOpt, Debug)]
 struct Cli {
@@ -37,6 +38,7 @@ arg_enum! {
         ParseCategory,
         ParseImage,
         ParsePage,
+        PullExchangeRates,
     }
 }
 
@@ -44,6 +46,7 @@ arg_enum! {
     #[derive(Debug)]
     enum ProducerName {
         ParseCategory,
+        PullExchangeRates,
     }
 }
 arg_enum! {
@@ -63,15 +66,17 @@ async fn main() {
     let args: Cli = Cli::from_args();
 
     if args.worker_type == "queue_config" {
-        let declare1 = declare_parse_category_queue().await;
-        let declare2 = declare_parse_image_queue().await;
-        let declare3 = declare_parse_page_queue().await;
-
-        if declare1.is_err() || declare2.is_err() || declare3.is_err() {
-            log::error!("Queue declaration failed.");
-            log::error!("parse_category: {:?}", declare1);
-            log::error!("parse_image: {:?}", declare2);
-            log::error!("parse_page: {:?}", declare3);
+        let queues = [
+            &SETTINGS.amqp.queues.parse_category.name,
+            &SETTINGS.amqp.queues.parse_image.name,
+            &SETTINGS.amqp.queues.parse_page.name,
+            &SETTINGS.amqp.queues.pull_exchange_rates.name,
+        ];
+        for queue_name in queues.iter() {
+            let declare = declare_queue(queue_name).await;
+            if declare.is_err() {
+                log::error!("Queue declaration failed. {} {:?}", queue_name, declare);
+            }
         }
         return;
     }
@@ -80,6 +85,9 @@ async fn main() {
         match args.producer_name.unwrap() {
             ProducerName::ParseCategory => {
                 let _res = parse::producer::parse_category::start().await;
+            }
+            ProducerName::PullExchangeRates => {
+                let _res = parse::producer::pull_exchange_rates::start().await;
             }
         }
     } else {
@@ -92,6 +100,9 @@ async fn main() {
             }
             ConsumerName::ParsePage => {
                 let _res = parse::consumer::parse_page::start().await;
+            }
+            ConsumerName::PullExchangeRates => {
+                let _res = parse::consumer::pull_exchange_rates::start().await;
             }
         }
     }

@@ -1,5 +1,5 @@
 use crate::schema::source_product_price_history;
-use crate::parse::db;
+use crate::common::db;
 use diesel::{ExpressionMethods, QueryDsl, BoolExpressionMethods, RunQueryDsl};
 use crate::parse::db::entity::{NewSourceProductPriceHistory, NewSourceProduct, SourceProductPriceHistory};
 use chrono::Utc;

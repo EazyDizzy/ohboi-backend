@@ -13,6 +13,18 @@ table! {
     use diesel::sql_types::*;
     use crate::my_enum::*;
 
+    exchange_rate (id) {
+        id -> Int4,
+        currency -> Currency_enum,
+        rate -> Numeric,
+        updated_at -> Timestamp,
+    }
+}
+
+table! {
+    use diesel::sql_types::*;
+    use crate::my_enum::*;
+
     product (id) {
         id -> Int4,
         title -> Varchar,
@@ -35,6 +47,7 @@ table! {
         id -> Int4,
         site_name -> Varchar,
         logo -> Varchar,
+        currency -> Currency_enum,
         enabled -> Bool,
         created_at -> Timestamp,
         updated_at -> Timestamp,
@@ -50,6 +63,7 @@ table! {
         source_id -> Int4,
         product_id -> Int4,
         external_id -> Varchar,
+        original_price -> Numeric,
         price -> Numeric,
         enabled -> Bool,
         updated_at -> Timestamp,
@@ -104,6 +118,7 @@ joinable!(user_registration -> users (user_id));
 
 allow_tables_to_appear_in_same_query!(
     category,
+    exchange_rate,
     product,
     source,
     source_product,

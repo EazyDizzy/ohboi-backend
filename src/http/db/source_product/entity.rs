@@ -11,6 +11,7 @@ pub struct SourceProduct {
     #[serde(skip)]
     pub external_id: String,
     pub price: BigDecimal,
+    pub original_price: BigDecimal,
     #[serde(skip)]
     pub enabled: bool,
 

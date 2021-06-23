@@ -8,10 +8,13 @@ create table category (
     	  on delete set null
 );
 
+create TYPE currency_enum AS ENUM ('eur', 'rub', 'uah', 'usd');
+
 create table source (
     id              serial primary key,
     site_name       varchar not null,
     logo            varchar not null,
+    currency        currency_enum not null,
     enabled         bool not null,
 
     created_at      timestamp not null default now(),
@@ -45,6 +48,7 @@ create table source_product (
     source_id       int not null,
     product_id      int not null,
     external_id     varchar not null,
+    original_price  numeric not null,
     price           numeric not null,
     enabled         bool not null,
 

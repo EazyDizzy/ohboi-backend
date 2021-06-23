@@ -2,9 +2,10 @@ use async_trait::async_trait;
 use regex::Regex;
 use scraper::{Html, Selector};
 
+use crate::my_enum::CurrencyEnum;
 use crate::parse::crawler::crawler::{Crawler, get_html_nodes, ProductHtmlSelectors};
 use crate::parse::db::entity::{CategorySlug, SourceName};
-use crate::parse::parsed_product::{AdditionalParsedProductInfo, ParsedProduct};
+use crate::parse::parsed_product::{AdditionalParsedProductInfo, LocalParsedProduct};
 
 #[derive(Clone)]
 pub struct SamsungShopComUaCrawler {}
@@ -12,6 +13,10 @@ pub struct SamsungShopComUaCrawler {}
 #[async_trait(? Send)]
 impl Crawler for SamsungShopComUaCrawler {
     fn get_source(&self) -> &SourceName { &SourceName::SamsungShopComUa }
+
+    fn get_currency(&self) -> &CurrencyEnum {
+        &CurrencyEnum::UAH
+    }
 
     fn get_categories(&self) -> Vec<&CategorySlug> {
         vec![
@@ -37,7 +42,7 @@ impl Crawler for SamsungShopComUaCrawler {
         }).collect()
     }
 
-    fn extract_products(&self, document: &Html) -> Vec<ParsedProduct> {
+    fn extract_products(&self, document: &Html) -> Vec<LocalParsedProduct> {
         // to not include russian words in title
         let title_re: Regex = Regex::new(r"[a-zA-Z0-9 \-+()]{2,}").unwrap();
         let price_re: Regex = Regex::new(r"[0-9][0-9 ]*[0-9]").unwrap();
@@ -73,9 +78,9 @@ impl Crawler for SamsungShopComUaCrawler {
                 let price_html = product_nodes.price.inner_html();
 
                 let price_text = price_re.find(price_html.as_str()).unwrap()
-                                         .as_str().to_string()
-                                         .replace(" ", "")
-                                         .parse::<f64>();
+                    .as_str().to_string()
+                    .replace(" ", "")
+                    .parse::<f64>();
 
                 if price_text.is_err() {
                     let message = format!(
@@ -105,7 +110,7 @@ impl Crawler for SamsungShopComUaCrawler {
                 continue;
             }
 
-            parsed_products.push(ParsedProduct {
+            parsed_products.push(LocalParsedProduct {
                 title: title.clone(),
                 price,
                 available,

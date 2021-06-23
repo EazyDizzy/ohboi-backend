@@ -17,6 +17,7 @@ mod http;
 mod schema;
 mod my_enum;
 mod local_sentry;
+mod common;
 
 #[actix_web::main]
 async fn main() {

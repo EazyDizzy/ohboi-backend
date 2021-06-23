@@ -1,7 +1,7 @@
 use chrono::Utc;
 use diesel::{ExpressionMethods, QueryDsl, RunQueryDsl};
 
-use crate::http::db;
+use crate::common::db;
 use crate::http::db::user::entity::{NewUser, User};
 use crate::schema::users;
 

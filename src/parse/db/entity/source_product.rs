@@ -13,6 +13,7 @@ pub struct SourceProduct {
     #[serde(skip)]
     pub external_id: String,
     pub price: BigDecimal,
+    pub original_price: BigDecimal,
     #[serde(skip)]
     pub enabled: bool,
 
@@ -26,6 +27,7 @@ pub struct NewSourceProduct<'a> {
     pub source_id: i32,
     pub product_id: i32,
     pub price: BigDecimal,
+    pub original_price: BigDecimal,
     pub enabled: bool,
     pub external_id: &'a str,
 

@@ -1,4 +1,4 @@
 INSERT INTO source
-(site_name, logo, enabled, created_at, updated_at)
+(site_name, logo, currency, enabled, created_at, updated_at)
 VALUES
-('samsung_shop_com_ua', 'her', true, now(), now())
+('samsung_shop_com_ua', 'her', 'uah', true, now(), now())

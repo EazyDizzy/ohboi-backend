@@ -3,11 +3,14 @@ use std::fmt;
 use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
 
+use crate::my_enum::CurrencyEnum;
+
 #[derive(Serialize, Queryable, Debug)]
 pub struct Source {
     pub id: i32,
     pub site_name: String,
     pub logo: String,
+    pub currency: CurrencyEnum,
     pub enabled: bool,
 
     #[serde(skip)]

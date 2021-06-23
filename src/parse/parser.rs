@@ -1,3 +1,4 @@
+use bigdecimal::ToPrimitive;
 use futures::future::*;
 use maplit::*;
 use scraper::Html;
@@ -11,10 +12,12 @@ use crate::parse::crawler::samsung_shop_com_ua::SamsungShopComUaCrawler;
 use crate::parse::db::entity::{CategorySlug, SourceName};
 use crate::parse::db::repository::product::{create_if_not_exists, update_details};
 use crate::parse::db::repository::source_product::link_to_product;
-use crate::parse::parsed_product::{AdditionalParsedProductInfo, ParsedProduct};
+use crate::parse::parsed_product::{AdditionalParsedProductInfo, InternationalParsedProduct, LocalParsedProduct};
 use crate::parse::queue::postpone_page_parsing;
 use crate::parse::requester::get_data;
 use crate::SETTINGS;
+use crate::common::db::repository::exchange_rate::get_exchange_rate_by_code;
+use crate::common::service::currency_converter::convert_from_with_rate;
 
 pub async fn parse_page(url: String, source: &SourceName, category: &CategorySlug) -> Result<(), reqwest::Error> {
     let crawler = get_crawler(source);
@@ -56,7 +59,7 @@ pub async fn parse_category(source: &SourceName, category: &CategorySlug) -> Res
                 },
     );
 
-    let mut products: Vec<ParsedProduct> = vec![];
+    let mut products: Vec<LocalParsedProduct> = vec![];
     let concurrent_pages = 5; // TODO move to the db settings of specific crawler
 
     for url in crawler.get_next_page_urls(category) {
@@ -142,11 +145,13 @@ pub async fn parse_category(source: &SourceName, category: &CategorySlug) -> Res
     Ok(())
 }
 
-async fn save_parsed_products(crawler: &dyn Crawler, products: Vec<ParsedProduct>, category: &CategorySlug) {
+async fn save_parsed_products(crawler: &dyn Crawler, products: Vec<LocalParsedProduct>, category: &CategorySlug) {
     let mut savings_in_progress = vec![];
+    let currency = crawler.get_currency();
+    let rate = get_exchange_rate_by_code(currency).unwrap().rate.to_f64().unwrap();
 
-    for parsed_product in &products {
-        savings_in_progress.push(save_parsed_product(crawler, parsed_product, category));
+    for parsed_product in products {
+        savings_in_progress.push(save_parsed_product(crawler, parsed_product, category, rate));
 
         if savings_in_progress.len() == SETTINGS.database.product_save_concurrency {
             join_all(savings_in_progress).await;
@@ -164,12 +169,19 @@ async fn save_parsed_products(crawler: &dyn Crawler, products: Vec<ParsedProduct
     );
 }
 
-async fn save_parsed_product(crawler: &dyn Crawler, parsed_product: &ParsedProduct, category: &CategorySlug) {
-    let product = create_if_not_exists(parsed_product, &category);
+async fn save_parsed_product(crawler: &dyn Crawler, parsed_product: LocalParsedProduct, category: &CategorySlug, rate: f64) {
+    let international_parsed_product = InternationalParsedProduct {
+        title: parsed_product.title,
+        price: convert_from_with_rate(parsed_product.price, rate),
+        original_price: parsed_product.price,
+        available: parsed_product.available,
+        external_id: parsed_product.external_id,
+    };
+    let product = create_if_not_exists(&international_parsed_product, &category);
 
     if product.description.is_none() || product.images.is_none() {
         let details = extract_additional_info(
-            &parsed_product.external_id,
+            &international_parsed_product.external_id,
             crawler,
         ).await;
 
@@ -179,7 +191,7 @@ async fn save_parsed_product(crawler: &dyn Crawler, parsed_product: &ParsedProdu
                     format!(
                         "No additional info found [{source}] for: {id}",
                         source = crawler.get_source().to_string(),
-                        id = parsed_product.external_id.to_string()
+                        id = international_parsed_product.external_id.to_string()
                     ).as_str(),
                     sentry::Level::Warning,
                 );
@@ -190,10 +202,10 @@ async fn save_parsed_product(crawler: &dyn Crawler, parsed_product: &ParsedProdu
         }
     }
 
-    link_to_product(&product, parsed_product, crawler.get_source());
+    link_to_product(&product, &international_parsed_product, crawler.get_source());
 }
 
-fn parse_html(data: String, crawler: &dyn Crawler) -> Vec<ParsedProduct> {
+fn parse_html(data: String, crawler: &dyn Crawler) -> Vec<LocalParsedProduct> {
     let document = Html::parse_document(&data);
 
     crawler.extract_products(&document)
@@ -230,7 +242,7 @@ async fn extract_additional_info(external_id: &str, crawler: &dyn Crawler) -> Op
     }
 }
 
-fn dedup_products(products: &mut Vec<ParsedProduct>, source: &SourceName) {
+fn dedup_products(products: &mut Vec<LocalParsedProduct>, source: &SourceName) {
     products.dedup_by(|a, b| {
         if a.external_id == b.external_id && a.price != b.price {
             let message = format!(
