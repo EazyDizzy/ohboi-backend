@@ -35,8 +35,8 @@ pub fn get_filtered_products(filters: &ProductFilters) -> Vec<Product> {
         .offset((filters.page * 20).into())
         .order(id.asc());
 
-    if filters.title.is_some() {
-        let requested_title = filters.title.clone().unwrap().to_lowercase();
+    if let Some(filtered_title) = &filters.title {
+        let requested_title = filtered_title.to_lowercase();
         query = query.filter(
             lower(title).like(
                 ["%", requested_title.as_str(), "%"].join("")
@@ -44,15 +44,15 @@ pub fn get_filtered_products(filters: &ProductFilters) -> Vec<Product> {
         );
     }
 
-    if filters.category.is_some() {
+    if let Some(filtered_category) = &filters.category {
         query = query.filter(
-            category.eq_any(filters.category.clone().unwrap())
+            category.eq_any(filtered_category)
         );
     }
 
-    if filters.source.is_some() {
+    if let Some(source) = &filters.source {
         query = query
-            .filter(source_product::source_id.eq_any(filters.source.clone().unwrap()));
+            .filter(source_product::source_id.eq_any(source));
     }
 
     if let Some(min_price) = filters.min_price {
