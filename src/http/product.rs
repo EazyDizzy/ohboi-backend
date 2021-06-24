@@ -39,4 +39,9 @@ pub struct ProductFilters {
     pub source: Option<Vec<i32>>,
     #[validate(range(min = 0, message = "should be bigger than or equal to zero"), range(max = 4294967295, message = "should be less than 4294967295"))]
     pub page: u32,
+
+    #[validate(range(min = 0, message = "should be bigger than or equal to zero"), range(max = 4294967295, message = "should be less than 4294967295"))]
+    pub min_price: Option<f64>,
+    #[validate(range(min = 1, message = "should be bigger than or equal to zero"), range(max = 4294967295, message = "should be less than 4294967295"))]
+    pub max_price: Option<f64>,
 }
