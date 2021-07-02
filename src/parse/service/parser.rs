@@ -4,6 +4,8 @@ use maplit::*;
 use scraper::Html;
 use sentry::types::protocol::latest::map::BTreeMap;
 
+use crate::common::db::repository::exchange_rate::get_exchange_rate_by_code;
+use crate::common::service::currency_converter::convert_from_with_rate;
 use crate::local_sentry::add_category_breadcrumb;
 use crate::parse::consumer::parse_page::ParsePageMessage;
 use crate::parse::crawler::crawler::Crawler;
@@ -12,12 +14,11 @@ use crate::parse::crawler::samsung_shop_com_ua::SamsungShopComUaCrawler;
 use crate::parse::db::entity::{CategorySlug, SourceName};
 use crate::parse::db::repository::product::{create_if_not_exists, update_details};
 use crate::parse::db::repository::source_product::link_to_product;
-use crate::parse::parsed_product::{AdditionalParsedProductInfo, InternationalParsedProduct, LocalParsedProduct};
+use crate::parse::parsed_product::{AdditionalParsedProductInfo, CleanParsedProductInfo, InternationalParsedProduct, LocalParsedProduct};
 use crate::parse::queue::postpone_page_parsing;
-use crate::parse::requester::{get_data, get_data_s};
+use crate::parse::service::html_cleaner::clean_html;
+use crate::parse::service::requester::{get_data, get_data_s};
 use crate::SETTINGS;
-use crate::common::db::repository::exchange_rate::get_exchange_rate_by_code;
-use crate::common::service::currency_converter::convert_from_with_rate;
 
 pub async fn parse_page(url: String, source: &SourceName, category: &CategorySlug) -> Result<(), reqwest::Error> {
     let crawler = get_crawler(source);
@@ -197,7 +198,12 @@ async fn save_parsed_product(crawler: &dyn Crawler, parsed_product: LocalParsedP
                 );
             }
             Some(details) => {
-                update_details(&product, &details);
+                let clean_details = CleanParsedProductInfo {
+                    image_urls: details.image_urls,
+                    available: details.available,
+                    description: clean_html(details.description),
+                };
+                update_details(&product, &clean_details);
             }
         }
     }

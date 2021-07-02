@@ -4,7 +4,7 @@ use rusoto_s3::{PutObjectRequest, S3, S3Client, StreamingBody};
 use sentry::protocol::map::BTreeMap;
 
 use crate::local_sentry::add_category_breadcrumb;
-use crate::parse::requester::get_bytes;
+use crate::parse::service::requester::get_bytes;
 use crate::SETTINGS;
 
 pub async fn upload_image_to_cloud(file_path: String, image_url: String) -> bool {
