@@ -2,11 +2,11 @@ use bigdecimal::{BigDecimal, ToPrimitive};
 use chrono::Utc;
 use diesel::{QueryDsl, RunQueryDsl, sql_query};
 
-use crate::diesel::prelude::*;
 use crate::common::db;
+use crate::diesel::prelude::*;
 use crate::parse::db::entity::{CategorySlug, NewProduct, Product};
 use crate::parse::db::repository::category::get_category;
-use crate::parse::parsed_product::{AdditionalParsedProductInfo, InternationalParsedProduct};
+use crate::parse::parsed_product::{CleanParsedProductInfo, InternationalParsedProduct};
 use crate::schema::product;
 
 pub fn add_image_to_product_details(existent_product_id: i32, file_path: &str) {
@@ -23,7 +23,7 @@ pub fn add_image_to_product_details(existent_product_id: i32, file_path: &str) {
     // TODO enable?
 }
 
-pub fn update_details(existent_product: &Product, additional_info: &AdditionalParsedProductInfo) {
+pub fn update_details(existent_product: &Product, additional_info: &CleanParsedProductInfo) {
     use crate::schema::product::dsl::*;
 
     let connection = &db::establish_connection();
