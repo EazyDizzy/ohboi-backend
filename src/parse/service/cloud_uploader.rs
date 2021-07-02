@@ -12,7 +12,7 @@ pub async fn upload_image_to_cloud(file_path: String, image_url: String) -> bool
                     "file_path" => file_path.clone(),
                     "image_url" => image_url.clone()
                 };
-    add_uploader_breadcrumb("downloading image", breadcrumb_data.clone());
+    add_uploader_breadcrumb("uploading image", breadcrumb_data.clone());
 
     let data = get_bytes(&image_url).await;
 

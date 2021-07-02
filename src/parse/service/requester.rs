@@ -44,8 +44,8 @@ pub async fn get_request(url: &str) -> Result<Response, reqwest::Error> {
         .await
 }
 
-static REFERER_LIST: &str = include_str!("../../cache/referrers");
-static USER_AGENT_LIST: &str = include_str!("../../cache/user_agents");
+static REFERER_LIST: &str = include_str!("../../../cache/referrers");
+static USER_AGENT_LIST: &str = include_str!("../../../cache/user_agents");
 
 fn get_random_referer() -> String {
     let referrers = REFERER_LIST.split("\n").collect::<Vec<&str>>();

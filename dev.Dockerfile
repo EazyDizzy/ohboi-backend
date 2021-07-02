@@ -13,7 +13,7 @@ WORKDIR /app
 RUN cargo install cargo-chef --version 0.1.21
 COPY --from=planner /app/recipe.json recipe.json
 RUN cargo install diesel_cli --no-default-features --features postgres
-RUN cargo chef cook --release --recipe-path recipe.json
+RUN cargo chef cook --recipe-path recipe.json
 
 # Builds the binary
 FROM $BASE_IMAGE as builder
@@ -23,7 +23,7 @@ COPY . .
 COPY --from=cacher /app/target /app/target
 # Copy cached dependencies
 COPY --from=cacher $CARGO_HOME $CARGO_HOME
-RUN cargo build --release
+RUN cargo build
 
 FROM debian:buster-slim as runtime
 
@@ -52,7 +52,7 @@ COPY run.sh .
 COPY migrations ./migrations
 COPY cache ./cache
 # Copying only compiled binaries
-COPY --from=builder /app/target/release/daemon ./daemon
-COPY --from=builder /app/target/release/http ./http
+COPY --from=builder /app/target/debug/daemon ./daemon
+COPY --from=builder /app/target/debug/http ./http
 # Copying diesel to have opportunity execute migrations before server start
 COPY --from=cacher /usr/local/cargo/bin/diesel ./bin/diesel

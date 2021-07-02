@@ -9,6 +9,7 @@ services:
             - shopily
         build:
             context: .
+            dockerfile: dev.Dockerfile
         command: bash run.sh
         env_file:
             - .env
