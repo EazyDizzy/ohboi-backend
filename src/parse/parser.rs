@@ -14,7 +14,7 @@ use crate::parse::db::repository::product::{create_if_not_exists, update_details
 use crate::parse::db::repository::source_product::link_to_product;
 use crate::parse::parsed_product::{AdditionalParsedProductInfo, InternationalParsedProduct, LocalParsedProduct};
 use crate::parse::queue::postpone_page_parsing;
-use crate::parse::requester::get_data;
+use crate::parse::requester::{get_data, get_data_s};
 use crate::SETTINGS;
 use crate::common::db::repository::exchange_rate::get_exchange_rate_by_code;
 use crate::common::service::currency_converter::convert_from_with_rate;
@@ -29,7 +29,7 @@ pub async fn parse_page(url: String, source: &SourceName, category: &CategorySlu
                 },
     );
 
-    let response = get_data(url).await?;
+    let response = get_data(&url).await?;
     let mut products = parse_html(response, crawler);
 
     dedup_products(&mut products, source);
@@ -68,7 +68,7 @@ pub async fn parse_category(source: &SourceName, category: &CategorySlug) -> Res
             for page in page..page + concurrent_pages {
                 let url = url.replace("{page}", (page).to_string().as_ref());
 
-                page_requests.push(get_data(url));
+                page_requests.push(get_data_s(url));
             }
 
             let page_responses = join_all(page_requests).await;
@@ -221,7 +221,7 @@ async fn extract_additional_info(external_id: &str, crawler: &dyn Crawler) -> Op
     );
 
     let url = crawler.get_additional_info_url(&external_id);
-    let data = get_data(url).await;
+    let data = get_data(&url).await;
 
     match data {
         Ok(data) => {

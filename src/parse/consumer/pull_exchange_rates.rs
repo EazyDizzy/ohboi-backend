@@ -50,7 +50,7 @@ pub async fn start() -> Result<()> {
             btreemap! {},
         );
 
-        let response = get_data("https://api.exchangerate.host/latest?base=EUR&symbols=UAH,USD,RUB".to_string()).await;
+        let response = get_data("https://api.exchangerate.host/latest?base=EUR&symbols=UAH,USD,RUB").await;
 
         if response.is_err() {
             let message = format!("Request for exchange rates failed!  {error:?}", error = response.err());
