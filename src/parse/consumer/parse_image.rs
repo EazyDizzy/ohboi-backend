@@ -5,7 +5,7 @@ use sentry::protocol::map::BTreeMap;
 use serde::{Deserialize, Serialize};
 
 use crate::local_sentry::add_category_breadcrumb;
-use crate::parse::cloud_uploader::upload_image_to_cloud;
+use crate::parse::service::cloud_uploader::upload_image_to_cloud;
 use crate::parse::db::entity::SourceName;
 use crate::parse::db::repository::product::add_image_to_product_details;
 use crate::parse::db::repository::source_product::get_by_source_and_external_id;

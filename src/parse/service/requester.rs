@@ -4,7 +4,11 @@ use rand::prelude::Distribution;
 use reqwest::header::{ACCEPT, ACCEPT_ENCODING, ACCEPT_LANGUAGE, CONNECTION, REFERER, USER_AGENT};
 use reqwest::Response;
 
-pub async fn get_data(url: String) -> Result<String, reqwest::Error> {
+pub async fn get_data_s(url: String) -> Result<String, reqwest::Error> {
+    get_data(&url).await
+}
+
+pub async fn get_data(url: &str) -> Result<String, reqwest::Error> {
     let response = get_request(url).await?;
 
     let text = response.text().await?;
@@ -12,13 +16,13 @@ pub async fn get_data(url: String) -> Result<String, reqwest::Error> {
     Ok(text)
 }
 
-pub async fn get_bytes(url: String) -> Result<Bytes, reqwest::Error> {
+pub async fn get_bytes(url: &str) -> Result<Bytes, reqwest::Error> {
     let response = get_request(url).await?;
 
     Ok(response.bytes().await?)
 }
 
-pub async fn get_request(url: String) -> Result<Response, reqwest::Error> {
+pub async fn get_request(url: &str) -> Result<Response, reqwest::Error> {
     // TODO preconnect, zip header
     // TODO random headers
     // TODO proxy
@@ -26,7 +30,7 @@ pub async fn get_request(url: String) -> Result<Response, reqwest::Error> {
     let client = reqwest::Client::builder().build().unwrap();
 
     let req = client
-        .get(url.as_str())
+        .get(url)
         .header(USER_AGENT, get_random_user_agent())
         .header(REFERER, get_random_referer())
         .header(ACCEPT_LANGUAGE, "en-gb")

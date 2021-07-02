@@ -4,7 +4,7 @@ use maplit::*;
 use sentry::protocol::map::BTreeMap;
 
 use crate::local_sentry::add_category_breadcrumb;
-use crate::parse::parser::parse_category;
+use crate::parse::service::parser::parse_category;
 use crate::parse::producer::parse_category::CrawlerCategoryMessage;
 use crate::parse::queue::get_channel;
 use crate::SETTINGS;

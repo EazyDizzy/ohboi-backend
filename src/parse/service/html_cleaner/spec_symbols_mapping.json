@@ -1,0 +1,5794 @@
+[
+  {
+    "symbol": "",
+    "named": "&Tab;"
+  },
+  {
+    "symbol": "",
+    "named": "&NewLine;"
+  },
+  {
+    "symbol": "!",
+    "named": "&excl;"
+  },
+  {
+    "symbol": "\"",
+    "named": "&quot; &QUOT;"
+  },
+  {
+    "symbol": "#",
+    "named": "&num;"
+  },
+  {
+    "symbol": "$",
+    "named": "&dollar;"
+  },
+  {
+    "symbol": "%",
+    "named": "&percnt;"
+  },
+  {
+    "symbol": "&",
+    "named": "&amp; &AMP;"
+  },
+  {
+    "symbol": "'",
+    "named": "&apos;"
+  },
+  {
+    "symbol": "(",
+    "named": "&lpar;"
+  },
+  {
+    "symbol": ")",
+    "named": "&rpar;"
+  },
+  {
+    "symbol": "*",
+    "named": "&ast; &midast;"
+  },
+  {
+    "symbol": "+",
+    "named": "&plus;"
+  },
+  {
+    "symbol": ",",
+    "named": "&comma;"
+  },
+  {
+    "symbol": ".",
+    "named": "&period;"
+  },
+  {
+    "symbol": "/",
+    "named": "&sol;"
+  },
+  {
+    "symbol": ":",
+    "named": "&colon;"
+  },
+  {
+    "symbol": ";",
+    "named": "&semi;"
+  },
+  {
+    "symbol": "<",
+    "named": "&lt; &LT;"
+  },
+  {
+    "symbol": "=",
+    "named": "&equals;"
+  },
+  {
+    "symbol": ">",
+    "named": "&gt; &GT;"
+  },
+  {
+    "symbol": "?",
+    "named": "&quest;"
+  },
+  {
+    "symbol": "@",
+    "named": "&commat;"
+  },
+  {
+    "symbol": "[",
+    "named": "&lsqb; &lbrack;"
+  },
+  {
+    "symbol": "\\\\",
+    "named": "&bsol;"
+  },
+  {
+    "symbol": "]",
+    "named": "&rsqb; &rbrack;"
+  },
+  {
+    "symbol": "^",
+    "named": "&Hat;"
+  },
+  {
+    "symbol": "_",
+    "named": "&lowbar;"
+  },
+  {
+    "symbol": "`",
+    "named": "&grave; &DiacriticalGrave;"
+  },
+  {
+    "symbol": "{",
+    "named": "&lcub; &lbrace;"
+  },
+  {
+    "symbol": "|",
+    "named": "&verbar; &vert; &VerticalLine;"
+  },
+  {
+    "symbol": "}",
+    "named": "&rcub; &rbrace;"
+  },
+  {
+    "symbol": " ",
+    "named": "&nbsp; &NonBreakingSpace;"
+  },
+  {
+    "symbol": "¡",
+    "named": "&iexcl;"
+  },
+  {
+    "symbol": "¢",
+    "named": "&cent;"
+  },
+  {
+    "symbol": "£",
+    "named": "&pound;"
+  },
+  {
+    "symbol": "¤",
+    "named": "&curren;"
+  },
+  {
+    "symbol": "¥",
+    "named": "&yen;"
+  },
+  {
+    "symbol": "¦",
+    "named": "&brvbar;"
+  },
+  {
+    "symbol": "§",
+    "named": "&sect;"
+  },
+  {
+    "symbol": "¨",
+    "named": "&Dot; &die; &DoubleDot; &uml;"
+  },
+  {
+    "symbol": "©",
+    "named": "&copy; &COPY;"
+  },
+  {
+    "symbol": "ª",
+    "named": "&ordf;"
+  },
+  {
+    "symbol": "«",
+    "named": "&laquo;"
+  },
+  {
+    "symbol": "¬",
+    "named": "&not;"
+  },
+  {
+    "symbol": "­",
+    "named": "&shy;"
+  },
+  {
+    "symbol": "®",
+    "named": "&reg; &circledR; &REG;"
+  },
+  {
+    "symbol": "¯",
+    "named": "&macr; &OverBar; &strns;"
+  },
+  {
+    "symbol": "°",
+    "named": "&deg;"
+  },
+  {
+    "symbol": "±",
+    "named": "&plusmn; &pm; &PlusMinus;"
+  },
+  {
+    "symbol": "²",
+    "named": "&sup2;"
+  },
+  {
+    "symbol": "³",
+    "named": "&sup3;"
+  },
+  {
+    "symbol": "´",
+    "named": "&acute; &DiacriticalAcute;"
+  },
+  {
+    "symbol": "µ",
+    "named": "&micro;"
+  },
+  {
+    "symbol": "¶",
+    "named": "&para;"
+  },
+  {
+    "symbol": "·",
+    "named": "&middot; &centerdot; &CenterDot;"
+  },
+  {
+    "symbol": "¸",
+    "named": "&cedil; &Cedilla;"
+  },
+  {
+    "symbol": "¹",
+    "named": "&sup1;"
+  },
+  {
+    "symbol": "º",
+    "named": "&ordm;"
+  },
+  {
+    "symbol": "»",
+    "named": "&raquo;"
+  },
+  {
+    "symbol": "¼",
+    "named": "&frac14;"
+  },
+  {
+    "symbol": "½",
+    "named": "&frac12; &half;"
+  },
+  {
+    "symbol": "¾",
+    "named": "&frac34;"
+  },
+  {
+    "symbol": "¿",
+    "named": "&iquest;"
+  },
+  {
+    "symbol": "À",
+    "named": "&Agrave;"
+  },
+  {
+    "symbol": "Á",
+    "named": "&Aacute;"
+  },
+  {
+    "symbol": "Â",
+    "named": "&Acirc;"
+  },
+  {
+    "symbol": "Ã",
+    "named": "&Atilde;"
+  },
+  {
+    "symbol": "Ä",
+    "named": "&Auml;"
+  },
+  {
+    "symbol": "Å",
+    "named": "&Aring;"
+  },
+  {
+    "symbol": "Æ",
+    "named": "&AElig;"
+  },
+  {
+    "symbol": "Ç",
+    "named": "&Ccedil;"
+  },
+  {
+    "symbol": "È",
+    "named": "&Egrave;"
+  },
+  {
+    "symbol": "É",
+    "named": "&Eacute;"
+  },
+  {
+    "symbol": "Ê",
+    "named": "&Ecirc;"
+  },
+  {
+    "symbol": "Ë",
+    "named": "&Euml;"
+  },
+  {
+    "symbol": "Ì",
+    "named": "&Igrave;"
+  },
+  {
+    "symbol": "Í",
+    "named": "&Iacute;"
+  },
+  {
+    "symbol": "Î",
+    "named": "&Icirc;"
+  },
+  {
+    "symbol": "Ï",
+    "named": "&Iuml;"
+  },
+  {
+    "symbol": "Ð",
+    "named": "&ETH;"
+  },
+  {
+    "symbol": "Ñ",
+    "named": "&Ntilde;"
+  },
+  {
+    "symbol": "Ò",
+    "named": "&Ograve;"
+  },
+  {
+    "symbol": "Ó",
+    "named": "&Oacute;"
+  },
+  {
+    "symbol": "Ô",
+    "named": "&Ocirc;"
+  },
+  {
+    "symbol": "Õ",
+    "named": "&Otilde;"
+  },
+  {
+    "symbol": "Ö",
+    "named": "&Ouml;"
+  },
+  {
+    "symbol": "×",
+    "named": "&times;"
+  },
+  {
+    "symbol": "Ø",
+    "named": "&Oslash;"
+  },
+  {
+    "symbol": "Ù",
+    "named": "&Ugrave;"
+  },
+  {
+    "symbol": "Ú",
+    "named": "&Uacute;"
+  },
+  {
+    "symbol": "Û",
+    "named": "&Ucirc;"
+  },
+  {
+    "symbol": "Ü",
+    "named": "&Uuml;"
+  },
+  {
+    "symbol": "Ý",
+    "named": "&Yacute;"
+  },
+  {
+    "symbol": "Þ",
+    "named": "&THORN;"
+  },
+  {
+    "symbol": "ß",
+    "named": "&szlig;"
+  },
+  {
+    "symbol": "à",
+    "named": "&agrave;"
+  },
+  {
+    "symbol": "á",
+    "named": "&aacute;"
+  },
+  {
+    "symbol": "â",
+    "named": "&acirc;"
+  },
+  {
+    "symbol": "ã",
+    "named": "&atilde;"
+  },
+  {
+    "symbol": "ä",
+    "named": "&auml;"
+  },
+  {
+    "symbol": "å",
+    "named": "&aring;"
+  },
+  {
+    "symbol": "æ",
+    "named": "&aelig;"
+  },
+  {
+    "symbol": "ç",
+    "named": "&ccedil;"
+  },
+  {
+    "symbol": "è",
+    "named": "&egrave;"
+  },
+  {
+    "symbol": "é",
+    "named": "&eacute;"
+  },
+  {
+    "symbol": "ê",
+    "named": "&ecirc;"
+  },
+  {
+    "symbol": "ë",
+    "named": "&euml;"
+  },
+  {
+    "symbol": "ì",
+    "named": "&igrave;"
+  },
+  {
+    "symbol": "í",
+    "named": "&iacute;"
+  },
+  {
+    "symbol": "î",
+    "named": "&icirc;"
+  },
+  {
+    "symbol": "ï",
+    "named": "&iuml;"
+  },
+  {
+    "symbol": "ð",
+    "named": "&eth;"
+  },
+  {
+    "symbol": "ñ",
+    "named": "&ntilde;"
+  },
+  {
+    "symbol": "ò",
+    "named": "&ograve;"
+  },
+  {
+    "symbol": "ó",
+    "named": "&oacute;"
+  },
+  {
+    "symbol": "ô",
+    "named": "&ocirc;"
+  },
+  {
+    "symbol": "õ",
+    "named": "&otilde;"
+  },
+  {
+    "symbol": "ö",
+    "named": "&ouml;"
+  },
+  {
+    "symbol": "÷",
+    "named": "&divide; &div;"
+  },
+  {
+    "symbol": "ø",
+    "named": "&oslash;"
+  },
+  {
+    "symbol": "ù",
+    "named": "&ugrave;"
+  },
+  {
+    "symbol": "ú",
+    "named": "&uacute;"
+  },
+  {
+    "symbol": "û",
+    "named": "&ucirc;"
+  },
+  {
+    "symbol": "ü",
+    "named": "&uuml;"
+  },
+  {
+    "symbol": "ý",
+    "named": "&yacute;"
+  },
+  {
+    "symbol": "þ",
+    "named": "&thorn;"
+  },
+  {
+    "symbol": "ÿ",
+    "named": "&yuml;"
+  },
+  {
+    "symbol": "Ā",
+    "named": "&Amacr;"
+  },
+  {
+    "symbol": "ā",
+    "named": "&amacr;"
+  },
+  {
+    "symbol": "Ă",
+    "named": "&Abreve;"
+  },
+  {
+    "symbol": "ă",
+    "named": "&abreve;"
+  },
+  {
+    "symbol": "Ą",
+    "named": "&Aogon;"
+  },
+  {
+    "symbol": "ą",
+    "named": "&aogon;"
+  },
+  {
+    "symbol": "Ć",
+    "named": "&Cacute;"
+  },
+  {
+    "symbol": "ć",
+    "named": "&cacute;"
+  },
+  {
+    "symbol": "Ĉ",
+    "named": "&Ccirc;"
+  },
+  {
+    "symbol": "ĉ",
+    "named": "&ccirc;"
+  },
+  {
+    "symbol": "Ċ",
+    "named": "&Cdot;"
+  },
+  {
+    "symbol": "ċ",
+    "named": "&cdot;"
+  },
+  {
+    "symbol": "Č",
+    "named": "&Ccaron;"
+  },
+  {
+    "symbol": "č",
+    "named": "&ccaron;"
+  },
+  {
+    "symbol": "Ď",
+    "named": "&Dcaron;"
+  },
+  {
+    "symbol": "ď",
+    "named": "&dcaron;"
+  },
+  {
+    "symbol": "Đ",
+    "named": "&Dstrok;"
+  },
+  {
+    "symbol": "đ",
+    "named": "&dstrok;"
+  },
+  {
+    "symbol": "Ē",
+    "named": "&Emacr;"
+  },
+  {
+    "symbol": "ē",
+    "named": "&emacr;"
+  },
+  {
+    "symbol": "Ė",
+    "named": "&Edot;"
+  },
+  {
+    "symbol": "ė",
+    "named": "&edot;"
+  },
+  {
+    "symbol": "Ę",
+    "named": "&Eogon;"
+  },
+  {
+    "symbol": "ę",
+    "named": "&eogon;"
+  },
+  {
+    "symbol": "Ě",
+    "named": "&Ecaron;"
+  },
+  {
+    "symbol": "ě",
+    "named": "&ecaron;"
+  },
+  {
+    "symbol": "Ĝ",
+    "named": "&Gcirc;"
+  },
+  {
+    "symbol": "ĝ",
+    "named": "&gcirc;"
+  },
+  {
+    "symbol": "Ğ",
+    "named": "&Gbreve;"
+  },
+  {
+    "symbol": "ğ",
+    "named": "&gbreve;"
+  },
+  {
+    "symbol": "Ġ",
+    "named": "&Gdot;"
+  },
+  {
+    "symbol": "ġ",
+    "named": "&gdot;"
+  },
+  {
+    "symbol": "Ģ",
+    "named": "&Gcedil;"
+  },
+  {
+    "symbol": "Ĥ",
+    "named": "&Hcirc;"
+  },
+  {
+    "symbol": "ĥ",
+    "named": "&hcirc;"
+  },
+  {
+    "symbol": "Ħ",
+    "named": "&Hstrok;"
+  },
+  {
+    "symbol": "ħ",
+    "named": "&hstrok;"
+  },
+  {
+    "symbol": "Ĩ",
+    "named": "&Itilde;"
+  },
+  {
+    "symbol": "ĩ",
+    "named": "&itilde;"
+  },
+  {
+    "symbol": "Ī",
+    "named": "&Imacr;"
+  },
+  {
+    "symbol": "ī",
+    "named": "&imacr;"
+  },
+  {
+    "symbol": "Į",
+    "named": "&Iogon;"
+  },
+  {
+    "symbol": "į",
+    "named": "&iogon;"
+  },
+  {
+    "symbol": "İ",
+    "named": "&Idot;"
+  },
+  {
+    "symbol": "ı",
+    "named": "&imath; &inodot;"
+  },
+  {
+    "symbol": "Ĳ",
+    "named": "&IJlig;"
+  },
+  {
+    "symbol": "ĳ",
+    "named": "&ijlig;"
+  },
+  {
+    "symbol": "Ĵ",
+    "named": "&Jcirc;"
+  },
+  {
+    "symbol": "ĵ",
+    "named": "&jcirc;"
+  },
+  {
+    "symbol": "Ķ",
+    "named": "&Kcedil;"
+  },
+  {
+    "symbol": "ķ",
+    "named": "&kcedil;"
+  },
+  {
+    "symbol": "ĸ",
+    "named": "&kgreen;"
+  },
+  {
+    "symbol": "Ĺ",
+    "named": "&Lacute;"
+  },
+  {
+    "symbol": "ĺ",
+    "named": "&lacute;"
+  },
+  {
+    "symbol": "Ļ",
+    "named": "&Lcedil;"
+  },
+  {
+    "symbol": "ļ",
+    "named": "&lcedil;"
+  },
+  {
+    "symbol": "Ľ",
+    "named": "&Lcaron;"
+  },
+  {
+    "symbol": "ľ",
+    "named": "&lcaron;"
+  },
+  {
+    "symbol": "Ŀ",
+    "named": "&Lmidot;"
+  },
+  {
+    "symbol": "ŀ",
+    "named": "&lmidot;"
+  },
+  {
+    "symbol": "Ł",
+    "named": "&Lstrok;"
+  },
+  {
+    "symbol": "ł",
+    "named": "&lstrok;"
+  },
+  {
+    "symbol": "Ń",
+    "named": "&Nacute;"
+  },
+  {
+    "symbol": "ń",
+    "named": "&nacute;"
+  },
+  {
+    "symbol": "Ņ",
+    "named": "&Ncedil;"
+  },
+  {
+    "symbol": "ņ",
+    "named": "&ncedil;"
+  },
+  {
+    "symbol": "Ň",
+    "named": "&Ncaron;"
+  },
+  {
+    "symbol": "ň",
+    "named": "&ncaron;"
+  },
+  {
+    "symbol": "ŉ",
+    "named": "&napos;"
+  },
+  {
+    "symbol": "Ŋ",
+    "named": "&ENG;"
+  },
+  {
+    "symbol": "ŋ",
+    "named": "&eng;"
+  },
+  {
+    "symbol": "Ō",
+    "named": "&Omacr;"
+  },
+  {
+    "symbol": "ō",
+    "named": "&omacr;"
+  },
+  {
+    "symbol": "Ő",
+    "named": "&Odblac;"
+  },
+  {
+    "symbol": "ő",
+    "named": "&odblac;"
+  },
+  {
+    "symbol": "Œ",
+    "named": "&OElig;"
+  },
+  {
+    "symbol": "œ",
+    "named": "&oelig;"
+  },
+  {
+    "symbol": "Ŕ",
+    "named": "&Racute;"
+  },
+  {
+    "symbol": "ŕ",
+    "named": "&racute;"
+  },
+  {
+    "symbol": "Ŗ",
+    "named": "&Rcedil;"
+  },
+  {
+    "symbol": "ŗ",
+    "named": "&rcedil;"
+  },
+  {
+    "symbol": "Ř",
+    "named": "&Rcaron;"
+  },
+  {
+    "symbol": "ř",
+    "named": "&rcaron;"
+  },
+  {
+    "symbol": "Ś",
+    "named": "&Sacute;"
+  },
+  {
+    "symbol": "ś",
+    "named": "&sacute;"
+  },
+  {
+    "symbol": "Ŝ",
+    "named": "&Scirc;"
+  },
+  {
+    "symbol": "ŝ",
+    "named": "&scirc;"
+  },
+  {
+    "symbol": "Ş",
+    "named": "&Scedil;"
+  },
+  {
+    "symbol": "ş",
+    "named": "&scedil;"
+  },
+  {
+    "symbol": "Š",
+    "named": "&Scaron;"
+  },
+  {
+    "symbol": "š",
+    "named": "&scaron;"
+  },
+  {
+    "symbol": "Ţ",
+    "named": "&Tcedil;"
+  },
+  {
+    "symbol": "ţ",
+    "named": "&tcedil;"
+  },
+  {
+    "symbol": "Ť",
+    "named": "&Tcaron;"
+  },
+  {
+    "symbol": "ť",
+    "named": "&tcaron;"
+  },
+  {
+    "symbol": "Ŧ",
+    "named": "&Tstrok;"
+  },
+  {
+    "symbol": "ŧ",
+    "named": "&tstrok;"
+  },
+  {
+    "symbol": "Ũ",
+    "named": "&Utilde;"
+  },
+  {
+    "symbol": "ũ",
+    "named": "&utilde;"
+  },
+  {
+    "symbol": "Ū",
+    "named": "&Umacr;"
+  },
+  {
+    "symbol": "ū",
+    "named": "&umacr;"
+  },
+  {
+    "symbol": "Ŭ",
+    "named": "&Ubreve;"
+  },
+  {
+    "symbol": "ŭ",
+    "named": "&ubreve;"
+  },
+  {
+    "symbol": "Ů",
+    "named": "&Uring;"
+  },
+  {
+    "symbol": "ů",
+    "named": "&uring;"
+  },
+  {
+    "symbol": "Ű",
+    "named": "&Udblac;"
+  },
+  {
+    "symbol": "ű",
+    "named": "&udblac;"
+  },
+  {
+    "symbol": "Ų",
+    "named": "&Uogon;"
+  },
+  {
+    "symbol": "ų",
+    "named": "&uogon;"
+  },
+  {
+    "symbol": "Ŵ",
+    "named": "&Wcirc;"
+  },
+  {
+    "symbol": "ŵ",
+    "named": "&wcirc;"
+  },
+  {
+    "symbol": "Ŷ",
+    "named": "&Ycirc;"
+  },
+  {
+    "symbol": "ŷ",
+    "named": "&ycirc;"
+  },
+  {
+    "symbol": "Ÿ",
+    "named": "&Yuml;"
+  },
+  {
+    "symbol": "Ź",
+    "named": "&Zacute;"
+  },
+  {
+    "symbol": "ź",
+    "named": "&zacute;"
+  },
+  {
+    "symbol": "Ż",
+    "named": "&Zdot;"
+  },
+  {
+    "symbol": "ż",
+    "named": "&zdot;"
+  },
+  {
+    "symbol": "Ž",
+    "named": "&Zcaron;"
+  },
+  {
+    "symbol": "ž",
+    "named": "&zcaron;"
+  },
+  {
+    "symbol": "ƒ",
+    "named": "&fnof;"
+  },
+  {
+    "symbol": "Ƶ",
+    "named": "&imped;"
+  },
+  {
+    "symbol": "ǵ",
+    "named": "&gacute;"
+  },
+  {
+    "symbol": "ȷ",
+    "named": "&jmath;"
+  },
+  {
+    "symbol": "ˆ",
+    "named": "&circ;"
+  },
+  {
+    "symbol": "ˇ",
+    "named": "&caron; &Hacek;"
+  },
+  {
+    "symbol": "˘",
+    "named": "&breve; &Breve;"
+  },
+  {
+    "symbol": "˙",
+    "named": "&dot; &DiacriticalDot;"
+  },
+  {
+    "symbol": "˚",
+    "named": "&ring;"
+  },
+  {
+    "symbol": "˛",
+    "named": "&ogon;"
+  },
+  {
+    "symbol": "˜",
+    "named": "&tilde; &DiacriticalTilde;"
+  },
+  {
+    "symbol": "˝",
+    "named": "&dblac; &DiacriticalDoubleAcute;"
+  },
+  {
+    "symbol": " ̑",
+    "named": "&DownBreve;"
+  },
+  {
+    "symbol": " ̲",
+    "named": "&UnderBar;"
+  },
+  {
+    "symbol": "Α",
+    "named": "&Alpha;"
+  },
+  {
+    "symbol": "Β",
+    "named": "&Beta;"
+  },
+  {
+    "symbol": "Γ",
+    "named": "&Gamma;"
+  },
+  {
+    "symbol": "Δ",
+    "named": "&Delta;"
+  },
+  {
+    "symbol": "Ε",
+    "named": "&Epsilon;"
+  },
+  {
+    "symbol": "Ζ",
+    "named": "&Zeta;"
+  },
+  {
+    "symbol": "Η",
+    "named": "&Eta;"
+  },
+  {
+    "symbol": "Θ",
+    "named": "&Theta;"
+  },
+  {
+    "symbol": "Ι",
+    "named": "&Iota;"
+  },
+  {
+    "symbol": "Κ",
+    "named": "&Kappa;"
+  },
+  {
+    "symbol": "Λ",
+    "named": "&Lambda;"
+  },
+  {
+    "symbol": "Μ",
+    "named": "&Mu;"
+  },
+  {
+    "symbol": "Ν",
+    "named": "&Nu;"
+  },
+  {
+    "symbol": "Ξ",
+    "named": "&Xi;"
+  },
+  {
+    "symbol": "Ο",
+    "named": "&Omicron;"
+  },
+  {
+    "symbol": "Π",
+    "named": "&Pi;"
+  },
+  {
+    "symbol": "Ρ",
+    "named": "&Rho;"
+  },
+  {
+    "symbol": "Σ",
+    "named": "&Sigma;"
+  },
+  {
+    "symbol": "Τ",
+    "named": "&Tau;"
+  },
+  {
+    "symbol": "Υ",
+    "named": "&Upsilon;"
+  },
+  {
+    "symbol": "Φ",
+    "named": "&Phi;"
+  },
+  {
+    "symbol": "Χ",
+    "named": "&Chi;"
+  },
+  {
+    "symbol": "Ψ",
+    "named": "&Psi;"
+  },
+  {
+    "symbol": "Ω",
+    "named": "&Omega;"
+  },
+  {
+    "symbol": "α",
+    "named": "&alpha;"
+  },
+  {
+    "symbol": "β",
+    "named": "&beta;"
+  },
+  {
+    "symbol": "γ",
+    "named": "&gamma;"
+  },
+  {
+    "symbol": "δ",
+    "named": "&delta;"
+  },
+  {
+    "symbol": "ε",
+    "named": "&epsiv; &varepsilon; &epsilon;"
+  },
+  {
+    "symbol": "ζ",
+    "named": "&zeta;"
+  },
+  {
+    "symbol": "η",
+    "named": "&eta;"
+  },
+  {
+    "symbol": "θ",
+    "named": "&theta;"
+  },
+  {
+    "symbol": "ι",
+    "named": "&iota;"
+  },
+  {
+    "symbol": "κ",
+    "named": "&kappa;"
+  },
+  {
+    "symbol": "λ",
+    "named": "&lambda;"
+  },
+  {
+    "symbol": "μ",
+    "named": "&mu;"
+  },
+  {
+    "symbol": "ν",
+    "named": "&nu;"
+  },
+  {
+    "symbol": "ξ",
+    "named": "&xi;"
+  },
+  {
+    "symbol": "ο",
+    "named": "&omicron;"
+  },
+  {
+    "symbol": "π",
+    "named": "&pi;"
+  },
+  {
+    "symbol": "ρ",
+    "named": "&rho;"
+  },
+  {
+    "symbol": "ς",
+    "named": "&sigmav; &varsigma; &sigmaf;"
+  },
+  {
+    "symbol": "σ",
+    "named": "&sigma;"
+  },
+  {
+    "symbol": "τ",
+    "named": "&tau;"
+  },
+  {
+    "symbol": "υ",
+    "named": "&upsi; &upsilon;"
+  },
+  {
+    "symbol": "φ",
+    "named": "&phi; &phiv; &varphi;"
+  },
+  {
+    "symbol": "χ",
+    "named": "&chi;"
+  },
+  {
+    "symbol": "ψ",
+    "named": "&psi;"
+  },
+  {
+    "symbol": "ω",
+    "named": "&omega;"
+  },
+  {
+    "symbol": "ϑ",
+    "named": "&thetav; &vartheta; &thetasym;"
+  },
+  {
+    "symbol": "ϒ",
+    "named": "&Upsi; &upsih;"
+  },
+  {
+    "symbol": "ϕ",
+    "named": "&straightphi;"
+  },
+  {
+    "symbol": "ϖ",
+    "named": "&piv; &varpi;"
+  },
+  {
+    "symbol": "Ϝ",
+    "named": "&Gammad;"
+  },
+  {
+    "symbol": "ϝ",
+    "named": "&gammad; &digamma;"
+  },
+  {
+    "symbol": "ϰ",
+    "named": "&kappav; &varkappa;"
+  },
+  {
+    "symbol": "ϱ",
+    "named": "&rhov; &varrho;"
+  },
+  {
+    "symbol": "ϵ",
+    "named": "&epsi; &straightepsilon;"
+  },
+  {
+    "symbol": "϶",
+    "named": "&bepsi; &backepsilon;"
+  },
+  {
+    "symbol": "Ё",
+    "named": "&IOcy;"
+  },
+  {
+    "symbol": "Ђ",
+    "named": "&DJcy;"
+  },
+  {
+    "symbol": "Ѓ",
+    "named": "&GJcy;"
+  },
+  {
+    "symbol": "Є",
+    "named": "&Jukcy;"
+  },
+  {
+    "symbol": "Ѕ",
+    "named": "&DScy;"
+  },
+  {
+    "symbol": "І",
+    "named": "&Iukcy;"
+  },
+  {
+    "symbol": "Ї",
+    "named": "&YIcy;"
+  },
+  {
+    "symbol": "Ј",
+    "named": "&Jsercy;"
+  },
+  {
+    "symbol": "Љ",
+    "named": "&LJcy;"
+  },
+  {
+    "symbol": "Њ",
+    "named": "&NJcy;"
+  },
+  {
+    "symbol": "Ћ",
+    "named": "&TSHcy;"
+  },
+  {
+    "symbol": "Ќ",
+    "named": "&KJcy;"
+  },
+  {
+    "symbol": "Ў",
+    "named": "&Ubrcy;"
+  },
+  {
+    "symbol": "Џ",
+    "named": "&DZcy;"
+  },
+  {
+    "symbol": "А",
+    "named": "&Acy;"
+  },
+  {
+    "symbol": "Б",
+    "named": "&Bcy;"
+  },
+  {
+    "symbol": "В",
+    "named": "&Vcy;"
+  },
+  {
+    "symbol": "Г",
+    "named": "&Gcy;"
+  },
+  {
+    "symbol": "Д",
+    "named": "&Dcy;"
+  },
+  {
+    "symbol": "Е",
+    "named": "&IEcy;"
+  },
+  {
+    "symbol": "Ж",
+    "named": "&ZHcy;"
+  },
+  {
+    "symbol": "З",
+    "named": "&Zcy;"
+  },
+  {
+    "symbol": "И",
+    "named": "&Icy;"
+  },
+  {
+    "symbol": "Й",
+    "named": "&Jcy;"
+  },
+  {
+    "symbol": "К",
+    "named": "&Kcy;"
+  },
+  {
+    "symbol": "Л",
+    "named": "&Lcy;"
+  },
+  {
+    "symbol": "М",
+    "named": "&Mcy;"
+  },
+  {
+    "symbol": "Н",
+    "named": "&Ncy;"
+  },
+  {
+    "symbol": "О",
+    "named": "&Ocy;"
+  },
+  {
+    "symbol": "П",
+    "named": "&Pcy;"
+  },
+  {
+    "symbol": "Р",
+    "named": "&Rcy;"
+  },
+  {
+    "symbol": "С",
+    "named": "&Scy;"
+  },
+  {
+    "symbol": "Т",
+    "named": "&Tcy;"
+  },
+  {
+    "symbol": "У",
+    "named": "&Ucy;"
+  },
+  {
+    "symbol": "Ф",
+    "named": "&Fcy;"
+  },
+  {
+    "symbol": "Х",
+    "named": "&KHcy;"
+  },
+  {
+    "symbol": "Ц",
+    "named": "&TScy;"
+  },
+  {
+    "symbol": "Ч",
+    "named": "&CHcy;"
+  },
+  {
+    "symbol": "Ш",
+    "named": "&SHcy;"
+  },
+  {
+    "symbol": "Щ",
+    "named": "&SHCHcy;"
+  },
+  {
+    "symbol": "Ъ",
+    "named": "&HARDcy;"
+  },
+  {
+    "symbol": "Ы",
+    "named": "&Ycy;"
+  },
+  {
+    "symbol": "Ь",
+    "named": "&SOFTcy;"
+  },
+  {
+    "symbol": "Э",
+    "named": "&Ecy;"
+  },
+  {
+    "symbol": "Ю",
+    "named": "&YUcy;"
+  },
+  {
+    "symbol": "Я",
+    "named": "&YAcy;"
+  },
+  {
+    "symbol": "а",
+    "named": "&acy;"
+  },
+  {
+    "symbol": "б",
+    "named": "&bcy;"
+  },
+  {
+    "symbol": "в",
+    "named": "&vcy;"
+  },
+  {
+    "symbol": "г",
+    "named": "&gcy;"
+  },
+  {
+    "symbol": "д",
+    "named": "&dcy;"
+  },
+  {
+    "symbol": "е",
+    "named": "&iecy;"
+  },
+  {
+    "symbol": "ж",
+    "named": "&zhcy;"
+  },
+  {
+    "symbol": "з",
+    "named": "&zcy;"
+  },
+  {
+    "symbol": "и",
+    "named": "&icy;"
+  },
+  {
+    "symbol": "й",
+    "named": "&jcy;"
+  },
+  {
+    "symbol": "к",
+    "named": "&kcy;"
+  },
+  {
+    "symbol": "л",
+    "named": "&lcy;"
+  },
+  {
+    "symbol": "м",
+    "named": "&mcy;"
+  },
+  {
+    "symbol": "н",
+    "named": "&ncy;"
+  },
+  {
+    "symbol": "о",
+    "named": "&ocy;"
+  },
+  {
+    "symbol": "п",
+    "named": "&pcy;"
+  },
+  {
+    "symbol": "р",
+    "named": "&rcy;"
+  },
+  {
+    "symbol": "с",
+    "named": "&scy;"
+  },
+  {
+    "symbol": "т",
+    "named": "&tcy;"
+  },
+  {
+    "symbol": "у",
+    "named": "&ucy;"
+  },
+  {
+    "symbol": "ф",
+    "named": "&fcy;"
+  },
+  {
+    "symbol": "х",
+    "named": "&khcy;"
+  },
+  {
+    "symbol": "ц",
+    "named": "&tscy;"
+  },
+  {
+    "symbol": "ч",
+    "named": "&chcy;"
+  },
+  {
+    "symbol": "ш",
+    "named": "&shcy;"
+  },
+  {
+    "symbol": "щ",
+    "named": "&shchcy;"
+  },
+  {
+    "symbol": "ъ",
+    "named": "&hardcy;"
+  },
+  {
+    "symbol": "ы",
+    "named": "&ycy;"
+  },
+  {
+    "symbol": "ь",
+    "named": "&softcy;"
+  },
+  {
+    "symbol": "э",
+    "named": "&ecy;"
+  },
+  {
+    "symbol": "ю",
+    "named": "&yucy;"
+  },
+  {
+    "symbol": "я",
+    "named": "&yacy;"
+  },
+  {
+    "symbol": "ё",
+    "named": "&iocy;"
+  },
+  {
+    "symbol": "ђ",
+    "named": "&djcy;"
+  },
+  {
+    "symbol": "ѓ",
+    "named": "&gjcy;"
+  },
+  {
+    "symbol": "є",
+    "named": "&jukcy;"
+  },
+  {
+    "symbol": "ѕ",
+    "named": "&dscy;"
+  },
+  {
+    "symbol": "і",
+    "named": "&iukcy;"
+  },
+  {
+    "symbol": "ї",
+    "named": "&yicy;"
+  },
+  {
+    "symbol": "ј",
+    "named": "&jsercy;"
+  },
+  {
+    "symbol": "љ",
+    "named": "&ljcy;"
+  },
+  {
+    "symbol": "њ",
+    "named": "&njcy;"
+  },
+  {
+    "symbol": "ћ",
+    "named": "&tshcy;"
+  },
+  {
+    "symbol": "ќ",
+    "named": "&kjcy;"
+  },
+  {
+    "symbol": "ў",
+    "named": "&ubrcy;"
+  },
+  {
+    "symbol": "џ",
+    "named": "&dzcy;"
+  },
+  {
+    "symbol": " ",
+    "named": "&ensp;"
+  },
+  {
+    "symbol": " ",
+    "named": "&emsp;"
+  },
+  {
+    "symbol": " ",
+    "named": "&emsp13;"
+  },
+  {
+    "symbol": " ",
+    "named": "&emsp14;"
+  },
+  {
+    "symbol": " ",
+    "named": "&numsp;"
+  },
+  {
+    "symbol": " ",
+    "named": "&puncsp;"
+  },
+  {
+    "symbol": " ",
+    "named": "&thinsp; &ThinSpace;"
+  },
+  {
+    "symbol": " ",
+    "named": "&hairsp; &VeryThinSpace;"
+  },
+  {
+    "symbol": "​",
+    "named": "&ZeroWidthSpace; &NegativeVeryThinSpace; &NegativeThinSpace; &NegativeMediumSpace; &NegativeThickSpace;"
+  },
+  {
+    "symbol": " ‌",
+    "named": "&zwnj;"
+  },
+  {
+    "symbol": " ‍",
+    "named": "&zwj;"
+  },
+  {
+    "symbol": "",
+    "named": "&lrm;"
+  },
+  {
+    "symbol": "",
+    "named": "&rlm;"
+  },
+  {
+    "symbol": "‐",
+    "named": "&hyphen; &dash;"
+  },
+  {
+    "symbol": "–",
+    "named": "&ndash;"
+  },
+  {
+    "symbol": "—",
+    "named": "&mdash;"
+  },
+  {
+    "symbol": "―",
+    "named": "&horbar;"
+  },
+  {
+    "symbol": "‖",
+    "named": "&Verbar; &Vert;"
+  },
+  {
+    "symbol": "‘",
+    "named": "&lsquo; &OpenCurlyQuote;"
+  },
+  {
+    "symbol": "’",
+    "named": "&rsquo; &rsquor; &CloseCurlyQuote;"
+  },
+  {
+    "symbol": "‚",
+    "named": "&lsquor; &sbquo;"
+  },
+  {
+    "symbol": "“",
+    "named": "&ldquo; &OpenCurlyDoubleQuote;"
+  },
+  {
+    "symbol": "”",
+    "named": "&rdquo; &rdquor; &CloseCurlyDoubleQuote;"
+  },
+  {
+    "symbol": "„",
+    "named": "&ldquor; &bdquo;"
+  },
+  {
+    "symbol": "†",
+    "named": "&dagger;"
+  },
+  {
+    "symbol": "‡",
+    "named": "&Dagger; &ddagger;"
+  },
+  {
+    "symbol": "•",
+    "named": "&bull; &bullet;"
+  },
+  {
+    "symbol": "‥",
+    "named": "&nldr;"
+  },
+  {
+    "symbol": "…",
+    "named": "&hellip; &mldr;"
+  },
+  {
+    "symbol": "‰",
+    "named": "&permil;"
+  },
+  {
+    "symbol": "‱",
+    "named": "&pertenk;"
+  },
+  {
+    "symbol": "′",
+    "named": "&prime;"
+  },
+  {
+    "symbol": "″",
+    "named": "&Prime;"
+  },
+  {
+    "symbol": "‴",
+    "named": "&tprime;"
+  },
+  {
+    "symbol": "‵",
+    "named": "&bprime; &backprime;"
+  },
+  {
+    "symbol": "‹",
+    "named": "&lsaquo;"
+  },
+  {
+    "symbol": "›",
+    "named": "&rsaquo;"
+  },
+  {
+    "symbol": "‾",
+    "named": "&oline;"
+  },
+  {
+    "symbol": "⁁",
+    "named": "&caret;"
+  },
+  {
+    "symbol": "⁃",
+    "named": "&hybull;"
+  },
+  {
+    "symbol": "⁄",
+    "named": "&frasl;"
+  },
+  {
+    "symbol": "⁏",
+    "named": "&bsemi;"
+  },
+  {
+    "symbol": "⁗",
+    "named": "&qprime;"
+  },
+  {
+    "symbol": " ",
+    "named": "&MediumSpace;"
+  },
+  {
+    "symbol": "⁠",
+    "named": "&NoBreak;"
+  },
+  {
+    "symbol": "\u2061",
+    "named": "&ApplyFunction; &af;"
+  },
+  {
+    "symbol": "\u2062",
+    "named": "&InvisibleTimes; &it;"
+  },
+  {
+    "symbol": "\u2063",
+    "named": "&InvisibleComma; &ic;"
+  },
+  {
+    "symbol": "€",
+    "named": "&euro;"
+  },
+  {
+    "symbol": " ⃛",
+    "named": "&tdot; &TripleDot;"
+  },
+  {
+    "symbol": " ⃜",
+    "named": "&DotDot;"
+  },
+  {
+    "symbol": "ℂ",
+    "named": "&Copf; &complexes;"
+  },
+  {
+    "symbol": "℅",
+    "named": "&incare;"
+  },
+  {
+    "symbol": "ℊ",
+    "named": "&gscr;"
+  },
+  {
+    "symbol": "ℋ",
+    "named": "&hamilt; &HilbertSpace; &Hscr;"
+  },
+  {
+    "symbol": "ℌ",
+    "named": "&Hfr; &Poincareplane;"
+  },
+  {
+    "symbol": "ℍ",
+    "named": "&quaternions; &Hopf;"
+  },
+  {
+    "symbol": "ℎ",
+    "named": "&planckh;"
+  },
+  {
+    "symbol": "ℏ",
+    "named": "&planck; &hbar; &plankv; &hslash;"
+  },
+  {
+    "symbol": "ℐ",
+    "named": "&Iscr; &imagline;"
+  },
+  {
+    "symbol": "ℑ",
+    "named": "&image; &Im; &imagpart; &Ifr;"
+  },
+  {
+    "symbol": "ℒ",
+    "named": "&Lscr; &lagran; &Laplacetrf;"
+  },
+  {
+    "symbol": "ℓ",
+    "named": "&ell;"
+  },
+  {
+    "symbol": "ℕ",
+    "named": "&Nopf; &naturals;"
+  },
+  {
+    "symbol": "№",
+    "named": "&numero;"
+  },
+  {
+    "symbol": "℗",
+    "named": "&copysr;"
+  },
+  {
+    "symbol": "℘",
+    "named": "&weierp; &wp;"
+  },
+  {
+    "symbol": "ℙ",
+    "named": "&Popf; &primes;"
+  },
+  {
+    "symbol": "ℚ",
+    "named": "&rationals; &Qopf;"
+  },
+  {
+    "symbol": "ℛ",
+    "named": "&Rscr; &realine;"
+  },
+  {
+    "symbol": "ℜ",
+    "named": "&real; &Re; &realpart; &Rfr;"
+  },
+  {
+    "symbol": "ℝ",
+    "named": "&reals; &Ropf;"
+  },
+  {
+    "symbol": "℞",
+    "named": "&rx;"
+  },
+  {
+    "symbol": "™",
+    "named": "&trade; &TRADE;"
+  },
+  {
+    "symbol": "ℤ",
+    "named": "&integers; &Zopf;"
+  },
+  {
+    "symbol": "Ω",
+    "named": "&ohm;"
+  },
+  {
+    "symbol": "℧",
+    "named": "&mho;"
+  },
+  {
+    "symbol": "ℨ",
+    "named": "&Zfr; &zeetrf;"
+  },
+  {
+    "symbol": "℩",
+    "named": "&iiota;"
+  },
+  {
+    "symbol": "Å",
+    "named": "&angst;"
+  },
+  {
+    "symbol": "ℬ",
+    "named": "&bernou; &Bernoullis; &Bscr;"
+  },
+  {
+    "symbol": "ℭ",
+    "named": "&Cfr; &Cayleys;"
+  },
+  {
+    "symbol": "ℯ",
+    "named": "&escr;"
+  },
+  {
+    "symbol": "ℰ",
+    "named": "&Escr; &expectation;"
+  },
+  {
+    "symbol": "ℱ",
+    "named": "&Fscr; &Fouriertrf;"
+  },
+  {
+    "symbol": "ℳ",
+    "named": "&phmmat; &Mellintrf; &Mscr;"
+  },
+  {
+    "symbol": "ℴ",
+    "named": "&order; &orderof; &oscr;"
+  },
+  {
+    "symbol": "ℵ",
+    "named": "&alefsym; &aleph;"
+  },
+  {
+    "symbol": "ℶ",
+    "named": "&beth;"
+  },
+  {
+    "symbol": "ℷ",
+    "named": "&gimel;"
+  },
+  {
+    "symbol": "ℸ",
+    "named": "&daleth;"
+  },
+  {
+    "symbol": "ⅅ",
+    "named": "&CapitalDifferentialD; &DD;"
+  },
+  {
+    "symbol": "ⅆ",
+    "named": "&DifferentialD; &dd;"
+  },
+  {
+    "symbol": "ⅇ",
+    "named": "&ExponentialE; &exponentiale; &ee;"
+  },
+  {
+    "symbol": "ⅈ",
+    "named": "&ImaginaryI; &ii;"
+  },
+  {
+    "symbol": "⅓",
+    "named": "&frac13;"
+  },
+  {
+    "symbol": "⅔",
+    "named": "&frac23;"
+  },
+  {
+    "symbol": "⅕",
+    "named": "&frac15;"
+  },
+  {
+    "symbol": "⅖",
+    "named": "&frac25;"
+  },
+  {
+    "symbol": "⅗",
+    "named": "&frac35;"
+  },
+  {
+    "symbol": "⅘",
+    "named": "&frac45;"
+  },
+  {
+    "symbol": "⅙",
+    "named": "&frac16;"
+  },
+  {
+    "symbol": "⅚",
+    "named": "&frac56;"
+  },
+  {
+    "symbol": "⅛",
+    "named": "&frac18;"
+  },
+  {
+    "symbol": "⅜",
+    "named": "&frac38;"
+  },
+  {
+    "symbol": "⅝",
+    "named": "&frac58;"
+  },
+  {
+    "symbol": "⅞",
+    "named": "&frac78;"
+  },
+  {
+    "symbol": "←",
+    "named": "&larr; &leftarrow; &LeftArrow; &slarr; &ShortLeftArrow;"
+  },
+  {
+    "symbol": "↑",
+    "named": "&uarr; &uparrow; &UpArrow; &ShortUpArrow;"
+  },
+  {
+    "symbol": "→",
+    "named": "&rarr; &rightarrow; &RightArrow; &srarr; &ShortRightArrow;"
+  },
+  {
+    "symbol": "↓",
+    "named": "&darr; &downarrow; &DownArrow; &ShortDownArrow;"
+  },
+  {
+    "symbol": "↔",
+    "named": "&harr; &leftrightarrow; &LeftRightArrow;"
+  },
+  {
+    "symbol": "↕",
+    "named": "&varr; &updownarrow; &UpDownArrow;"
+  },
+  {
+    "symbol": "↖",
+    "named": "&nwarr; &UpperLeftArrow; &nwarrow;"
+  },
+  {
+    "symbol": "↗",
+    "named": "&nearr; &UpperRightArrow; &nearrow;"
+  },
+  {
+    "symbol": "↘",
+    "named": "&searr; &searrow; &LowerRightArrow;"
+  },
+  {
+    "symbol": "↙",
+    "named": "&swarr; &swarrow; &LowerLeftArrow;"
+  },
+  {
+    "symbol": "↚",
+    "named": "&nlarr; &nleftarrow;"
+  },
+  {
+    "symbol": "↛",
+    "named": "&nrarr; &nrightarrow;"
+  },
+  {
+    "symbol": "↝",
+    "named": "&rarrw; &rightsquigarrow;"
+  },
+  {
+    "symbol": "↞",
+    "named": "&Larr; &twoheadleftarrow;"
+  },
+  {
+    "symbol": "↟",
+    "named": "&Uarr;"
+  },
+  {
+    "symbol": "↠",
+    "named": "&Rarr; &twoheadrightarrow;"
+  },
+  {
+    "symbol": "↡",
+    "named": "&Darr;"
+  },
+  {
+    "symbol": "↢",
+    "named": "&larrtl; &leftarrowtail;"
+  },
+  {
+    "symbol": "↣",
+    "named": "&rarrtl; &rightarrowtail;"
+  },
+  {
+    "symbol": "↤",
+    "named": "&LeftTeeArrow; &mapstoleft;"
+  },
+  {
+    "symbol": "↥",
+    "named": "&UpTeeArrow; &mapstoup;"
+  },
+  {
+    "symbol": "↦",
+    "named": "&map; &RightTeeArrow; &mapsto;"
+  },
+  {
+    "symbol": "↧",
+    "named": "&DownTeeArrow; &mapstodown;"
+  },
+  {
+    "symbol": "↩",
+    "named": "&larrhk; &hookleftarrow;"
+  },
+  {
+    "symbol": "↪",
+    "named": "&rarrhk; &hookrightarrow;"
+  },
+  {
+    "symbol": "↫",
+    "named": "&larrlp; &looparrowleft;"
+  },
+  {
+    "symbol": "↬",
+    "named": "&rarrlp; &looparrowright;"
+  },
+  {
+    "symbol": "↭",
+    "named": "&harrw; &leftrightsquigarrow;"
+  },
+  {
+    "symbol": "↮",
+    "named": "&nharr; &nleftrightarrow;"
+  },
+  {
+    "symbol": "↰",
+    "named": "&lsh; &Lsh;"
+  },
+  {
+    "symbol": "↱",
+    "named": "&rsh; &Rsh;"
+  },
+  {
+    "symbol": "↲",
+    "named": "&ldsh;"
+  },
+  {
+    "symbol": "↳",
+    "named": "&rdsh;"
+  },
+  {
+    "symbol": "↵",
+    "named": "&crarr;"
+  },
+  {
+    "symbol": "↶",
+    "named": "&cularr; &curvearrowleft;"
+  },
+  {
+    "symbol": "↷",
+    "named": "&curarr; &curvearrowright;"
+  },
+  {
+    "symbol": "↺",
+    "named": "&olarr; &circlearrowleft;"
+  },
+  {
+    "symbol": "↻",
+    "named": "&orarr; &circlearrowright;"
+  },
+  {
+    "symbol": "↼",
+    "named": "&lharu; &LeftVector; &leftharpoonup;"
+  },
+  {
+    "symbol": "↽",
+    "named": "&lhard; &leftharpoondown; &DownLeftVector;"
+  },
+  {
+    "symbol": "↾",
+    "named": "&uharr; &upharpoonright; &RightUpVector;"
+  },
+  {
+    "symbol": "↿",
+    "named": "&uharl; &upharpoonleft; &LeftUpVector;"
+  },
+  {
+    "symbol": "⇀",
+    "named": "&rharu; &RightVector; &rightharpoonup;"
+  },
+  {
+    "symbol": "⇁",
+    "named": "&rhard; &rightharpoondown; &DownRightVector;"
+  },
+  {
+    "symbol": "⇂",
+    "named": "&dharr; &RightDownVector; &downharpoonright;"
+  },
+  {
+    "symbol": "⇃",
+    "named": "&dharl; &LeftDownVector; &downharpoonleft;"
+  },
+  {
+    "symbol": "⇄",
+    "named": "&rlarr; &rightleftarrows; &RightArrowLeftArrow;"
+  },
+  {
+    "symbol": "⇅",
+    "named": "&udarr; &UpArrowDownArrow;"
+  },
+  {
+    "symbol": "⇆",
+    "named": "&lrarr; &leftrightarrows; &LeftArrowRightArrow;"
+  },
+  {
+    "symbol": "⇇",
+    "named": "&llarr; &leftleftarrows;"
+  },
+  {
+    "symbol": "⇈",
+    "named": "&uuarr; &upuparrows;"
+  },
+  {
+    "symbol": "⇉",
+    "named": "&rrarr; &rightrightarrows;"
+  },
+  {
+    "symbol": "⇊",
+    "named": "&ddarr; &downdownarrows;"
+  },
+  {
+    "symbol": "⇋",
+    "named": "&lrhar; &ReverseEquilibrium; &leftrightharpoons;"
+  },
+  {
+    "symbol": "⇌",
+    "named": "&rlhar; &rightleftharpoons; &Equilibrium;"
+  },
+  {
+    "symbol": "⇍",
+    "named": "&nlArr; &nLeftarrow;"
+  },
+  {
+    "symbol": "⇎",
+    "named": "&nhArr; &nLeftrightarrow;"
+  },
+  {
+    "symbol": "⇏",
+    "named": "&nrArr; &nRightarrow;"
+  },
+  {
+    "symbol": "⇐",
+    "named": "&lArr; &Leftarrow; &DoubleLeftArrow;"
+  },
+  {
+    "symbol": "⇑",
+    "named": "&uArr; &Uparrow; &DoubleUpArrow;"
+  },
+  {
+    "symbol": "⇒",
+    "named": "&rArr; &Rightarrow; &Implies; &DoubleRightArrow;"
+  },
+  {
+    "symbol": "⇓",
+    "named": "&dArr; &Downarrow; &DoubleDownArrow;"
+  },
+  {
+    "symbol": "⇔",
+    "named": "&hArr; &Leftrightarrow; &DoubleLeftRightArrow; &iff;"
+  },
+  {
+    "symbol": "⇕",
+    "named": "&vArr; &Updownarrow; &DoubleUpDownArrow;"
+  },
+  {
+    "symbol": "⇖",
+    "named": "&nwArr;"
+  },
+  {
+    "symbol": "⇗",
+    "named": "&neArr;"
+  },
+  {
+    "symbol": "⇘",
+    "named": "&seArr;"
+  },
+  {
+    "symbol": "⇙",
+    "named": "&swArr;"
+  },
+  {
+    "symbol": "⇚",
+    "named": "&lAarr; &Lleftarrow;"
+  },
+  {
+    "symbol": "⇛",
+    "named": "&rAarr; &Rrightarrow;"
+  },
+  {
+    "symbol": "⇝",
+    "named": "&zigrarr;"
+  },
+  {
+    "symbol": "⇤",
+    "named": "&larrb; &LeftArrowBar;"
+  },
+  {
+    "symbol": "⇥",
+    "named": "&rarrb; &RightArrowBar;"
+  },
+  {
+    "symbol": "⇵",
+    "named": "&duarr; &DownArrowUpArrow;"
+  },
+  {
+    "symbol": "⇽",
+    "named": "&loarr;"
+  },
+  {
+    "symbol": "⇾",
+    "named": "&roarr;"
+  },
+  {
+    "symbol": "⇿",
+    "named": "&hoarr;"
+  },
+  {
+    "symbol": "∀",
+    "named": "&forall; &ForAll;"
+  },
+  {
+    "symbol": "∁",
+    "named": "&comp; &complement;"
+  },
+  {
+    "symbol": "∂",
+    "named": "&part; &PartialD;"
+  },
+  {
+    "symbol": "∃",
+    "named": "&exist; &Exists;"
+  },
+  {
+    "symbol": "∄",
+    "named": "&nexist; &NotExists; &nexists;"
+  },
+  {
+    "symbol": "∅",
+    "named": "&empty; &emptyset; &emptyv; &varnothing;"
+  },
+  {
+    "symbol": "∇",
+    "named": "&nabla; &Del;"
+  },
+  {
+    "symbol": "∈",
+    "named": "&isin; &isinv; &Element; &in;"
+  },
+  {
+    "symbol": "∉",
+    "named": "&notin; &NotElement; &notinva;"
+  },
+  {
+    "symbol": "∋",
+    "named": "&niv; &ReverseElement; &ni; &SuchThat;"
+  },
+  {
+    "symbol": "∌",
+    "named": "&notni; &notniva; &NotReverseElement;"
+  },
+  {
+    "symbol": "∏",
+    "named": "&prod; &Product;"
+  },
+  {
+    "symbol": "∐",
+    "named": "&coprod; &Coproduct;"
+  },
+  {
+    "symbol": "∑",
+    "named": "&sum; &Sum;"
+  },
+  {
+    "symbol": "−",
+    "named": "&minus;"
+  },
+  {
+    "symbol": "∓",
+    "named": "&mnplus; &mp; &MinusPlus;"
+  },
+  {
+    "symbol": "∔",
+    "named": "&plusdo; &dotplus;"
+  },
+  {
+    "symbol": "∖",
+    "named": "&setmn; &setminus; &Backslash; &ssetmn; &smallsetminus;"
+  },
+  {
+    "symbol": "∗",
+    "named": "&lowast;"
+  },
+  {
+    "symbol": "∘",
+    "named": "&compfn; &SmallCircle;"
+  },
+  {
+    "symbol": "√",
+    "named": "&radic; &Sqrt;"
+  },
+  {
+    "symbol": "∝",
+    "named": "&prop; &propto; &Proportional; &vprop; &varpropto;"
+  },
+  {
+    "symbol": "∞",
+    "named": "&infin;"
+  },
+  {
+    "symbol": "∟",
+    "named": "&angrt;"
+  },
+  {
+    "symbol": "∠",
+    "named": "&ang; &angle;"
+  },
+  {
+    "symbol": "∡",
+    "named": "&angmsd; &measuredangle;"
+  },
+  {
+    "symbol": "∢",
+    "named": "&angsph;"
+  },
+  {
+    "symbol": "∣",
+    "named": "&mid; &VerticalBar; &smid; &shortmid;"
+  },
+  {
+    "symbol": "∤",
+    "named": "&nmid; &NotVerticalBar; &nsmid; &nshortmid;"
+  },
+  {
+    "symbol": "∥",
+    "named": "&par; &parallel; &DoubleVerticalBar; &spar; &shortparallel;"
+  },
+  {
+    "symbol": "∦",
+    "named": "&npar; &nparallel; &NotDoubleVerticalBar; &nspar; &nshortparallel;"
+  },
+  {
+    "symbol": "∧",
+    "named": "&and; &wedge;"
+  },
+  {
+    "symbol": "∨",
+    "named": "&or; &vee;"
+  },
+  {
+    "symbol": "∩",
+    "named": "&cap;"
+  },
+  {
+    "symbol": "∪",
+    "named": "&cup;"
+  },
+  {
+    "symbol": "∫",
+    "named": "&int; &Integral;"
+  },
+  {
+    "symbol": "∬",
+    "named": "&Int;"
+  },
+  {
+    "symbol": "∭",
+    "named": "&tint; &iiint;"
+  },
+  {
+    "symbol": "∮",
+    "named": "&conint; &oint; &ContourIntegral;"
+  },
+  {
+    "symbol": "∯",
+    "named": "&Conint; &DoubleContourIntegral;"
+  },
+  {
+    "symbol": "∰",
+    "named": "&Cconint;"
+  },
+  {
+    "symbol": "∱",
+    "named": "&cwint;"
+  },
+  {
+    "symbol": "∲",
+    "named": "&cwconint; &ClockwiseContourIntegral;"
+  },
+  {
+    "symbol": "∳",
+    "named": "&awconint; &CounterClockwiseContourIntegral;"
+  },
+  {
+    "symbol": "∴",
+    "named": "&there4; &therefore; &Therefore;"
+  },
+  {
+    "symbol": "∵",
+    "named": "&becaus; &because; &Because;"
+  },
+  {
+    "symbol": "∶",
+    "named": "&ratio;"
+  },
+  {
+    "symbol": "∷",
+    "named": "&Colon; &Proportion;"
+  },
+  {
+    "symbol": "∸",
+    "named": "&minusd; &dotminus;"
+  },
+  {
+    "symbol": "∺",
+    "named": "&mDDot;"
+  },
+  {
+    "symbol": "∻",
+    "named": "&homtht;"
+  },
+  {
+    "symbol": "∼",
+    "named": "&sim; &Tilde; &thksim; &thicksim;"
+  },
+  {
+    "symbol": "∽",
+    "named": "&bsim; &backsim;"
+  },
+  {
+    "symbol": "∾",
+    "named": "&ac; &mstpos;"
+  },
+  {
+    "symbol": "∿",
+    "named": "&acd;"
+  },
+  {
+    "symbol": "≀",
+    "named": "&wreath; &VerticalTilde; &wr;"
+  },
+  {
+    "symbol": "≁",
+    "named": "&nsim; &NotTilde;"
+  },
+  {
+    "symbol": "≂",
+    "named": "&esim; &EqualTilde; &eqsim;"
+  },
+  {
+    "symbol": "≃",
+    "named": "&sime; &TildeEqual; &simeq;"
+  },
+  {
+    "symbol": "≄",
+    "named": "&nsime; &nsimeq; &NotTildeEqual;"
+  },
+  {
+    "symbol": "≅",
+    "named": "&cong; &TildeFullEqual;"
+  },
+  {
+    "symbol": "≆",
+    "named": "&simne;"
+  },
+  {
+    "symbol": "≇",
+    "named": "&ncong; &NotTildeFullEqual;"
+  },
+  {
+    "symbol": "≈",
+    "named": "&asymp; &ap; &TildeTilde; &approx; &thkap; &thickapprox;"
+  },
+  {
+    "symbol": "≉",
+    "named": "&nap; &NotTildeTilde; &napprox;"
+  },
+  {
+    "symbol": "≊",
+    "named": "&ape; &approxeq;"
+  },
+  {
+    "symbol": "≋",
+    "named": "&apid;"
+  },
+  {
+    "symbol": "≌",
+    "named": "&bcong; &backcong;"
+  },
+  {
+    "symbol": "≍",
+    "named": "&asympeq; &CupCap;"
+  },
+  {
+    "symbol": "≎",
+    "named": "&bump; &HumpDownHump; &Bumpeq;"
+  },
+  {
+    "symbol": "≏",
+    "named": "&bumpe; &HumpEqual; &bumpeq;"
+  },
+  {
+    "symbol": "≐",
+    "named": "&esdot; &DotEqual; &doteq;"
+  },
+  {
+    "symbol": "≑",
+    "named": "&eDot; &doteqdot;"
+  },
+  {
+    "symbol": "≒",
+    "named": "&efDot; &fallingdotseq;"
+  },
+  {
+    "symbol": "≓",
+    "named": "&erDot; &risingdotseq;"
+  },
+  {
+    "symbol": "≔",
+    "named": "&colone; &coloneq; &Assign;"
+  },
+  {
+    "symbol": "≕",
+    "named": "&ecolon; &eqcolon;"
+  },
+  {
+    "symbol": "≖",
+    "named": "&ecir; &eqcirc;"
+  },
+  {
+    "symbol": "≗",
+    "named": "&cire; &circeq;"
+  },
+  {
+    "symbol": "≙",
+    "named": "&wedgeq;"
+  },
+  {
+    "symbol": "≚",
+    "named": "&veeeq;"
+  },
+  {
+    "symbol": "≜",
+    "named": "&trie; &triangleq;"
+  },
+  {
+    "symbol": "≟",
+    "named": "&equest; &questeq;"
+  },
+  {
+    "symbol": "≠",
+    "named": "&ne; &NotEqual;"
+  },
+  {
+    "symbol": "≡",
+    "named": "&equiv; &Congruent;"
+  },
+  {
+    "symbol": "≢",
+    "named": "&nequiv; &NotCongruent;"
+  },
+  {
+    "symbol": "≤",
+    "named": "&le; &leq;"
+  },
+  {
+    "symbol": "≥",
+    "named": "&ge; &GreaterEqual; &geq;"
+  },
+  {
+    "symbol": "≦",
+    "named": "&lE; &LessFullEqual; &leqq;"
+  },
+  {
+    "symbol": "≧",
+    "named": "&gE; &GreaterFullEqual; &geqq;"
+  },
+  {
+    "symbol": "≨",
+    "named": "&lnE; &lneqq;"
+  },
+  {
+    "symbol": "≩",
+    "named": "&gnE; &gneqq;"
+  },
+  {
+    "symbol": "≪",
+    "named": "&Lt; &NestedLessLess; &ll;"
+  },
+  {
+    "symbol": "≫",
+    "named": "&Gt; &NestedGreaterGreater; &gg;"
+  },
+  {
+    "symbol": "≬",
+    "named": "&twixt; &between;"
+  },
+  {
+    "symbol": "≭",
+    "named": "&NotCupCap;"
+  },
+  {
+    "symbol": "≮",
+    "named": "&nlt; &NotLess; &nless;"
+  },
+  {
+    "symbol": "≯",
+    "named": "&ngt; &NotGreater; &ngtr;"
+  },
+  {
+    "symbol": "≰",
+    "named": "&nle; &NotLessEqual; &nleq;"
+  },
+  {
+    "symbol": "≱",
+    "named": "&nge; &NotGreaterEqual; &ngeq;"
+  },
+  {
+    "symbol": "≲",
+    "named": "&lsim; &LessTilde; &lesssim;"
+  },
+  {
+    "symbol": "≳",
+    "named": "&gsim; &gtrsim; &GreaterTilde;"
+  },
+  {
+    "symbol": "≴",
+    "named": "&nlsim; &NotLessTilde;"
+  },
+  {
+    "symbol": "≵",
+    "named": "&ngsim; &NotGreaterTilde;"
+  },
+  {
+    "symbol": "≶",
+    "named": "&lg; &lessgtr; &LessGreater;"
+  },
+  {
+    "symbol": "≷",
+    "named": "&gl; &gtrless; &GreaterLess;"
+  },
+  {
+    "symbol": "≸",
+    "named": "&ntlg; &NotLessGreater;"
+  },
+  {
+    "symbol": "≹",
+    "named": "&ntgl; &NotGreaterLess;"
+  },
+  {
+    "symbol": "≺",
+    "named": "&pr; &Precedes; &prec;"
+  },
+  {
+    "symbol": "≻",
+    "named": "&sc; &Succeeds; &succ;"
+  },
+  {
+    "symbol": "≼",
+    "named": "&prcue; &PrecedesSlantEqual; &preccurlyeq;"
+  },
+  {
+    "symbol": "≽",
+    "named": "&sccue; &SucceedsSlantEqual; &succcurlyeq;"
+  },
+  {
+    "symbol": "≾",
+    "named": "&prsim; &precsim; &PrecedesTilde;"
+  },
+  {
+    "symbol": "≿",
+    "named": "&scsim; &succsim; &SucceedsTilde;"
+  },
+  {
+    "symbol": "⊀",
+    "named": "&npr; &nprec; &NotPrecedes;"
+  },
+  {
+    "symbol": "⊁",
+    "named": "&nsc; &nsucc; &NotSucceeds;"
+  },
+  {
+    "symbol": "⊂",
+    "named": "&sub; &subset;"
+  },
+  {
+    "symbol": "⊃",
+    "named": "&sup; &supset; &Superset;"
+  },
+  {
+    "symbol": "⊄",
+    "named": "&nsub;"
+  },
+  {
+    "symbol": "⊅",
+    "named": "&nsup;"
+  },
+  {
+    "symbol": "⊆",
+    "named": "&sube; &SubsetEqual; &subseteq;"
+  },
+  {
+    "symbol": "⊇",
+    "named": "&supe; &supseteq; &SupersetEqual;"
+  },
+  {
+    "symbol": "⊈",
+    "named": "&nsube; &nsubseteq; &NotSubsetEqual;"
+  },
+  {
+    "symbol": "⊉",
+    "named": "&nsupe; &nsupseteq; &NotSupersetEqual;"
+  },
+  {
+    "symbol": "⊊",
+    "named": "&subne; &subsetneq;"
+  },
+  {
+    "symbol": "⊋",
+    "named": "&supne; &supsetneq;"
+  },
+  {
+    "symbol": "⊍",
+    "named": "&cupdot;"
+  },
+  {
+    "symbol": "⊎",
+    "named": "&uplus; &UnionPlus;"
+  },
+  {
+    "symbol": "⊏",
+    "named": "&sqsub; &SquareSubset; &sqsubset;"
+  },
+  {
+    "symbol": "⊐",
+    "named": "&sqsup; &SquareSuperset; &sqsupset;"
+  },
+  {
+    "symbol": "⊑",
+    "named": "&sqsube; &SquareSubsetEqual; &sqsubseteq;"
+  },
+  {
+    "symbol": "⊒",
+    "named": "&sqsupe; &SquareSupersetEqual; &sqsupseteq;"
+  },
+  {
+    "symbol": "⊓",
+    "named": "&sqcap; &SquareIntersection;"
+  },
+  {
+    "symbol": "⊔",
+    "named": "&sqcup; &SquareUnion;"
+  },
+  {
+    "symbol": "⊕",
+    "named": "&oplus; &CirclePlus;"
+  },
+  {
+    "symbol": "⊖",
+    "named": "&ominus; &CircleMinus;"
+  },
+  {
+    "symbol": "⊗",
+    "named": "&otimes; &CircleTimes;"
+  },
+  {
+    "symbol": "⊘",
+    "named": "&osol;"
+  },
+  {
+    "symbol": "⊙",
+    "named": "&odot; &CircleDot;"
+  },
+  {
+    "symbol": "⊚",
+    "named": "&ocir; &circledcirc;"
+  },
+  {
+    "symbol": "⊛",
+    "named": "&oast; &circledast;"
+  },
+  {
+    "symbol": "⊝",
+    "named": "&odash; &circleddash;"
+  },
+  {
+    "symbol": "⊞",
+    "named": "&plusb; &boxplus;"
+  },
+  {
+    "symbol": "⊟",
+    "named": "&minusb; &boxminus;"
+  },
+  {
+    "symbol": "⊠",
+    "named": "&timesb; &boxtimes;"
+  },
+  {
+    "symbol": "⊡",
+    "named": "&sdotb; &dotsquare;"
+  },
+  {
+    "symbol": "⊢",
+    "named": "&vdash; &RightTee;"
+  },
+  {
+    "symbol": "⊣",
+    "named": "&dashv; &LeftTee;"
+  },
+  {
+    "symbol": "⊤",
+    "named": "&top; &DownTee;"
+  },
+  {
+    "symbol": "⊥",
+    "named": "&bottom; &bot; &perp; &UpTee;"
+  },
+  {
+    "symbol": "⊧",
+    "named": "&models;"
+  },
+  {
+    "symbol": "⊨",
+    "named": "&vDash; &DoubleRightTee;"
+  },
+  {
+    "symbol": "⊩",
+    "named": "&Vdash;"
+  },
+  {
+    "symbol": "⊪",
+    "named": "&Vvdash;"
+  },
+  {
+    "symbol": "⊫",
+    "named": "&VDash;"
+  },
+  {
+    "symbol": "⊬",
+    "named": "&nvdash;"
+  },
+  {
+    "symbol": "⊭",
+    "named": "&nvDash;"
+  },
+  {
+    "symbol": "⊮",
+    "named": "&nVdash;"
+  },
+  {
+    "symbol": "⊯",
+    "named": "&nVDash;"
+  },
+  {
+    "symbol": "⊰",
+    "named": "&prurel;"
+  },
+  {
+    "symbol": "⊲",
+    "named": "&vltri; &vartriangleleft; &LeftTriangle;"
+  },
+  {
+    "symbol": "⊳",
+    "named": "&vrtri; &vartriangleright; &RightTriangle;"
+  },
+  {
+    "symbol": "⊴",
+    "named": "&ltrie; &trianglelefteq; &LeftTriangleEqual;"
+  },
+  {
+    "symbol": "⊵",
+    "named": "&rtrie; &trianglerighteq; &RightTriangleEqual;"
+  },
+  {
+    "symbol": "⊶",
+    "named": "&origof;"
+  },
+  {
+    "symbol": "⊷",
+    "named": "&imof;"
+  },
+  {
+    "symbol": "⊸",
+    "named": "&mumap; &multimap;"
+  },
+  {
+    "symbol": "⊹",
+    "named": "&hercon;"
+  },
+  {
+    "symbol": "⊺",
+    "named": "&intcal; &intercal;"
+  },
+  {
+    "symbol": "⊻",
+    "named": "&veebar;"
+  },
+  {
+    "symbol": "⊽",
+    "named": "&barvee;"
+  },
+  {
+    "symbol": "⊾",
+    "named": "&angrtvb;"
+  },
+  {
+    "symbol": "⊿",
+    "named": "&lrtri;"
+  },
+  {
+    "symbol": "⋀",
+    "named": "&xwedge; &Wedge; &bigwedge;"
+  },
+  {
+    "symbol": "⋁",
+    "named": "&xvee; &Vee; &bigvee;"
+  },
+  {
+    "symbol": "⋂",
+    "named": "&xcap; &Intersection; &bigcap;"
+  },
+  {
+    "symbol": "⋃",
+    "named": "&xcup; &Union; &bigcup;"
+  },
+  {
+    "symbol": "⋄",
+    "named": "&diam; &diamond; &Diamond;"
+  },
+  {
+    "symbol": "⋅",
+    "named": "&sdot;"
+  },
+  {
+    "symbol": "⋆",
+    "named": "&sstarf; &Star;"
+  },
+  {
+    "symbol": "⋇",
+    "named": "&divonx; &divideontimes;"
+  },
+  {
+    "symbol": "⋈",
+    "named": "&bowtie;"
+  },
+  {
+    "symbol": "⋉",
+    "named": "&ltimes;"
+  },
+  {
+    "symbol": "⋊",
+    "named": "&rtimes;"
+  },
+  {
+    "symbol": "⋋",
+    "named": "&lthree; &leftthreetimes;"
+  },
+  {
+    "symbol": "⋌",
+    "named": "&rthree; &rightthreetimes;"
+  },
+  {
+    "symbol": "⋍",
+    "named": "&bsime; &backsimeq;"
+  },
+  {
+    "symbol": "⋎",
+    "named": "&cuvee; &curlyvee;"
+  },
+  {
+    "symbol": "⋏",
+    "named": "&cuwed; &curlywedge;"
+  },
+  {
+    "symbol": "⋐",
+    "named": "&Sub; &Subset;"
+  },
+  {
+    "symbol": "⋑",
+    "named": "&Sup; &Supset;"
+  },
+  {
+    "symbol": "⋒",
+    "named": "&Cap;"
+  },
+  {
+    "symbol": "⋓",
+    "named": "&Cup;"
+  },
+  {
+    "symbol": "⋔",
+    "named": "&fork; &pitchfork;"
+  },
+  {
+    "symbol": "⋕",
+    "named": "&epar;"
+  },
+  {
+    "symbol": "⋖",
+    "named": "&ltdot; &lessdot;"
+  },
+  {
+    "symbol": "⋗",
+    "named": "&gtdot; &gtrdot;"
+  },
+  {
+    "symbol": "⋘",
+    "named": "&Ll;"
+  },
+  {
+    "symbol": "⋙",
+    "named": "&Gg; &ggg;"
+  },
+  {
+    "symbol": "⋚",
+    "named": "&leg; &LessEqualGreater; &lesseqgtr;"
+  },
+  {
+    "symbol": "⋛",
+    "named": "&gel; &gtreqless; &GreaterEqualLess;"
+  },
+  {
+    "symbol": "⋞",
+    "named": "&cuepr; &curlyeqprec;"
+  },
+  {
+    "symbol": "⋟",
+    "named": "&cuesc; &curlyeqsucc;"
+  },
+  {
+    "symbol": "⋠",
+    "named": "&nprcue; &NotPrecedesSlantEqual;"
+  },
+  {
+    "symbol": "⋡",
+    "named": "&nsccue; &NotSucceedsSlantEqual;"
+  },
+  {
+    "symbol": "⋢",
+    "named": "&nsqsube; &NotSquareSubsetEqual;"
+  },
+  {
+    "symbol": "⋣",
+    "named": "&nsqsupe; &NotSquareSupersetEqual;"
+  },
+  {
+    "symbol": "⋦",
+    "named": "&lnsim;"
+  },
+  {
+    "symbol": "⋧",
+    "named": "&gnsim;"
+  },
+  {
+    "symbol": "⋨",
+    "named": "&prnsim; &precnsim;"
+  },
+  {
+    "symbol": "⋩",
+    "named": "&scnsim; &succnsim;"
+  },
+  {
+    "symbol": "⋪",
+    "named": "&nltri; &ntriangleleft; &NotLeftTriangle;"
+  },
+  {
+    "symbol": "⋫",
+    "named": "&nrtri; &ntriangleright; &NotRightTriangle;"
+  },
+  {
+    "symbol": "⋬",
+    "named": "&nltrie; &ntrianglelefteq; &NotLeftTriangleEqual;"
+  },
+  {
+    "symbol": "⋭",
+    "named": "&nrtrie; &ntrianglerighteq; &NotRightTriangleEqual;"
+  },
+  {
+    "symbol": "⋮",
+    "named": "&vellip;"
+  },
+  {
+    "symbol": "⋯",
+    "named": "&ctdot;"
+  },
+  {
+    "symbol": "⋰",
+    "named": "&utdot;"
+  },
+  {
+    "symbol": "⋱",
+    "named": "&dtdot;"
+  },
+  {
+    "symbol": "⋲",
+    "named": "&disin;"
+  },
+  {
+    "symbol": "⋳",
+    "named": "&isinsv;"
+  },
+  {
+    "symbol": "⋴",
+    "named": "&isins;"
+  },
+  {
+    "symbol": "⋵",
+    "named": "&isindot;"
+  },
+  {
+    "symbol": "⋶",
+    "named": "&notinvc;"
+  },
+  {
+    "symbol": "⋷",
+    "named": "&notinvb;"
+  },
+  {
+    "symbol": "⋹",
+    "named": "&isinE;"
+  },
+  {
+    "symbol": "⋺",
+    "named": "&nisd;"
+  },
+  {
+    "symbol": "⋻",
+    "named": "&xnis;"
+  },
+  {
+    "symbol": "⋼",
+    "named": "&nis;"
+  },
+  {
+    "symbol": "⋽",
+    "named": "&notnivc;"
+  },
+  {
+    "symbol": "⋾",
+    "named": "&notnivb;"
+  },
+  {
+    "symbol": "⌅",
+    "named": "&barwed; &barwedge;"
+  },
+  {
+    "symbol": "⌆",
+    "named": "&Barwed; &doublebarwedge;"
+  },
+  {
+    "symbol": "⌈",
+    "named": "&lceil; &LeftCeiling;"
+  },
+  {
+    "symbol": "⌉",
+    "named": "&rceil; &RightCeiling;"
+  },
+  {
+    "symbol": "⌊",
+    "named": "&lfloor; &LeftFloor;"
+  },
+  {
+    "symbol": "⌋",
+    "named": "&rfloor; &RightFloor;"
+  },
+  {
+    "symbol": "⌌",
+    "named": "&drcrop;"
+  },
+  {
+    "symbol": "⌍",
+    "named": "&dlcrop;"
+  },
+  {
+    "symbol": "⌎",
+    "named": "&urcrop;"
+  },
+  {
+    "symbol": "⌏",
+    "named": "&ulcrop;"
+  },
+  {
+    "symbol": "⌐",
+    "named": "&bnot;"
+  },
+  {
+    "symbol": "⌒",
+    "named": "&profline;"
+  },
+  {
+    "symbol": "⌓",
+    "named": "&profsurf;"
+  },
+  {
+    "symbol": "⌕",
+    "named": "&telrec;"
+  },
+  {
+    "symbol": "⌖",
+    "named": "&target;"
+  },
+  {
+    "symbol": "⌜",
+    "named": "&ulcorn; &ulcorner;"
+  },
+  {
+    "symbol": "⌝",
+    "named": "&urcorn; &urcorner;"
+  },
+  {
+    "symbol": "⌞",
+    "named": "&dlcorn; &llcorner;"
+  },
+  {
+    "symbol": "⌟",
+    "named": "&drcorn; &lrcorner;"
+  },
+  {
+    "symbol": "⌢",
+    "named": "&frown; &sfrown;"
+  },
+  {
+    "symbol": "⌣",
+    "named": "&smile; &ssmile;"
+  },
+  {
+    "symbol": "⌭",
+    "named": "&cylcty;"
+  },
+  {
+    "symbol": "⌮",
+    "named": "&profalar;"
+  },
+  {
+    "symbol": "⌶",
+    "named": "&topbot;"
+  },
+  {
+    "symbol": "⌽",
+    "named": "&ovbar;"
+  },
+  {
+    "symbol": "⌿",
+    "named": "&solbar;"
+  },
+  {
+    "symbol": "⍼",
+    "named": "&angzarr;"
+  },
+  {
+    "symbol": "⎰",
+    "named": "&lmoust; &lmoustache;"
+  },
+  {
+    "symbol": "⎱",
+    "named": "&rmoust; &rmoustache;"
+  },
+  {
+    "symbol": "⎴",
+    "named": "&tbrk; &OverBracket;"
+  },
+  {
+    "symbol": "⎵",
+    "named": "&bbrk; &UnderBracket;"
+  },
+  {
+    "symbol": "⎶",
+    "named": "&bbrktbrk;"
+  },
+  {
+    "symbol": "⏜",
+    "named": "&OverParenthesis;"
+  },
+  {
+    "symbol": "⏝",
+    "named": "&UnderParenthesis;"
+  },
+  {
+    "symbol": "⏞",
+    "named": "&OverBrace;"
+  },
+  {
+    "symbol": "⏟",
+    "named": "&UnderBrace;"
+  },
+  {
+    "symbol": "⏢",
+    "named": "&trpezium;"
+  },
+  {
+    "symbol": "⏧",
+    "named": "&elinters;"
+  },
+  {
+    "symbol": "␣",
+    "named": "&blank;"
+  },
+  {
+    "symbol": "Ⓢ",
+    "named": "&oS; &circledS;"
+  },
+  {
+    "symbol": "─",
+    "named": "&boxh; &HorizontalLine;"
+  },
+  {
+    "symbol": "│",
+    "named": "&boxv;"
+  },
+  {
+    "symbol": "┌",
+    "named": "&boxdr;"
+  },
+  {
+    "symbol": "┐",
+    "named": "&boxdl;"
+  },
+  {
+    "symbol": "└",
+    "named": "&boxur;"
+  },
+  {
+    "symbol": "┘",
+    "named": "&boxul;"
+  },
+  {
+    "symbol": "├",
+    "named": "&boxvr;"
+  },
+  {
+    "symbol": "┤",
+    "named": "&boxvl;"
+  },
+  {
+    "symbol": "┬",
+    "named": "&boxhd;"
+  },
+  {
+    "symbol": "┴",
+    "named": "&boxhu;"
+  },
+  {
+    "symbol": "┼",
+    "named": "&boxvh;"
+  },
+  {
+    "symbol": "═",
+    "named": "&boxH;"
+  },
+  {
+    "symbol": "║",
+    "named": "&boxV;"
+  },
+  {
+    "symbol": "╒",
+    "named": "&boxdR;"
+  },
+  {
+    "symbol": "╓",
+    "named": "&boxDr;"
+  },
+  {
+    "symbol": "╔",
+    "named": "&boxDR;"
+  },
+  {
+    "symbol": "╕",
+    "named": "&boxdL;"
+  },
+  {
+    "symbol": "╖",
+    "named": "&boxDl;"
+  },
+  {
+    "symbol": "╗",
+    "named": "&boxDL;"
+  },
+  {
+    "symbol": "╘",
+    "named": "&boxuR;"
+  },
+  {
+    "symbol": "╙",
+    "named": "&boxUr;"
+  },
+  {
+    "symbol": "╚",
+    "named": "&boxUR;"
+  },
+  {
+    "symbol": "╛",
+    "named": "&boxuL;"
+  },
+  {
+    "symbol": "╜",
+    "named": "&boxUl;"
+  },
+  {
+    "symbol": "╝",
+    "named": "&boxUL;"
+  },
+  {
+    "symbol": "╞",
+    "named": "&boxvR;"
+  },
+  {
+    "symbol": "╟",
+    "named": "&boxVr;"
+  },
+  {
+    "symbol": "╠",
+    "named": "&boxVR;"
+  },
+  {
+    "symbol": "╡",
+    "named": "&boxvL;"
+  },
+  {
+    "symbol": "╢",
+    "named": "&boxVl;"
+  },
+  {
+    "symbol": "╣",
+    "named": "&boxVL;"
+  },
+  {
+    "symbol": "╤",
+    "named": "&boxHd;"
+  },
+  {
+    "symbol": "╥",
+    "named": "&boxhD;"
+  },
+  {
+    "symbol": "╦",
+    "named": "&boxHD;"
+  },
+  {
+    "symbol": "╧",
+    "named": "&boxHu;"
+  },
+  {
+    "symbol": "╨",
+    "named": "&boxhU;"
+  },
+  {
+    "symbol": "╩",
+    "named": "&boxHU;"
+  },
+  {
+    "symbol": "╪",
+    "named": "&boxvH;"
+  },
+  {
+    "symbol": "╫",
+    "named": "&boxVh;"
+  },
+  {
+    "symbol": "╬",
+    "named": "&boxVH;"
+  },
+  {
+    "symbol": "▀",
+    "named": "&uhblk;"
+  },
+  {
+    "symbol": "▄",
+    "named": "&lhblk;"
+  },
+  {
+    "symbol": "█",
+    "named": "&block;"
+  },
+  {
+    "symbol": "░",
+    "named": "&blk14;"
+  },
+  {
+    "symbol": "▒",
+    "named": "&blk12;"
+  },
+  {
+    "symbol": "▓",
+    "named": "&blk34;"
+  },
+  {
+    "symbol": "□",
+    "named": "&squ; &square; &Square;"
+  },
+  {
+    "symbol": "▪",
+    "named": "&squf; &squarf; &blacksquare; &FilledVerySmallSquare;"
+  },
+  {
+    "symbol": "▫",
+    "named": "&EmptyVerySmallSquare;"
+  },
+  {
+    "symbol": "▭",
+    "named": "&rect;"
+  },
+  {
+    "symbol": "▮",
+    "named": "&marker;"
+  },
+  {
+    "symbol": "▱",
+    "named": "&fltns;"
+  },
+  {
+    "symbol": "△",
+    "named": "&xutri; &bigtriangleup;"
+  },
+  {
+    "symbol": "▴",
+    "named": "&utrif; &blacktriangle;"
+  },
+  {
+    "symbol": "▵",
+    "named": "&utri; &triangle;"
+  },
+  {
+    "symbol": "▸",
+    "named": "&rtrif; &blacktriangleright;"
+  },
+  {
+    "symbol": "▹",
+    "named": "&rtri; &triangleright;"
+  },
+  {
+    "symbol": "▽",
+    "named": "&xdtri; &bigtriangledown;"
+  },
+  {
+    "symbol": "▾",
+    "named": "&dtrif; &blacktriangledown;"
+  },
+  {
+    "symbol": "▿",
+    "named": "&dtri; &triangledown;"
+  },
+  {
+    "symbol": "◂",
+    "named": "&ltrif; &blacktriangleleft;"
+  },
+  {
+    "symbol": "◃",
+    "named": "&ltri; &triangleleft;"
+  },
+  {
+    "symbol": "◊",
+    "named": "&loz; &lozenge;"
+  },
+  {
+    "symbol": "○",
+    "named": "&cir;"
+  },
+  {
+    "symbol": "◬",
+    "named": "&tridot;"
+  },
+  {
+    "symbol": "◯",
+    "named": "&xcirc; &bigcirc;"
+  },
+  {
+    "symbol": "◸",
+    "named": "&ultri;"
+  },
+  {
+    "symbol": "◹",
+    "named": "&urtri;"
+  },
+  {
+    "symbol": "◺",
+    "named": "&lltri;"
+  },
+  {
+    "symbol": "◻",
+    "named": "&EmptySmallSquare;"
+  },
+  {
+    "symbol": "◼",
+    "named": "&FilledSmallSquare;"
+  },
+  {
+    "symbol": "★",
+    "named": "&starf; &bigstar;"
+  },
+  {
+    "symbol": "☆",
+    "named": "&star;"
+  },
+  {
+    "symbol": "☎",
+    "named": "&phone;"
+  },
+  {
+    "symbol": "♀",
+    "named": "&female;"
+  },
+  {
+    "symbol": "♂",
+    "named": "&male;"
+  },
+  {
+    "symbol": "♠",
+    "named": "&spades; &spadesuit;"
+  },
+  {
+    "symbol": "♣",
+    "named": "&clubs; &clubsuit;"
+  },
+  {
+    "symbol": "♥",
+    "named": "&hearts; &heartsuit;"
+  },
+  {
+    "symbol": "♦",
+    "named": "&diams; &diamondsuit;"
+  },
+  {
+    "symbol": "♪",
+    "named": "&sung;"
+  },
+  {
+    "symbol": "♭",
+    "named": "&flat;"
+  },
+  {
+    "symbol": "♮",
+    "named": "&natur; &natural;"
+  },
+  {
+    "symbol": "♯",
+    "named": "&sharp;"
+  },
+  {
+    "symbol": "✓",
+    "named": "&check; &checkmark;"
+  },
+  {
+    "symbol": "✗",
+    "named": "&cross;"
+  },
+  {
+    "symbol": "✠",
+    "named": "&malt; &maltese;"
+  },
+  {
+    "symbol": "✶",
+    "named": "&sext;"
+  },
+  {
+    "symbol": "❘",
+    "named": "&VerticalSeparator;"
+  },
+  {
+    "symbol": "❲",
+    "named": "&lbbrk;"
+  },
+  {
+    "symbol": "❳",
+    "named": "&rbbrk;"
+  },
+  {
+    "symbol": "⟦",
+    "named": "&lobrk; &LeftDoubleBracket;"
+  },
+  {
+    "symbol": "⟧",
+    "named": "&robrk; &RightDoubleBracket;"
+  },
+  {
+    "symbol": "⟨",
+    "named": "&lang; &LeftAngleBracket; &langle;"
+  },
+  {
+    "symbol": "⟩",
+    "named": "&rang; &RightAngleBracket; &rangle;"
+  },
+  {
+    "symbol": "⟪",
+    "named": "&Lang;"
+  },
+  {
+    "symbol": "⟫",
+    "named": "&Rang;"
+  },
+  {
+    "symbol": "⟬",
+    "named": "&loang;"
+  },
+  {
+    "symbol": "⟭",
+    "named": "&roang;"
+  },
+  {
+    "symbol": "⟵",
+    "named": "&xlarr; &longleftarrow; &LongLeftArrow;"
+  },
+  {
+    "symbol": "⟶",
+    "named": "&xrarr; &longrightarrow; &LongRightArrow;"
+  },
+  {
+    "symbol": "⟷",
+    "named": "&xharr; &longleftrightarrow; &LongLeftRightArrow;"
+  },
+  {
+    "symbol": "⟸",
+    "named": "&xlArr; &Longleftarrow; &DoubleLongLeftArrow;"
+  },
+  {
+    "symbol": "⟹",
+    "named": "&xrArr; &Longrightarrow; &DoubleLongRightArrow;"
+  },
+  {
+    "symbol": "⟺",
+    "named": "&xhArr; &Longleftrightarrow; &DoubleLongLeftRightArrow;"
+  },
+  {
+    "symbol": "⟼",
+    "named": "&xmap; &longmapsto;"
+  },
+  {
+    "symbol": "⟿",
+    "named": "&dzigrarr;"
+  },
+  {
+    "symbol": "⤂",
+    "named": "&nvlArr;"
+  },
+  {
+    "symbol": "⤃",
+    "named": "&nvrArr;"
+  },
+  {
+    "symbol": "⤄",
+    "named": "&nvHarr;"
+  },
+  {
+    "symbol": "⤅",
+    "named": "&Map;"
+  },
+  {
+    "symbol": "⤌",
+    "named": "&lbarr;"
+  },
+  {
+    "symbol": "⤍",
+    "named": "&rbarr; &bkarow;"
+  },
+  {
+    "symbol": "⤎",
+    "named": "&lBarr;"
+  },
+  {
+    "symbol": "⤏",
+    "named": "&rBarr; &dbkarow;"
+  },
+  {
+    "symbol": "⤐",
+    "named": "&RBarr; &drbkarow;"
+  },
+  {
+    "symbol": "⤑",
+    "named": "&DDotrahd;"
+  },
+  {
+    "symbol": "⤒",
+    "named": "&UpArrowBar;"
+  },
+  {
+    "symbol": "⤓",
+    "named": "&DownArrowBar;"
+  },
+  {
+    "symbol": "⤖",
+    "named": "&Rarrtl;"
+  },
+  {
+    "symbol": "⤙",
+    "named": "&latail;"
+  },
+  {
+    "symbol": "⤚",
+    "named": "&ratail;"
+  },
+  {
+    "symbol": "⤛",
+    "named": "&lAtail;"
+  },
+  {
+    "symbol": "⤜",
+    "named": "&rAtail;"
+  },
+  {
+    "symbol": "⤝",
+    "named": "&larrfs;"
+  },
+  {
+    "symbol": "⤞",
+    "named": "&rarrfs;"
+  },
+  {
+    "symbol": "⤟",
+    "named": "&larrbfs;"
+  },
+  {
+    "symbol": "⤠",
+    "named": "&rarrbfs;"
+  },
+  {
+    "symbol": "⤣",
+    "named": "&nwarhk;"
+  },
+  {
+    "symbol": "⤤",
+    "named": "&nearhk;"
+  },
+  {
+    "symbol": "⤥",
+    "named": "&searhk; &hksearow;"
+  },
+  {
+    "symbol": "⤦",
+    "named": "&swarhk; &hkswarow;"
+  },
+  {
+    "symbol": "⤧",
+    "named": "&nwnear;"
+  },
+  {
+    "symbol": "⤨",
+    "named": "&nesear; &toea;"
+  },
+  {
+    "symbol": "⤩",
+    "named": "&seswar; &tosa;"
+  },
+  {
+    "symbol": "⤪",
+    "named": "&swnwar;"
+  },
+  {
+    "symbol": "⤳",
+    "named": "&rarrc;"
+  },
+  {
+    "symbol": "⤵",
+    "named": "&cudarrr;"
+  },
+  {
+    "symbol": "⤶",
+    "named": "&ldca;"
+  },
+  {
+    "symbol": "⤷",
+    "named": "&rdca;"
+  },
+  {
+    "symbol": "⤸",
+    "named": "&cudarrl;"
+  },
+  {
+    "symbol": "⤹",
+    "named": "&larrpl;"
+  },
+  {
+    "symbol": "⤼",
+    "named": "&curarrm;"
+  },
+  {
+    "symbol": "⤽",
+    "named": "&cularrp;"
+  },
+  {
+    "symbol": "⥅",
+    "named": "&rarrpl;"
+  },
+  {
+    "symbol": "⥈",
+    "named": "&harrcir;"
+  },
+  {
+    "symbol": "⥉",
+    "named": "&Uarrocir;"
+  },
+  {
+    "symbol": "⥊",
+    "named": "&lurdshar;"
+  },
+  {
+    "symbol": "⥋",
+    "named": "&ldrushar;"
+  },
+  {
+    "symbol": "⥎",
+    "named": "&LeftRightVector;"
+  },
+  {
+    "symbol": "⥏",
+    "named": "&RightUpDownVector;"
+  },
+  {
+    "symbol": "⥐",
+    "named": "&DownLeftRightVector;"
+  },
+  {
+    "symbol": "⥑",
+    "named": "&LeftUpDownVector;"
+  },
+  {
+    "symbol": "⥒",
+    "named": "&LeftVectorBar;"
+  },
+  {
+    "symbol": "⥓",
+    "named": "&RightVectorBar;"
+  },
+  {
+    "symbol": "⥔",
+    "named": "&RightUpVectorBar;"
+  },
+  {
+    "symbol": "⥕",
+    "named": "&RightDownVectorBar;"
+  },
+  {
+    "symbol": "⥖",
+    "named": "&DownLeftVectorBar;"
+  },
+  {
+    "symbol": "⥗",
+    "named": "&DownRightVectorBar;"
+  },
+  {
+    "symbol": "⥘",
+    "named": "&LeftUpVectorBar;"
+  },
+  {
+    "symbol": "⥙",
+    "named": "&LeftDownVectorBar;"
+  },
+  {
+    "symbol": "⥚",
+    "named": "&LeftTeeVector;"
+  },
+  {
+    "symbol": "⥛",
+    "named": "&RightTeeVector;"
+  },
+  {
+    "symbol": "⥜",
+    "named": "&RightUpTeeVector;"
+  },
+  {
+    "symbol": "⥝",
+    "named": "&RightDownTeeVector;"
+  },
+  {
+    "symbol": "⥞",
+    "named": "&DownLeftTeeVector;"
+  },
+  {
+    "symbol": "⥟",
+    "named": "&DownRightTeeVector;"
+  },
+  {
+    "symbol": "⥠",
+    "named": "&LeftUpTeeVector;"
+  },
+  {
+    "symbol": "⥡",
+    "named": "&LeftDownTeeVector;"
+  },
+  {
+    "symbol": "⥢",
+    "named": "&lHar;"
+  },
+  {
+    "symbol": "⥣",
+    "named": "&uHar;"
+  },
+  {
+    "symbol": "⥤",
+    "named": "&rHar;"
+  },
+  {
+    "symbol": "⥥",
+    "named": "&dHar;"
+  },
+  {
+    "symbol": "⥦",
+    "named": "&luruhar;"
+  },
+  {
+    "symbol": "⥧",
+    "named": "&ldrdhar;"
+  },
+  {
+    "symbol": "⥨",
+    "named": "&ruluhar;"
+  },
+  {
+    "symbol": "⥩",
+    "named": "&rdldhar;"
+  },
+  {
+    "symbol": "⥪",
+    "named": "&lharul;"
+  },
+  {
+    "symbol": "⥫",
+    "named": "&llhard;"
+  },
+  {
+    "symbol": "⥬",
+    "named": "&rharul;"
+  },
+  {
+    "symbol": "⥭",
+    "named": "&lrhard;"
+  },
+  {
+    "symbol": "⥮",
+    "named": "&udhar; &UpEquilibrium;"
+  },
+  {
+    "symbol": "⥯",
+    "named": "&duhar; &ReverseUpEquilibrium;"
+  },
+  {
+    "symbol": "⥰",
+    "named": "&RoundImplies;"
+  },
+  {
+    "symbol": "⥱",
+    "named": "&erarr;"
+  },
+  {
+    "symbol": "⥲",
+    "named": "&simrarr;"
+  },
+  {
+    "symbol": "⥳",
+    "named": "&larrsim;"
+  },
+  {
+    "symbol": "⥴",
+    "named": "&rarrsim;"
+  },
+  {
+    "symbol": "⥵",
+    "named": "&rarrap;"
+  },
+  {
+    "symbol": "⥶",
+    "named": "&ltlarr;"
+  },
+  {
+    "symbol": "⥸",
+    "named": "&gtrarr;"
+  },
+  {
+    "symbol": "⥹",
+    "named": "&subrarr;"
+  },
+  {
+    "symbol": "⥻",
+    "named": "&suplarr;"
+  },
+  {
+    "symbol": "⥼",
+    "named": "&lfisht;"
+  },
+  {
+    "symbol": "⥽",
+    "named": "&rfisht;"
+  },
+  {
+    "symbol": "⥾",
+    "named": "&ufisht;"
+  },
+  {
+    "symbol": "⥿",
+    "named": "&dfisht;"
+  },
+  {
+    "symbol": "⦅",
+    "named": "&lopar;"
+  },
+  {
+    "symbol": "⦆",
+    "named": "&ropar;"
+  },
+  {
+    "symbol": "⦋",
+    "named": "&lbrke;"
+  },
+  {
+    "symbol": "⦌",
+    "named": "&rbrke;"
+  },
+  {
+    "symbol": "⦍",
+    "named": "&lbrkslu;"
+  },
+  {
+    "symbol": "⦎",
+    "named": "&rbrksld;"
+  },
+  {
+    "symbol": "⦏",
+    "named": "&lbrksld;"
+  },
+  {
+    "symbol": "⦐",
+    "named": "&rbrkslu;"
+  },
+  {
+    "symbol": "⦑",
+    "named": "&langd;"
+  },
+  {
+    "symbol": "⦒",
+    "named": "&rangd;"
+  },
+  {
+    "symbol": "⦓",
+    "named": "&lparlt;"
+  },
+  {
+    "symbol": "⦔",
+    "named": "&rpargt;"
+  },
+  {
+    "symbol": "⦕",
+    "named": "&gtlPar;"
+  },
+  {
+    "symbol": "⦖",
+    "named": "&ltrPar;"
+  },
+  {
+    "symbol": "⦚",
+    "named": "&vzigzag;"
+  },
+  {
+    "symbol": "⦜",
+    "named": "&vangrt;"
+  },
+  {
+    "symbol": "⦝",
+    "named": "&angrtvbd;"
+  },
+  {
+    "symbol": "⦤",
+    "named": "&ange;"
+  },
+  {
+    "symbol": "⦥",
+    "named": "&range;"
+  },
+  {
+    "symbol": "⦦",
+    "named": "&dwangle;"
+  },
+  {
+    "symbol": "⦧",
+    "named": "&uwangle;"
+  },
+  {
+    "symbol": "⦨",
+    "named": "&angmsdaa;"
+  },
+  {
+    "symbol": "⦩",
+    "named": "&angmsdab;"
+  },
+  {
+    "symbol": "⦪",
+    "named": "&angmsdac;"
+  },
+  {
+    "symbol": "⦫",
+    "named": "&angmsdad;"
+  },
+  {
+    "symbol": "⦬",
+    "named": "&angmsdae;"
+  },
+  {
+    "symbol": "⦭",
+    "named": "&angmsdaf;"
+  },
+  {
+    "symbol": "⦮",
+    "named": "&angmsdag;"
+  },
+  {
+    "symbol": "⦯",
+    "named": "&angmsdah;"
+  },
+  {
+    "symbol": "⦰",
+    "named": "&bemptyv;"
+  },
+  {
+    "symbol": "⦱",
+    "named": "&demptyv;"
+  },
+  {
+    "symbol": "⦲",
+    "named": "&cemptyv;"
+  },
+  {
+    "symbol": "⦳",
+    "named": "&raemptyv;"
+  },
+  {
+    "symbol": "⦴",
+    "named": "&laemptyv;"
+  },
+  {
+    "symbol": "⦵",
+    "named": "&ohbar;"
+  },
+  {
+    "symbol": "⦶",
+    "named": "&omid;"
+  },
+  {
+    "symbol": "⦷",
+    "named": "&opar;"
+  },
+  {
+    "symbol": "⦹",
+    "named": "&operp;"
+  },
+  {
+    "symbol": "⦻",
+    "named": "&olcross;"
+  },
+  {
+    "symbol": "⦼",
+    "named": "&odsold;"
+  },
+  {
+    "symbol": "⦾",
+    "named": "&olcir;"
+  },
+  {
+    "symbol": "⦿",
+    "named": "&ofcir;"
+  },
+  {
+    "symbol": "⧀",
+    "named": "&olt;"
+  },
+  {
+    "symbol": "⧁",
+    "named": "&ogt;"
+  },
+  {
+    "symbol": "⧂",
+    "named": "&cirscir;"
+  },
+  {
+    "symbol": "⧃",
+    "named": "&cirE;"
+  },
+  {
+    "symbol": "⧄",
+    "named": "&solb;"
+  },
+  {
+    "symbol": "⧅",
+    "named": "&bsolb;"
+  },
+  {
+    "symbol": "⧉",
+    "named": "&boxbox;"
+  },
+  {
+    "symbol": "⧍",
+    "named": "&trisb;"
+  },
+  {
+    "symbol": "⧎",
+    "named": "&rtriltri;"
+  },
+  {
+    "symbol": "⧏",
+    "named": "&LeftTriangleBar;"
+  },
+  {
+    "symbol": "⧐",
+    "named": "&RightTriangleBar;"
+  },
+  {
+    "symbol": "⧚",
+    "named": "&race;"
+  },
+  {
+    "symbol": "⧜",
+    "named": "&iinfin;"
+  },
+  {
+    "symbol": "⧝",
+    "named": "&infintie;"
+  },
+  {
+    "symbol": "⧞",
+    "named": "&nvinfin;"
+  },
+  {
+    "symbol": "⧣",
+    "named": "&eparsl;"
+  },
+  {
+    "symbol": "⧤",
+    "named": "&smeparsl;"
+  },
+  {
+    "symbol": "⧥",
+    "named": "&eqvparsl;"
+  },
+  {
+    "symbol": "⧫",
+    "named": "&lozf; &blacklozenge;"
+  },
+  {
+    "symbol": "⧴",
+    "named": "&RuleDelayed;"
+  },
+  {
+    "symbol": "⧶",
+    "named": "&dsol;"
+  },
+  {
+    "symbol": "⨀",
+    "named": "&xodot; &bigodot;"
+  },
+  {
+    "symbol": "⨁",
+    "named": "&xoplus; &bigoplus;"
+  },
+  {
+    "symbol": "⨂",
+    "named": "&xotime; &bigotimes;"
+  },
+  {
+    "symbol": "⨄",
+    "named": "&xuplus; &biguplus;"
+  },
+  {
+    "symbol": "⨆",
+    "named": "&xsqcup; &bigsqcup;"
+  },
+  {
+    "symbol": "⨌",
+    "named": "&qint; &iiiint;"
+  },
+  {
+    "symbol": "⨍",
+    "named": "&fpartint;"
+  },
+  {
+    "symbol": "⨐",
+    "named": "&cirfnint;"
+  },
+  {
+    "symbol": "⨑",
+    "named": "&awint;"
+  },
+  {
+    "symbol": "⨒",
+    "named": "&rppolint;"
+  },
+  {
+    "symbol": "⨓",
+    "named": "&scpolint;"
+  },
+  {
+    "symbol": "⨔",
+    "named": "&npolint;"
+  },
+  {
+    "symbol": "⨕",
+    "named": "&pointint;"
+  },
+  {
+    "symbol": "⨖",
+    "named": "&quatint;"
+  },
+  {
+    "symbol": "⨗",
+    "named": "&intlarhk;"
+  },
+  {
+    "symbol": "⨢",
+    "named": "&pluscir;"
+  },
+  {
+    "symbol": "⨣",
+    "named": "&plusacir;"
+  },
+  {
+    "symbol": "⨤",
+    "named": "&simplus;"
+  },
+  {
+    "symbol": "⨥",
+    "named": "&plusdu;"
+  },
+  {
+    "symbol": "⨦",
+    "named": "&plussim;"
+  },
+  {
+    "symbol": "⨧",
+    "named": "&plustwo;"
+  },
+  {
+    "symbol": "⨩",
+    "named": "&mcomma;"
+  },
+  {
+    "symbol": "⨪",
+    "named": "&minusdu;"
+  },
+  {
+    "symbol": "⨭",
+    "named": "&loplus;"
+  },
+  {
+    "symbol": "⨮",
+    "named": "&roplus;"
+  },
+  {
+    "symbol": "⨯",
+    "named": "&Cross;"
+  },
+  {
+    "symbol": "⨰",
+    "named": "&timesd;"
+  },
+  {
+    "symbol": "⨱",
+    "named": "&timesbar;"
+  },
+  {
+    "symbol": "⨳",
+    "named": "&smashp;"
+  },
+  {
+    "symbol": "⨴",
+    "named": "&lotimes;"
+  },
+  {
+    "symbol": "⨵",
+    "named": "&rotimes;"
+  },
+  {
+    "symbol": "⨶",
+    "named": "&otimesas;"
+  },
+  {
+    "symbol": "⨷",
+    "named": "&Otimes;"
+  },
+  {
+    "symbol": "⨸",
+    "named": "&odiv;"
+  },
+  {
+    "symbol": "⨹",
+    "named": "&triplus;"
+  },
+  {
+    "symbol": "⨺",
+    "named": "&triminus;"
+  },
+  {
+    "symbol": "⨻",
+    "named": "&tritime;"
+  },
+  {
+    "symbol": "⨼",
+    "named": "&iprod; &intprod;"
+  },
+  {
+    "symbol": "⨿",
+    "named": "&amalg;"
+  },
+  {
+    "symbol": "⩀",
+    "named": "&capdot;"
+  },
+  {
+    "symbol": "⩂",
+    "named": "&ncup;"
+  },
+  {
+    "symbol": "⩃",
+    "named": "&ncap;"
+  },
+  {
+    "symbol": "⩄",
+    "named": "&capand;"
+  },
+  {
+    "symbol": "⩅",
+    "named": "&cupor;"
+  },
+  {
+    "symbol": "⩆",
+    "named": "&cupcap;"
+  },
+  {
+    "symbol": "⩇",
+    "named": "&capcup;"
+  },
+  {
+    "symbol": "⩈",
+    "named": "&cupbrcap;"
+  },
+  {
+    "symbol": "⩉",
+    "named": "&capbrcup;"
+  },
+  {
+    "symbol": "⩊",
+    "named": "&cupcup;"
+  },
+  {
+    "symbol": "⩋",
+    "named": "&capcap;"
+  },
+  {
+    "symbol": "⩌",
+    "named": "&ccups;"
+  },
+  {
+    "symbol": "⩍",
+    "named": "&ccaps;"
+  },
+  {
+    "symbol": "⩐",
+    "named": "&ccupssm;"
+  },
+  {
+    "symbol": "⩓",
+    "named": "&And;"
+  },
+  {
+    "symbol": "⩔",
+    "named": "&Or;"
+  },
+  {
+    "symbol": "⩕",
+    "named": "&andand;"
+  },
+  {
+    "symbol": "⩖",
+    "named": "&oror;"
+  },
+  {
+    "symbol": "⩗",
+    "named": "&orslope;"
+  },
+  {
+    "symbol": "⩘",
+    "named": "&andslope;"
+  },
+  {
+    "symbol": "⩚",
+    "named": "&andv;"
+  },
+  {
+    "symbol": "⩛",
+    "named": "&orv;"
+  },
+  {
+    "symbol": "⩜",
+    "named": "&andd;"
+  },
+  {
+    "symbol": "⩝",
+    "named": "&ord;"
+  },
+  {
+    "symbol": "⩟",
+    "named": "&wedbar;"
+  },
+  {
+    "symbol": "⩦",
+    "named": "&sdote;"
+  },
+  {
+    "symbol": "⩪",
+    "named": "&simdot;"
+  },
+  {
+    "symbol": "⩭",
+    "named": "&congdot;"
+  },
+  {
+    "symbol": "⩮",
+    "named": "&easter;"
+  },
+  {
+    "symbol": "⩯",
+    "named": "&apacir;"
+  },
+  {
+    "symbol": "⩰",
+    "named": "&apE;"
+  },
+  {
+    "symbol": "⩱",
+    "named": "&eplus;"
+  },
+  {
+    "symbol": "⩲",
+    "named": "&pluse;"
+  },
+  {
+    "symbol": "⩳",
+    "named": "&Esim;"
+  },
+  {
+    "symbol": "⩴",
+    "named": "&Colone;"
+  },
+  {
+    "symbol": "⩵",
+    "named": "&Equal;"
+  },
+  {
+    "symbol": "⩷",
+    "named": "&eDDot; &ddotseq;"
+  },
+  {
+    "symbol": "⩸",
+    "named": "&equivDD;"
+  },
+  {
+    "symbol": "⩹",
+    "named": "&ltcir;"
+  },
+  {
+    "symbol": "⩺",
+    "named": "&gtcir;"
+  },
+  {
+    "symbol": "⩻",
+    "named": "&ltquest;"
+  },
+  {
+    "symbol": "⩼",
+    "named": "&gtquest;"
+  },
+  {
+    "symbol": "⩽",
+    "named": "&les; &LessSlantEqual; &leqslant;"
+  },
+  {
+    "symbol": "⩾",
+    "named": "&ges; &GreaterSlantEqual; &geqslant;"
+  },
+  {
+    "symbol": "⩿",
+    "named": "&lesdot;"
+  },
+  {
+    "symbol": "⪀",
+    "named": "&gesdot;"
+  },
+  {
+    "symbol": "⪁",
+    "named": "&lesdoto;"
+  },
+  {
+    "symbol": "⪂",
+    "named": "&gesdoto;"
+  },
+  {
+    "symbol": "⪃",
+    "named": "&lesdotor;"
+  },
+  {
+    "symbol": "⪄",
+    "named": "&gesdotol;"
+  },
+  {
+    "symbol": "⪅",
+    "named": "&lap; &lessapprox;"
+  },
+  {
+    "symbol": "⪆",
+    "named": "&gap; &gtrapprox;"
+  },
+  {
+    "symbol": "⪇",
+    "named": "&lne; &lneq;"
+  },
+  {
+    "symbol": "⪈",
+    "named": "&gne; &gneq;"
+  },
+  {
+    "symbol": "⪉",
+    "named": "&lnap; &lnapprox;"
+  },
+  {
+    "symbol": "⪊",
+    "named": "&gnap; &gnapprox;"
+  },
+  {
+    "symbol": "⪋",
+    "named": "&lEg; &lesseqqgtr;"
+  },
+  {
+    "symbol": "⪌",
+    "named": "&gEl; &gtreqqless;"
+  },
+  {
+    "symbol": "⪍",
+    "named": "&lsime;"
+  },
+  {
+    "symbol": "⪎",
+    "named": "&gsime;"
+  },
+  {
+    "symbol": "⪏",
+    "named": "&lsimg;"
+  },
+  {
+    "symbol": "⪐",
+    "named": "&gsiml;"
+  },
+  {
+    "symbol": "⪑",
+    "named": "&lgE;"
+  },
+  {
+    "symbol": "⪒",
+    "named": "&glE;"
+  },
+  {
+    "symbol": "⪓",
+    "named": "&lesges;"
+  },
+  {
+    "symbol": "⪔",
+    "named": "&gesles;"
+  },
+  {
+    "symbol": "⪕",
+    "named": "&els; &eqslantless;"
+  },
+  {
+    "symbol": "⪖",
+    "named": "&egs; &eqslantgtr;"
+  },
+  {
+    "symbol": "⪗",
+    "named": "&elsdot;"
+  },
+  {
+    "symbol": "⪘",
+    "named": "&egsdot;"
+  },
+  {
+    "symbol": "⪙",
+    "named": "&el;"
+  },
+  {
+    "symbol": "⪚",
+    "named": "&eg;"
+  },
+  {
+    "symbol": "⪝",
+    "named": "&siml;"
+  },
+  {
+    "symbol": "⪞",
+    "named": "&simg;"
+  },
+  {
+    "symbol": "⪟",
+    "named": "&simlE;"
+  },
+  {
+    "symbol": "⪠",
+    "named": "&simgE;"
+  },
+  {
+    "symbol": "⪡",
+    "named": "&LessLess;"
+  },
+  {
+    "symbol": "⪢",
+    "named": "&GreaterGreater;"
+  },
+  {
+    "symbol": "⪤",
+    "named": "&glj;"
+  },
+  {
+    "symbol": "⪥",
+    "named": "&gla;"
+  },
+  {
+    "symbol": "⪦",
+    "named": "&ltcc;"
+  },
+  {
+    "symbol": "⪧",
+    "named": "&gtcc;"
+  },
+  {
+    "symbol": "⪨",
+    "named": "&lescc;"
+  },
+  {
+    "symbol": "⪩",
+    "named": "&gescc;"
+  },
+  {
+    "symbol": "⪪",
+    "named": "&smt;"
+  },
+  {
+    "symbol": "⪫",
+    "named": "&lat;"
+  },
+  {
+    "symbol": "⪬",
+    "named": "&smte;"
+  },
+  {
+    "symbol": "⪭",
+    "named": "&late;"
+  },
+  {
+    "symbol": "⪮",
+    "named": "&bumpE;"
+  },
+  {
+    "symbol": "⪯",
+    "named": "&pre; &preceq; &PrecedesEqual;"
+  },
+  {
+    "symbol": "⪰",
+    "named": "&sce; &succeq; &SucceedsEqual;"
+  },
+  {
+    "symbol": "⪳",
+    "named": "&prE;"
+  },
+  {
+    "symbol": "⪴",
+    "named": "&scE;"
+  },
+  {
+    "symbol": "⪵",
+    "named": "&prnE; &precneqq;"
+  },
+  {
+    "symbol": "⪶",
+    "named": "&scnE; &succneqq;"
+  },
+  {
+    "symbol": "⪷",
+    "named": "&prap; &precapprox;"
+  },
+  {
+    "symbol": "⪸",
+    "named": "&scap; &succapprox;"
+  },
+  {
+    "symbol": "⪹",
+    "named": "&prnap; &precnapprox;"
+  },
+  {
+    "symbol": "⪺",
+    "named": "&scnap; &succnapprox;"
+  },
+  {
+    "symbol": "⪻",
+    "named": "&Pr;"
+  },
+  {
+    "symbol": "⪼",
+    "named": "&Sc;"
+  },
+  {
+    "symbol": "⪽",
+    "named": "&subdot;"
+  },
+  {
+    "symbol": "⪾",
+    "named": "&supdot;"
+  },
+  {
+    "symbol": "⪿",
+    "named": "&subplus;"
+  },
+  {
+    "symbol": "⫀",
+    "named": "&supplus;"
+  },
+  {
+    "symbol": "⫁",
+    "named": "&submult;"
+  },
+  {
+    "symbol": "⫂",
+    "named": "&supmult;"
+  },
+  {
+    "symbol": "⫃",
+    "named": "&subedot;"
+  },
+  {
+    "symbol": "⫄",
+    "named": "&supedot;"
+  },
+  {
+    "symbol": "⫅",
+    "named": "&subE; &subseteqq;"
+  },
+  {
+    "symbol": "⫆",
+    "named": "&supE; &supseteqq;"
+  },
+  {
+    "symbol": "⫇",
+    "named": "&subsim;"
+  },
+  {
+    "symbol": "⫈",
+    "named": "&supsim;"
+  },
+  {
+    "symbol": "⫋",
+    "named": "&subnE; &subsetneqq;"
+  },
+  {
+    "symbol": "⫌",
+    "named": "&supnE; &supsetneqq;"
+  },
+  {
+    "symbol": "⫏",
+    "named": "&csub;"
+  },
+  {
+    "symbol": "⫐",
+    "named": "&csup;"
+  },
+  {
+    "symbol": "⫑",
+    "named": "&csube;"
+  },
+  {
+    "symbol": "⫒",
+    "named": "&csupe;"
+  },
+  {
+    "symbol": "⫓",
+    "named": "&subsup;"
+  },
+  {
+    "symbol": "⫔",
+    "named": "&supsub;"
+  },
+  {
+    "symbol": "⫕",
+    "named": "&subsub;"
+  },
+  {
+    "symbol": "⫖",
+    "named": "&supsup;"
+  },
+  {
+    "symbol": "⫗",
+    "named": "&suphsub;"
+  },
+  {
+    "symbol": "⫘",
+    "named": "&supdsub;"
+  },
+  {
+    "symbol": "⫙",
+    "named": "&forkv;"
+  },
+  {
+    "symbol": "⫚",
+    "named": "&topfork;"
+  },
+  {
+    "symbol": "⫛",
+    "named": "&mlcp;"
+  },
+  {
+    "symbol": "⫤",
+    "named": "&Dashv; &DoubleLeftTee;"
+  },
+  {
+    "symbol": "⫦",
+    "named": "&Vdashl;"
+  },
+  {
+    "symbol": "⫧",
+    "named": "&Barv;"
+  },
+  {
+    "symbol": "⫨",
+    "named": "&vBar;"
+  },
+  {
+    "symbol": "⫩",
+    "named": "&vBarv;"
+  },
+  {
+    "symbol": "⫫",
+    "named": "&Vbar;"
+  },
+  {
+    "symbol": "⫬",
+    "named": "&Not;"
+  },
+  {
+    "symbol": "⫭",
+    "named": "&bNot;"
+  },
+  {
+    "symbol": "⫮",
+    "named": "&rnmid;"
+  },
+  {
+    "symbol": "⫯",
+    "named": "&cirmid;"
+  },
+  {
+    "symbol": "⫰",
+    "named": "&midcir;"
+  },
+  {
+    "symbol": "⫱",
+    "named": "&topcir;"
+  },
+  {
+    "symbol": "⫲",
+    "named": "&nhpar;"
+  },
+  {
+    "symbol": "⫳",
+    "named": "&parsim;"
+  },
+  {
+    "symbol": "⫽",
+    "named": "&parsl;"
+  },
+  {
+    "symbol": "ﬀ",
+    "named": "&fflig;"
+  },
+  {
+    "symbol": "ﬁ",
+    "named": "&filig;"
+  },
+  {
+    "symbol": "ﬂ",
+    "named": "&fllig;"
+  },
+  {
+    "symbol": "ﬃ",
+    "named": "&ffilig;"
+  },
+  {
+    "symbol": "ﬄ",
+    "named": "&ffllig;"
+  },
+  {
+    "symbol": "𝒜",
+    "named": "&Ascr;"
+  },
+  {
+    "symbol": "𝒞",
+    "named": "&Cscr;"
+  },
+  {
+    "symbol": "𝒟",
+    "named": "&Dscr;"
+  },
+  {
+    "symbol": "𝒢",
+    "named": "&Gscr;"
+  },
+  {
+    "symbol": "𝒥",
+    "named": "&Jscr;"
+  },
+  {
+    "symbol": "𝒦",
+    "named": "&Kscr;"
+  },
+  {
+    "symbol": "𝒩",
+    "named": "&Nscr;"
+  },
+  {
+    "symbol": "𝒪",
+    "named": "&Oscr;"
+  },
+  {
+    "symbol": "𝒫",
+    "named": "&Pscr;"
+  },
+  {
+    "symbol": "𝒬",
+    "named": "&Qscr;"
+  },
+  {
+    "symbol": "𝒮",
+    "named": "&Sscr;"
+  },
+  {
+    "symbol": "𝒯",
+    "named": "&Tscr;"
+  },
+  {
+    "symbol": "𝒰",
+    "named": "&Uscr;"
+  },
+  {
+    "symbol": "𝒱",
+    "named": "&Vscr;"
+  },
+  {
+    "symbol": "𝒲",
+    "named": "&Wscr;"
+  },
+  {
+    "symbol": "𝒳",
+    "named": "&Xscr;"
+  },
+  {
+    "symbol": "𝒴",
+    "named": "&Yscr;"
+  },
+  {
+    "symbol": "𝒵",
+    "named": "&Zscr;"
+  },
+  {
+    "symbol": "𝒶",
+    "named": "&ascr;"
+  },
+  {
+    "symbol": "𝒷",
+    "named": "&bscr;"
+  },
+  {
+    "symbol": "𝒸",
+    "named": "&cscr;"
+  },
+  {
+    "symbol": "𝒹",
+    "named": "&dscr;"
+  },
+  {
+    "symbol": "𝒻",
+    "named": "&fscr;"
+  },
+  {
+    "symbol": "𝒽",
+    "named": "&hscr;"
+  },
+  {
+    "symbol": "𝒾",
+    "named": "&iscr;"
+  },
+  {
+    "symbol": "𝒿",
+    "named": "&jscr;"
+  },
+  {
+    "symbol": "𝓀",
+    "named": "&kscr;"
+  },
+  {
+    "symbol": "𝓁",
+    "named": "&lscr;"
+  },
+  {
+    "symbol": "𝓂",
+    "named": "&mscr;"
+  },
+  {
+    "symbol": "𝓃",
+    "named": "&nscr;"
+  },
+  {
+    "symbol": "𝓅",
+    "named": "&pscr;"
+  },
+  {
+    "symbol": "𝓆",
+    "named": "&qscr;"
+  },
+  {
+    "symbol": "𝓇",
+    "named": "&rscr;"
+  },
+  {
+    "symbol": "𝓈",
+    "named": "&sscr;"
+  },
+  {
+    "symbol": "𝓉",
+    "named": "&tscr;"
+  },
+  {
+    "symbol": "𝓊",
+    "named": "&uscr;"
+  },
+  {
+    "symbol": "𝓋",
+    "named": "&vscr;"
+  },
+  {
+    "symbol": "𝓌",
+    "named": "&wscr;"
+  },
+  {
+    "symbol": "𝓍",
+    "named": "&xscr;"
+  },
+  {
+    "symbol": "𝓎",
+    "named": "&yscr;"
+  },
+  {
+    "symbol": "𝓏",
+    "named": "&zscr;"
+  },
+  {
+    "symbol": "𝔄",
+    "named": "&Afr;"
+  },
+  {
+    "symbol": "𝔅",
+    "named": "&Bfr;"
+  },
+  {
+    "symbol": "𝔇",
+    "named": "&Dfr;"
+  },
+  {
+    "symbol": "𝔈",
+    "named": "&Efr;"
+  },
+  {
+    "symbol": "𝔉",
+    "named": "&Ffr;"
+  },
+  {
+    "symbol": "𝔊",
+    "named": "&Gfr;"
+  },
+  {
+    "symbol": "𝔍",
+    "named": "&Jfr;"
+  },
+  {
+    "symbol": "𝔎",
+    "named": "&Kfr;"
+  },
+  {
+    "symbol": "𝔏",
+    "named": "&Lfr;"
+  },
+  {
+    "symbol": "𝔐",
+    "named": "&Mfr;"
+  },
+  {
+    "symbol": "𝔑",
+    "named": "&Nfr;"
+  },
+  {
+    "symbol": "𝔒",
+    "named": "&Ofr;"
+  },
+  {
+    "symbol": "𝔓",
+    "named": "&Pfr;"
+  },
+  {
+    "symbol": "𝔔",
+    "named": "&Qfr;"
+  },
+  {
+    "symbol": "𝔖",
+    "named": "&Sfr;"
+  },
+  {
+    "symbol": "𝔗",
+    "named": "&Tfr;"
+  },
+  {
+    "symbol": "𝔘",
+    "named": "&Ufr;"
+  },
+  {
+    "symbol": "𝔙",
+    "named": "&Vfr;"
+  },
+  {
+    "symbol": "𝔚",
+    "named": "&Wfr;"
+  },
+  {
+    "symbol": "𝔛",
+    "named": "&Xfr;"
+  },
+  {
+    "symbol": "𝔜",
+    "named": "&Yfr;"
+  },
+  {
+    "symbol": "𝔞",
+    "named": "&afr;"
+  },
+  {
+    "symbol": "𝔟",
+    "named": "&bfr;"
+  },
+  {
+    "symbol": "𝔠",
+    "named": "&cfr;"
+  },
+  {
+    "symbol": "𝔡",
+    "named": "&dfr;"
+  },
+  {
+    "symbol": "𝔢",
+    "named": "&efr;"
+  },
+  {
+    "symbol": "𝔣",
+    "named": "&ffr;"
+  },
+  {
+    "symbol": "𝔤",
+    "named": "&gfr;"
+  },
+  {
+    "symbol": "𝔥",
+    "named": "&hfr;"
+  },
+  {
+    "symbol": "𝔦",
+    "named": "&ifr;"
+  },
+  {
+    "symbol": "𝔧",
+    "named": "&jfr;"
+  },
+  {
+    "symbol": "𝔨",
+    "named": "&kfr;"
+  },
+  {
+    "symbol": "𝔩",
+    "named": "&lfr;"
+  },
+  {
+    "symbol": "𝔪",
+    "named": "&mfr;"
+  },
+  {
+    "symbol": "𝔫",
+    "named": "&nfr;"
+  },
+  {
+    "symbol": "𝔬",
+    "named": "&ofr;"
+  },
+  {
+    "symbol": "𝔭",
+    "named": "&pfr;"
+  },
+  {
+    "symbol": "𝔮",
+    "named": "&qfr;"
+  },
+  {
+    "symbol": "𝔯",
+    "named": "&rfr;"
+  },
+  {
+    "symbol": "𝔰",
+    "named": "&sfr;"
+  },
+  {
+    "symbol": "𝔱",
+    "named": "&tfr;"
+  },
+  {
+    "symbol": "𝔲",
+    "named": "&ufr;"
+  },
+  {
+    "symbol": "𝔳",
+    "named": "&vfr;"
+  },
+  {
+    "symbol": "𝔴",
+    "named": "&wfr;"
+  },
+  {
+    "symbol": "𝔵",
+    "named": "&xfr;"
+  },
+  {
+    "symbol": "𝔶",
+    "named": "&yfr;"
+  },
+  {
+    "symbol": "𝔷",
+    "named": "&zfr;"
+  },
+  {
+    "symbol": "𝔸",
+    "named": "&Aopf;"
+  },
+  {
+    "symbol": "𝔹",
+    "named": "&Bopf;"
+  },
+  {
+    "symbol": "𝔻",
+    "named": "&Dopf;"
+  },
+  {
+    "symbol": "𝔼",
+    "named": "&Eopf;"
+  },
+  {
+    "symbol": "𝔽",
+    "named": "&Fopf;"
+  },
+  {
+    "symbol": "𝔾",
+    "named": "&Gopf;"
+  },
+  {
+    "symbol": "𝕀",
+    "named": "&Iopf;"
+  },
+  {
+    "symbol": "𝕁",
+    "named": "&Jopf;"
+  },
+  {
+    "symbol": "𝕂",
+    "named": "&Kopf;"
+  },
+  {
+    "symbol": "𝕃",
+    "named": "&Lopf;"
+  },
+  {
+    "symbol": "𝕄",
+    "named": "&Mopf;"
+  },
+  {
+    "symbol": "𝕆",
+    "named": "&Oopf;"
+  },
+  {
+    "symbol": "𝕊",
+    "named": "&Sopf;"
+  },
+  {
+    "symbol": "𝕋",
+    "named": "&Topf;"
+  },
+  {
+    "symbol": "𝕌",
+    "named": "&Uopf;"
+  },
+  {
+    "symbol": "𝕍",
+    "named": "&Vopf;"
+  },
+  {
+    "symbol": "𝕎",
+    "named": "&Wopf;"
+  },
+  {
+    "symbol": "𝕏",
+    "named": "&Xopf;"
+  },
+  {
+    "symbol": "𝕐",
+    "named": "&Yopf;"
+  },
+  {
+    "symbol": "𝕒",
+    "named": "&aopf;"
+  },
+  {
+    "symbol": "𝕓",
+    "named": "&bopf;"
+  },
+  {
+    "symbol": "𝕔",
+    "named": "&copf;"
+  },
+  {
+    "symbol": "𝕕",
+    "named": "&dopf;"
+  },
+  {
+    "symbol": "𝕖",
+    "named": "&eopf;"
+  },
+  {
+    "symbol": "𝕗",
+    "named": "&fopf;"
+  },
+  {
+    "symbol": "𝕘",
+    "named": "&gopf;"
+  },
+  {
+    "symbol": "𝕙",
+    "named": "&hopf;"
+  },
+  {
+    "symbol": "𝕚",
+    "named": "&iopf;"
+  },
+  {
+    "symbol": "𝕛",
+    "named": "&jopf;"
+  },
+  {
+    "symbol": "𝕜",
+    "named": "&kopf;"
+  },
+  {
+    "symbol": "𝕝",
+    "named": "&lopf;"
+  },
+  {
+    "symbol": "𝕞",
+    "named": "&mopf;"
+  },
+  {
+    "symbol": "𝕟",
+    "named": "&nopf;"
+  },
+  {
+    "symbol": "𝕠",
+    "named": "&oopf;"
+  },
+  {
+    "symbol": "𝕡",
+    "named": "&popf;"
+  },
+  {
+    "symbol": "𝕢",
+    "named": "&qopf;"
+  },
+  {
+    "symbol": "𝕣",
+    "named": "&ropf;"
+  },
+  {
+    "symbol": "𝕤",
+    "named": "&sopf;"
+  },
+  {
+    "symbol": "𝕥",
+    "named": "&topf;"
+  },
+  {
+    "symbol": "𝕦",
+    "named": "&uopf;"
+  },
+  {
+    "symbol": "𝕧",
+    "named": "&vopf;"
+  },
+  {
+    "symbol": "𝕨",
+    "named": "&wopf;"
+  },
+  {
+    "symbol": "𝕩",
+    "named": "&xopf;"
+  },
+  {
+    "symbol": "𝕪",
+    "named": "&yopf;"
+  },
+  {
+    "symbol": "𝕫",
+    "named": "&zopf;"
+  }
+]

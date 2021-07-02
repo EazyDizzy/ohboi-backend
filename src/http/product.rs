@@ -6,11 +6,11 @@ use validator::Validate;
 
 use crate::common::db::repository::exchange_rate::get_exchange_rate_by_code;
 use crate::common::service::currency_converter::convert_to_with_rate;
-use crate::http::db::product::repository::get_all_products_of_category;
+use crate::http::db::product::repository::get_filtered_products;
 use crate::my_enum::CurrencyEnum;
 
 pub async fn get_products(filters: Json<ProductFilters>) -> HttpResponse {
-    let mut products = get_all_products_of_category(&filters);
+    let mut products = get_filtered_products(&filters);
     let rate = get_exchange_rate_by_code(&filters.currency).unwrap().rate.to_f64().unwrap();
 
     for mut product in &mut products {
@@ -35,6 +35,13 @@ pub struct ProductFilters {
     pub currency: CurrencyEnum,
     #[validate(length(min = 1, max = 1000, message = "should be an array of 1-1000 elements"))]
     pub category: Option<Vec<i32>>,
+    #[validate(length(min = 1, max = 1000, message = "should be an array of 1-1000 elements"))]
+    pub source: Option<Vec<i32>>,
     #[validate(range(min = 0, message = "should be bigger than or equal to zero"), range(max = 4294967295, message = "should be less than 4294967295"))]
     pub page: u32,
+
+    #[validate(range(min = 0, message = "should be bigger than or equal to zero"), range(max = 4294967295, message = "should be less than 4294967295"))]
+    pub min_price: Option<f64>,
+    #[validate(range(min = 1, message = "should be bigger than or equal to zero"), range(max = 4294967295, message = "should be less than 4294967295"))]
+    pub max_price: Option<f64>,
 }

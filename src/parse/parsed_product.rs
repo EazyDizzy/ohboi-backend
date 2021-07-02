@@ -1,4 +1,4 @@
-use serde::{Serialize};
+use serde::Serialize;
 
 #[derive(Serialize, Debug, PartialEq, Clone)]
 pub struct LocalParsedProduct {
@@ -19,6 +19,13 @@ pub struct InternationalParsedProduct {
 
 #[derive(Serialize, Debug, PartialEq)]
 pub struct AdditionalParsedProductInfo {
+    pub image_urls: Vec<String>,
+    pub description: String,
+    pub available: bool,
+}
+
+#[derive(Serialize, Debug, PartialEq)]
+pub struct CleanParsedProductInfo {
     pub image_urls: Vec<String>,
     pub description: String,
     pub available: bool,

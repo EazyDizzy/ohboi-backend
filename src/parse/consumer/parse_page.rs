@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::local_sentry::add_category_breadcrumb;
 use crate::parse::db::entity::{CategorySlug, SourceName};
-use crate::parse::parser::parse_page;
+use crate::parse::service::parser::parse_page;
 use crate::parse::queue::get_channel;
 use crate::SETTINGS;
 
