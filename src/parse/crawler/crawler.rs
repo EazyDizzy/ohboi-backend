@@ -5,16 +5,19 @@ use futures::future::{err, ok};
 use futures::future::*;
 use futures::FutureExt;
 use inflector::Inflector;
+use maplit::*;
 use regex::Regex;
 use scraper::{ElementRef, Html, Selector};
 use scraper::html::Select;
 
-use crate::parse::service::cloud_uploader::upload_image_to_cloud;
+use crate::local_sentry::add_category_breadcrumb;
+use crate::my_enum::CurrencyEnum;
 use crate::parse::consumer::parse_image::UploadImageMessage;
 use crate::parse::db::entity::{CategorySlug, SourceName};
 use crate::parse::parsed_product::{AdditionalParsedProductInfo, LocalParsedProduct};
 use crate::parse::queue::postpone_image_parsing;
-use crate::my_enum::CurrencyEnum;
+use crate::parse::service::cloud_uploader::upload_image_to_cloud;
+use crate::SETTINGS;
 
 #[async_trait(? Send)]
 pub trait Crawler {
@@ -33,6 +36,16 @@ pub trait Crawler {
     async fn extract_additional_info(&self, document: &Html, external_id: &str) -> Option<AdditionalParsedProductInfo>;
 
     async fn abstract_extract_images(&self, image_urls: Vec<String>, external_id: &str, base: String) -> Vec<String> {
+        add_category_breadcrumb(
+            "updating product",
+            btreemap! {
+                    "external_id" => external_id.to_string(),
+                    "image_urls" => format!("{:?}", image_urls.clone()),
+                    "source" => self.get_source().to_string(),
+                },
+            ["consumer.", &SETTINGS.amqp.queues.parse_category.name].join("").into(),
+        );
+
         let mut uploaded_urls: Vec<String> = vec![];
         let mut uploads: Vec<_> = vec![];
 

@@ -57,3 +57,4 @@ env_logger = "0.8.2"
 maplit = "1.0.2"
 config = { version = "0.10.1", features = ["yaml"] }
 rusoto_logs = "0.46.0"
+rand = "0.8.3"

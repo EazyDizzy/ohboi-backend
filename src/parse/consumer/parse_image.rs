@@ -64,6 +64,7 @@ pub async fn start() -> Result<()> {
 
             delivery.ack(BasicAckOptions { multiple: false }).await.expect("ack");
         } else {
+            // TODO requeue with delay
             delivery.nack(BasicNackOptions { requeue: true, multiple: false }).await.expect("nack");
         }
     }

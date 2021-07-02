@@ -171,9 +171,9 @@ impl MiShopComCrawler {
     async fn extract_images(&self, document: &Html, external_id: &str) -> Vec<String> {
         let images_selector = Selector::parse(".detail-modal .detail__slides img").unwrap();
         let image_nodes = document.select(&images_selector);
-        let images_urls = self.abstract_extract_image_urls(image_nodes, "data-lazy");
+        let image_urls = self.abstract_extract_image_urls(image_nodes, "data-lazy");
 
-        self.abstract_extract_images(images_urls, external_id, self.get_base()).await
+        self.abstract_extract_images(image_urls, external_id, self.get_base()).await
     }
 }
 
