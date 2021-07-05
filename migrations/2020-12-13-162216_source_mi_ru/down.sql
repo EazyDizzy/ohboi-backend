@@ -1,1 +1,1 @@
--- This file should undo anything in `up.sql`
+DELETE FROM source WHERE site_name = 'mi_shop_com';

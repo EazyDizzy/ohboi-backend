@@ -39,3 +39,13 @@ docker exec -ti ohboi bash
 /app/daemon producer -p PullExchangeRates
 /app/daemon producer -p ParseCategory
 ```
+
+### To clean database
+1) Revert all migrations:
+```
+for i in {1..7}; do bin/diesel migration revert; done
+```
+2) Run all migrations
+```
+bin/diesel migration run
+```

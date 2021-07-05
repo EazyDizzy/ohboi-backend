@@ -1,1 +1,1 @@
--- This file should undo anything in `up.sql`
+DELETE FROM source WHERE site_name = 'samsung_shop_com_ua';
