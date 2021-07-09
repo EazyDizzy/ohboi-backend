@@ -48,7 +48,7 @@ pub async fn upload_image_to_cloud(file_path: String, image_url: String) -> bool
         );
         sentry::capture_message(message.as_str(), sentry::Level::Error);
     }
-    add_uploader_breadcrumb("uploaded image", breadcrumb_data.clone());
+    add_uploader_breadcrumb("uploaded image", breadcrumb_data);
 
     success
 }

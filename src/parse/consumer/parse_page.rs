@@ -45,8 +45,8 @@ pub async fn start() -> Result<()> {
         add_consumer_breadcrumb(
             "got message",
             btreemap! {
-                     "category" => message.category.clone().to_string(),
-                     "source" => message.source.clone().to_string(),
+                     "category" => message.category.to_string(),
+                     "source" => message.source.to_string(),
                      "url" => message.url.to_string()
                 },
         );

@@ -192,7 +192,7 @@ async fn save_parsed_product(crawler: &dyn Crawler, parsed_product: LocalParsedP
                     format!(
                         "No additional info found [{source}] for: {id}",
                         source = crawler.get_source().to_string(),
-                        id = international_parsed_product.external_id.to_string()
+                        id = international_parsed_product.external_id
                     ).as_str(),
                     sentry::Level::Warning,
                 );

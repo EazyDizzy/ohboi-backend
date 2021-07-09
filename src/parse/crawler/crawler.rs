@@ -40,7 +40,7 @@ pub trait Crawler {
             "updating product",
             btreemap! {
                     "external_id" => external_id.to_string(),
-                    "image_urls" => format!("{:?}", image_urls.clone()),
+                    "image_urls" => format!("{:?}", &image_urls),
                     "source" => self.get_source().to_string(),
                 },
             ["consumer.", &SETTINGS.amqp.queues.parse_category.name].join("").into(),
