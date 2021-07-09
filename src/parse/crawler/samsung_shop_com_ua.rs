@@ -38,7 +38,7 @@ impl Crawler for SamsungShopComUaCrawler {
         };
 
         urls.into_iter().map(|url| {
-            [base.clone(), url.to_string(), pagination.to_string()].concat()
+            [&base, url, pagination].concat()
         }).collect()
     }
 
@@ -110,13 +110,13 @@ impl Crawler for SamsungShopComUaCrawler {
                 continue;
             }
 
+            log::info!("{}", title);
             parsed_products.push(LocalParsedProduct {
-                title: title.clone(),
+                title,
                 price,
                 available,
                 external_id,
             });
-            log::info!("{}", title);
         }
 
         parsed_products

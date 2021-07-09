@@ -86,16 +86,16 @@ pub async fn parse_category(source: &SourceName, category: &CategorySlug) -> Res
                         let parsed = parse_html(&response_data, crawler);
                         let mut amount_of_duplicates = 0;
 
-                        parsed.iter().for_each(|x| {
+                        parsed.iter().for_each(|parsed_product| {
                             let will_be_duplicated = products
                                 .iter()
-                                .filter(|p| p.external_id == x.external_id)
+                                .filter(|p| p.external_id == parsed_product.external_id)
                                 .next().is_some();
 
                             if will_be_duplicated {
                                 amount_of_duplicates = amount_of_duplicates + 1;
                             } else {
-                                products.push(x.clone());
+                                products.push(parsed_product.clone());
                             }
                         });
                         all_successful = all_successful
@@ -115,8 +115,8 @@ pub async fn parse_category(source: &SourceName, category: &CategorySlug) -> Res
 
                         let _result = postpone_page_parsing(ParsePageMessage {
                             url: url.replace("{page}", (current_page).to_string().as_ref()),
-                            source: source.clone(),
-                            category: category.clone(),
+                            source: *source,
+                            category: *category,
                         }).await;
                     }
                 }

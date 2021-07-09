@@ -33,6 +33,7 @@ pub async fn start() -> Result<()> {
             btreemap! {},
         );
 
+        // TODO why clone?
         let decoded_data = String::from_utf8(delivery.data.clone());
         let data = decoded_data.unwrap();
 

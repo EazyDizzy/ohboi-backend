@@ -42,8 +42,8 @@ pub async fn get_channel() -> Result<Channel> {
 
 pub async fn postpone_page_parsing(message: ParsePageMessage) -> Result<()> {
     let breadcrumb_data = btreemap! {
-                    "category" => message.category.clone().to_string(),
-                    "source" => message.source.clone().to_string(),
+                    "category" => message.category.to_string(),
+                    "source" => message.source.to_string(),
                     "url" => message.url.to_string()
                 };
     add_uploader_breadcrumb("scheduling later upload", breadcrumb_data);
@@ -79,7 +79,7 @@ pub async fn postpone_image_parsing(message: UploadImageMessage) -> Result<()> {
     let breadcrumb_data = btreemap! {
                     "file_path" => message.file_path.clone(),
                     "image_url" => message.image_url.clone(),
-                    "external_id" => message.external_id.to_string()
+                    "external_id" => message.external_id.clone()
                 };
     add_uploader_breadcrumb("scheduling later upload", breadcrumb_data);
 

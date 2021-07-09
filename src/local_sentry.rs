@@ -31,7 +31,7 @@ pub fn init_sentry() -> ClientInitGuard {
                     log::error!(
                         "{c}{message:#?}{c_end}",
                         c = color::Fg(color::Red),
-                        message = event.message.clone().unwrap(),
+                        message = event.message.as_ref().unwrap(),
                         c_end = style::Reset
                     );
                 }
@@ -57,8 +57,6 @@ pub fn add_category_breadcrumb(message: &str, data: BTreeMap<&str, String>, cate
         ..Default::default()
     };
 
-    add_breadcrumb(breadcrumb.clone());
-
     if cfg!(debug_assertions) {
         log::info!(
             "{c1}{category}{r} {c2}{message}{r} {c3}{data:?}{r}",
@@ -66,16 +64,18 @@ pub fn add_category_breadcrumb(message: &str, data: BTreeMap<&str, String>, cate
             c2 = color::Fg(color::Yellow),
             c3 = color::Fg(color::LightBlue),
             r = style::Reset,
-            category = &breadcrumb.category.unwrap(),
-            message = breadcrumb.message.unwrap(),
-            data = breadcrumb.data,
+            category = breadcrumb.category.as_ref().unwrap(),
+            message = breadcrumb.message.as_ref().unwrap(),
+            data = &breadcrumb.data,
         );
     } else {
         log::info!(
             "{category} {message} {data:?}",
-            category = breadcrumb.category.unwrap(),
-            message = breadcrumb.message.unwrap(),
-            data = breadcrumb.data,
+            category = breadcrumb.category.as_ref().unwrap(),
+            message = breadcrumb.message.as_ref().unwrap(),
+            data = &breadcrumb.data,
         );
     }
+
+    add_breadcrumb(breadcrumb);
 }

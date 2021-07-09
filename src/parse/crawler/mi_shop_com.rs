@@ -46,7 +46,7 @@ impl Crawler for MiShopComCrawler {
         };
 
         urls.into_iter().map(|url| {
-            [base.clone(), url.to_string(), pagination.to_string()].concat()
+            [&base, url, pagination].concat()
         }).collect()
     }
 

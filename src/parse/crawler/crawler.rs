@@ -52,9 +52,9 @@ pub trait Crawler {
         let upload_later = Mutex::new(vec![]);
         for image_url in image_urls {
             let file_path = [
-                "product_images/".to_string(),
-                self.get_source().to_string().to_snake_case(),
-                image_url.clone()
+                "product_images/",
+                &self.get_source().to_string().to_snake_case(),
+                &image_url
             ].concat();
 
             let url: String = [base, &image_url].concat();
