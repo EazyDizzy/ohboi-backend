@@ -1,3 +1,5 @@
+use std::str;
+
 use futures::StreamExt;
 use lapin::{options::*, Result, types::FieldTable};
 use maplit::*;
@@ -5,11 +7,11 @@ use sentry::protocol::map::BTreeMap;
 use serde::{Deserialize, Serialize};
 
 use crate::local_sentry::add_category_breadcrumb;
-use crate::parse::service::cloud_uploader::upload_image_to_cloud;
 use crate::parse::db::entity::SourceName;
 use crate::parse::db::repository::product::add_image_to_product_details;
 use crate::parse::db::repository::source_product::get_by_source_and_external_id;
 use crate::parse::queue::get_channel;
+use crate::parse::service::cloud_uploader::upload_image_to_cloud;
 use crate::SETTINGS;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -44,11 +46,8 @@ pub async fn start() -> Result<()> {
             btreemap! {},
         );
 
-        let decoded_data = String::from_utf8(delivery.data.clone());
-        let data = decoded_data.unwrap();
-
-        let parsed_json = serde_json::from_str(data.as_str());
-        let message: UploadImageMessage = parsed_json.unwrap();
+        let data = str::from_utf8(&delivery.data).unwrap();
+        let message: UploadImageMessage = serde_json::from_str(data).unwrap();
 
         let result = upload_image_to_cloud(message.file_path.clone(), message.image_url).await;
 

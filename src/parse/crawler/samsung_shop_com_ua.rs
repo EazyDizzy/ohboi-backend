@@ -27,7 +27,7 @@ impl Crawler for SamsungShopComUaCrawler {
     fn get_next_page_urls(&self, category: &CategorySlug) -> Vec<String> {
         let host = self.get_base();
 
-        let base = [host, "/ru/".to_string()].concat();
+        let base = [host, "/ru/"].concat();
         let pagination = "?page={page}";
 
         let urls = match category {
@@ -123,7 +123,7 @@ impl Crawler for SamsungShopComUaCrawler {
     }
 
     fn get_additional_info_url(&self, external_id: &str) -> String {
-        self.get_base() + external_id
+        format!("{}{}", self.get_base(), external_id)
     }
 
     async fn extract_additional_info(&self, document: &Html, external_id: &str) -> Option<AdditionalParsedProductInfo> {
@@ -155,8 +155,8 @@ lazy_static! {
     static ref DESCRIPTION_RE: Regex = Regex::new(r"(?ms)<big>.*?</big>|<h3>.*?</h3>").unwrap();
 }
 impl SamsungShopComUaCrawler {
-    fn get_base(&self) -> String {
-        "https://samsungshop.com.ua".to_string()
+    fn get_base(&self) -> &str {
+        "https://samsungshop.com.ua"
     }
 
     async fn extract_images(&self, document: &Html, external_id: &str) -> Vec<String> {

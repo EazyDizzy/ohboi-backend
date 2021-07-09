@@ -35,7 +35,7 @@ pub trait Crawler {
 
     async fn extract_additional_info(&self, document: &Html, external_id: &str) -> Option<AdditionalParsedProductInfo>;
 
-    async fn abstract_extract_images(&self, image_urls: Vec<String>, external_id: &str, base: String) -> Vec<String> {
+    async fn abstract_extract_images(&self, image_urls: Vec<String>, external_id: &str, base: &str) -> Vec<String> {
         add_category_breadcrumb(
             "updating product",
             btreemap! {
@@ -57,7 +57,7 @@ pub trait Crawler {
                 image_url.clone()
             ].concat();
 
-            let url: String = [base.clone(), image_url.clone()].concat();
+            let url: String = [base, &image_url].concat();
 
             uploads.push(
                 upload_image_to_cloud(file_path.clone(), url.clone(),

@@ -51,7 +51,7 @@ pub async fn start() -> Result<()> {
                 },
         );
 
-        let parse_result = parse_page(message.url, &message.source, &message.category).await;
+        let parse_result = parse_page(&message.url, &message.source, &message.category).await;
 
         if parse_result.is_err() {
             let message = format!(

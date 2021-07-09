@@ -20,7 +20,7 @@ use crate::parse::service::html_cleaner::clean_html;
 use crate::parse::service::requester::{get_data, get_data_s};
 use crate::SETTINGS;
 
-pub async fn parse_page(url: String, source: &SourceName, category: &CategorySlug) -> Result<(), reqwest::Error> {
+pub async fn parse_page(url: &str, source: &SourceName, category: &CategorySlug) -> Result<(), reqwest::Error> {
     let crawler = get_crawler(source);
     add_parse_breadcrumb(
         "in progress",
@@ -30,8 +30,8 @@ pub async fn parse_page(url: String, source: &SourceName, category: &CategorySlu
                 },
     );
 
-    let response = get_data(&url).await?;
-    let mut products = parse_html(response, crawler);
+    let response = get_data(url).await?;
+    let mut products = parse_html(&response, crawler);
 
     dedup_products(&mut products, source);
 
@@ -83,7 +83,7 @@ pub async fn parse_category(source: &SourceName, category: &CategorySlug) -> Res
             for response in page_responses {
                 match response {
                     Ok(response_data) => {
-                        let parsed = parse_html(response_data, crawler);
+                        let parsed = parse_html(&response_data, crawler);
                         let mut amount_of_duplicates = 0;
 
                         parsed.iter().for_each(|x| {
@@ -211,8 +211,8 @@ async fn save_parsed_product(crawler: &dyn Crawler, parsed_product: LocalParsedP
     link_to_product(&product, &international_parsed_product, crawler.get_source());
 }
 
-fn parse_html(data: String, crawler: &dyn Crawler) -> Vec<LocalParsedProduct> {
-    let document = Html::parse_document(&data);
+fn parse_html(data: &str, crawler: &dyn Crawler) -> Vec<LocalParsedProduct> {
+    let document = Html::parse_document(data);
 
     crawler.extract_products(&document)
 }

@@ -31,7 +31,7 @@ impl Crawler for MiShopComCrawler {
 
     fn get_next_page_urls(&self, category: &CategorySlug) -> Vec<String> {
         let host = self.get_base();
-        let base = [host, "/ru/catalog/".to_string()].concat();
+        let base = [host, "/ru/catalog/"].concat();
         let pagination = "/page/{page}/";
 
         let urls = match category {
@@ -128,7 +128,7 @@ impl Crawler for MiShopComCrawler {
     }
 
     fn get_additional_info_url(&self, external_id: &str) -> String {
-        self.get_base() + external_id
+        format!("{}{}", self.get_base(), external_id)
     }
 
     async fn extract_additional_info(&self, document: &Html, external_id: &str) -> Option<AdditionalParsedProductInfo> {
@@ -164,8 +164,8 @@ lazy_static! {
 }
 
 impl MiShopComCrawler {
-    fn get_base(&self) -> String {
-        "https://mi-shop.com".to_string()
+    fn get_base(&self) -> &str {
+        "https://mi-shop.com"
     }
 
     async fn extract_images(&self, document: &Html, external_id: &str) -> Vec<String> {

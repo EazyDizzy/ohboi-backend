@@ -22,7 +22,7 @@ pub async fn get_bytes(url: &str) -> Result<Bytes, reqwest::Error> {
     Ok(response.bytes().await?)
 }
 
-pub async fn get_request(url: &str) -> Result<Response, reqwest::Error> {
+async fn get_request(url: &str) -> Result<Response, reqwest::Error> {
     // TODO preconnect, zip header
     // TODO random headers
     // TODO proxy

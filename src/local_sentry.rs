@@ -46,10 +46,10 @@ pub fn init_sentry() -> ClientInitGuard {
 #[allow(dead_code)]
 pub fn add_category_breadcrumb(message: &str, data: BTreeMap<&str, String>, category: String) {
     let mut btree_data = BTreeMap::new();
-
     for pair in data {
         btree_data.insert(pair.0.to_string(), Value::from(pair.1));
     }
+
     let breadcrumb = Breadcrumb {
         category: Some(category),
         data: btree_data,
@@ -66,15 +66,15 @@ pub fn add_category_breadcrumb(message: &str, data: BTreeMap<&str, String>, cate
             c2 = color::Fg(color::Yellow),
             c3 = color::Fg(color::LightBlue),
             r = style::Reset,
-            category = breadcrumb.category.clone().unwrap(),
-            message = breadcrumb.message.clone().unwrap(),
+            category = &breadcrumb.category.unwrap(),
+            message = breadcrumb.message.unwrap(),
             data = breadcrumb.data,
         );
     } else {
         log::info!(
             "{category} {message} {data:?}",
-            category = breadcrumb.category.clone().unwrap(),
-            message = breadcrumb.message.clone().unwrap(),
+            category = breadcrumb.category.unwrap(),
+            message = breadcrumb.message.unwrap(),
             data = breadcrumb.data,
         );
     }
