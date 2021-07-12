@@ -1,3 +1,5 @@
+#![deny(clippy::all, clippy::pedantic, clippy::cognitive_complexity)]
+#![allow(clippy::module_name_repetitions, clippy::default_trait_access, clippy::module_inception, clippy::too_many_lines, clippy::await_holding_lock)]
 #![warn(unused_extern_crates)]
 #[macro_use]
 extern crate diesel;
@@ -58,7 +60,7 @@ arg_enum! {
 async fn main() {
     std::env::set_var("RUST_LOG", "daemon");
     env_logger::init();
-    let _guard = local_sentry::init_sentry();
+    let guard = local_sentry::init_sentry();
 
     let args: Cli = Cli::from_args();
 
@@ -69,7 +71,7 @@ async fn main() {
             &SETTINGS.amqp.queues.parse_page.name,
             &SETTINGS.amqp.queues.pull_exchange_rates.name,
         ];
-        for queue_name in queues.iter() {
+        for queue_name in &queues {
             let declare = declare_queue(queue_name).await;
             if declare.is_err() {
                 log::error!("Queue declaration failed. {} {:?}", queue_name, declare);
@@ -104,7 +106,7 @@ async fn main() {
         }
     }
 
-    let close_result = _guard.close(None);
+    let close_result = guard.close(None);
     println!("sentry closed {}", close_result);
 }
 

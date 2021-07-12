@@ -4,7 +4,7 @@ use crate::common::db;
 use crate::http::db::source::entity::Source;
 
 pub fn get_all_enabled() -> Vec<Source> {
-    use crate::schema::source::dsl::*;
+    use crate::schema::source::dsl::{enabled, source};
     let connection = &db::establish_connection();
 
     source

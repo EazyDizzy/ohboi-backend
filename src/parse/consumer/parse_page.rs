@@ -1,13 +1,13 @@
 use futures::StreamExt;
-use lapin::{options::*, Result, types::FieldTable};
+use lapin::{options::{BasicAckOptions, BasicConsumeOptions, BasicNackOptions, BasicQosOptions}, Result, types::FieldTable};
 use maplit::btreemap;
 use sentry::protocol::map::BTreeMap;
 use serde::{Deserialize, Serialize};
 
 use crate::local_sentry::add_category_breadcrumb;
 use crate::parse::db::entity::{CategorySlug, SourceName};
-use crate::parse::service::parser::parse_page;
 use crate::parse::queue::get_channel;
+use crate::parse::service::parser::parse_page;
 use crate::SETTINGS;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -51,7 +51,7 @@ pub async fn start() -> Result<()> {
                 },
         );
 
-        let parse_result = parse_page(&message.url, &message.source, &message.category).await;
+        let parse_result = parse_page(&message.url, message.source, message.category).await;
 
         if parse_result.is_err() {
             let message = format!(

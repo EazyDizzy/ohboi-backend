@@ -5,8 +5,8 @@ use crate::common::db::entity::exchange_rate::ExchangeRate;
 use crate::diesel::prelude::*;
 use crate::my_enum::CurrencyEnum;
 
-pub fn get_exchange_rate_by_code(sought_currency: &CurrencyEnum) -> Option<ExchangeRate> {
-    use crate::schema::exchange_rate::dsl::*;
+pub fn get_exchange_rate_by_code(sought_currency: CurrencyEnum) -> Option<ExchangeRate> {
+    use crate::schema::exchange_rate::dsl::{currency, exchange_rate};
 
     let connection = &db::establish_connection();
 

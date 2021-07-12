@@ -10,8 +10,8 @@ use crate::parse::db::repository::source_product_price_history::add_to_history_i
 use crate::parse::parsed_product::InternationalParsedProduct;
 use crate::schema::source_product;
 
-pub fn get_by_source_and_external_id(source: &SourceName, expected_external_id: String) -> Option<SourceProduct> {
-    use crate::schema::source_product::dsl::*;
+pub fn get_by_source_and_external_id(source: SourceName, expected_external_id: String) -> Option<SourceProduct> {
+    use crate::schema::source_product::dsl::{external_id, source_id, source_product};
 
     let connection = &db::establish_connection();
     let source = get_source(source);
@@ -29,7 +29,7 @@ pub fn get_by_source_and_external_id(source: &SourceName, expected_external_id: 
     results.into_iter().next()
 }
 
-pub fn link_to_product(product: &Product, parsed_product: &InternationalParsedProduct, source: &SourceName) {
+pub fn link_to_product(product: &Product, parsed_product: &InternationalParsedProduct, source: SourceName) {
     let source = get_source(source);
 
     let now = Utc::now();
@@ -44,7 +44,7 @@ pub fn link_to_product(product: &Product, parsed_product: &InternationalParsedPr
     };
 
     create_if_not_exists(&new_link);
-    update_price_range_if_needed(&product.id, parsed_product.price);
+    update_price_range_if_needed(product.id, parsed_product.price);
 
     add_to_history_if_not_exists(&new_link);
 }

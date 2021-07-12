@@ -21,8 +21,8 @@ pub fn create(username: &str) -> User {
         .expect("Error saving new user")
 }
 
-pub fn get_by_id(user_id: &i32) -> User {
-    use crate::schema::users::dsl::*;
+pub fn get_by_id(user_id: i32) -> User {
+    use crate::schema::users::dsl::{id, users};
 
     let connection = &db::establish_connection();
 

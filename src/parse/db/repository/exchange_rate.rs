@@ -9,7 +9,7 @@ use crate::diesel::prelude::*;
 use crate::my_enum::CurrencyEnum;
 use crate::schema::exchange_rate;
 
-pub fn create_or_update(currency: &CurrencyEnum, rate: f32) -> bool {
+pub fn create_or_update(currency: CurrencyEnum, rate: f32) -> bool {
     let existed_rate = get_exchange_rate_by_code(currency);
 
     if existed_rate.is_none() {
@@ -25,7 +25,7 @@ pub fn create_or_update(currency: &CurrencyEnum, rate: f32) -> bool {
     }
 }
 
-fn create(currency: &CurrencyEnum, rate: f32) -> bool {
+fn create(currency: CurrencyEnum, rate: f32) -> bool {
     let connection = &db::establish_connection();
     let now = Utc::now();
 
@@ -42,8 +42,8 @@ fn create(currency: &CurrencyEnum, rate: f32) -> bool {
     insert_result.is_ok()
 }
 
-fn update(sought_currency: &CurrencyEnum, new_rate: f32) -> bool {
-    use crate::schema::exchange_rate::dsl::*;
+fn update(sought_currency: CurrencyEnum, new_rate: f32) -> bool {
+    use crate::schema::exchange_rate::dsl::{currency, exchange_rate, rate, updated_at};
 
     let connection = &db::establish_connection();
     let now = Utc::now();

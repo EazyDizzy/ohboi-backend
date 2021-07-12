@@ -8,7 +8,7 @@ pub enum UserRegistrationType {
     Apple,
 }
 
-#[derive(diesel_derive_enum::DbEnum, Debug, Serialize, Deserialize)]
+#[derive(diesel_derive_enum::DbEnum, Debug, Serialize, Deserialize, Copy, Clone)]
 #[DieselType = "Currency_enum"]
 pub enum CurrencyEnum {
     EUR,

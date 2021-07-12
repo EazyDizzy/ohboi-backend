@@ -14,7 +14,7 @@ pub struct UserRegistration {
 #[derive(Insertable)]
 #[table_name = "user_registration"]
 pub struct NewUserRegistration<'a> {
-    pub user_id: &'a i32,
+    pub user_id: i32,
     pub registration_type: &'a UserRegistrationType,
 
     pub email: &'a str,

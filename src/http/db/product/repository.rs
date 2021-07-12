@@ -8,7 +8,7 @@ use crate::http::db::lower;
 use crate::http::db::product::entity::Product;
 use crate::http::product::ProductFilters;
 use crate::schema::product;
-use crate::schema::product::dsl::*;
+use crate::schema::product::dsl::{category, enabled, highest_price, id, lowest_price, title};
 use crate::schema::source_product;
 
 pub fn get_filtered_products(filters: &ProductFilters) -> Vec<Product> {
@@ -58,14 +58,14 @@ pub fn get_filtered_products(filters: &ProductFilters) -> Vec<Product> {
     if let Some(min_price) = filters.min_price {
         query = query.filter(
             highest_price.ge(
-                BigDecimal::from(convert_from(min_price, &filters.currency))
+                BigDecimal::from(convert_from(min_price, filters.currency))
             )
         );
     }
     if let Some(max_price) = filters.max_price {
         query = query.filter(
             lowest_price.le(
-                BigDecimal::from(convert_from(max_price, &filters.currency))
+                BigDecimal::from(convert_from(max_price, filters.currency))
             )
         );
     }

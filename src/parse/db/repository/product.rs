@@ -24,7 +24,7 @@ pub fn add_image_to_product_details(existent_product_id: i32, file_path: &str) {
 }
 
 pub fn update_details(existent_product: &Product, additional_info: &CleanParsedProductInfo) {
-    use crate::schema::product::dsl::*;
+    use crate::schema::product::dsl::{description, enabled, id, images, product};
 
     let connection = &db::establish_connection();
     let target = product.filter(id.eq(existent_product.id));
@@ -43,26 +43,23 @@ pub fn update_details(existent_product: &Product, additional_info: &CleanParsedP
         .expect("Failed to update product price");
 }
 
-pub fn create_if_not_exists(parsed_product: &InternationalParsedProduct, product_category: &CategorySlug) -> Product {
+pub fn create_if_not_exists(parsed_product: &InternationalParsedProduct, product_category: CategorySlug) -> Product {
     let existed_product = get_product_by_title(parsed_product.title.as_str());
 
-    if let Some(current_product) = existed_product {
-        // TODO what if all sub products were disabled
+    existed_product.map_or_else(|| create(
+        parsed_product,
+        product_category,
+    ), |current_product| {
         if parsed_product.available && !current_product.enabled {
-            enable_product(&current_product.id);
+            enable_product(current_product.id);
         }
 
         current_product
-    } else {
-        create(
-            parsed_product,
-            product_category,
-        )
-    }
+    })
 }
 
-pub fn update_price_range_if_needed(product_id: &i32, new_price: f64) {
-    use crate::schema::product::dsl::*;
+pub fn update_price_range_if_needed(product_id: i32, new_price: f64) {
+    use crate::schema::product::dsl::{highest_price, id, lowest_price, product, updated_at};
     let now = Utc::now();
 
     let connection = &db::establish_connection();
@@ -103,7 +100,7 @@ pub fn update_price_range_if_needed(product_id: &i32, new_price: f64) {
     }
 }
 
-fn create(parsed_product: &InternationalParsedProduct, product_category: &CategorySlug) -> Product {
+fn create(parsed_product: &InternationalParsedProduct, product_category: CategorySlug) -> Product {
     let connection = &db::establish_connection();
     let now = Utc::now();
     let category = get_category(product_category);
@@ -129,8 +126,8 @@ fn create(parsed_product: &InternationalParsedProduct, product_category: &Catego
     }
 }
 
-fn enable_product(product_id: &i32) {
-    use crate::schema::product::dsl::*;
+fn enable_product(product_id: i32) {
+    use crate::schema::product::dsl::{enabled, id, product, updated_at};
     let connection = &db::establish_connection();
     let now = Utc::now();
 
@@ -143,7 +140,7 @@ fn enable_product(product_id: &i32) {
 }
 
 fn get_product_by_title(product_title: &str) -> Option<Product> {
-    use crate::schema::product::dsl::*;
+    use crate::schema::product::dsl::{product, title};
 
     let connection = &db::establish_connection();
 
@@ -156,8 +153,8 @@ fn get_product_by_title(product_title: &str) -> Option<Product> {
     results.into_iter().next()
 }
 
-fn get_product_by_id(product_id: &i32) -> Option<Product> {
-    use crate::schema::product::dsl::*;
+fn get_product_by_id(product_id: i32) -> Option<Product> {
+    use crate::schema::product::dsl::{id, product};
 
     let connection = &db::establish_connection();
 

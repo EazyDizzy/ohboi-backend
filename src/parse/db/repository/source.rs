@@ -4,8 +4,8 @@ use crate::diesel::prelude::*;
 use crate::common::db;
 use crate::parse::db::entity::{Source, SourceName};
 
-pub fn get_source(name: &SourceName) -> Source {
-    use crate::schema::source::dsl::*;
+pub fn get_source(name: SourceName) -> Source {
+    use crate::schema::source::dsl::{site_name, source};
     let connection = &db::establish_connection();
 
     let filter = site_name.eq(name.to_string().to_snake_case());

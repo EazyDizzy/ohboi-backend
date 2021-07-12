@@ -1,13 +1,13 @@
 use futures::StreamExt;
-use lapin::{options::*, Result, types::FieldTable};
+use lapin::{options::{BasicAckOptions, BasicConsumeOptions, BasicNackOptions, BasicQosOptions}, Result, types::FieldTable};
 use maplit::btreemap;
 use sentry::protocol::map::BTreeMap;
 use serde::Deserialize;
 use serde_json::error::Result as SerdeResult;
 
-use crate::parse::db::repository::exchange_rate::create_or_update;
 use crate::local_sentry::add_category_breadcrumb;
 use crate::my_enum::CurrencyEnum;
+use crate::parse::db::repository::exchange_rate::create_or_update;
 use crate::parse::queue::get_channel;
 use crate::parse::service::requester::get_data;
 use crate::SETTINGS;
@@ -76,17 +76,17 @@ pub async fn start() -> Result<()> {
             continue;
         }
 
-        let save_result = create_or_update(&CurrencyEnum::RUB, response.rates.rub)
-            && create_or_update(&CurrencyEnum::UAH, response.rates.uah)
-            && create_or_update(&CurrencyEnum::USD, response.rates.usd)
-            && create_or_update(&CurrencyEnum::EUR, 1.0)
+        let save_result = create_or_update(CurrencyEnum::RUB, response.rates.rub)
+            && create_or_update(CurrencyEnum::UAH, response.rates.uah)
+            && create_or_update(CurrencyEnum::USD, response.rates.usd)
+            && create_or_update(CurrencyEnum::EUR, 1.0)
             ;
 
-        if !save_result {
+        if save_result {
+            delivery.ack(BasicAckOptions { multiple: false }).await.expect("ack");
+        } else {
             sentry::capture_message("Saving of exchange rate failed!", sentry::Level::Warning);
             delivery.nack(BasicNackOptions { requeue: true, multiple: false }).await.expect("nack");
-        } else {
-            delivery.ack(BasicAckOptions { multiple: false }).await.expect("ack");
         }
     }
 

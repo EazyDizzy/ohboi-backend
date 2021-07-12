@@ -19,7 +19,7 @@ pub struct ExchangeRate {
 #[derive(Insertable)]
 #[table_name = "exchange_rate"]
 pub struct NewExchangeRate<'a> {
-    pub currency: &'a CurrencyEnum,
+    pub currency: CurrencyEnum,
     pub rate: BigDecimal,
 
     pub updated_at: &'a NaiveDateTime,

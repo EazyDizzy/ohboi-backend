@@ -32,8 +32,8 @@ async fn start_crawler<T>(crawler: T, channel: &Channel) -> Result<()>
     // TODO check if crawler is enabled
     for category in crawler.get_categories() {
         let payload = CrawlerCategoryMessage {
-            category: *category,
-            source: *crawler.get_source(),
+            category,
+            source: crawler.get_source(),
         };
         add_producer_breadcrumb(
             "creating",

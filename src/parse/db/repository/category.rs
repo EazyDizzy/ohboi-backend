@@ -4,8 +4,8 @@ use crate::diesel::prelude::*;
 use crate::common::db;
 use crate::parse::db::entity::{Category, CategorySlug};
 
-pub fn get_category(name: &CategorySlug) -> Category {
-    use crate::schema::category::dsl::*;
+pub fn get_category(name: CategorySlug) -> Category {
+    use crate::schema::category::dsl::{category, slug};
     let connection = &db::establish_connection();
 
     let filter = slug.eq(name.to_string().to_snake_case());

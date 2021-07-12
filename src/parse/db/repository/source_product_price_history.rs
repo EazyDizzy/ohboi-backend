@@ -1,12 +1,13 @@
-use crate::schema::source_product_price_history;
-use crate::common::db;
-use diesel::{ExpressionMethods, QueryDsl, BoolExpressionMethods, RunQueryDsl};
-use crate::parse::db::entity::{NewSourceProductPriceHistory, NewSourceProduct, SourceProductPriceHistory};
-use chrono::Utc;
 use bigdecimal::{BigDecimal, ToPrimitive};
+use chrono::Utc;
+use diesel::{BoolExpressionMethods, ExpressionMethods, QueryDsl, RunQueryDsl};
+
+use crate::common::db;
+use crate::parse::db::entity::{NewSourceProduct, NewSourceProductPriceHistory, SourceProductPriceHistory};
+use crate::schema::source_product_price_history;
 
 pub fn add_to_history_if_not_exists(source_product: &NewSourceProduct) {
-    use crate::schema::source_product_price_history::dsl::*;
+    use crate::schema::source_product_price_history::dsl::{external_id, id, product_id, source_id, source_product_price_history};
 
     let connection = &db::establish_connection();
 

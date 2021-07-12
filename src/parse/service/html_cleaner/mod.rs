@@ -9,7 +9,7 @@ lazy_static! {
 }
 
 
-pub fn clean_html(html: String) -> String {
+pub fn clean_html(html: &str) -> String {
     replace_html_entities(remove_unneeded_tags(html))
 }
 
@@ -25,7 +25,7 @@ fn replace_html_entities(mut html: String) -> String {
     html
 }
 
-fn remove_unneeded_tags(html: String) -> String {
+fn remove_unneeded_tags(html: &str) -> String {
     let html_without_indents = html
         .replace("\n", "")
         .replace("\t", "");
@@ -50,27 +50,27 @@ mod tests {
 
     #[test]
     fn it_removes_new_lines() {
-        assert_eq!(remove_unneeded_tags("<div>\n</div>".to_string()), "<div></div>".to_string());
+        assert_eq!(remove_unneeded_tags("<div>\n</div>"), "<div></div>".to_string());
     }
 
     #[test]
     fn it_removes_tabs() {
-        assert_eq!(remove_unneeded_tags("<div>her\ther</div>".to_string()), "<div>herher</div>".to_string());
+        assert_eq!(remove_unneeded_tags("<div>her\ther</div>"), "<div>herher</div>".to_string());
     }
 
     #[test]
     fn it_removes_simple_links() {
-        assert_eq!(remove_unneeded_tags("<div><a href=\"https://trello.com/c/1HiOMiAR/72-clean-product-description\">Link text</a></div>".to_string()), "<div>Link text</div>".to_string());
+        assert_eq!(remove_unneeded_tags("<div><a href=\"https://trello.com/c/1HiOMiAR/72-clean-product-description\">Link text</a></div>"), "<div>Link text</div>".to_string());
     }
 
     #[test]
     fn it_removes_links_with_attributes() {
-        assert_eq!(remove_unneeded_tags("<div><a href=\"https://trello.com/c/1HiOMiAR/72-clean-product-description\" target=\"_blank\" type=\"her\">Link text</a></div>".to_string()), "<div>Link text</div>".to_string());
+        assert_eq!(remove_unneeded_tags("<div><a href=\"https://trello.com/c/1HiOMiAR/72-clean-product-description\" target=\"_blank\" type=\"her\">Link text</a></div>"), "<div>Link text</div>".to_string());
     }
 
     #[test]
     fn it_removes_links_with_nested_content() {
-        assert_eq!(remove_unneeded_tags("<a href=\"https://www.w3schools.com\"><img border=\"0\" alt=\"W3Schools\" src=\"logo_w3s.gif\"></a>".to_string()), "<img border=\"0\" alt=\"W3Schools\" src=\"logo_w3s.gif\">".to_string());
+        assert_eq!(remove_unneeded_tags("<a href=\"https://www.w3schools.com\"><img border=\"0\" alt=\"W3Schools\" src=\"logo_w3s.gif\"></a>"), "<img border=\"0\" alt=\"W3Schools\" src=\"logo_w3s.gif\">".to_string());
     }
 
     #[test]
@@ -91,6 +91,6 @@ mod tests {
 
     #[test]
     fn it_cleans_html() {
-        assert_eq!(clean_html("<div><a href=\"https://trello.com/c/1HiOMiAR/72-clean-product-description\" target=\"_blank\" type=\"her\">Link text</a><p>\n&DownLeftVector;\t&uharr;</p></div>".to_string()), "<div>Link text<p>↽↾</p></div>".to_string());
+        assert_eq!(clean_html("<div><a href=\"https://trello.com/c/1HiOMiAR/72-clean-product-description\" target=\"_blank\" type=\"her\">Link text</a><p>\n&DownLeftVector;\t&uharr;</p></div>"), "<div>Link text<p>↽↾</p></div>".to_string());
     }
 }

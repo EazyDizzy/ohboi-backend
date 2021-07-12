@@ -28,8 +28,7 @@ pub async fn validator(req: ServiceRequest, credentials: BearerAuth) -> Result<S
 
             let config = req
                 .app_data::<Config>()
-                .map(|data| data.as_ref().clone())
-                .unwrap_or_else(Default::default);
+                .map_or_else(Default::default, |data| data.as_ref().clone());
             Err(AuthenticationError::new(config).into())
         }
     }

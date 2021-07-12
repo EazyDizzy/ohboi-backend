@@ -7,31 +7,32 @@ use crate::parse::crawler::crawler::{Crawler, get_html_nodes, ProductHtmlSelecto
 use crate::parse::db::entity::{CategorySlug, SourceName};
 use crate::parse::parsed_product::{AdditionalParsedProductInfo, LocalParsedProduct};
 
+static SITE_BASE: &str = "https://mi-shop.com";
+
 #[derive(Clone)]
 pub struct MiShopComCrawler {}
 
 #[async_trait(? Send)]
 impl Crawler for MiShopComCrawler {
-    fn get_source(&self) -> &SourceName {
-        &SourceName::MiShopCom
+    fn get_source(&self) -> SourceName {
+        SourceName::MiShopCom
     }
 
-    fn get_currency(&self) -> &CurrencyEnum {
-        &CurrencyEnum::RUB
+    fn get_currency(&self) -> CurrencyEnum {
+        CurrencyEnum::RUB
     }
 
-    fn get_categories(&self) -> Vec<&CategorySlug> {
+    fn get_categories(&self) -> Vec<CategorySlug> {
         vec![
-            &CategorySlug::Smartphone,
-            &CategorySlug::SmartHome,
-            &CategorySlug::Headphones,
-            &CategorySlug::Watches,
+            CategorySlug::Smartphone,
+            CategorySlug::SmartHome,
+            CategorySlug::Headphones,
+            CategorySlug::Watches,
         ]
     }
 
-    fn get_next_page_urls(&self, category: &CategorySlug) -> Vec<String> {
-        let host = self.get_base();
-        let base = [host, "/ru/catalog/"].concat();
+    fn get_next_page_urls(&self, category: CategorySlug) -> Vec<String> {
+        let base = [SITE_BASE, "/ru/catalog/"].concat();
         let pagination = "/page/{page}/";
 
         let urls = match category {
@@ -63,7 +64,7 @@ impl Crawler for MiShopComCrawler {
         };
 
         for element in document.select(&items_selector) {
-            let nodes = get_html_nodes(&selectors, &element, &self.get_source());
+            let nodes = get_html_nodes(&selectors, &element, self.get_source());
 
             if nodes.is_none() {
                 continue;
@@ -84,8 +85,8 @@ impl Crawler for MiShopComCrawler {
             let price: f64 = {
                 let price_html = product_nodes.price.inner_html();
                 let price_text = price_html
-                    .replace("₽", "")
-                    .replace(" ", "")
+                    .replace('₽', "")
+                    .replace(' ', "")
                     .trim()
                     .parse::<f64>();
 
@@ -128,7 +129,7 @@ impl Crawler for MiShopComCrawler {
     }
 
     fn get_additional_info_url(&self, external_id: &str) -> String {
-        format!("{}{}", self.get_base(), external_id)
+        format!("{}{}", SITE_BASE, external_id)
     }
 
     async fn extract_additional_info(&self, document: &Html, external_id: &str) -> Option<AdditionalParsedProductInfo> {
@@ -164,16 +165,12 @@ lazy_static! {
 }
 
 impl MiShopComCrawler {
-    fn get_base(&self) -> &str {
-        "https://mi-shop.com"
-    }
-
     async fn extract_images(&self, document: &Html, external_id: &str) -> Vec<String> {
         let images_selector = Selector::parse(".detail-modal .detail__slides img").unwrap();
         let image_nodes = document.select(&images_selector);
         let image_urls = self.abstract_extract_image_urls(image_nodes, "data-lazy");
 
-        self.abstract_extract_images(image_urls, external_id, self.get_base()).await
+        self.abstract_extract_images(image_urls, external_id, SITE_BASE).await
     }
 }
 

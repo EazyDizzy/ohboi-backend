@@ -1,5 +1,5 @@
 use bigdecimal::ToPrimitive;
-use futures::future::*;
+use futures::future::join_all;
 use maplit::btreemap;
 use scraper::Html;
 use sentry::types::protocol::latest::map::BTreeMap;
@@ -20,8 +20,8 @@ use crate::parse::service::html_cleaner::clean_html;
 use crate::parse::service::requester::{get_data, get_data_s};
 use crate::SETTINGS;
 
-pub async fn parse_page(url: &str, source: &SourceName, category: &CategorySlug) -> Result<(), reqwest::Error> {
-    let crawler = get_crawler(source);
+pub async fn parse_page(url: &str, source: SourceName, category: CategorySlug) -> Result<(), reqwest::Error> {
+    let crawler = get_crawler(&source);
     add_parse_breadcrumb(
         "in progress",
         btreemap! {
@@ -49,8 +49,8 @@ pub async fn parse_page(url: &str, source: &SourceName, category: &CategorySlug)
     Ok(())
 }
 
-pub async fn parse_category(source: &SourceName, category: &CategorySlug) -> Result<(), reqwest::Error> {
-    let crawler = get_crawler(source);
+pub async fn parse_category(source: SourceName, category: CategorySlug) -> Result<(), reqwest::Error> {
+    let crawler = get_crawler(&source);
 
     add_parse_breadcrumb(
         "in progress",
@@ -114,8 +114,8 @@ pub async fn parse_category(source: &SourceName, category: &CategorySlug) -> Res
 
                         let _result = postpone_page_parsing(ParsePageMessage {
                             url: url.replace("{page}", (current_page).to_string().as_ref()),
-                            source: *source,
-                            category: *category,
+                            source,
+                            category,
                         }).await;
                     }
                 }
@@ -123,6 +123,7 @@ pub async fn parse_category(source: &SourceName, category: &CategorySlug) -> Res
                 current_page += 1;
             }
 
+            // if last page
             if !all_successful || amount_of_fails == concurrent_pages {
                 break;
             }
@@ -145,7 +146,7 @@ pub async fn parse_category(source: &SourceName, category: &CategorySlug) -> Res
     Ok(())
 }
 
-async fn save_parsed_products(crawler: &dyn Crawler, products: Vec<LocalParsedProduct>, category: &CategorySlug) {
+async fn save_parsed_products(crawler: &dyn Crawler, products: Vec<LocalParsedProduct>, category: CategorySlug) {
     let mut savings_in_progress = vec![];
     let currency = crawler.get_currency();
     let rate = get_exchange_rate_by_code(currency).unwrap().rate.to_f64().unwrap();
@@ -169,7 +170,7 @@ async fn save_parsed_products(crawler: &dyn Crawler, products: Vec<LocalParsedPr
     );
 }
 
-async fn save_parsed_product(crawler: &dyn Crawler, parsed_product: LocalParsedProduct, category: &CategorySlug, rate: f64) {
+async fn save_parsed_product(crawler: &dyn Crawler, parsed_product: LocalParsedProduct, category: CategorySlug, rate: f64) {
     let international_parsed_product = InternationalParsedProduct {
         title: parsed_product.title,
         price: convert_from_with_rate(parsed_product.price, rate),
@@ -177,7 +178,7 @@ async fn save_parsed_product(crawler: &dyn Crawler, parsed_product: LocalParsedP
         available: parsed_product.available,
         external_id: parsed_product.external_id,
     };
-    let product = create_if_not_exists(&international_parsed_product, &category);
+    let product = create_if_not_exists(&international_parsed_product, category);
 
     if product.description.is_none() || product.images.is_none() {
         let details = extract_additional_info(
@@ -200,7 +201,7 @@ async fn save_parsed_product(crawler: &dyn Crawler, parsed_product: LocalParsedP
                 let clean_details = CleanParsedProductInfo {
                     image_urls: details.image_urls,
                     available: details.available,
-                    description: clean_html(details.description),
+                    description: clean_html(&details.description),
                 };
                 update_details(&product, &clean_details);
             }
@@ -247,7 +248,7 @@ async fn extract_additional_info(external_id: &str, crawler: &dyn Crawler) -> Op
     }
 }
 
-fn dedup_products(products: &mut Vec<LocalParsedProduct>, source: &SourceName) {
+fn dedup_products(products: &mut Vec<LocalParsedProduct>, source: SourceName) {
     let error_margin = f64::EPSILON;
 
     products.dedup_by(|a, b| {

@@ -1,5 +1,5 @@
 use futures::StreamExt;
-use lapin::{options::*, Result, types::FieldTable};
+use lapin::{options::{BasicAckOptions, BasicConsumeOptions, BasicNackOptions, BasicQosOptions}, Result, types::FieldTable};
 use maplit::btreemap;
 use sentry::protocol::map::BTreeMap;
 
@@ -40,7 +40,7 @@ pub async fn start() -> Result<()> {
         let parsed_json = serde_json::from_str(data.as_str());
         let message: CrawlerCategoryMessage = parsed_json.unwrap();
 
-        let parse_result = parse_category(&message.source, &message.category).await;
+        let parse_result = parse_category(message.source, message.category).await;
 
         if parse_result.is_err() {
             let message = format!(

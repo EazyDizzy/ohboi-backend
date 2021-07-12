@@ -1,3 +1,5 @@
+#![deny(clippy::all, clippy::pedantic, clippy::cognitive_complexity)]
+#![allow(clippy::module_name_repetitions, clippy::default_trait_access, clippy::module_inception, clippy::too_many_lines)]
 #![warn(unused_extern_crates)]
 #[macro_use]
 extern crate diesel;
@@ -9,7 +11,6 @@ use std::env;
 use diesel::PgConnection;
 use diesel::r2d2::ConnectionManager;
 use log::{error, info};
-use r2d2;
 
 mod http;
 mod schema;

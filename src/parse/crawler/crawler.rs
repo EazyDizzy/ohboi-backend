@@ -2,7 +2,7 @@ use std::sync::Mutex;
 
 use async_trait::async_trait;
 use futures::future::{err, ok};
-use futures::future::*;
+use futures::future::join_all;
 use futures::FutureExt;
 use inflector::Inflector;
 use maplit::btreemap;
@@ -21,13 +21,13 @@ use crate::SETTINGS;
 
 #[async_trait(? Send)]
 pub trait Crawler {
-    fn get_source(&self) -> &SourceName;
+    fn get_source(&self) -> SourceName;
 
-    fn get_currency(&self) -> &CurrencyEnum;
+    fn get_currency(&self) -> CurrencyEnum;
 
-    fn get_categories(&self) -> Vec<&CategorySlug>;
+    fn get_categories(&self) -> Vec<CategorySlug>;
 
-    fn get_next_page_urls(&self, category: &CategorySlug) -> Vec<String>;
+    fn get_next_page_urls(&self, category: CategorySlug) -> Vec<String>;
 
     fn extract_products(&self, document: &Html) -> Vec<LocalParsedProduct>;
 
@@ -72,7 +72,7 @@ pub trait Crawler {
                                 file_path: file_path.clone(),
                                 image_url: url,
                                 external_id: external_id.to_string(),
-                                source: *self.get_source(),
+                                source: self.get_source(),
                             });
                         err(file_path)
                     }
@@ -186,7 +186,7 @@ fn is_valid_url(url: &str) -> bool {
     url.starts_with('/') || url.starts_with("http")
 }
 
-pub fn get_html_nodes<'a>(selectors: &'a ProductHtmlSelectors, element: &'a ElementRef, source: &'a SourceName) -> Option<ProductHtmlNodes<'a>> {
+pub fn get_html_nodes<'result>(selectors: &'result ProductHtmlSelectors, element: &'result ElementRef, source: SourceName) -> Option<ProductHtmlNodes<'result>> {
     let id_node = element.select(&selectors.id).next();
     let title_node = element.select(&selectors.title).next();
     let price_node = element.select(&selectors.price).next();
@@ -262,13 +262,13 @@ mod tests {
 
     #[async_trait(? Send)]
     impl Crawler for EmptyCrawler {
-        fn get_source(&self) -> &SourceName { &SourceName::MiShopCom }
+        fn get_source(&self) -> SourceName { SourceName::MiShopCom }
 
-        fn get_currency(&self) -> &CurrencyEnum { &CurrencyEnum::RUB }
+        fn get_currency(&self) -> CurrencyEnum { CurrencyEnum::RUB }
 
-        fn get_categories(&self) -> Vec<&CategorySlug> { vec![] }
+        fn get_categories(&self) -> Vec<CategorySlug> { vec![] }
 
-        fn get_next_page_urls(&self, category: &CategorySlug) -> Vec<String> { vec![] }
+        fn get_next_page_urls(&self, category: CategorySlug) -> Vec<String> { vec![] }
 
         fn extract_products(&self, document: &Html) -> Vec<LocalParsedProduct> { vec![] }
 

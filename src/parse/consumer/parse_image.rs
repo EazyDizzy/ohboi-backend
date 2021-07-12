@@ -1,7 +1,7 @@
 use std::str;
 
 use futures::StreamExt;
-use lapin::{options::*, Result, types::FieldTable};
+use lapin::{options::{BasicAckOptions, BasicConsumeOptions, BasicNackOptions, BasicQosOptions}, Result, types::FieldTable};
 use maplit::btreemap;
 use sentry::protocol::map::BTreeMap;
 use serde::{Deserialize, Serialize};
@@ -52,7 +52,7 @@ pub async fn start() -> Result<()> {
         let result = upload_image_to_cloud(message.file_path.clone(), message.image_url).await;
 
         if result {
-            let source_product = get_by_source_and_external_id(&message.source, message.external_id).unwrap();
+            let source_product = get_by_source_and_external_id(message.source, message.external_id).unwrap();
             add_consumer_breadcrumb(
                 "updating product",
                 btreemap! {

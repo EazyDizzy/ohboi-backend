@@ -4,7 +4,7 @@ use crate::common::db::repository::exchange_rate::get_exchange_rate_by_code;
 use crate::my_enum::CurrencyEnum;
 
 #[allow(dead_code)]
-pub fn convert_from(price: f64, currency: &CurrencyEnum) -> f64 {
+pub fn convert_from(price: f64, currency: CurrencyEnum) -> f64 {
     let rate = get_exchange_rate_by_code(currency)
         .unwrap().rate
         .to_f64().unwrap();
