@@ -102,21 +102,23 @@ pub trait Crawler {
             let url_path: String;
             let src_tag = image.value().attr("src");
 
-            if src_tag.is_some() {
-                url_path = src_tag.unwrap().to_string();
+            if let Some(tag) = src_tag {
+                url_path = tag.to_string();
+            } else if let Some(lazy_tag) = image.value().attr(lazy_attribute) {
+                url_path = lazy_tag.to_string();
             } else {
-                let lazy_tag = image.value().attr(lazy_attribute);
-                if lazy_tag.is_none() {
-                    let message = format!(
-                        "both src & lazy tags not found! [{source}]",
-                        source = self.get_source()
-                    );
-                    sentry::capture_message(message.as_str(), sentry::Level::Warning);
-                    continue;
-                }
-                url_path = lazy_tag.unwrap().to_string();
+                let message = format!(
+                    "both src & lazy tags not found! [{source}]",
+                    source = self.get_source()
+                );
+                sentry::capture_message(message.as_str(), sentry::Level::Warning);
+                continue;
             }
-            images_urls.push(url_path);
+
+            // Mi-shop sometimes provides broken src attributes which look like src="data:,"
+            if is_valid_url(&url_path) {
+                images_urls.push(url_path);
+            }
         }
 
         images_urls
@@ -180,6 +182,10 @@ pub trait Crawler {
     }
 }
 
+fn is_valid_url(url: &str) -> bool {
+    url.starts_with("/") || url.starts_with("http")
+}
+
 pub fn get_html_nodes<'a>(selectors: &'a ProductHtmlSelectors, element: &'a ElementRef, source: &'a SourceName) -> Option<ProductHtmlNodes<'a>> {
     let id_node = element.select(&selectors.id).next();
     let title_node = element.select(&selectors.title).next();
@@ -238,4 +244,102 @@ pub struct ProductHtmlNodes<'a> {
     pub price: ElementRef<'a>,
     pub available: Option<ElementRef<'a>>,
     pub unavailable: Option<ElementRef<'a>>,
+}
+
+
+#[cfg(test)]
+mod tests {
+    use async_trait::async_trait;
+    use scraper::{Html, Selector};
+
+    use crate::my_enum::CurrencyEnum;
+    use crate::parse::crawler::crawler::Crawler;
+    use crate::parse::db::entity::{CategorySlug, SourceName};
+    use crate::parse::parsed_product::{AdditionalParsedProductInfo, LocalParsedProduct};
+
+    #[derive(Clone)]
+    pub struct EmptyCrawler {}
+
+    #[async_trait(? Send)]
+    impl Crawler for EmptyCrawler {
+        fn get_source(&self) -> &SourceName { &SourceName::MiShopCom }
+
+        fn get_currency(&self) -> &CurrencyEnum { &CurrencyEnum::RUB }
+
+        fn get_categories(&self) -> Vec<&CategorySlug> { vec![] }
+
+        fn get_next_page_urls(&self, category: &CategorySlug) -> Vec<String> { vec![] }
+
+        fn extract_products(&self, document: &Html) -> Vec<LocalParsedProduct> { vec![] }
+
+        fn get_additional_info_url(&self, external_id: &str) -> String { "todo".to_string() }
+
+        async fn extract_additional_info(&self, document: &Html, external_id: &str) -> Option<AdditionalParsedProductInfo> { None }
+    }
+
+    impl EmptyCrawler {
+        async fn extract_image_urls(&self, document: &Html, external_id: &str) -> Vec<String> {
+            let images_selector = Selector::parse("img").unwrap();
+            let image_nodes = document.select(&images_selector);
+            self.abstract_extract_image_urls(image_nodes, "data-lazy")
+        }
+    }
+
+
+    #[actix_rt::test]
+    async fn it_doesnt_fail_on_no_images() {
+        let crawler = EmptyCrawler {};
+        let document = Html::parse_document("<div></div>");
+
+        assert!(crawler.extract_image_urls(&document, "her").await.is_empty());
+    }
+
+    #[actix_rt::test]
+    async fn it_doesnt_fail_on_no_src_tags() {
+        let crawler = EmptyCrawler {};
+        let document = Html::parse_document("<div>\
+         <img not-src=\"url.jpg\">
+        </div>");
+
+        assert!(crawler.extract_image_urls(&document, "her").await.is_empty());
+    }
+
+    #[actix_rt::test]
+    async fn it_finds_src_tags() {
+        let crawler = EmptyCrawler {};
+        let document = Html::parse_document("<div>\
+         <img src=\"/url.jpg\">
+        </div>");
+
+        let result = crawler.extract_image_urls(&document, "her").await;
+        assert_eq!(result.len(), 1);
+        assert_eq!(*result.first().unwrap(), "/url.jpg".to_string());
+    }
+
+    #[actix_rt::test]
+    async fn it_finds_lazy_tags() {
+        let crawler = EmptyCrawler {};
+        let document = Html::parse_document("<div>\
+            <img src=\"/src.jpg\">
+            <img data-lazy=\"/lazy.jpg\">
+        </div>");
+
+        let result = crawler.extract_image_urls(&document, "her").await;
+        assert_eq!(result.len(), 2);
+        assert_eq!(*result.first().unwrap(), "/src.jpg".to_string());
+        assert_eq!(*result.get(1).unwrap(), "/lazy.jpg".to_string());
+    }
+
+    #[actix_rt::test]
+    async fn it_doesnt_return_invalid_urls() {
+        let crawler = EmptyCrawler {};
+        let document = Html::parse_document("<div>\
+            <img src=\"/src.jpg\">
+            <img data-lazy=\"data:,\">
+        </div>");
+
+        let result = crawler.extract_image_urls(&document, "her").await;
+        assert_eq!(result.len(), 1);
+        assert_eq!(*result.first().unwrap(), "/src.jpg".to_string());
+    }
 }

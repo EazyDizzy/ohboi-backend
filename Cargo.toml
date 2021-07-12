@@ -22,6 +22,7 @@ codegen-units = 1256
 [dependencies]
 # http
 actix-web = { version = "3.3.2", features = ["compress", "rustls"] }
+actix-rt = "^1.1.1"
 actix-web-httpauth = "0.5.0"
 actix-web-validator = { git = "https://github.com/Vitaliy-Svinchyak/actix-web-validator", branch = "custom-message-fix" }
 validator = { version = "0.12", features = ["derive"] }
@@ -56,5 +57,4 @@ log = "0.4.13"
 env_logger = "0.8.2"
 maplit = "1.0.2"
 config = { version = "0.10.1", features = ["yaml"] }
-rusoto_logs = "0.46.0"
 rand = "0.8.3"
