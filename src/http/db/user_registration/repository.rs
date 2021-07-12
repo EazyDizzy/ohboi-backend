@@ -3,7 +3,7 @@ use diesel::{BoolExpressionMethods, ExpressionMethods, QueryDsl, RunQueryDsl};
 use crate::common::db;
 use crate::http::db::user::entity::User;
 use crate::http::db::user::repository::{create, get_by_id};
-use crate::http::db::user_registration::entity::{UserRegistration, NewUserRegistration};
+use crate::http::db::user_registration::entity::{NewUserRegistration, UserRegistration};
 use crate::my_enum::UserRegistrationType;
 use crate::schema::user_registration;
 
@@ -16,14 +16,14 @@ pub fn get_user_by_auth(expected_registration_type: &UserRegistrationType,
 
     let target = user_registration.filter(
         registration_type.eq(expected_registration_type)
-                         .and(email.eq(expected_email))
-                         .and(full_name.eq(expected_full_name)));
+            .and(email.eq(expected_email))
+            .and(full_name.eq(expected_full_name)));
     let results: Vec<UserRegistration> = target
         .limit(1)
         .load::<UserRegistration>(connection)
         .expect("Error loading user_registration");
 
-    if results.len() == 0 {
+    if results.is_empty() {
         let user = create(expected_full_name);
         create_registration(&user.id, expected_registration_type, expected_email, expected_full_name);
         user

@@ -66,3 +66,8 @@ bin/diesel migration run
 ```
 cargo test -- --nocapture
 ```
+
+### To check known issues
+```
+cargo clippy
+```

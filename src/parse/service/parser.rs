@@ -1,6 +1,6 @@
 use bigdecimal::ToPrimitive;
 use futures::future::*;
-use maplit::*;
+use maplit::btreemap;
 use scraper::Html;
 use sentry::types::protocol::latest::map::BTreeMap;
 
@@ -89,11 +89,10 @@ pub async fn parse_category(source: &SourceName, category: &CategorySlug) -> Res
                         parsed.iter().for_each(|parsed_product| {
                             let will_be_duplicated = products
                                 .iter()
-                                .filter(|p| p.external_id == parsed_product.external_id)
-                                .next().is_some();
+                                .any(|p| p.external_id == parsed_product.external_id);
 
                             if will_be_duplicated {
-                                amount_of_duplicates = amount_of_duplicates + 1;
+                                amount_of_duplicates += 1;
                             } else {
                                 products.push(parsed_product.clone());
                             }
@@ -103,7 +102,7 @@ pub async fn parse_category(source: &SourceName, category: &CategorySlug) -> Res
                             && amount_of_duplicates != parsed.len(); // But some return the last page (samsung)
                     }
                     Err(e) => {
-                        amount_of_fails = amount_of_fails + 1;
+                        amount_of_fails += 1;
                         sentry::capture_message(
                             format!(
                                 "Request for page failed[{source}]: {error:?}",
@@ -121,7 +120,7 @@ pub async fn parse_category(source: &SourceName, category: &CategorySlug) -> Res
                     }
                 }
 
-                current_page = current_page + 1;
+                current_page += 1;
             }
 
             if !all_successful || amount_of_fails == concurrent_pages {
@@ -249,8 +248,10 @@ async fn extract_additional_info(external_id: &str, crawler: &dyn Crawler) -> Op
 }
 
 fn dedup_products(products: &mut Vec<LocalParsedProduct>, source: &SourceName) {
+    let error_margin = f64::EPSILON;
+
     products.dedup_by(|a, b| {
-        if a.external_id == b.external_id && a.price != b.price {
+        if a.external_id == b.external_id && (a.price - b.price).abs() > error_margin {
             let message = format!(
                 "Warning! Same external_id, different prices. Parser: {source}, id: {id}, price1: {price1}, price2: {price2}",
                 source = source.to_string(),

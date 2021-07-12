@@ -2,7 +2,7 @@ use std::str;
 
 use futures::StreamExt;
 use lapin::{options::*, Result, types::FieldTable};
-use maplit::*;
+use maplit::btreemap;
 use sentry::protocol::map::BTreeMap;
 use serde::{Deserialize, Serialize};
 
@@ -75,6 +75,6 @@ fn add_consumer_breadcrumb(message: &str, data: BTreeMap<&str, String>) {
     add_category_breadcrumb(
         message,
         data,
-        ["consumer.", &SETTINGS.amqp.queues.parse_image.name].join("").into(),
+        ["consumer.", &SETTINGS.amqp.queues.parse_image.name].join(""),
     );
 }

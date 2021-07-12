@@ -1,6 +1,6 @@
 use lapin::{BasicProperties, Result};
 use lapin::options::BasicPublishOptions;
-use maplit::*;
+use maplit::btreemap;
 use sentry::protocol::map::BTreeMap;
 
 use crate::local_sentry::add_category_breadcrumb;
@@ -44,6 +44,6 @@ fn add_producer_breadcrumb(message: &str, data: BTreeMap<&str, String>) {
     add_category_breadcrumb(
         message,
         data,
-        ["producer.", &SETTINGS.amqp.queues.pull_exchange_rates.name].join("").into(),
+        ["producer.", &SETTINGS.amqp.queues.pull_exchange_rates.name].join(""),
     );
 }

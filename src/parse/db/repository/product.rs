@@ -46,20 +46,18 @@ pub fn update_details(existent_product: &Product, additional_info: &CleanParsedP
 pub fn create_if_not_exists(parsed_product: &InternationalParsedProduct, product_category: &CategorySlug) -> Product {
     let existed_product = get_product_by_title(parsed_product.title.as_str());
 
-    if existed_product.is_none() {
-        create(
-            parsed_product,
-            product_category,
-        )
-    } else {
-        let current_product = existed_product.unwrap();
-
+    if let Some(current_product) = existed_product {
         // TODO what if all sub products were disabled
         if parsed_product.available && !current_product.enabled {
             enable_product(&current_product.id);
         }
 
         current_product
+    } else {
+        create(
+            parsed_product,
+            product_category,
+        )
     }
 }
 
@@ -124,10 +122,10 @@ fn create(parsed_product: &InternationalParsedProduct, product_category: &Catego
         .values(&new_product)
         .get_result(connection);
 
-    if insert_result.is_err() {
-        get_product_by_title(parsed_product.title.as_str()).unwrap()
+    if let Ok(product) = insert_result {
+        product
     } else {
-        insert_result.unwrap()
+        get_product_by_title(parsed_product.title.as_str()).unwrap()
     }
 }
 

@@ -1,13 +1,13 @@
 use lapin::{BasicProperties, Channel, Connection, ConnectionProperties, Queue, Result, types::FieldTable};
 use lapin::options::{BasicPublishOptions, QueueDeclareOptions};
-use maplit::*;
+use maplit::btreemap;
 
 use crate::parse::service::cloud_uploader::add_uploader_breadcrumb;
 use crate::parse::consumer::parse_image::UploadImageMessage;
 use crate::parse::consumer::parse_page::ParsePageMessage;
 use crate::SETTINGS;
 
-pub async fn declare_queue(name: &String) -> Result<Queue> {
+pub async fn declare_queue(name: &str) -> Result<Queue> {
     let channel = get_channel().await?;
 
     let queue = channel

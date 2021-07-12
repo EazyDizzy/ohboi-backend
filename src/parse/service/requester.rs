@@ -48,7 +48,7 @@ static REFERER_LIST: &str = include_str!("../../../cache/referrers");
 static USER_AGENT_LIST: &str = include_str!("../../../cache/user_agents");
 
 fn get_random_referer() -> String {
-    let referrers = REFERER_LIST.split("\n").collect::<Vec<&str>>();
+    let referrers = REFERER_LIST.split('\n').collect::<Vec<&str>>();
     let mut rng = rand::thread_rng();
     let range = Uniform::new(0, referrers.len() - 1);
 
@@ -56,7 +56,7 @@ fn get_random_referer() -> String {
 }
 
 fn get_random_user_agent() -> String {
-    let sites = USER_AGENT_LIST.split("\n").collect::<Vec<&str>>();
+    let sites = USER_AGENT_LIST.split('\n').collect::<Vec<&str>>();
     let mut rng = rand::thread_rng();
     let range = Uniform::new(0, sites.len() - 1);
 

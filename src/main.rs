@@ -1,10 +1,8 @@
+#![warn(unused_extern_crates)]
 #[macro_use]
 extern crate diesel;
-extern crate dotenv;
 #[macro_use]
 extern crate lazy_static;
-extern crate log;
-extern crate maplit;
 
 use std::env;
 

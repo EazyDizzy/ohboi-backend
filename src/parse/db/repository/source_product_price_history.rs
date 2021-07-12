@@ -22,7 +22,7 @@ pub fn add_to_history_if_not_exists(source_product: &NewSourceProduct) {
         .load::<SourceProductPriceHistory>(connection)
         .expect("Error loading product");
 
-    if results.len() == 0 {
+    if results.is_empty() {
         create(&source_product);
     } else {
         let last_history_price = results.into_iter().next().unwrap();

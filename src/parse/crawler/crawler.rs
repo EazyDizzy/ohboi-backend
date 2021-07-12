@@ -5,7 +5,7 @@ use futures::future::{err, ok};
 use futures::future::*;
 use futures::FutureExt;
 use inflector::Inflector;
-use maplit::*;
+use maplit::btreemap;
 use regex::Regex;
 use scraper::{ElementRef, Html, Selector};
 use scraper::html::Select;
@@ -43,7 +43,7 @@ pub trait Crawler {
                     "image_urls" => format!("{:?}", &image_urls),
                     "source" => self.get_source().to_string(),
                 },
-            ["consumer.", &SETTINGS.amqp.queues.parse_category.name].join("").into(),
+            ["consumer.", &SETTINGS.amqp.queues.parse_category.name].join(""),
         );
 
         let mut uploaded_urls: Vec<String> = vec![];
@@ -144,8 +144,8 @@ pub trait Crawler {
 
         for capture in matches {
             for text in capture.iter() {
-                if text.is_some() {
-                    description_sanitized.push(text.unwrap().as_str());
+                if let Some(text) = text {
+                    description_sanitized.push(text.as_str());
                 }
             }
         }
@@ -183,7 +183,7 @@ pub trait Crawler {
 }
 
 fn is_valid_url(url: &str) -> bool {
-    url.starts_with("/") || url.starts_with("http")
+    url.starts_with('/') || url.starts_with("http")
 }
 
 pub fn get_html_nodes<'a>(selectors: &'a ProductHtmlSelectors, element: &'a ElementRef, source: &'a SourceName) -> Option<ProductHtmlNodes<'a>> {

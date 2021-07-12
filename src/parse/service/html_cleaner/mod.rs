@@ -3,8 +3,6 @@ use std::ops::Deref;
 use regex::Regex;
 use serde::Deserialize;
 
-use lazy_static;
-
 lazy_static! {
     static ref LINK_REGEX: Regex = Regex::new(r"(?i)<a[^>]+>(.+?)</a>").unwrap();
     static ref SPEC_SYMBOLS_MAPPING_TYPED: Vec<SpecialSymbolMapping> = serde_json::from_str(include_str!("spec_symbols_mapping.json")).unwrap();
@@ -17,7 +15,7 @@ pub fn clean_html(html: String) -> String {
 
 fn replace_html_entities(mut html: String) -> String {
     for symbol_mapping in SPEC_SYMBOLS_MAPPING_TYPED.deref() {
-        let names_list = symbol_mapping.named.split(" ");
+        let names_list = symbol_mapping.named.split(' ');
 
         for name in names_list {
             html = html.replace(name, &symbol_mapping.symbol);
@@ -48,7 +46,7 @@ pub struct SpecialSymbolMapping {
 
 #[cfg(test)]
 mod tests {
-    use crate::parse::service::html_cleaner::{remove_unneeded_tags, replace_html_entities, clean_html};
+    use crate::parse::service::html_cleaner::{clean_html, remove_unneeded_tags, replace_html_entities};
 
     #[test]
     fn it_removes_new_lines() {
@@ -90,6 +88,7 @@ mod tests {
     fn it_replaces_money() {
         assert_eq!(replace_html_entities("1&yen; = 1&cent; = 0.03&euro;".to_string()), "1¥ = 1¢ = 0.03€".to_string());
     }
+
     #[test]
     fn it_cleans_html() {
         assert_eq!(clean_html("<div><a href=\"https://trello.com/c/1HiOMiAR/72-clean-product-description\" target=\"_blank\" type=\"her\">Link text</a><p>\n&DownLeftVector;\t&uharr;</p></div>".to_string()), "<div>Link text<p>↽↾</p></div>".to_string());

@@ -1,4 +1,3 @@
-use config::ConfigError;
 use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
@@ -40,7 +39,7 @@ pub struct Settings {
 }
 
 impl Settings {
-    pub fn new() -> Result<Self, ConfigError> {
+    pub fn new() -> Result<Self, ()> {
         let database_settings = Database {
             url: dotenv::var("DATABASE_URL")
                 .expect("DATABASE_URL must be set"),

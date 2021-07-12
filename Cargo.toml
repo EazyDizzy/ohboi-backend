@@ -22,7 +22,6 @@ codegen-units = 1256
 [dependencies]
 # http
 actix-web = { version = "3.3.2", features = ["compress", "rustls"] }
-actix-rt = "^1.1.1"
 actix-web-httpauth = "0.5.0"
 actix-web-validator = { git = "https://github.com/Vitaliy-Svinchyak/actix-web-validator", branch = "custom-message-fix" }
 validator = { version = "0.12", features = ["derive"] }
@@ -33,28 +32,30 @@ google-jwt-verify = { version = "0.3.0", features = ["async"] }
 # db
 diesel = { version = "1.4.7", features = ["postgres", "chrono", "numeric", "r2d2"] }
 diesel-derive-enum = { version = "1.1", features = ["postgres"] }
-dotenv = "0.15.0"
 chrono = "0.4.19"
 bigdecimal = { version = "0.1.2", features = ["serde"] }
 r2d2 = "0.8.9" # connection pool
 # parsing
-structopt = { version = "0.3" }
-clap = "2.33.3"
+structopt = { version = "0.3.22" } # parse command line arguments into struct
+clap = "2.33.3" # enums from cli arguments
 lapin = "1.6.6" # rabbitmq
-scraper = "0.12.0"
+scraper = "0.12.0" # html parsing
 reqwest = { version = "0.10.9", features = ["gzip", "rustls-tls"] }
 rusoto_core = "0.45.0"
 rusoto_s3 = "0.45.0"
 # util
+dotenv = "0.15.0"
 Inflector = "0.11.4" # string manipulations
 lazy_static = "1.4.0"
 futures = "0.3.8"
 termion = "1.5.5" # terminal colors etc
 regex = "1.4.2"
-async-trait = "0.1.42"
+async-trait = "0.1.42" # to allow async functions in traits
 sentry = { version = "0.22.0", features = ["debug-images"] }
 log = "0.4.13"
-env_logger = "0.8.2"
-maplit = "1.0.2"
-config = { version = "0.10.1", features = ["yaml"] }
+env_logger = "0.8.2" # configuration for logger via env
+maplit = "1.0.2" # btreemap macros
 rand = "0.8.3"
+
+[dev-dependencies]
+actix-rt = "^1.1.1"

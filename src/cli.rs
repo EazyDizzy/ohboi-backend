@@ -1,15 +1,12 @@
+#![warn(unused_extern_crates)]
 #[macro_use]
 extern crate diesel;
-extern crate dotenv;
 #[macro_use]
 extern crate lazy_static;
-extern crate log;
-extern crate maplit;
 
 use clap::arg_enum;
 use diesel::PgConnection;
 use diesel::r2d2::ConnectionManager;
-use r2d2;
 use structopt::StructOpt;
 
 use parse::settings::Settings;

@@ -1,4 +1,4 @@
-use maplit::*;
+use maplit::btreemap;
 use rusoto_core::Region;
 use rusoto_s3::{PutObjectRequest, S3, S3Client, StreamingBody};
 use sentry::protocol::map::BTreeMap;
