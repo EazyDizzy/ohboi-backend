@@ -23,10 +23,3 @@ pub struct AdditionalParsedProductInfo {
     pub description: String,
     pub available: bool,
 }
-
-#[derive(Serialize, Debug, PartialEq)]
-pub struct CleanParsedProductInfo {
-    pub image_urls: Vec<String>,
-    pub description: String,
-    pub available: bool,
-}

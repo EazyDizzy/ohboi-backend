@@ -9,6 +9,10 @@ use crate::parse::parsed_product::{AdditionalParsedProductInfo, LocalParsedProdu
 
 static SITE_BASE: &str = "https://mi-shop.com";
 
+lazy_static! {
+    static ref DESCRIPTION_RE: Regex = Regex::new(r"(?ms)<p>.*?</p>|<h2>.*?</h2>|<ul>.*?</ul>").unwrap();
+}
+
 #[derive(Clone)]
 pub struct MiShopComCrawler {}
 
@@ -158,10 +162,6 @@ impl Crawler for MiShopComCrawler {
             })
         }
     }
-}
-
-lazy_static! {
-    static ref DESCRIPTION_RE: Regex = Regex::new(r"(?ms)<p>.*?</p>|<h2>.*?</h2>|<ul>.*?</ul>").unwrap();
 }
 
 impl MiShopComCrawler {

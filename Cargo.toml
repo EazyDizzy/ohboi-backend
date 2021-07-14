@@ -38,7 +38,7 @@ r2d2 = "0.8.9" # connection pool
 # parsing
 structopt = { version = "0.3.22" } # parse command line arguments into struct
 clap = "2.33.3" # enums from cli arguments
-lapin = "1.6.6" # rabbitmq
+lapin = "1.7.1" # rabbitmq
 scraper = "0.12.0" # html parsing
 reqwest = { version = "0.10.9", features = ["gzip", "rustls-tls"] }
 rusoto_core = "0.45.0"

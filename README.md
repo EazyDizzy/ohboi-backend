@@ -61,13 +61,28 @@ for i in {1..7}; do bin/diesel migration revert; done
 bin/diesel migration run
 ```
 
-### To run tests with println enabled
+### To switch between channels/versions
+
+https://github.com/rust-lang/rust/blob/master/RELEASES.md
 
 ```
-cargo test -- --nocapture
+rustup install nightly-2021-03-25
+rustup default nightly-2021-02-11
+rustup default stable-2021-03-25
+```
+
+### To run tests with coverage & println enabled
+
+https://doc.rust-lang.org/nightly/unstable-book/compiler-flags/instrument-coverage.html
+
+```
+RUSTFLAGS="-Z instrument-coverage" LLVM_PROFILE_FILE="coverage/ohboi-%m.profraw" cargo test -- --nocapture
+cargo profdata -- merge -sparse coverage/ohboi-*.profraw -o coverage/ohboi.profdata
+bash coverage.sh 
 ```
 
 ### To check known issues
+
 ```
 cargo clippy
 ```

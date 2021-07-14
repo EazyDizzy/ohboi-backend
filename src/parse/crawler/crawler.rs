@@ -17,6 +17,7 @@ use crate::parse::db::entity::{CategorySlug, SourceName};
 use crate::parse::parsed_product::{AdditionalParsedProductInfo, LocalParsedProduct};
 use crate::parse::queue::postpone_image_parsing;
 use crate::parse::service::cloud_uploader::upload_image_to_cloud;
+use crate::parse::service::html_cleaner::clean_html;
 use crate::SETTINGS;
 
 #[async_trait(? Send)]
@@ -137,10 +138,10 @@ pub trait Crawler {
             return None;
         }
 
-        let description: String = description_node.unwrap().inner_html();
+        let description_html: String = description_node.unwrap().inner_html();
 
         let mut description_sanitized: Vec<&str> = vec![];
-        let matches = re.captures_iter(description.as_str());
+        let matches = re.captures_iter(description_html.as_str());
 
         for capture in matches {
             for text in capture.iter() {
@@ -152,11 +153,11 @@ pub trait Crawler {
 
         if description_sanitized.is_empty() {
             description_sanitized.push(r"<p>");
-            description_sanitized.push(description.trim());
+            description_sanitized.push(description_html.trim());
             description_sanitized.push(r"<\p>");
         }
 
-        Some(description_sanitized.concat())
+        Some(clean_html(&description_sanitized.concat()))
     }
 
     fn abstract_parse_availability(
@@ -250,6 +251,7 @@ pub struct ProductHtmlNodes<'a> {
 #[cfg(test)]
 mod tests {
     use async_trait::async_trait;
+    use regex::Regex;
     use scraper::{Html, Selector};
 
     use crate::my_enum::CurrencyEnum;
@@ -278,68 +280,148 @@ mod tests {
     }
 
     impl EmptyCrawler {
-        async fn extract_image_urls(&self, document: &Html, external_id: &str) -> Vec<String> {
+        fn extract_image_urls(&self, document: &Html, external_id: &str) -> Vec<String> {
             let images_selector = Selector::parse("img").unwrap();
             let image_nodes = document.select(&images_selector);
             self.abstract_extract_image_urls(image_nodes, "data-lazy")
         }
+
+        fn parse_availability(&self, document: &Html) -> Option<bool> {
+            let available_selector = Selector::parse("available").unwrap();
+            let unavailable_selector = Selector::parse("unavailable").unwrap();
+
+            self.abstract_parse_availability(document, available_selector, unavailable_selector)
+        }
+
+        fn extract_description(&self, document: &Html) -> Option<String> {
+            let available_selector = Selector::parse("description").unwrap();
+            let text_regex = Regex::new(r"(?ms)<p>.*?</p>|<h2>.*?</h2>|<ul>.*?</ul>").unwrap();
+
+            self.abstract_extract_description(document, available_selector, &text_regex)
+        }
     }
 
+    static CRAWLER: EmptyCrawler = EmptyCrawler {};
 
-    #[actix_rt::test]
-    async fn it_doesnt_fail_on_no_images() {
-        let crawler = EmptyCrawler {};
+    #[test]
+    fn it_doesnt_fail_on_no_images() {
         let document = Html::parse_document("<div></div>");
 
-        assert!(crawler.extract_image_urls(&document, "her").await.is_empty());
+        assert!(CRAWLER.extract_image_urls(&document, "her").is_empty());
     }
 
-    #[actix_rt::test]
-    async fn it_doesnt_fail_on_no_src_tags() {
-        let crawler = EmptyCrawler {};
+    #[test]
+    fn it_doesnt_fail_on_no_src_tags() {
         let document = Html::parse_document("<div>\
          <img not-src=\"url.jpg\">
         </div>");
 
-        assert!(crawler.extract_image_urls(&document, "her").await.is_empty());
+        assert!(CRAWLER.extract_image_urls(&document, "her").is_empty());
     }
 
-    #[actix_rt::test]
-    async fn it_finds_src_tags() {
-        let crawler = EmptyCrawler {};
+    #[test]
+    fn it_finds_src_tags() {
         let document = Html::parse_document("<div>\
          <img src=\"/url.jpg\">
         </div>");
 
-        let result = crawler.extract_image_urls(&document, "her").await;
+        let result = CRAWLER.extract_image_urls(&document, "her");
         assert_eq!(result.len(), 1);
         assert_eq!(*result.first().unwrap(), "/url.jpg".to_string());
     }
 
-    #[actix_rt::test]
-    async fn it_finds_lazy_tags() {
-        let crawler = EmptyCrawler {};
+    #[test]
+    fn it_finds_lazy_tags() {
         let document = Html::parse_document("<div>\
             <img src=\"/src.jpg\">
             <img data-lazy=\"/lazy.jpg\">
         </div>");
 
-        let result = crawler.extract_image_urls(&document, "her").await;
+        let result = CRAWLER.extract_image_urls(&document, "her");
         assert_eq!(result.len(), 2);
         assert_eq!(*result.first().unwrap(), "/src.jpg".to_string());
         assert_eq!(*result.get(1).unwrap(), "/lazy.jpg".to_string());
     }
 
-    #[actix_rt::test]
-    async fn it_doesnt_return_invalid_urls() {
-        let crawler = EmptyCrawler {};
+    #[test]
+    fn it_doesnt_return_invalid_urls() {
         let document = Html::parse_document("<div>\
             <img src=\"/src.jpg\">
             <img data-lazy=\"data:,\">
         </div>");
 
-        let result = crawler.extract_image_urls(&document, "her").await;
+        let result = CRAWLER.extract_image_urls(&document, "her");
         assert_eq!(result.len(), 1);
         assert_eq!(*result.first().unwrap(), "/src.jpg".to_string());
+    }
+
+    #[test]
+    fn it_doesnt_fail_when_no_tags_presented() {
+        let document = Html::parse_document("<div>\
+        </div>");
+
+        assert_eq!(CRAWLER.parse_availability(&document), None);
+    }
+
+    #[test]
+    fn it_parses_availability() {
+        let document = Html::parse_document("<div>\
+            <available/>
+        </div>");
+
+        assert_eq!(CRAWLER.parse_availability(&document), Some(true));
+    }
+
+    #[test]
+    fn it_parses_unavailability() {
+        let document = Html::parse_document("<div>\
+            <unavailable/>
+        </div>");
+
+        assert_eq!(CRAWLER.parse_availability(&document), Some(false));
+    }
+
+    #[test]
+    fn it_parses_as_unavailability_when_both_tags_presented() {
+        let document = Html::parse_document("<div>\
+            <unavailable/>
+            <available/>
+        </div>");
+
+        assert_eq!(CRAWLER.parse_availability(&document), Some(false));
+    }
+
+    #[test]
+    fn it_doesnt_fail_on_no_description() {
+        let document = Html::parse_document("<div>\
+        </div>");
+
+        assert_eq!(CRAWLER.extract_description(&document), None);
+    }
+
+    #[test]
+    fn it_extracts_one_word_description() {
+        let document = Html::parse_document("<div>\
+            <description>
+                her
+            </description>
+        </div>");
+
+        assert_eq!(CRAWLER.extract_description(&document), Some(r"<p>her<\p>".to_string()));
+    }
+
+    #[test]
+    fn it_extracts_only_valid_text() {
+        let document = Html::parse_document(r"<div>
+            <description>
+                <p>her<\p>
+                    <ul>
+                        <li>1</li>
+                        <li>2</li>
+                    </ul>
+            </description>
+        </div>");
+
+        assert_eq!(CRAWLER.extract_description(&document), Some(r"<p>her<\p></p><ul><li>1</li><li>2</li></ul>".to_string()));
     }
 }

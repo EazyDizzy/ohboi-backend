@@ -5,12 +5,13 @@ use serde::Deserialize;
 
 lazy_static! {
     static ref LINK_REGEX: Regex = Regex::new(r"(?i)<a[^>]+>(.+?)</a>").unwrap();
+    static ref SPACES_REGEX: Regex = Regex::new(r"(?im)>[ ]+<").unwrap();
     static ref SPEC_SYMBOLS_MAPPING_TYPED: Vec<SpecialSymbolMapping> = serde_json::from_str(include_str!("spec_symbols_mapping.json")).unwrap();
 }
 
 
 pub fn clean_html(html: &str) -> String {
-    replace_html_entities(remove_unneeded_tags(html))
+    remove_multiple_spaces(&replace_html_entities(remove_unneeded_tags(html)))
 }
 
 fn replace_html_entities(mut html: String) -> String {
@@ -23,6 +24,10 @@ fn replace_html_entities(mut html: String) -> String {
     }
 
     html
+}
+
+fn remove_multiple_spaces(html: &str) -> String {
+    SPACES_REGEX.replace_all(html, "><").into()
 }
 
 fn remove_unneeded_tags(html: &str) -> String {
@@ -46,7 +51,7 @@ pub struct SpecialSymbolMapping {
 
 #[cfg(test)]
 mod tests {
-    use crate::parse::service::html_cleaner::{clean_html, remove_unneeded_tags, replace_html_entities};
+    use crate::parse::service::html_cleaner::{clean_html, remove_multiple_spaces, remove_unneeded_tags, replace_html_entities};
 
     #[test]
     fn it_removes_new_lines() {
@@ -87,6 +92,12 @@ mod tests {
     #[test]
     fn it_replaces_money() {
         assert_eq!(replace_html_entities("1&yen; = 1&cent; = 0.03&euro;".to_string()), "1¥ = 1¢ = 0.03€".to_string());
+    }
+
+
+    #[test]
+    fn it_removes_only_spaces_between_tags() {
+        assert_eq!(remove_multiple_spaces("<p> h </p>      <p>e</>"), "<p> h </p><p>e</>".to_string());
     }
 
     #[test]

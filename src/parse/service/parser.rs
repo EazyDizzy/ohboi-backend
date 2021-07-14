@@ -14,7 +14,7 @@ use crate::parse::crawler::samsung_shop_com_ua::SamsungShopComUaCrawler;
 use crate::parse::db::entity::{CategorySlug, SourceName};
 use crate::parse::db::repository::product::{create_if_not_exists, update_details};
 use crate::parse::db::repository::source_product::link_to_product;
-use crate::parse::parsed_product::{AdditionalParsedProductInfo, CleanParsedProductInfo, InternationalParsedProduct, LocalParsedProduct};
+use crate::parse::parsed_product::{AdditionalParsedProductInfo, InternationalParsedProduct, LocalParsedProduct};
 use crate::parse::queue::postpone_page_parsing;
 use crate::parse::service::html_cleaner::clean_html;
 use crate::parse::service::requester::{get_data, get_data_s};
@@ -198,12 +198,7 @@ async fn save_parsed_product(crawler: &dyn Crawler, parsed_product: LocalParsedP
                 );
             }
             Some(details) => {
-                let clean_details = CleanParsedProductInfo {
-                    image_urls: details.image_urls,
-                    available: details.available,
-                    description: clean_html(&details.description),
-                };
-                update_details(&product, &clean_details);
+                update_details(&product, &details);
             }
         }
     }
