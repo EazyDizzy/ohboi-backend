@@ -7,7 +7,7 @@ use crate::diesel::prelude::*;
 use crate::parse::db::entity::category::CategorySlug;
 use crate::parse::db::entity::product::{NewProduct, Product};
 use crate::parse::db::repository::category::get_category;
-use crate::parse::parsed_product::{AdditionalParsedProductInfo, InternationalParsedProduct};
+use crate::parse::dto::parsed_product::{AdditionalParsedProductInfo, InternationalParsedProduct};
 use crate::schema::product;
 
 pub fn add_image_to_product_details(existent_product_id: i32, file_path: &str) {

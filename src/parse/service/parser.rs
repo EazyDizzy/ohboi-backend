@@ -15,7 +15,7 @@ use crate::parse::db::entity::category::CategorySlug;
 use crate::parse::db::entity::source::SourceName;
 use crate::parse::db::repository::product::{create_if_not_exists, update_details};
 use crate::parse::db::repository::source_product::link_to_product;
-use crate::parse::parsed_product::{AdditionalParsedProductInfo, InternationalParsedProduct, LocalParsedProduct};
+use crate::parse::dto::parsed_product::{AdditionalParsedProductInfo, InternationalParsedProduct, LocalParsedProduct};
 use crate::parse::queue::postpone_page_parsing;
 use crate::parse::service::requester::{get_data, get_data_s};
 use crate::SETTINGS;
