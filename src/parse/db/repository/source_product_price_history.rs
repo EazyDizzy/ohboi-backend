@@ -3,7 +3,8 @@ use chrono::Utc;
 use diesel::{BoolExpressionMethods, ExpressionMethods, QueryDsl, RunQueryDsl};
 
 use crate::common::db;
-use crate::parse::db::entity::{NewSourceProduct, NewSourceProductPriceHistory, SourceProductPriceHistory};
+use crate::parse::db::entity::source_product::NewSourceProduct;
+use crate::parse::db::entity::source_product_price_history::{NewSourceProductPriceHistory, SourceProductPriceHistory};
 use crate::schema::source_product_price_history;
 
 pub fn add_to_history_if_not_exists(source_product: &NewSourceProduct) {

@@ -4,7 +4,8 @@ use diesel::{QueryDsl, RunQueryDsl, sql_query};
 
 use crate::common::db;
 use crate::diesel::prelude::*;
-use crate::parse::db::entity::{CategorySlug, NewProduct, Product};
+use crate::parse::db::entity::category::CategorySlug;
+use crate::parse::db::entity::product::{NewProduct, Product};
 use crate::parse::db::repository::category::get_category;
 use crate::parse::parsed_product::{AdditionalParsedProductInfo, InternationalParsedProduct};
 use crate::schema::product;

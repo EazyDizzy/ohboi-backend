@@ -11,12 +11,12 @@ use crate::parse::consumer::parse_page::ParsePageMessage;
 use crate::parse::crawler::crawler::Crawler;
 use crate::parse::crawler::mi_shop_com::MiShopComCrawler;
 use crate::parse::crawler::samsung_shop_com_ua::SamsungShopComUaCrawler;
-use crate::parse::db::entity::{CategorySlug, SourceName};
+use crate::parse::db::entity::category::CategorySlug;
+use crate::parse::db::entity::source::SourceName;
 use crate::parse::db::repository::product::{create_if_not_exists, update_details};
 use crate::parse::db::repository::source_product::link_to_product;
 use crate::parse::parsed_product::{AdditionalParsedProductInfo, InternationalParsedProduct, LocalParsedProduct};
 use crate::parse::queue::postpone_page_parsing;
-use crate::parse::service::html_cleaner::clean_html;
 use crate::parse::service::requester::{get_data, get_data_s};
 use crate::SETTINGS;
 

@@ -4,7 +4,8 @@ use scraper::{Html, Selector};
 
 use crate::my_enum::CurrencyEnum;
 use crate::parse::crawler::crawler::{Crawler, get_html_nodes, ProductHtmlSelectors};
-use crate::parse::db::entity::{CategorySlug, SourceName};
+use crate::parse::db::entity::category::CategorySlug;
+use crate::parse::db::entity::source::SourceName;
 use crate::parse::parsed_product::{AdditionalParsedProductInfo, LocalParsedProduct};
 
 static SITE_BASE: &str = "https://samsungshop.com.ua";
