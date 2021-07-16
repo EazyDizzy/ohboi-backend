@@ -4,19 +4,14 @@ use bigdecimal::{BigDecimal, ToPrimitive};
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::common::db::repository::exchange_rate::get_exchange_rate_by_code;
+use crate::common::db::repository::exchange_rate::try_get_exchange_rate_by_code;
 use crate::common::service::currency_converter::convert_to_with_rate;
 use crate::http::db::product::repository::get_filtered_products;
 use crate::my_enum::CurrencyEnum;
 
 pub async fn get_products(filters: Json<ProductFilters>) -> HttpResponse {
     let mut products = get_filtered_products(&filters);
-    let rate = if let Some(db_rate) = get_exchange_rate_by_code(filters.currency) {
-        db_rate.rate.to_f64().unwrap()
-    } else {
-        log::error!("No exchange rate found in db for {:?}. Probably, exchange rates pulling job was not executed.", &filters.currency);
-        1.00
-    };
+    let rate = try_get_exchange_rate_by_code(filters.currency);
 
     for mut product in &mut products {
         product.highest_price = BigDecimal::from(convert_to_with_rate(

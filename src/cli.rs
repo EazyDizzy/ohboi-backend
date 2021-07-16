@@ -1,5 +1,11 @@
 #![deny(clippy::all, clippy::pedantic, clippy::cognitive_complexity)]
-#![allow(clippy::module_name_repetitions, clippy::default_trait_access, clippy::module_inception, clippy::too_many_lines, clippy::await_holding_lock)]
+#![allow(
+    clippy::module_name_repetitions,
+    clippy::default_trait_access,
+    clippy::module_inception,
+    clippy::too_many_lines,
+    clippy::await_holding_lock
+)]
 #![warn(unused_extern_crates)]
 #[macro_use]
 extern crate diesel;
@@ -7,19 +13,22 @@ extern crate diesel;
 extern crate lazy_static;
 
 use clap::arg_enum;
-use diesel::PgConnection;
 use diesel::r2d2::ConnectionManager;
+use diesel::PgConnection;
 use structopt::StructOpt;
 
 use parse::settings::Settings;
 
+use crate::parse::db::entity::category::CategorySlug;
+use crate::parse::db::entity::source::SourceName;
 use crate::parse::queue::declare_queue;
+use crate::parse::service::parser::parse_category;
 
-mod schema;
-mod parse;
-mod my_enum;
-mod local_sentry;
 mod common;
+mod local_sentry;
+mod my_enum;
+mod parse;
+mod schema;
 
 #[derive(StructOpt, Debug)]
 struct Cli {
@@ -30,7 +39,6 @@ struct Cli {
     #[structopt(short, possible_values = & ProducerName::variants(), case_insensitive = true, required_if("worker-type", "producer"))]
     producer_name: Option<ProducerName>,
 }
-
 arg_enum! {
     #[derive(Debug)]
     enum ConsumerName {
@@ -65,18 +73,20 @@ async fn main() {
     let args: Cli = Cli::from_args();
 
     if args.worker_type == "queue_config" {
-        let queues = [
-            &SETTINGS.amqp.queues.parse_category.name,
-            &SETTINGS.amqp.queues.parse_image.name,
-            &SETTINGS.amqp.queues.parse_page.name,
-            &SETTINGS.amqp.queues.pull_exchange_rates.name,
-        ];
-        for queue_name in &queues {
-            let declare = declare_queue(queue_name).await;
-            if declare.is_err() {
-                log::error!("Queue declaration failed. {} {:?}", queue_name, declare);
-            }
-        }
+        let _ = parse_category(SourceName::MiShopCom, CategorySlug::Smartphone).await;
+
+        // let queues = [
+        //     &SETTINGS.amqp.queues.parse_category.name,
+        //     &SETTINGS.amqp.queues.parse_image.name,
+        //     &SETTINGS.amqp.queues.parse_page.name,
+        //     &SETTINGS.amqp.queues.pull_exchange_rates.name,
+        // ];
+        // for queue_name in &queues {
+        //     let declare = declare_queue(queue_name).await;
+        //     if declare.is_err() {
+        //         log::error!("Queue declaration failed. {} {:?}", queue_name, declare);
+        //     }
+        // }
         return;
     }
 
@@ -111,7 +121,7 @@ async fn main() {
 }
 
 lazy_static! {
-	static ref SETTINGS: Settings = Settings::new().unwrap();
+    static ref SETTINGS: Settings = Settings::new().unwrap();
 }
 
 pub type Pool = r2d2::Pool<ConnectionManager<PgConnection>>;
@@ -121,7 +131,7 @@ lazy_static! {
         let manager = ConnectionManager::<PgConnection>::new(database_url);
 
         r2d2::Pool::builder()
-                .build(manager)
-                .expect("Failed to create pool")
+            .build(manager)
+            .expect("Failed to create pool")
     };
 }

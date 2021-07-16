@@ -47,8 +47,8 @@ trivy ohboi_backend_ohboi_backend > trivy_security.txt
 https://github.com/rust-lang/rust/blob/master/RELEASES.md
 
 ```
-rustup install nightly-2021-02-11
-rustup default nightly-2021-02-11
+rustup install nightly-2020-12-31
+rustup default nightly-2020-12-31
 rustup default stable-2021-03-25
 ```
 

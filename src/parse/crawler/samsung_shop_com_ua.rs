@@ -147,6 +147,7 @@ impl Crawler for SamsungShopComUaCrawler {
                 image_urls,
                 description: description.unwrap(),
                 available: available.unwrap(),
+                characteristics: vec![],
             })
         }
     }

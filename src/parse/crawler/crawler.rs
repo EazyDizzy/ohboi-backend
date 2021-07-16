@@ -257,7 +257,6 @@ mod tests {
 
     use crate::my_enum::CurrencyEnum;
     use crate::parse::crawler::crawler::Crawler;
-    use crate::parse::db::entity::{CategorySlug, SourceName};
     use crate::parse::db::entity::category::CategorySlug;
     use crate::parse::db::entity::source::SourceName;
     use crate::parse::dto::parsed_product::{AdditionalParsedProductInfo, LocalParsedProduct};

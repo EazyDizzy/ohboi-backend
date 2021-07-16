@@ -1,8 +1,6 @@
-pub struct BoolCharacteristic {
-    pub slug: BoolCharacteristicSlug,
-    pub value: String,
-}
+use serde::Serialize;
 
-pub enum BoolCharacteristicSlug {
+#[derive(Serialize, Debug, PartialEq)]
+pub enum BoolCharacteristic {
     FastCharging,
 }

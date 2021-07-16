@@ -20,16 +20,16 @@ services:
 #            - ./migrations:/app/migrations
 #            - ./run.sh:/app/run.sh
 
-    ohboi_rabbitmq:
-        networks:
-            - shopily
-        image: library/rabbitmq:3.8.9-management
-        ports:
-            - 15672:15672
-            - 5672:5672
-        environment:
-            RABBITMQ_DEFAULT_USER: root
-            RABBITMQ_DEFAULT_PASS: root
+#    ohboi_rabbitmq:
+#        networks:
+#            - shopily
+#        image: library/rabbitmq:3.8.9-management
+#        ports:
+#            - 15672:15672
+#            - 5672:5672
+#        environment:
+#            RABBITMQ_DEFAULT_USER: root
+#            RABBITMQ_DEFAULT_PASS: root
 
     ohboi_postgres:
         command: [ "postgres", "-c", "log_statement=all", "-c", "log_destination=stderr" ]

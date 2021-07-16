@@ -1,6 +1,4 @@
-pub struct FloatCharacteristic {
-    pub slug: FloatCharacteristicSlug,
-    pub value: f32,
-}
+use serde::Serialize;
 
-pub enum FloatCharacteristicSlug {}
+#[derive(Serialize, Debug, PartialEq)]
+pub enum FloatCharacteristic {}
