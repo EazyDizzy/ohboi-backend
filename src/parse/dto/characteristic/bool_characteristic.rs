@@ -2,5 +2,8 @@ use serde::Serialize;
 
 #[derive(Serialize, Debug, PartialEq)]
 pub enum BoolCharacteristic {
-    FastCharging,
+    HasFastCharging(bool),
+    HasNFC(bool),
+    DisplayIsSensor(bool),
+    CanShootVideo(bool),
 }

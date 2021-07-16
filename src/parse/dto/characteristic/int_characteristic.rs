@@ -2,9 +2,6 @@ use serde::Serialize;
 
 #[derive(Serialize, Debug, PartialEq)]
 pub enum IntCharacteristic {
-    Width(i32),
-    Height(i32),
-    Thickness(i32),
     BatteryCapacity_mA_h(i32),
     NumberOfProcessorCores(i32),
     BuiltInMemory_GB(i32),
@@ -14,4 +11,9 @@ pub enum IntCharacteristic {
     Weight_gr(i32),
     MIUIVersion(i32),
     AndroidVersion(i32),
+    AmountOfSimCards(i32),
+    PPI(i32),
+    Fps(i32),
+    Brightness_cd_m2(i32),
+    UpdateFrequency_Hz (i32),
 }

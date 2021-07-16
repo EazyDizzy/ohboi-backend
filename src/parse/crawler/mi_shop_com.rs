@@ -2,6 +2,7 @@ use std::num::ParseIntError;
 use std::str::FromStr;
 
 use async_trait::async_trait;
+use bigdecimal::Num;
 use regex::Regex;
 use scraper::element_ref::Select;
 use scraper::{ElementRef, Html, Selector};
@@ -10,6 +11,7 @@ use crate::my_enum::CurrencyEnum;
 use crate::parse::crawler::crawler::{get_html_nodes, Crawler, ProductHtmlSelectors};
 use crate::parse::db::entity::category::CategorySlug;
 use crate::parse::db::entity::source::SourceName;
+use crate::parse::dto::characteristic::float_characteristic::FloatCharacteristic;
 use crate::parse::dto::characteristic::int_characteristic::IntCharacteristic;
 use crate::parse::dto::characteristic::string_characteristic::StringCharacteristic;
 use crate::parse::dto::parsed_product::{
@@ -171,7 +173,7 @@ impl Crawler for MiShopComCrawler {
             // We should not upload images if it is not valid product
             // let image_urls = self.extract_images(document, external_id).await;
             println!(
-                "characteristics {:?}",
+                "characteristics {:#?}",
                 self.extract_characteristics(&document, external_id)
             );
             panic!("her");
@@ -179,7 +181,7 @@ impl Crawler for MiShopComCrawler {
             //     image_urls,
             //     description: description.unwrap(),
             //     available: available.unwrap(),
-            //     characteristics: self.extract_characteristics(&document),
+            //     characteristics: self.extract_characteristics(&document, external_id),
             // })
         }
     }
@@ -208,106 +210,183 @@ impl MiShopComCrawler {
         let characteristic_value_nodes = document.select(&characteristic_value_selector);
 
         let mut characteristics: Vec<TypedCharacteristic> = vec![];
-        let titles = characteristic_title_nodes
+        let mut titles: Vec<String> = characteristic_title_nodes
             .into_iter()
             .collect::<Vec<ElementRef>>()
-            .to_vec();
-        let values = characteristic_value_nodes
+            .into_iter()
+            .map(|title| inner_text(&title.inner_html()).replace(":", ""))
+            .collect();
+
+        let mut values: Vec<String> = characteristic_value_nodes
             .into_iter()
             .collect::<Vec<ElementRef>>()
-            .to_vec();
+            .into_iter()
+            .map(|title| inner_text(&title.inner_html()))
+            .collect();
 
         println!("{}", external_id);
-        let int_characteristics = self.extract_int_characteristics(external_id, &titles, &values);
-
+        let (int_characteristics, mut parsed_indexes) =
+            self.extract_int_characteristics(external_id, &titles, &values);
         for int_char in int_characteristics {
             characteristics.push(TypedCharacteristic::Int(int_char));
         }
+        parsed_indexes.reverse();
+        for index in parsed_indexes {
+            titles.remove(index);
+            values.remove(index);
+        }
 
+        let (float_characteristics, mut parsed_indexes) =
+            self.extract_float_characteristics(external_id, &titles, &values);
+        for float_char in float_characteristics {
+            characteristics.push(TypedCharacteristic::Float(float_char));
+        }
+        parsed_indexes.reverse();
+        for index in parsed_indexes {
+            titles.remove(index);
+            values.remove(index);
+        }
+
+        for (title_index, title) in titles.into_iter().enumerate() {
+            let value = values.get(title_index).unwrap();
+            sentry::capture_message(
+                format!(
+                    "Unknown characteristic ({title}) with value ({value}) for [{external_id}]",
+                    title = title,
+                    value = value,
+                    external_id = external_id,
+                )
+                .as_str(),
+                sentry::Level::Warning,
+            );
+        }
         characteristics
+    }
+
+    fn extract_float_characteristics(
+        &self,
+        external_id: &str,
+        titles: &Vec<String>,
+        values: &Vec<String>,
+    ) -> (Vec<FloatCharacteristic>, Vec<usize>) {
+        let mut characteristics: Vec<FloatCharacteristic> = vec![];
+        let mut parsed_indexes = vec![];
+
+        for (title_index, title) in titles.into_iter().enumerate() {
+            let value = values.get(title_index).unwrap();
+
+            let characteristic: Option<FloatCharacteristic> = match title.as_str() {
+                "Толщина (мм)" => float_value(&title, external_id, &value)
+                    .map_or(None, |v| Some(FloatCharacteristic::Thickness_mm(v))),
+                "Ширина (мм)" => float_value(&title, external_id, &value)
+                    .map_or(None, |v| Some(FloatCharacteristic::Width_mm(v))),
+                "Высота (мм)" => float_value(&title, external_id, &value)
+                    .map_or(None, |v| Some(FloatCharacteristic::Height_mm(v))),
+                "Диагональ экрана" => {
+                    float_diagonal_value(&title, external_id, &value)
+                        .map_or(None, |v| Some(FloatCharacteristic::ScreenDiagonal(v)))
+                }
+                "Bluetooth" => float_value(&title, external_id, &value)
+                    .map_or(None, |v| Some(FloatCharacteristic::Bluetooth(v))),
+                "Частота" => float_ghz_value(&title, external_id, &value)
+                    .map_or(None, |v| Some(FloatCharacteristic::CPUFrequency_Ghz(v))),
+                e => None,
+            };
+
+            if let Some(characteristic) = characteristic {
+                parsed_indexes.push(title_index);
+                characteristics.push(characteristic);
+            }
+        }
+
+        (characteristics, parsed_indexes)
     }
 
     fn extract_int_characteristics(
         &self,
         external_id: &str,
-        titles: &Vec<ElementRef>,
-        values: &Vec<ElementRef>,
-    ) -> Vec<IntCharacteristic> {
+        titles: &Vec<String>,
+        values: &Vec<String>,
+    ) -> (Vec<IntCharacteristic>, Vec<usize>) {
         let mut characteristics: Vec<IntCharacteristic> = vec![];
+        let mut parsed_indexes = vec![];
 
         for (title_index, title) in titles.into_iter().enumerate() {
-            let mut value_raw = inner_text(&values.get(title_index).unwrap().inner_html());
+            let value = values.get(title_index).unwrap();
 
-            let clean_title = inner_text(&title.inner_html()).replace(":", "");
-
-            let characteristic: Option<IntCharacteristic> = match clean_title.as_str() {
+            let characteristic: Option<IntCharacteristic> = match title.as_str() {
                 "Количество ядер процессора" => {
-                    int_value(&clean_title, external_id, &value_raw)
+                    int_value(&title, external_id, &value)
                         .map_or(None, |v| Some(IntCharacteristic::NumberOfProcessorCores(v)))
                 }
-                "Встроенная память (ГБ):" => {
-                    int_value(&clean_title, external_id, &value_raw)
+                "Встроенная память (ГБ)" => {
+                    int_value(&title, external_id, &value)
                         .map_or(None, |v| Some(IntCharacteristic::BuiltInMemory_GB(v)))
                 }
                 "Оперативная память (ГБ)" => {
-                    int_value(&clean_title, external_id, &value_raw)
+                    int_value(&title, external_id, &value)
                         .map_or(None, |v| Some(IntCharacteristic::Ram_GB(v)))
                 }
                 "Фронтальная камера (Мп)" => {
-                    int_mp_value(&clean_title, external_id, &value_raw)
+                    int_mp_value(&title, external_id, &value)
                         .map_or(None, |v| Some(IntCharacteristic::FrontCamera_MP(v)))
                 }
                 "Разрешение видеосъемки (пикс)" => {
-                    pix_int_value(&clean_title, external_id, &value_raw)
+                    pix_int_value(&title, external_id, &value)
                         .map_or(None, |v| Some(IntCharacteristic::VideoResolution_Pix(v)))
                 }
                 "Емкость аккумулятора (мА*ч)" => {
-                    int_ma_h_value(&clean_title, external_id, &value_raw)
+                    int_ma_h_value(&title, external_id, &value)
                         .map_or(None, |v| Some(IntCharacteristic::BatteryCapacity_mA_h(v)))
                 }
-                "Вес (г)" => int_value(&clean_title, external_id, &value_raw)
+                "Вес (г)" => int_value(&title, external_id, &value)
                     .map_or(None, |v| Some(IntCharacteristic::Weight_gr(v))),
-                "Версия MIUI" => int_value(&clean_title, external_id, &value_raw)
+                "Версия MIUI" => int_value(&title, external_id, &value)
                     .map_or(None, |v| Some(IntCharacteristic::MIUIVersion(v))),
-                "Версия Android" => {
-                    int_android_version_value(&clean_title, external_id, &value_raw)
-                        .map_or(None, |v| Some(IntCharacteristic::AndroidVersion(v)))
+                "Версия Android" => int_android_version_value(&title, external_id, &value)
+                    .map_or(None, |v| Some(IntCharacteristic::AndroidVersion(v))),
+                "Кол-во SIM-карт" => int_value(&title, external_id, &value)
+                    .map_or(None, |v| Some(IntCharacteristic::AmountOfSimCards(v))),
+                "Частота кадров видеосъемки" => {
+                    int_fps_value(&title, external_id, &value)
+                        .map_or(None, |v| Some(IntCharacteristic::Fps(v)))
                 }
-                e => {
-                    sentry::capture_message(
-                        format!(
-                            "Unknown characteristic ({title}) with value ({value}) for [{external_id}]",
-                            title = e,
-                            value = value_raw,
-                            external_id = external_id,
-                        )
-                            .as_str(),
-                        sentry::Level::Warning,
-                    );
-                    None
+                "Плотность пикселей (PPI)" => {
+                    int_value(&title, external_id, &value)
+                        .map_or(None, |v| Some(IntCharacteristic::PPI(v)))
                 }
+                "Яркость (кд/м²)" => int_value(&title, external_id, &value)
+                    .map_or(None, |v| Some(IntCharacteristic::Brightness_cd_m2(v))),
+                "Частота обновления" => int_hz_value(&title, external_id, &value)
+                    .map_or(None, |v| Some(IntCharacteristic::UpdateFrequency_Hz(v))),
+                _ => None,
             };
 
             if let Some(characteristic) = characteristic {
+                parsed_indexes.push(title_index);
                 characteristics.push(characteristic);
             }
         }
 
-        characteristics
+        (characteristics, parsed_indexes)
     }
 }
 
 fn int_android_version_value(title: &str, external_id: &str, value: &str) -> Option<i32> {
     int_value(title, external_id, &value.replace("Android", "").trim())
 }
-
 fn int_mp_value(title: &str, external_id: &str, value: &str) -> Option<i32> {
     int_value(title, external_id, &value.replace("Мп", "").trim())
 }
 fn int_ma_h_value(title: &str, external_id: &str, value: &str) -> Option<i32> {
     int_value(title, external_id, &value.replace("мАч", "").trim())
 }
-
+fn int_hz_value(title: &str, external_id: &str, value: &str) -> Option<i32> {
+    int_value(title, external_id, &value.replace("Гц", "").trim())
+}
+fn int_fps_value(title: &str, external_id: &str, value: &str) -> Option<i32> {
+    int_value(title, external_id, &value.replace("fps", "").trim())
+}
 fn pix_int_value(title: &str, external_id: &str, value: &str) -> Option<i32> {
     int_value(
         title,
@@ -317,14 +396,41 @@ fn pix_int_value(title: &str, external_id: &str, value: &str) -> Option<i32> {
 }
 
 fn int_value(title: &str, external_id: &str, value: &str) -> Option<i32> {
-    println!("raw value {}", value);
-
     match i32::from_str_radix(value, 10) {
         Ok(v) => Some(v),
         Err(e) => {
             sentry::capture_message(
                 format!(
-                    "Can't parse characteristic ({title}) with value ({value}) for [{external_id}]: {error:?}",
+                    "Can't parse int characteristic ({title}) with value ({value}) for [{external_id}]: {error:?}",
+                    title = title,
+                    value = value,
+                    external_id = external_id,
+                    error = e,
+                )
+                .as_str(),
+                sentry::Level::Warning,
+            );
+            None
+        }
+    }
+}
+fn float_ghz_value(title: &str, external_id: &str, value: &str) -> Option<f32> {
+    float_value(
+        title,
+        external_id,
+        value.replace("ГГц", "").replace(",", ".").trim(),
+    )
+}
+fn float_diagonal_value(title: &str, external_id: &str, value: &str) -> Option<f32> {
+    float_value(title, external_id, value.replace('"', "").trim())
+}
+fn float_value(title: &str, external_id: &str, value: &str) -> Option<f32> {
+    match f32::from_str_radix(value, 10) {
+        Ok(v) => Some(v),
+        Err(e) => {
+            sentry::capture_message(
+                format!(
+                    "Can't parse float characteristic ({title}) with value ({value}) for [{external_id}]: {error:?}",
                     title = title,
                     value = value,
                     external_id = external_id,
