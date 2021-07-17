@@ -62,6 +62,7 @@ pub enum InternetConnectionTechnology {
 #[derive(Serialize, Debug, PartialEq)]
 pub enum SatelliteNavigation {
     GPS,
+    A_GPS,
     Galileo,
     BeiDou,
     GLONASS,

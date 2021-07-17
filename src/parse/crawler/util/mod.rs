@@ -6,7 +6,7 @@ mod float_value_parser;
 mod int_value_parser;
 mod string_value_parser;
 
-type Parser<SomeEnum> = Box<fn(&str) -> Option<SomeEnum>>;
+type Parser<SomeEnum> = fn(&str) -> Option<SomeEnum>;
 
 pub fn multiple_parse_and_capture<SomeEnum>(
     title: &str,
@@ -17,7 +17,7 @@ pub fn multiple_parse_and_capture<SomeEnum>(
     let parsed_values: Vec<Option<SomeEnum>> = value
         .split(",")
         .into_iter()
-        .map(|v| parse_and_capture(title, external_id, v, &parser))
+        .map(|v| parse_and_capture(title, external_id, v, parser))
         .collect();
 
     let mut values = vec![];
@@ -34,7 +34,7 @@ pub fn parse_and_capture<SomeEnum>(
     title: &str,
     external_id: &str,
     value: &str,
-    parser: &Parser<SomeEnum>,
+    parser: Parser<SomeEnum>,
 ) -> Option<SomeEnum> {
     let parsed = parser(value);
 

@@ -18,6 +18,7 @@ pub fn string_internet_connection_technology_value(
 pub fn string_satellite_navigation_value(value: &str) -> Option<SatelliteNavigation> {
     match string_value(value).as_str() {
         "GPS" => Some(SatelliteNavigation::GPS),
+        "A-GPS" => Some(SatelliteNavigation::A_GPS),
         "ГЛОНАСС" => Some(SatelliteNavigation::GLONASS),
         "Galileo" => Some(SatelliteNavigation::Galileo),
         "BeiDou" => Some(SatelliteNavigation::BeiDou),

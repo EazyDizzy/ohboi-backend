@@ -296,7 +296,7 @@ impl MiShopComCrawler {
                         title,
                         external_id,
                         value,
-                        Box::new(string_internet_connection_technology_value),
+                        string_internet_connection_technology_value,
                     )
                     .into_iter()
                     .for_each(|v| {
@@ -309,7 +309,7 @@ impl MiShopComCrawler {
                         title,
                         external_id,
                         value,
-                        Box::new(string_satellite_navigation_value),
+                        string_satellite_navigation_value,
                     )
                     .into_iter()
                     .for_each(|v| {
@@ -322,7 +322,7 @@ impl MiShopComCrawler {
                         title,
                         external_id,
                         value,
-                        Box::new(string_wifi_standard_value),
+                        string_wifi_standard_value,
                     )
                     .into_iter()
                     .for_each(|v| characteristics.push(StringCharacteristic::WifiStandard(v)));
@@ -349,28 +349,28 @@ impl MiShopComCrawler {
                     Some(StringCharacteristic::VideoProcessor(string_value(&value)))
                 }
                 "SIM-карта" => {
-                    parse_and_capture(&title, external_id, &value, &Box::new(string_sim_card_value))
+                    parse_and_capture(&title, external_id, &value, string_sim_card_value)
                         .map_or(None, |v| Some(StringCharacteristic::SimCard(v)))
                 }
                 "Тип разъема для зарядки" => parse_and_capture(
                     &title,
                     external_id,
                     &value,
-                    &Box::new(string_charging_connector_type_value),
+                    string_charging_connector_type_value,
                 )
                 .map_or(None, |v| {
                     Some(StringCharacteristic::ChargingConnectorType(v))
                 }),
                 "Аудиоразъем" => {
-                    parse_and_capture(&title, external_id, &value, &Box::new(string_audio_jack_value))
+                    parse_and_capture(&title, external_id, &value, string_audio_jack_value)
                         .map_or(None, |v| Some(StringCharacteristic::AudioJack(v)))
                 }
                 "Аккумулятор" => {
-                    parse_and_capture(&title, external_id, &value, &Box::new(string_battery_type_value))
+                    parse_and_capture(&title, external_id, &value, string_battery_type_value)
                         .map_or(None, |v| Some(StringCharacteristic::BatteryType(v)))
                 }
                 "Тип дисплея" => {
-                    parse_and_capture(&title, external_id, &value, &Box::new(string_display_type_value))
+                    parse_and_capture(&title, external_id, &value, string_display_type_value)
                         .map_or(None, |v| Some(StringCharacteristic::DisplayType(v)))
                 }
                 _ => None,
