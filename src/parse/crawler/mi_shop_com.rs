@@ -9,11 +9,14 @@ use scraper::{ElementRef, Html, Selector};
 
 use crate::my_enum::CurrencyEnum;
 use crate::parse::crawler::crawler::{get_html_nodes, Crawler, ProductHtmlSelectors};
+use crate::parse::crawler::util::*;
 use crate::parse::db::entity::category::CategorySlug;
 use crate::parse::db::entity::source::SourceName;
 use crate::parse::dto::characteristic::float_characteristic::FloatCharacteristic;
 use crate::parse::dto::characteristic::int_characteristic::IntCharacteristic;
-use crate::parse::dto::characteristic::string_characteristic::StringCharacteristic;
+use crate::parse::dto::characteristic::string_characteristic::{
+    BatteryType, DisplayType, SimCard, StringCharacteristic,
+};
 use crate::parse::dto::parsed_product::{
     AdditionalParsedProductInfo, LocalParsedProduct, TypedCharacteristic,
 };
@@ -230,22 +233,21 @@ impl MiShopComCrawler {
         for int_char in int_characteristics {
             characteristics.push(TypedCharacteristic::Int(int_char));
         }
-        parsed_indexes.reverse();
-        for index in parsed_indexes {
-            titles.remove(index);
-            values.remove(index);
-        }
+        self.remove_parsed_indexes(&mut titles, &mut values, &mut parsed_indexes);
 
         let (float_characteristics, mut parsed_indexes) =
             self.extract_float_characteristics(external_id, &titles, &values);
         for float_char in float_characteristics {
             characteristics.push(TypedCharacteristic::Float(float_char));
         }
-        parsed_indexes.reverse();
-        for index in parsed_indexes {
-            titles.remove(index);
-            values.remove(index);
+        self.remove_parsed_indexes(&mut titles, &mut values, &mut parsed_indexes);
+
+        let (string_characteristics, mut parsed_indexes) =
+            self.extract_string_characteristics(external_id, &titles, &values);
+        for string_char in string_characteristics {
+            characteristics.push(TypedCharacteristic::String(string_char));
         }
+        self.remove_parsed_indexes(&mut titles, &mut values, &mut parsed_indexes);
 
         for (title_index, title) in titles.into_iter().enumerate() {
             let value = values.get(title_index).unwrap();
@@ -263,6 +265,126 @@ impl MiShopComCrawler {
         characteristics
     }
 
+    fn remove_parsed_indexes(
+        &self,
+        titles: &mut Vec<String>,
+        values: &mut Vec<String>,
+        parsed_indexes: &mut Vec<usize>,
+    ) -> () {
+        parsed_indexes.sort_by(|a, b| b.cmp(a));
+        for index in parsed_indexes {
+            titles.remove(*index);
+            values.remove(*index);
+        }
+    }
+
+    fn extract_string_characteristics(
+        &self,
+        external_id: &str,
+        titles: &Vec<String>,
+        values: &Vec<String>,
+    ) -> (Vec<StringCharacteristic>, Vec<usize>) {
+        let mut characteristics: Vec<StringCharacteristic> = vec![];
+        let mut parsed_indexes = vec![];
+
+        for (title_index, title) in titles.into_iter().enumerate() {
+            let value = values.get(title_index).unwrap();
+
+            match title.as_str() {
+                "Интернет" => {
+                    multiple_parse_and_capture(
+                        title,
+                        external_id,
+                        value,
+                        Box::new(string_internet_connection_technology_value),
+                    )
+                    .into_iter()
+                    .for_each(|v| {
+                        characteristics.push(StringCharacteristic::InternetConnectionTechnology(v))
+                    });
+                    parsed_indexes.push(title_index);
+                }
+                "Спутниковая навигация" => {
+                    multiple_parse_and_capture(
+                        title,
+                        external_id,
+                        value,
+                        Box::new(string_satellite_navigation_value),
+                    )
+                    .into_iter()
+                    .for_each(|v| {
+                        characteristics.push(StringCharacteristic::SatelliteNavigation(v))
+                    });
+                    parsed_indexes.push(title_index);
+                }
+                "Wi-Fi (802.11)" => {
+                    multiple_parse_and_capture(
+                        title,
+                        external_id,
+                        value,
+                        Box::new(string_wifi_standard_value),
+                    )
+                    .into_iter()
+                    .for_each(|v| characteristics.push(StringCharacteristic::WifiStandard(v)));
+                    parsed_indexes.push(title_index);
+                }
+                _ => (),
+            }
+        }
+
+        for (title_index, title) in titles.into_iter().enumerate() {
+            let value = values.get(title_index).unwrap();
+            let characteristic: Option<StringCharacteristic> = match title.as_str() {
+                "Процессор" => Some(StringCharacteristic::Processor(string_value(&value))),
+                "Контрастность" => {
+                    Some(StringCharacteristic::Contrast(string_value(&value)))
+                }
+                "Соотношение сторон" => {
+                    Some(StringCharacteristic::AspectRatio(string_value(&value)))
+                }
+                "Разрешение дисплея" => Some(
+                    StringCharacteristic::DisplayResolution(string_value(&value)),
+                ),
+                "Видеопроцессор" => {
+                    Some(StringCharacteristic::VideoProcessor(string_value(&value)))
+                }
+                "SIM-карта" => {
+                    parse_and_capture(&title, external_id, &value, &Box::new(string_sim_card_value))
+                        .map_or(None, |v| Some(StringCharacteristic::SimCard(v)))
+                }
+                "Тип разъема для зарядки" => parse_and_capture(
+                    &title,
+                    external_id,
+                    &value,
+                    &Box::new(string_charging_connector_type_value),
+                )
+                .map_or(None, |v| {
+                    Some(StringCharacteristic::ChargingConnectorType(v))
+                }),
+                "Аудиоразъем" => {
+                    parse_and_capture(&title, external_id, &value, &Box::new(string_audio_jack_value))
+                        .map_or(None, |v| Some(StringCharacteristic::AudioJack(v)))
+                }
+                "Аккумулятор" => {
+                    parse_and_capture(&title, external_id, &value, &Box::new(string_battery_type_value))
+                        .map_or(None, |v| Some(StringCharacteristic::BatteryType(v)))
+                }
+                "Тип дисплея" => {
+                    parse_and_capture(&title, external_id, &value, &Box::new(string_display_type_value))
+                        .map_or(None, |v| Some(StringCharacteristic::DisplayType(v)))
+                }
+                _ => None,
+            };
+
+            if let Some(characteristic) = characteristic {
+                parsed_indexes.push(title_index);
+                characteristics.push(characteristic);
+            }
+        }
+
+        (characteristics, parsed_indexes)
+    }
+
     fn extract_float_characteristics(
         &self,
         external_id: &str,
@@ -278,6 +400,8 @@ impl MiShopComCrawler {
             let characteristic: Option<FloatCharacteristic> = match title.as_str() {
                 "Толщина (мм)" => float_value(&title, external_id, &value)
                     .map_or(None, |v| Some(FloatCharacteristic::Thickness_mm(v))),
+                "Апертура" => float_aperture_value(&title, external_id, &value)
+                    .map_or(None, |v| Some(FloatCharacteristic::Aperture(v))),
                 "Ширина (мм)" => float_value(&title, external_id, &value)
                     .map_or(None, |v| Some(FloatCharacteristic::Width_mm(v))),
                 "Высота (мм)" => float_value(&title, external_id, &value)
@@ -290,7 +414,13 @@ impl MiShopComCrawler {
                     .map_or(None, |v| Some(FloatCharacteristic::Bluetooth(v))),
                 "Частота" => float_ghz_value(&title, external_id, &value)
                     .map_or(None, |v| Some(FloatCharacteristic::CPUFrequency_Ghz(v))),
-                e => None,
+                "Вес (г)" => float_value(&title, external_id, &value)
+                    .map_or(None, |v| Some(FloatCharacteristic::Weight_gr(v))),
+                "Версия MIUI" => float_value(&title, external_id, &value)
+                    .map_or(None, |v| Some(FloatCharacteristic::MIUIVersion(v))),
+                "Версия Android" => float_android_version_value(&title, external_id, &value)
+                    .map_or(None, |v| Some(FloatCharacteristic::AndroidVersion(v))),
+                _ => None,
             };
 
             if let Some(characteristic) = characteristic {
@@ -314,11 +444,32 @@ impl MiShopComCrawler {
         for (title_index, title) in titles.into_iter().enumerate() {
             let value = values.get(title_index).unwrap();
 
+            match title.as_str() {
+                "Диапазоны LTE" => {
+                    multiple_int_value(title, external_id, value)
+                        .into_iter()
+                        .for_each(|v| characteristics.push(IntCharacteristic::LTEBand(v)));
+                    parsed_indexes.push(title_index);
+                }
+                "Диапазоны GSM" => {
+                    multiple_int_value(title, external_id, value)
+                        .into_iter()
+                        .for_each(|v| characteristics.push(IntCharacteristic::GSMBand(v)));
+                    parsed_indexes.push(title_index);
+                }
+                _ => (),
+            }
+        }
+        for (title_index, title) in titles.into_iter().enumerate() {
+            let value = values.get(title_index).unwrap();
+
             let characteristic: Option<IntCharacteristic> = match title.as_str() {
                 "Количество ядер процессора" => {
                     int_value(&title, external_id, &value)
                         .map_or(None, |v| Some(IntCharacteristic::NumberOfProcessorCores(v)))
                 }
+                "Гарантия (мес)" => int_value(&title, external_id, &value)
+                    .map_or(None, |v| Some(IntCharacteristic::Warranty_month(v))),
                 "Встроенная память (ГБ)" => {
                     int_value(&title, external_id, &value)
                         .map_or(None, |v| Some(IntCharacteristic::BuiltInMemory_GB(v)))
@@ -339,12 +490,6 @@ impl MiShopComCrawler {
                     int_ma_h_value(&title, external_id, &value)
                         .map_or(None, |v| Some(IntCharacteristic::BatteryCapacity_mA_h(v)))
                 }
-                "Вес (г)" => int_value(&title, external_id, &value)
-                    .map_or(None, |v| Some(IntCharacteristic::Weight_gr(v))),
-                "Версия MIUI" => int_value(&title, external_id, &value)
-                    .map_or(None, |v| Some(IntCharacteristic::MIUIVersion(v))),
-                "Версия Android" => int_android_version_value(&title, external_id, &value)
-                    .map_or(None, |v| Some(IntCharacteristic::AndroidVersion(v))),
                 "Кол-во SIM-карт" => int_value(&title, external_id, &value)
                     .map_or(None, |v| Some(IntCharacteristic::AmountOfSimCards(v))),
                 "Частота кадров видеосъемки" => {
@@ -359,6 +504,8 @@ impl MiShopComCrawler {
                     .map_or(None, |v| Some(IntCharacteristic::Brightness_cd_m2(v))),
                 "Частота обновления" => int_hz_value(&title, external_id, &value)
                     .map_or(None, |v| Some(IntCharacteristic::UpdateFrequency_Hz(v))),
+                "Фотокамера (Мп)" => int_mp_value(&title, external_id, &value)
+                    .map_or(None, |v| Some(IntCharacteristic::Camera_mp(v))),
                 _ => None,
             };
 
@@ -369,77 +516,5 @@ impl MiShopComCrawler {
         }
 
         (characteristics, parsed_indexes)
-    }
-}
-
-fn int_android_version_value(title: &str, external_id: &str, value: &str) -> Option<i32> {
-    int_value(title, external_id, &value.replace("Android", "").trim())
-}
-fn int_mp_value(title: &str, external_id: &str, value: &str) -> Option<i32> {
-    int_value(title, external_id, &value.replace("Мп", "").trim())
-}
-fn int_ma_h_value(title: &str, external_id: &str, value: &str) -> Option<i32> {
-    int_value(title, external_id, &value.replace("мАч", "").trim())
-}
-fn int_hz_value(title: &str, external_id: &str, value: &str) -> Option<i32> {
-    int_value(title, external_id, &value.replace("Гц", "").trim())
-}
-fn int_fps_value(title: &str, external_id: &str, value: &str) -> Option<i32> {
-    int_value(title, external_id, &value.replace("fps", "").trim())
-}
-fn pix_int_value(title: &str, external_id: &str, value: &str) -> Option<i32> {
-    int_value(
-        title,
-        external_id,
-        &value.replace("K", "000").replace("К", "000"),
-    )
-}
-
-fn int_value(title: &str, external_id: &str, value: &str) -> Option<i32> {
-    match i32::from_str_radix(value, 10) {
-        Ok(v) => Some(v),
-        Err(e) => {
-            sentry::capture_message(
-                format!(
-                    "Can't parse int characteristic ({title}) with value ({value}) for [{external_id}]: {error:?}",
-                    title = title,
-                    value = value,
-                    external_id = external_id,
-                    error = e,
-                )
-                .as_str(),
-                sentry::Level::Warning,
-            );
-            None
-        }
-    }
-}
-fn float_ghz_value(title: &str, external_id: &str, value: &str) -> Option<f32> {
-    float_value(
-        title,
-        external_id,
-        value.replace("ГГц", "").replace(",", ".").trim(),
-    )
-}
-fn float_diagonal_value(title: &str, external_id: &str, value: &str) -> Option<f32> {
-    float_value(title, external_id, value.replace('"', "").trim())
-}
-fn float_value(title: &str, external_id: &str, value: &str) -> Option<f32> {
-    match f32::from_str_radix(value, 10) {
-        Ok(v) => Some(v),
-        Err(e) => {
-            sentry::capture_message(
-                format!(
-                    "Can't parse float characteristic ({title}) with value ({value}) for [{external_id}]: {error:?}",
-                    title = title,
-                    value = value,
-                    external_id = external_id,
-                    error = e,
-                )
-                .as_str(),
-                sentry::Level::Warning,
-            );
-            None
-        }
     }
 }
