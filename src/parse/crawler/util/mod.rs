@@ -1,10 +1,12 @@
 pub use float_value_parser::*;
 pub use int_value_parser::*;
 pub use string_value_parser::*;
+pub use bool_value_parser::*;
 
 mod float_value_parser;
 mod int_value_parser;
 mod string_value_parser;
+mod bool_value_parser;
 
 type Parser<SomeEnum> = fn(&str) -> Option<SomeEnum>;
 

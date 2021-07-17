@@ -15,12 +15,13 @@ use crate::parse::db::entity::source::SourceName;
 use crate::parse::dto::characteristic::float_characteristic::FloatCharacteristic;
 use crate::parse::dto::characteristic::int_characteristic::IntCharacteristic;
 use crate::parse::dto::characteristic::string_characteristic::{
-    BatteryType, DisplayType, SimCard, StringCharacteristic,
+    BatteryType, DisplayType, SimCard, StringCharacteristic, Technology,
 };
 use crate::parse::dto::parsed_product::{
     AdditionalParsedProductInfo, LocalParsedProduct, TypedCharacteristic,
 };
 use crate::parse::service::html_cleaner::inner_text;
+use std::time::Instant;
 
 static SITE_BASE: &str = "https://mi-shop.com";
 
@@ -175,17 +176,20 @@ impl Crawler for MiShopComCrawler {
         } else {
             // We should not upload images if it is not valid product
             // let image_urls = self.extract_images(document, external_id).await;
+            let start = Instant::now();
+            let characteristics = self.extract_characteristics(&document, external_id);
+            let duration = start.elapsed();
+            println!("Time elapsed in extract_characteristics() is: {:?}", duration);
             println!(
-                "characteristics {:#?}",
-                self.extract_characteristics(&document, external_id)
+                "characteristics {:?}",
+                characteristics
             );
-            panic!("her");
-            // Some(AdditionalParsedProductInfo {
-            //     image_urls,
-            //     description: description.unwrap(),
-            //     available: available.unwrap(),
-            //     characteristics: self.extract_characteristics(&document, external_id),
-            // })
+            Some(AdditionalParsedProductInfo {
+                image_urls: vec![],
+                description: description.unwrap(),
+                available: available.unwrap(),
+                characteristics,
+            })
         }
     }
 }
@@ -249,6 +253,16 @@ impl MiShopComCrawler {
         }
         self.remove_parsed_indexes(&mut titles, &mut values, &mut parsed_indexes);
 
+        let (technology_characteristics, mut parsed_indexes) =
+            self.extract_technology_characteristics(external_id, &titles, &values);
+        for string_char in technology_characteristics {
+            characteristics.push(TypedCharacteristic::String(string_char));
+        }
+        self.remove_parsed_indexes(&mut titles, &mut values, &mut parsed_indexes);
+
+        let mut parsed_indexes = self.skip_unneeded_characteristics(&titles);
+        self.remove_parsed_indexes(&mut titles, &mut values, &mut parsed_indexes);
+
         for (title_index, title) in titles.into_iter().enumerate() {
             let value = values.get(title_index).unwrap();
             sentry::capture_message(
@@ -278,6 +292,65 @@ impl MiShopComCrawler {
         }
     }
 
+    fn skip_unneeded_characteristics(&self, titles: &Vec<String>) -> Vec<usize> {
+        let mut parsed_indexes = vec![];
+        for (title_index, title) in titles.into_iter().enumerate() {
+            let skip: bool = match title.as_str() {
+                "Видеозапись" => true,
+                "Сенсорный дисплей" => true,
+                _ => false,
+            };
+
+            if skip {
+                parsed_indexes.push(title_index);
+            }
+        }
+
+        parsed_indexes
+    }
+
+    fn extract_technology_characteristics(
+        &self,
+        external_id: &str,
+        titles: &Vec<String>,
+        values: &Vec<String>,
+    ) -> (Vec<StringCharacteristic>, Vec<usize>) {
+        let mut characteristics: Vec<StringCharacteristic> = vec![];
+        let mut parsed_indexes = vec![];
+
+        for (title_index, title) in titles.into_iter().enumerate() {
+            let value = values.get(title_index).unwrap();
+            let characteristic: Option<Technology> = match title.as_str() {
+                "NFC" => {
+                    parsed_indexes.push(title_index);
+                    bool_value(&title, external_id, &value).map_or(None, |v| {
+                        if v {
+                            Some(Technology::NFC)
+                        } else {
+                            None
+                        }
+                    })
+                }
+                "Быстрая зарядка" => {
+                    parsed_indexes.push(title_index);
+                    bool_value(&title, external_id, &value).map_or(None, |v| {
+                        if v {
+                            Some(Technology::FastCharging)
+                        } else {
+                            None
+                        }
+                    })
+                }
+                _ => None,
+            };
+
+            if let Some(characteristic) = characteristic {
+                characteristics.push(StringCharacteristic::TechnologySupport(characteristic));
+            }
+        }
+
+        (characteristics, parsed_indexes)
+    }
     fn extract_string_characteristics(
         &self,
         external_id: &str,
@@ -361,6 +434,10 @@ impl MiShopComCrawler {
                 .map_or(None, |v| {
                     Some(StringCharacteristic::ChargingConnectorType(v))
                 }),
+                "Страна производитель" => {
+                    parse_and_capture(&title, external_id, &value, string_country_value)
+                        .map_or(None, |v| Some(StringCharacteristic::ProducingCountry(v)))
+                }
                 "Аудиоразъем" => {
                     parse_and_capture(&title, external_id, &value, string_audio_jack_value)
                         .map_or(None, |v| Some(StringCharacteristic::AudioJack(v)))

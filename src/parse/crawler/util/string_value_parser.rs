@@ -1,7 +1,4 @@
-use crate::parse::dto::characteristic::string_characteristic::{
-    AudioJack, BatteryType, ChargingConnectorType, DisplayType, InternetConnectionTechnology,
-    SatelliteNavigation, SimCard, WifiStandard,
-};
+use crate::parse::dto::characteristic::string_characteristic::{AudioJack, BatteryType, ChargingConnectorType, DisplayType, InternetConnectionTechnology, SatelliteNavigation, SimCard, WifiStandard, Country};
 
 pub fn string_internet_connection_technology_value(
     value: &str,
@@ -46,6 +43,11 @@ pub fn string_sim_card_value(value: &str) -> Option<SimCard> {
 pub fn string_charging_connector_type_value(value: &str) -> Option<ChargingConnectorType> {
     match string_value(value).as_str() {
         "USB Type-C" => Some(ChargingConnectorType::USBTypeC),
+        _ => None,
+    }
+}pub fn string_country_value(value: &str) -> Option<Country> {
+    match string_value(value).as_str() {
+        "Китай" => Some(Country::China),
         _ => None,
     }
 }

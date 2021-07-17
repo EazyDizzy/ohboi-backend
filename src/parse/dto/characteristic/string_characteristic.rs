@@ -17,6 +17,8 @@ pub enum StringCharacteristic {
     SatelliteNavigation(SatelliteNavigation),
     WifiStandard(WifiStandard),
     AudioJack(AudioJack),
+    TechnologySupport(Technology),
+    ProducingCountry(Country),
 }
 
 #[derive(Serialize, Debug, PartialEq)]
@@ -86,4 +88,15 @@ pub enum ChargingConnectorType {
 #[derive(Serialize, Debug, PartialEq)]
 pub enum AudioJack {
     _3_5mm,
+}
+
+#[derive(Serialize, Debug, PartialEq)]
+pub enum Technology {
+    NFC,
+    FastCharging,
+}
+
+#[derive(Serialize, Debug, PartialEq)]
+pub enum Country {
+    China,
 }
