@@ -1,5 +1,42 @@
-use crate::parse::dto::characteristic::string_characteristic::{AudioJack, BatteryType, ChargingConnectorType, DisplayType, InternetConnectionTechnology, SatelliteNavigation, SimCard, WifiStandard, Country};
+use crate::parse::dto::characteristic::string_characteristic::*;
 
+pub fn string_media_format_value(value: &str) -> Option<MediaFormat> {
+    match string_value(value).as_str() {
+        "MP4" => Some(MediaFormat::MP4),
+        "M4V" => Some(MediaFormat::M4V),
+        "MKV" => Some(MediaFormat::MKV),
+        "XVID" => Some(MediaFormat::XVID),
+        "WAV" => Some(MediaFormat::WAV),
+        "AAC" => Some(MediaFormat::AAC),
+        "MP3" => Some(MediaFormat::MP3),
+        "AMR" => Some(MediaFormat::AMR),
+        "FLAC" => Some(MediaFormat::FLAC),
+        "APE" => Some(MediaFormat::APE),
+        "AAC+" | "AAC +" => Some(MediaFormat::AAC_plus),
+        "eAAC+" | "eAAC +" => Some(MediaFormat::eAAC_plus),
+        "AMR-NB" | "AMR - NB" => Some(MediaFormat::AMR_NB),
+        "WB" => Some(MediaFormat::WB),
+        "PCM" => Some(MediaFormat::PCM),
+        "H.263" | "H263" => Some(MediaFormat::H263),
+        "H.264" | "H264" => Some(MediaFormat::H264),
+        "H.265" | "HEVC" => Some(MediaFormat::H265),
+        "MPEG4" => Some(MediaFormat::MPEG4),
+        "ASF" => Some(MediaFormat::ASF),
+        "WMV" => Some(MediaFormat::WMV),
+        "3GI" => Some(MediaFormat::_3GI),
+        "WEBM" => Some(MediaFormat::WEBM),
+        "FLV" => Some(MediaFormat::FLV),
+        "MIDI" => Some(MediaFormat::MIDI),
+        "WAVE" => Some(MediaFormat::WAVE),
+        "Opus" => Some(MediaFormat::Opus),
+        "VC-1" => Some(MediaFormat::VC1),
+        "AMR–NB" => Some(MediaFormat::AMR_NB),
+        e => {
+            println!("unknown '{}'", e);
+            None
+        }
+    }
+}
 pub fn string_internet_connection_technology_value(
     value: &str,
 ) -> Option<InternetConnectionTechnology> {
@@ -34,32 +71,55 @@ pub fn string_wifi_standard_value(value: &str) -> Option<WifiStandard> {
         _ => None,
     }
 }
+pub fn string_material_value(value: &str) -> Option<Material> {
+    match string_value(value).as_str() {
+        "Металл" => Some(Material::Metal),
+        "Стекло" => Some(Material::Glass),
+        "Пластик" => Some(Material::Plastic),
+        "Алюминий" => Some(Material::Aluminum),
+        _ => None,
+    }
+}
 pub fn string_sim_card_value(value: &str) -> Option<SimCard> {
     match string_value(value).as_str() {
         "nano-SIM" => Some(SimCard::Nano),
+        "micro-SIM" => Some(SimCard::Micro),
+        "mini-SIM" => Some(SimCard::Mini),
         _ => None,
     }
 }
 pub fn string_charging_connector_type_value(value: &str) -> Option<ChargingConnectorType> {
     match string_value(value).as_str() {
         "USB Type-C" => Some(ChargingConnectorType::USBTypeC),
+        "Micro-USB" => Some(ChargingConnectorType::MicroUSB),
         _ => None,
     }
-}pub fn string_country_value(value: &str) -> Option<Country> {
+}
+pub fn string_country_value(value: &str) -> Option<Country> {
     match string_value(value).as_str() {
         "Китай" => Some(Country::China),
+        _ => None,
+    }
+}
+pub fn string_memory_card_slot_value(value: &str) -> Option<MemoryCardSlot> {
+    match string_value(value).as_str() {
+        "Гибридный" => Some(MemoryCardSlot::Hybrid),
+        "Отдельный" => Some(MemoryCardSlot::Separate),
+        "Отсутствует" => None,
         _ => None,
     }
 }
 pub fn string_audio_jack_value(value: &str) -> Option<AudioJack> {
     match string_value(value).as_str() {
         "3.5 мм" => Some(AudioJack::_3_5mm),
+        "3.5мм" => Some(AudioJack::_3_5mm),
         _ => None,
     }
 }
 pub fn string_battery_type_value(value: &str) -> Option<BatteryType> {
     match string_value(value).as_str() {
         "Литий-полимерный" => Some(BatteryType::LithiumPolymer),
+        "Литий-ионный" => Some(BatteryType::LithiumIon),
         _ => None,
     }
 }

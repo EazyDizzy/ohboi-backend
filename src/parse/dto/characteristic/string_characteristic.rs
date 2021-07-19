@@ -19,6 +19,8 @@ pub enum StringCharacteristic {
     AudioJack(AudioJack),
     TechnologySupport(Technology),
     ProducingCountry(Country),
+    MemoryCardSlot(MemoryCardSlot),
+    SupportedMediaFormats(MediaFormat),
 }
 
 #[derive(Serialize, Debug, PartialEq)]
@@ -32,6 +34,7 @@ pub enum Material {
     Metal,
     Glass,
     Plastic,
+    Aluminum,
 }
 
 #[derive(Serialize, Debug, PartialEq)]
@@ -84,6 +87,7 @@ pub enum WifiStandard {
 #[derive(Serialize, Debug, PartialEq)]
 pub enum ChargingConnectorType {
     USBTypeC,
+    MicroUSB,
 }
 #[derive(Serialize, Debug, PartialEq)]
 pub enum AudioJack {
@@ -94,9 +98,49 @@ pub enum AudioJack {
 pub enum Technology {
     NFC,
     FastCharging,
+    InfraredPort,
+    WirelessCharger,
+    Autofocus,
 }
 
 #[derive(Serialize, Debug, PartialEq)]
 pub enum Country {
     China,
+}
+
+#[derive(Serialize, Debug, PartialEq)]
+pub enum MemoryCardSlot {
+    Hybrid,
+    Separate,
+}
+#[derive(Serialize, Debug, PartialEq)]
+pub enum MediaFormat {
+    MP4,
+    M4V,
+    MKV,
+    XVID,
+    WAV,
+    AAC,
+    MP3,
+    AMR,
+    FLAC,
+    APE,
+    AAC_plus,
+    eAAC_plus,
+    AMR_NB,
+    WB,
+    VC1,
+    PCM,
+    H263,
+    H264,
+    H265,
+    MPEG4,
+    ASF,
+    WMV,
+    _3GI,
+    WEBM,
+    FLV,
+    MIDI,
+    WAVE,
+    Opus,
 }

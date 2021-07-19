@@ -1,4 +1,3 @@
-
 /// It skips additional cameras
 /// `64Мп + 8Мп + 6Мп` will result in just `64`
 pub fn int_mp_value(title: &str, external_id: &str, value: &str) -> Option<i32> {
@@ -10,24 +9,53 @@ pub fn int_mp_value(title: &str, external_id: &str, value: &str) -> Option<i32> 
             .split("+")
             .into_iter()
             .next()
-            .unwrap()
-            .trim(),
+            .unwrap(),
     )
 }
 pub fn int_ma_h_value(title: &str, external_id: &str, value: &str) -> Option<i32> {
-    int_value(title, external_id, &value.replace("мАч", "").trim())
+    int_value(title, external_id, &value.replace("мАч", ""))
 }
-pub fn int_hz_value(title: &str, external_id: &str, value: &str) -> Option<i32> {
-    int_value(title, external_id, &value.replace("Гц", "").trim())
+pub fn int_nit_value(title: &str, external_id: &str, value: &str) -> Option<i32> {
+    int_value(title, external_id, &value.replace("нит", ""))
 }
-pub fn int_fps_value(title: &str, external_id: &str, value: &str) -> Option<i32> {
-    int_value(title, external_id, &value.replace("fps", "").trim())
-}
-pub fn pix_int_value(title: &str, external_id: &str, value: &str) -> Option<i32> {
+pub fn int_max_memory_card_size_value(title: &str, external_id: &str, value: &str) -> Option<i32> {
     int_value(
         title,
         external_id,
-        &value.replace("K", "000").replace("К", "000"),
+        &value.replace("до", "").replace("ГБ", ""),
+    )
+}
+pub fn int_guarantee_value(title: &str, external_id: &str, value: &str) -> Option<i32> {
+    int_value(title, external_id, &value.replace("месяцев", ""))
+}
+pub fn int_hz_value(title: &str, external_id: &str, value: &str) -> Option<i32> {
+    int_value(title, external_id, &value.replace("Гц", ""))
+}
+pub fn int_fps_value(title: &str, external_id: &str, value: &str) -> Option<i32> {
+    int_value(title, external_id, &value.replace("fps", ""))
+}
+/// `4K` -> `4000`
+/// `720px` | `720p` -> `720`
+/// `1920x1080` -> `1920`
+/// `1080/720` -> `1080`
+pub fn pix_int_value(title: &str, external_id: &str, value: &str) -> Option<i32> {
+    let mut cut_value = value;
+
+    if cut_value.contains("x") {
+        cut_value = cut_value.split("x").into_iter().next().unwrap();
+    }
+    if cut_value.contains("/") {
+        cut_value = cut_value.split("/").into_iter().next().unwrap();
+    }
+
+    int_value(
+        title,
+        external_id,
+        &value
+            .replace("K", "000")
+            .replace("К", "000")
+            .replace("px", "")
+            .replace("p", ""),
     )
 }
 

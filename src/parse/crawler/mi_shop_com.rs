@@ -1,11 +1,13 @@
 use std::num::ParseIntError;
 use std::str::FromStr;
+use std::time::Instant;
 
 use async_trait::async_trait;
 use bigdecimal::Num;
-use regex::Regex;
+use regex::{Captures, Regex};
 use scraper::element_ref::Select;
 use scraper::{ElementRef, Html, Selector};
+use validator::HasLen;
 
 use crate::my_enum::CurrencyEnum;
 use crate::parse::crawler::crawler::{get_html_nodes, Crawler, ProductHtmlSelectors};
@@ -15,19 +17,20 @@ use crate::parse::db::entity::source::SourceName;
 use crate::parse::dto::characteristic::float_characteristic::FloatCharacteristic;
 use crate::parse::dto::characteristic::int_characteristic::IntCharacteristic;
 use crate::parse::dto::characteristic::string_characteristic::{
-    BatteryType, DisplayType, SimCard, StringCharacteristic, Technology,
+    BatteryType, DisplayType, MediaFormat, SimCard, StringCharacteristic, Technology,
 };
 use crate::parse::dto::parsed_product::{
     AdditionalParsedProductInfo, LocalParsedProduct, TypedCharacteristic,
 };
 use crate::parse::service::html_cleaner::inner_text;
-use std::time::Instant;
 
 static SITE_BASE: &str = "https://mi-shop.com";
 
 lazy_static! {
     static ref DESCRIPTION_RE: Regex =
         Regex::new(r"(?ms)<p>.*?</p>|<h2>.*?</h2>|<ul>.*?</ul>").unwrap();
+    static ref NO_MEDIA_FORMAT_DESCRIPTION_RE: Regex =
+        Regex::new(r"(?ms)[A-Za-z./ 0-9\-+–]{2,}").unwrap();
 }
 
 #[derive(Clone)]
@@ -179,11 +182,11 @@ impl Crawler for MiShopComCrawler {
             let start = Instant::now();
             let characteristics = self.extract_characteristics(&document, external_id);
             let duration = start.elapsed();
-            println!("Time elapsed in extract_characteristics() is: {:?}", duration);
             println!(
-                "characteristics {:?}",
-                characteristics
+                "Time elapsed in extract_characteristics() is: {:?}",
+                duration
             );
+            println!("characteristics {:?}", characteristics);
             Some(AdditionalParsedProductInfo {
                 image_urls: vec![],
                 description: description.unwrap(),
@@ -298,6 +301,7 @@ impl MiShopComCrawler {
             let skip: bool = match title.as_str() {
                 "Видеозапись" => true,
                 "Сенсорный дисплей" => true,
+                "Примечание" => true,
                 _ => false,
             };
 
@@ -331,11 +335,41 @@ impl MiShopComCrawler {
                         }
                     })
                 }
+                "Автофокус" => {
+                    parsed_indexes.push(title_index);
+                    bool_value(&title, external_id, &value).map_or(None, |v| {
+                        if v {
+                            Some(Technology::Autofocus)
+                        } else {
+                            None
+                        }
+                    })
+                }
                 "Быстрая зарядка" => {
                     parsed_indexes.push(title_index);
                     bool_value(&title, external_id, &value).map_or(None, |v| {
                         if v {
                             Some(Technology::FastCharging)
+                        } else {
+                            None
+                        }
+                    })
+                }
+                "ИК-порт" => {
+                    parsed_indexes.push(title_index);
+                    bool_value(&title, external_id, &value).map_or(None, |v| {
+                        if v {
+                            Some(Technology::InfraredPort)
+                        } else {
+                            None
+                        }
+                    })
+                }
+                "Беспроводная зарядка" => {
+                    parsed_indexes.push(title_index);
+                    bool_value(&title, external_id, &value).map_or(None, |v| {
+                        if v {
+                            Some(Technology::WirelessCharger)
                         } else {
                             None
                         }
@@ -364,6 +398,18 @@ impl MiShopComCrawler {
             let value = values.get(title_index).unwrap();
 
             match title.as_str() {
+                "SIM-карта" => {
+                    multiple_parse_and_capture(title, external_id, value, string_sim_card_value)
+                        .into_iter()
+                        .for_each(|v| characteristics.push(StringCharacteristic::SimCard(v)));
+                    parsed_indexes.push(title_index);
+                }
+                "Поддерживаемые медиа форматы" => {
+                    multiple_parse_and_capture(title, external_id, value, string_sim_card_value)
+                        .into_iter()
+                        .for_each(|v| characteristics.push(StringCharacteristic::SimCard(v)));
+                    parsed_indexes.push(title_index);
+                }
                 "Интернет" => {
                     multiple_parse_and_capture(
                         title,
@@ -401,6 +447,12 @@ impl MiShopComCrawler {
                     .for_each(|v| characteristics.push(StringCharacteristic::WifiStandard(v)));
                     parsed_indexes.push(title_index);
                 }
+                "Материал" => {
+                    multiple_parse_and_capture(title, external_id, value, string_material_value)
+                        .into_iter()
+                        .for_each(|v| characteristics.push(StringCharacteristic::Material(v)));
+                    parsed_indexes.push(title_index);
+                }
                 _ => (),
             }
         }
@@ -421,10 +473,6 @@ impl MiShopComCrawler {
                 "Видеопроцессор" => {
                     Some(StringCharacteristic::VideoProcessor(string_value(&value)))
                 }
-                "SIM-карта" => {
-                    parse_and_capture(&title, external_id, &value, string_sim_card_value)
-                        .map_or(None, |v| Some(StringCharacteristic::SimCard(v)))
-                }
                 "Тип разъема для зарядки" => parse_and_capture(
                     &title,
                     external_id,
@@ -434,11 +482,15 @@ impl MiShopComCrawler {
                 .map_or(None, |v| {
                     Some(StringCharacteristic::ChargingConnectorType(v))
                 }),
+                "Слот для карты памяти" => {
+                    parse_and_capture(&title, external_id, &value, string_memory_card_slot_value)
+                        .map_or(None, |v| Some(StringCharacteristic::MemoryCardSlot(v)))
+                }
                 "Страна производитель" => {
                     parse_and_capture(&title, external_id, &value, string_country_value)
                         .map_or(None, |v| Some(StringCharacteristic::ProducingCountry(v)))
                 }
-                "Аудиоразъем" => {
+                "Аудиоразъем" | "Вход аудио" => {
                     parse_and_capture(&title, external_id, &value, string_audio_jack_value)
                         .map_or(None, |v| Some(StringCharacteristic::AudioJack(v)))
                 }
@@ -493,7 +545,7 @@ impl MiShopComCrawler {
                     .map_or(None, |v| Some(FloatCharacteristic::CPUFrequency_Ghz(v))),
                 "Вес (г)" => float_value(&title, external_id, &value)
                     .map_or(None, |v| Some(FloatCharacteristic::Weight_gr(v))),
-                "Версия MIUI" => float_value(&title, external_id, &value)
+                "Версия MIUI" => float_miui_version_value(&title, external_id, &value)
                     .map_or(None, |v| Some(FloatCharacteristic::MIUIVersion(v))),
                 "Версия Android" => float_android_version_value(&title, external_id, &value)
                     .map_or(None, |v| Some(FloatCharacteristic::AndroidVersion(v))),
@@ -525,13 +577,19 @@ impl MiShopComCrawler {
                 "Диапазоны LTE" => {
                     multiple_int_value(title, external_id, value)
                         .into_iter()
-                        .for_each(|v| characteristics.push(IntCharacteristic::LTEBand(v)));
+                        .for_each(|v| characteristics.push(IntCharacteristic::LTEDiapason(v)));
                     parsed_indexes.push(title_index);
                 }
                 "Диапазоны GSM" => {
                     multiple_int_value(title, external_id, value)
                         .into_iter()
-                        .for_each(|v| characteristics.push(IntCharacteristic::GSMBand(v)));
+                        .for_each(|v| characteristics.push(IntCharacteristic::GSMDiapason(v)));
+                    parsed_indexes.push(title_index);
+                }
+                "Диапазоны UMTS" => {
+                    multiple_int_value(title, external_id, value)
+                        .into_iter()
+                        .for_each(|v| characteristics.push(IntCharacteristic::UMTSDiapason(v)));
                     parsed_indexes.push(title_index);
                 }
                 _ => (),
@@ -545,7 +603,7 @@ impl MiShopComCrawler {
                     int_value(&title, external_id, &value)
                         .map_or(None, |v| Some(IntCharacteristic::NumberOfProcessorCores(v)))
                 }
-                "Гарантия (мес)" => int_value(&title, external_id, &value)
+                "Гарантия (мес)" => int_guarantee_value(&title, external_id, &value)
                     .map_or(None, |v| Some(IntCharacteristic::Warranty_month(v))),
                 "Встроенная память (ГБ)" => {
                     int_value(&title, external_id, &value)
@@ -577,7 +635,11 @@ impl MiShopComCrawler {
                     int_value(&title, external_id, &value)
                         .map_or(None, |v| Some(IntCharacteristic::PPI(v)))
                 }
-                "Яркость (кд/м²)" => int_value(&title, external_id, &value)
+                "Максимальный объем карты памяти" => {
+                    int_value(&title, external_id, &value)
+                        .map_or(None, |v| Some(IntCharacteristic::MaxMemoryCardSize_GB(v)))
+                }
+                "Яркость (кд/м²)" => int_nit_value(&title, external_id, &value)
                     .map_or(None, |v| Some(IntCharacteristic::Brightness_cd_m2(v))),
                 "Частота обновления" => int_hz_value(&title, external_id, &value)
                     .map_or(None, |v| Some(IntCharacteristic::UpdateFrequency_Hz(v))),
@@ -593,5 +655,169 @@ impl MiShopComCrawler {
         }
 
         (characteristics, parsed_indexes)
+    }
+}
+
+fn multiple_string_media_format_value(
+    title: &str,
+    external_id: &str,
+    mut value: &str,
+) -> Vec<MediaFormat> {
+    let mut formats: Vec<MediaFormat> = vec![];
+    let mut values: Vec<&str>;
+    if value.ends_with(".") {
+        value = &value[0..value.len() - 1]
+    }
+
+    if value.contains(";") {
+        values = value.split(";").collect();
+    } else {
+        values = value.split(",").collect();
+    }
+
+    let mut index_bonus = 0;
+    let mut values_copy = values.clone();
+    for (i, v) in values.into_iter().enumerate() {
+        let mut additional_values: Vec<&str> = vec![];
+        if v.contains("/") {
+            additional_values = v.split("/").collect();
+        }
+        if v.contains(" and ") {
+            additional_values = v.split("and").collect();
+        }
+        if v.contains(" и ") {
+            additional_values = v.split("и").collect();
+        }
+
+        if !additional_values.is_empty() {
+            values_copy.remove(i + index_bonus);
+
+            for add_v in additional_values {
+                index_bonus += 1;
+                values_copy.insert(i + index_bonus - 1, add_v.trim());
+            }
+
+            index_bonus -= 1;
+        }
+    }
+    values = values_copy;
+    values = values
+        .iter()
+        .map(|v| {
+            println!("before '{}'", v);
+            let parsed = NO_MEDIA_FORMAT_DESCRIPTION_RE.captures_iter(v).next();
+            let v = match parsed {
+                None => &v[0..0],
+                Some(e) => e.get(0).unwrap().as_str(),
+            };
+            println!("after '{}'", v);
+
+            v
+        })
+        .collect::<Vec<&str>>()
+        .to_vec();
+
+    for v in values {
+        let mapped = string_media_format_value(v);
+
+        if let Some(format) = mapped {
+            if !formats.contains(&format) {
+                formats.push(format);
+            }
+        } else {
+            sentry::capture_message(
+                format!(
+                    "Can't parse media format characteristic ({title}) with value ({value}) for [{external_id}]: Unknown value",
+                    title = title,
+                    value = v,
+                    external_id = external_id
+                )
+                    .as_str(),
+                sentry::Level::Warning,
+            );
+        }
+    }
+
+    formats
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::parse::crawler::mi_shop_com::multiple_string_media_format_value;
+    use crate::parse::dto::characteristic::string_characteristic::MediaFormat;
+
+    #[test]
+    fn it_parses_media_format() {
+        assert_eq!(
+            multiple_string_media_format_value(
+                "_",
+                "_",
+                "MP4; M4V; MKV;XVID; WAV; AAC; MP3; AMR; FLAC; APE",
+            ),
+            vec![
+                MediaFormat::MP4,
+                MediaFormat::M4V,
+                MediaFormat::MKV,
+                MediaFormat::XVID,
+                MediaFormat::WAV,
+                MediaFormat::AAC,
+                MediaFormat::MP3,
+                MediaFormat::AMR,
+                MediaFormat::FLAC,
+                MediaFormat::APE,
+            ]
+        );
+
+        assert_eq!(
+            multiple_string_media_format_value(
+                "_",
+                "_",
+                "MP4; M4V; MKV; XVID; WAV; AAC/AAC+/eAAC+; MP3; AMR-NB/WB; FLAC; PCM",
+            ),
+            vec![
+                MediaFormat::MP4,
+                MediaFormat::M4V,
+                MediaFormat::MKV,
+                MediaFormat::XVID,
+                MediaFormat::WAV,
+                MediaFormat::AAC,
+                MediaFormat::AAC_plus,
+                MediaFormat::eAAC_plus,
+                MediaFormat::MP3,
+                MediaFormat::AMR_NB,
+                MediaFormat::WB,
+                MediaFormat::FLAC,
+                MediaFormat::PCM,
+            ]
+        );
+        assert_eq!(
+            multiple_string_media_format_value(
+                "_",
+                "_",
+                "PCM, AAC / AAC+, MP3, AMR–NB and WB, Opus, PCM/WAVE",
+            ),
+            vec![
+                MediaFormat::PCM,
+                MediaFormat::AAC,
+                MediaFormat::AAC_plus,
+                MediaFormat::MP3,
+                MediaFormat::AMR_NB,
+                MediaFormat::WB,
+                MediaFormat::Opus,
+                MediaFormat::WAVE,
+            ]
+        );
+        assert_eq!(
+            multiple_string_media_format_value("_", "_", "PCM, PCM/WAVE"),
+            vec![MediaFormat::PCM, MediaFormat::WAVE,]
+        );
+        assert_eq!(
+            multiple_string_media_format_value("_", "_", "Поддерживает H.263, H264 (базовый профиль / основной профиль), H.264 HEVC, MPEG4 (простой профиль / ASP), XVID, ASF / WMV, 3GI, MKV / WEBM, M4V, FLV и другие видеоформаты.Поддерживает аудиоформаты, такие как AAC / AAC +, MP3, AMR - NB и WB, FLAC, MIDI / PCM / WAVE"),
+            vec![MediaFormat::H263, MediaFormat::H264, MediaFormat::MPEG4, MediaFormat::XVID, MediaFormat::ASF, MediaFormat::WMV, MediaFormat::_3GI, MediaFormat::MKV, MediaFormat::WEBM, MediaFormat::M4V, MediaFormat::FLV, MediaFormat::AAC, MediaFormat::AAC_plus, MediaFormat::MP3, MediaFormat::AMR_NB, MediaFormat::WB, MediaFormat::FLAC, MediaFormat::MIDI, MediaFormat::PCM, MediaFormat::WAVE]
+        );
+        assert_eq!(
+            multiple_string_media_format_value("_", "_", "Видео форматы: H.265 / HEVC (основной профиль), H.264 (базовый/основной/высокий), MPEG4 (обычный/ASP) и другие. Аудио форматы: PCM, AAC / AAC + / eAAC +, MP3, AMR - NB и WB, FLAC, WAV."),
+            vec![MediaFormat::H265, MediaFormat::H264,MediaFormat::MPEG4,MediaFormat::PCM,MediaFormat::AAC,MediaFormat::AAC_plus,MediaFormat::eAAC_plus,MediaFormat::MP3,MediaFormat::AMR_NB,MediaFormat::WB,MediaFormat::FLAC,MediaFormat::WAV]
+        );
     }
 }

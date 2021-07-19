@@ -14,7 +14,9 @@ pub enum IntCharacteristic {
     Brightness_cd_m2(i32),
     UpdateFrequency_Hz(i32),
     Camera_mp(i32),
-    LTEBand(i32),
-    GSMBand(i32),
+    LTEDiapason(i32),
+    GSMDiapason(i32),
+    UMTSDiapason(i32),
     Warranty_month(i32),
+    MaxMemoryCardSize_GB(i32),
 }
