@@ -36,7 +36,8 @@ pub fn init_sentry() -> ClientInitGuard {
                     );
                 }
 
-                Some(event)
+                // Some(event)
+                None
             })),
             ..Default::default()
         }

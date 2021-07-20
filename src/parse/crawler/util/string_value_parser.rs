@@ -31,6 +31,11 @@ pub fn string_media_format_value(value: &str) -> Option<MediaFormat> {
         "Opus" => Some(MediaFormat::Opus),
         "VC-1" => Some(MediaFormat::VC1),
         "AMR–NB" => Some(MediaFormat::AMR_NB),
+        "DSF" => Some(MediaFormat::DSF),
+        "M4A" => Some(MediaFormat::M4A),
+        "OGG" => Some(MediaFormat::OGG),
+        "WMA" => Some(MediaFormat::WMA),
+        "AWB" => Some(MediaFormat::AWB),
         e => {
             println!("unknown '{}'", e);
             None
@@ -68,6 +73,7 @@ pub fn string_wifi_standard_value(value: &str) -> Option<WifiStandard> {
         "a" => Some(WifiStandard::A),
         "b" => Some(WifiStandard::B),
         "g" => Some(WifiStandard::G),
+        "gc" => Some(WifiStandard::GC),
         _ => None,
     }
 }
@@ -77,6 +83,7 @@ pub fn string_material_value(value: &str) -> Option<Material> {
         "Стекло" => Some(Material::Glass),
         "Пластик" => Some(Material::Plastic),
         "Алюминий" => Some(Material::Aluminum),
+        "Керамика" => Some(Material::Ceramics),
         _ => None,
     }
 }
@@ -105,14 +112,14 @@ pub fn string_memory_card_slot_value(value: &str) -> Option<MemoryCardSlot> {
     match string_value(value).as_str() {
         "Гибридный" => Some(MemoryCardSlot::Hybrid),
         "Отдельный" => Some(MemoryCardSlot::Separate),
-        "Отсутствует" => None,
+        "Отсутствует" => Some(MemoryCardSlot::None),
         _ => None,
     }
 }
 pub fn string_audio_jack_value(value: &str) -> Option<AudioJack> {
     match string_value(value).as_str() {
-        "3.5 мм" => Some(AudioJack::_3_5mm),
-        "3.5мм" => Some(AudioJack::_3_5mm),
+        "3.5" => Some(AudioJack::_3_5mm),
+        "USB Type-C" => Some(AudioJack::USBTypeC),
         _ => None,
     }
 }
@@ -126,6 +133,7 @@ pub fn string_battery_type_value(value: &str) -> Option<BatteryType> {
 pub fn string_display_type_value(value: &str) -> Option<DisplayType> {
     match string_value(value).as_str() {
         "AMOLED" => Some(DisplayType::Amoled),
+        "OLED" => Some(DisplayType::Oled),
         "IPS" => Some(DisplayType::IPS),
         _ => None,
     }

@@ -4,6 +4,7 @@ use std::time::Instant;
 
 use async_trait::async_trait;
 use bigdecimal::Num;
+use maplit::btreemap;
 use regex::{Captures, Regex};
 use scraper::element_ref::Select;
 use scraper::{ElementRef, Html, Selector};
@@ -29,8 +30,7 @@ static SITE_BASE: &str = "https://mi-shop.com";
 lazy_static! {
     static ref DESCRIPTION_RE: Regex =
         Regex::new(r"(?ms)<p>.*?</p>|<h2>.*?</h2>|<ul>.*?</ul>").unwrap();
-    static ref NO_MEDIA_FORMAT_DESCRIPTION_RE: Regex =
-        Regex::new(r"(?ms)[A-Za-z./ 0-9\-+–]{2,}").unwrap();
+    static ref NO_DESCRIPTION_RE: Regex = Regex::new(r"(?ms)[A-Za-z./ 0-9\-+–]{2,}").unwrap();
 }
 
 #[derive(Clone)]
@@ -302,6 +302,8 @@ impl MiShopComCrawler {
                 "Видеозапись" => true,
                 "Сенсорный дисплей" => true,
                 "Примечание" => true,
+                "Видеоплеер" => true,
+                "Аудиоплеер" => true,
                 _ => false,
             };
 
@@ -405,9 +407,11 @@ impl MiShopComCrawler {
                     parsed_indexes.push(title_index);
                 }
                 "Поддерживаемые медиа форматы" => {
-                    multiple_parse_and_capture(title, external_id, value, string_sim_card_value)
+                    multiple_string_media_format_value(title, external_id, value)
                         .into_iter()
-                        .for_each(|v| characteristics.push(StringCharacteristic::SimCard(v)));
+                        .for_each(|v| {
+                            characteristics.push(StringCharacteristic::SupportedMediaFormats(v))
+                        });
                     parsed_indexes.push(title_index);
                 }
                 "Интернет" => {
@@ -461,6 +465,7 @@ impl MiShopComCrawler {
             let value = values.get(title_index).unwrap();
             let characteristic: Option<StringCharacteristic> = match title.as_str() {
                 "Процессор" => Some(StringCharacteristic::Processor(string_value(&value))),
+                "Модель" => Some(StringCharacteristic::Model(string_value(&value))),
                 "Контрастность" => {
                     Some(StringCharacteristic::Contrast(string_value(&value)))
                 }
@@ -491,8 +496,17 @@ impl MiShopComCrawler {
                         .map_or(None, |v| Some(StringCharacteristic::ProducingCountry(v)))
                 }
                 "Аудиоразъем" | "Вход аудио" => {
-                    parse_and_capture(&title, external_id, &value, string_audio_jack_value)
+                    if let Some(value) = NO_DESCRIPTION_RE.captures_iter(value).next() {
+                        parse_and_capture(
+                            &title,
+                            external_id,
+                            &value.get(0).unwrap().as_str(),
+                            string_audio_jack_value,
+                        )
                         .map_or(None, |v| Some(StringCharacteristic::AudioJack(v)))
+                    } else {
+                        None
+                    }
                 }
                 "Аккумулятор" => {
                     parse_and_capture(&title, external_id, &value, string_battery_type_value)
@@ -636,7 +650,7 @@ impl MiShopComCrawler {
                         .map_or(None, |v| Some(IntCharacteristic::PPI(v)))
                 }
                 "Максимальный объем карты памяти" => {
-                    int_value(&title, external_id, &value)
+                    int_memory_value(&title, external_id, &value)
                         .map_or(None, |v| Some(IntCharacteristic::MaxMemoryCardSize_GB(v)))
                 }
                 "Яркость (кд/м²)" => int_nit_value(&title, external_id, &value)
@@ -704,25 +718,35 @@ fn multiple_string_media_format_value(
     values = values
         .iter()
         .map(|v| {
-            println!("before '{}'", v);
-            let parsed = NO_MEDIA_FORMAT_DESCRIPTION_RE.captures_iter(v).next();
-            let v = match parsed {
-                None => &v[0..0],
-                Some(e) => e.get(0).unwrap().as_str(),
-            };
-            println!("after '{}'", v);
-
-            v
+            let parsed = NO_DESCRIPTION_RE.captures_iter(v).next();
+            match parsed {
+                None => None,
+                Some(e) => Some(e.get(0).unwrap().as_str()),
+            }
         })
+        .filter(|v| v.is_some())
+        .map(|v| v.unwrap())
         .collect::<Vec<&str>>()
         .to_vec();
 
     for v in values {
         let mapped = string_media_format_value(v);
-
+        let exceptions = btreemap! {
+            "AAC+eAAC+" => vec![MediaFormat::AAC_plus, MediaFormat::eAAC_plus],
+            "H.264 HEVC" => vec![MediaFormat::H264, MediaFormat::H265],
+            "ASP" => vec![],
+            "/ ASP" => vec![],
+            "." => vec![],
+        };
         if let Some(format) = mapped {
             if !formats.contains(&format) {
                 formats.push(format);
+            }
+        } else if let Some(exception_values) = exceptions.get(string_value(v).as_str()) {
+            for exception_format in exception_values {
+                if !formats.contains(&exception_format) {
+                    formats.push(*exception_format);
+                }
             }
         } else {
             sentry::capture_message(

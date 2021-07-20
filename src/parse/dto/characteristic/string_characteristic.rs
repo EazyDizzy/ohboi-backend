@@ -7,6 +7,7 @@ pub enum StringCharacteristic {
     AspectRatio(String),
     DisplayResolution(String),
     Contrast(String),
+    Model(String),
     //
     ChargingConnectorType(ChargingConnectorType),
     BatteryType(BatteryType),
@@ -35,6 +36,7 @@ pub enum Material {
     Glass,
     Plastic,
     Aluminum,
+    Ceramics,
 }
 
 #[derive(Serialize, Debug, PartialEq)]
@@ -82,6 +84,7 @@ pub enum WifiStandard {
     A,
     B,
     G,
+    GC,
 }
 
 #[derive(Serialize, Debug, PartialEq)]
@@ -92,6 +95,7 @@ pub enum ChargingConnectorType {
 #[derive(Serialize, Debug, PartialEq)]
 pub enum AudioJack {
     _3_5mm,
+    USBTypeC,
 }
 
 #[derive(Serialize, Debug, PartialEq)]
@@ -112,8 +116,9 @@ pub enum Country {
 pub enum MemoryCardSlot {
     Hybrid,
     Separate,
+    None,
 }
-#[derive(Serialize, Debug, PartialEq)]
+#[derive(Serialize, Debug, PartialEq, Copy, Clone)]
 pub enum MediaFormat {
     MP4,
     M4V,
@@ -143,4 +148,9 @@ pub enum MediaFormat {
     MIDI,
     WAVE,
     Opus,
+    DSF,
+    M4A,
+    OGG,
+    WMA,
+    AWB,
 }

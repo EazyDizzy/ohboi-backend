@@ -26,13 +26,30 @@ pub fn int_max_memory_card_size_value(title: &str, external_id: &str, value: &st
     )
 }
 pub fn int_guarantee_value(title: &str, external_id: &str, value: &str) -> Option<i32> {
-    int_value(title, external_id, &value.replace("месяцев", ""))
+    int_value(
+        title,
+        external_id,
+        &value.replace("месяцев", "").replace("Месяцев.", ""),
+    )
 }
 pub fn int_hz_value(title: &str, external_id: &str, value: &str) -> Option<i32> {
     int_value(title, external_id, &value.replace("Гц", ""))
 }
+pub fn int_memory_value(title: &str, external_id: &str, value: &str) -> Option<i32> {
+    let is_tb = value.contains("ТБ");
+    int_value(
+        title,
+        external_id,
+        &value.replace("ГБ", "").replace("до", ""),
+    )
+    .map_or(None, |v| if is_tb { Some(v * 1000) } else { Some(v) })
+}
 pub fn int_fps_value(title: &str, external_id: &str, value: &str) -> Option<i32> {
-    int_value(title, external_id, &value.replace("fps", ""))
+    int_value(
+        title,
+        external_id,
+        &value.replace("fps", "").replace("кадров/с", ""),
+    )
 }
 /// `4K` -> `4000`
 /// `720px` | `720p` -> `720`
