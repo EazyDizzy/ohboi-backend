@@ -3,6 +3,7 @@ use serde::Serialize;
 use crate::parse::dto::characteristic::float_characteristic::FloatCharacteristic;
 use crate::parse::dto::characteristic::int_characteristic::IntCharacteristic;
 use crate::parse::dto::characteristic::string_characteristic::StringCharacteristic;
+use crate::parse::dto::characteristic::enum_characteristic::EnumCharacteristic;
 
 #[derive(Serialize, Debug, PartialEq, Clone)]
 pub struct LocalParsedProduct {
@@ -34,4 +35,5 @@ pub enum TypedCharacteristic {
     Float(FloatCharacteristic),
     Int(IntCharacteristic),
     String(StringCharacteristic),
+    Enum(EnumCharacteristic),
 }

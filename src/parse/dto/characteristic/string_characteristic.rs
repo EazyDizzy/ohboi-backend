@@ -1,6 +1,9 @@
-use serde::Serialize;
+use std::fmt;
 
-#[derive(Serialize, Debug, PartialEq)]
+use serde::Serialize;
+use strum_macros::EnumIter;
+
+#[derive(Serialize, Debug, PartialEq, EnumIter, Clone)]
 pub enum StringCharacteristic {
     Processor(String),
     VideoProcessor(String),
@@ -8,146 +11,27 @@ pub enum StringCharacteristic {
     DisplayResolution(String),
     Contrast(String),
     Model(String),
-    //
-    ChargingConnectorType(ChargingConnectorType),
-    BatteryType(BatteryType),
-    SimCard(SimCard),
-    Material(Material),
-    DisplayType(DisplayType),
-    InternetConnectionTechnology(InternetConnectionTechnology),
-    SatelliteNavigation(SatelliteNavigation),
-    WifiStandard(WifiStandard),
-    AudioJack(AudioJack),
-    TechnologySupport(Technology),
-    ProducingCountry(Country),
-    MemoryCardSlot(MemoryCardSlot),
-    SupportedMediaFormats(MediaFormat),
 }
 
-#[derive(Serialize, Debug, PartialEq)]
-pub enum BatteryType {
-    LithiumIon,
-    LithiumPolymer,
+impl fmt::Display for StringCharacteristic {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        fmt::Debug::fmt(self, f)
+    }
 }
 
-#[derive(Serialize, Debug, PartialEq)]
-pub enum Material {
-    Metal,
-    Glass,
-    Plastic,
-    Aluminum,
-    Ceramics,
-}
+impl StringCharacteristic {
+    pub fn name(&self) -> String {
+        let name = self.to_string();
 
-#[derive(Serialize, Debug, PartialEq)]
-pub enum SimCard {
-    FullSize,
-    Mini,
-    Micro,
-    Nano,
-    Embedded,
-}
-#[derive(Serialize, Debug, PartialEq)]
-pub enum DisplayType {
-    Oled,
-    Amoled,
-    IPS,
-}
+        name[0..name.find("(").unwrap()].to_string()
+    }
 
-#[derive(Serialize, Debug, PartialEq)]
-pub enum InternetConnectionTechnology {
-    GPRS,
-    EDGE,
-    _3G,
-    _4G,
-    _5G,
-}
+    pub fn value(&self) -> String {
+        use StringCharacteristic::*;
 
-#[derive(Serialize, Debug, PartialEq)]
-pub enum SatelliteNavigation {
-    GPS,
-    A_GPS,
-    Galileo,
-    BeiDou,
-    GLONASS,
-}
-
-#[derive(Serialize, Debug, PartialEq)]
-pub enum WifiStandard {
-    _4,
-    _5,
-    _6,
-    _7,
-    A,
-    B,
-    G,
-    GC,
-}
-
-#[derive(Serialize, Debug, PartialEq)]
-pub enum ChargingConnectorType {
-    USBTypeC,
-    MicroUSB,
-}
-#[derive(Serialize, Debug, PartialEq)]
-pub enum AudioJack {
-    _3_5mm,
-    USBTypeC,
-}
-
-#[derive(Serialize, Debug, PartialEq)]
-pub enum Technology {
-    NFC,
-    FastCharging,
-    InfraredPort,
-    WirelessCharger,
-    Autofocus,
-}
-
-#[derive(Serialize, Debug, PartialEq)]
-pub enum Country {
-    China,
-}
-
-#[derive(Serialize, Debug, PartialEq)]
-pub enum MemoryCardSlot {
-    Hybrid,
-    Separate,
-    None,
-}
-#[derive(Serialize, Debug, PartialEq, Copy, Clone)]
-pub enum MediaFormat {
-    MP4,
-    M4V,
-    MKV,
-    XVID,
-    WAV,
-    AAC,
-    MP3,
-    AMR,
-    FLAC,
-    APE,
-    AAC_plus,
-    eAAC_plus,
-    AMR_NB,
-    WB,
-    VC1,
-    PCM,
-    H263,
-    H264,
-    H265,
-    MPEG4,
-    ASF,
-    WMV,
-    _3GI,
-    WEBM,
-    FLV,
-    MIDI,
-    WAVE,
-    Opus,
-    DSF,
-    M4A,
-    OGG,
-    WMA,
-    AWB,
+        match self {
+            Processor(n) | VideoProcessor(n) | AspectRatio(n) | DisplayResolution(n)
+            | Contrast(n) | Model(n) => n.clone(),
+        }
+    }
 }

@@ -15,11 +15,12 @@ use crate::parse::crawler::crawler::{get_html_nodes, Crawler, ProductHtmlSelecto
 use crate::parse::crawler::util::*;
 use crate::parse::db::entity::category::CategorySlug;
 use crate::parse::db::entity::source::SourceName;
+use crate::parse::dto::characteristic::enum_characteristic::{
+    BatteryType, DisplayType, EnumCharacteristic, MediaFormat, SimCard, Technology,
+};
 use crate::parse::dto::characteristic::float_characteristic::FloatCharacteristic;
 use crate::parse::dto::characteristic::int_characteristic::IntCharacteristic;
-use crate::parse::dto::characteristic::string_characteristic::{
-    BatteryType, DisplayType, MediaFormat, SimCard, StringCharacteristic, Technology,
-};
+use crate::parse::dto::characteristic::string_characteristic::StringCharacteristic;
 use crate::parse::dto::parsed_product::{
     AdditionalParsedProductInfo, LocalParsedProduct, TypedCharacteristic,
 };
@@ -256,10 +257,17 @@ impl MiShopComCrawler {
         }
         self.remove_parsed_indexes(&mut titles, &mut values, &mut parsed_indexes);
 
+        let (enum_characteristics, mut parsed_indexes) =
+            self.extract_enum_characteristics(external_id, &titles, &values);
+        for string_char in enum_characteristics {
+            characteristics.push(TypedCharacteristic::Enum(string_char));
+        }
+        self.remove_parsed_indexes(&mut titles, &mut values, &mut parsed_indexes);
+
         let (technology_characteristics, mut parsed_indexes) =
             self.extract_technology_characteristics(external_id, &titles, &values);
         for string_char in technology_characteristics {
-            characteristics.push(TypedCharacteristic::String(string_char));
+            characteristics.push(TypedCharacteristic::Enum(string_char));
         }
         self.remove_parsed_indexes(&mut titles, &mut values, &mut parsed_indexes);
 
@@ -320,8 +328,8 @@ impl MiShopComCrawler {
         external_id: &str,
         titles: &Vec<String>,
         values: &Vec<String>,
-    ) -> (Vec<StringCharacteristic>, Vec<usize>) {
-        let mut characteristics: Vec<StringCharacteristic> = vec![];
+    ) -> (Vec<EnumCharacteristic>, Vec<usize>) {
+        let mut characteristics: Vec<EnumCharacteristic> = vec![];
         let mut parsed_indexes = vec![];
 
         for (title_index, title) in titles.into_iter().enumerate() {
@@ -381,12 +389,13 @@ impl MiShopComCrawler {
             };
 
             if let Some(characteristic) = characteristic {
-                characteristics.push(StringCharacteristic::TechnologySupport(characteristic));
+                characteristics.push(EnumCharacteristic::TechnologySupport(characteristic));
             }
         }
 
         (characteristics, parsed_indexes)
     }
+
     fn extract_string_characteristics(
         &self,
         external_id: &str,
@@ -395,71 +404,6 @@ impl MiShopComCrawler {
     ) -> (Vec<StringCharacteristic>, Vec<usize>) {
         let mut characteristics: Vec<StringCharacteristic> = vec![];
         let mut parsed_indexes = vec![];
-
-        for (title_index, title) in titles.into_iter().enumerate() {
-            let value = values.get(title_index).unwrap();
-
-            match title.as_str() {
-                "SIM-карта" => {
-                    multiple_parse_and_capture(title, external_id, value, string_sim_card_value)
-                        .into_iter()
-                        .for_each(|v| characteristics.push(StringCharacteristic::SimCard(v)));
-                    parsed_indexes.push(title_index);
-                }
-                "Поддерживаемые медиа форматы" => {
-                    multiple_string_media_format_value(title, external_id, value)
-                        .into_iter()
-                        .for_each(|v| {
-                            characteristics.push(StringCharacteristic::SupportedMediaFormats(v))
-                        });
-                    parsed_indexes.push(title_index);
-                }
-                "Интернет" => {
-                    multiple_parse_and_capture(
-                        title,
-                        external_id,
-                        value,
-                        string_internet_connection_technology_value,
-                    )
-                    .into_iter()
-                    .for_each(|v| {
-                        characteristics.push(StringCharacteristic::InternetConnectionTechnology(v))
-                    });
-                    parsed_indexes.push(title_index);
-                }
-                "Спутниковая навигация" => {
-                    multiple_parse_and_capture(
-                        title,
-                        external_id,
-                        value,
-                        string_satellite_navigation_value,
-                    )
-                    .into_iter()
-                    .for_each(|v| {
-                        characteristics.push(StringCharacteristic::SatelliteNavigation(v))
-                    });
-                    parsed_indexes.push(title_index);
-                }
-                "Wi-Fi (802.11)" => {
-                    multiple_parse_and_capture(
-                        title,
-                        external_id,
-                        value,
-                        string_wifi_standard_value,
-                    )
-                    .into_iter()
-                    .for_each(|v| characteristics.push(StringCharacteristic::WifiStandard(v)));
-                    parsed_indexes.push(title_index);
-                }
-                "Материал" => {
-                    multiple_parse_and_capture(title, external_id, value, string_material_value)
-                        .into_iter()
-                        .for_each(|v| characteristics.push(StringCharacteristic::Material(v)));
-                    parsed_indexes.push(title_index);
-                }
-                _ => (),
-            }
-        }
 
         for (title_index, title) in titles.into_iter().enumerate() {
             let value = values.get(title_index).unwrap();
@@ -478,22 +422,107 @@ impl MiShopComCrawler {
                 "Видеопроцессор" => {
                     Some(StringCharacteristic::VideoProcessor(string_value(&value)))
                 }
+                _ => None,
+            };
+
+            if let Some(characteristic) = characteristic {
+                parsed_indexes.push(title_index);
+                characteristics.push(characteristic);
+            }
+        }
+
+        (characteristics, parsed_indexes)
+    }
+
+    fn extract_enum_characteristics(
+        &self,
+        external_id: &str,
+        titles: &Vec<String>,
+        values: &Vec<String>,
+    ) -> (Vec<EnumCharacteristic>, Vec<usize>) {
+        let mut characteristics: Vec<EnumCharacteristic> = vec![];
+        let mut parsed_indexes = vec![];
+
+        for (title_index, title) in titles.into_iter().enumerate() {
+            let value = values.get(title_index).unwrap();
+
+            match title.as_str() {
+                "SIM-карта" => {
+                    multiple_parse_and_capture(title, external_id, value, enum_sim_card_value)
+                        .into_iter()
+                        .for_each(|v| characteristics.push(EnumCharacteristic::SimCard(v)));
+                    parsed_indexes.push(title_index);
+                }
+                "Поддерживаемые медиа форматы" => {
+                    multiple_string_media_format_value(title, external_id, value)
+                        .into_iter()
+                        .for_each(|v| {
+                            characteristics.push(EnumCharacteristic::SupportedMediaFormats(v))
+                        });
+                    parsed_indexes.push(title_index);
+                }
+                "Интернет" => {
+                    multiple_parse_and_capture(
+                        title,
+                        external_id,
+                        value,
+                        enum_internet_connection_technology_value,
+                    )
+                    .into_iter()
+                    .for_each(|v| {
+                        characteristics.push(EnumCharacteristic::InternetConnectionTechnology(v))
+                    });
+                    parsed_indexes.push(title_index);
+                }
+                "Спутниковая навигация" => {
+                    multiple_parse_and_capture(
+                        title,
+                        external_id,
+                        value,
+                        enum_satellite_navigation_value,
+                    )
+                    .into_iter()
+                    .for_each(|v| characteristics.push(EnumCharacteristic::SatelliteNavigation(v)));
+                    parsed_indexes.push(title_index);
+                }
+                "Wi-Fi (802.11)" => {
+                    multiple_parse_and_capture(
+                        title,
+                        external_id,
+                        value,
+                        enum_wifi_standard_value,
+                    )
+                    .into_iter()
+                    .for_each(|v| characteristics.push(EnumCharacteristic::WifiStandard(v)));
+                    parsed_indexes.push(title_index);
+                }
+                "Материал" => {
+                    multiple_parse_and_capture(title, external_id, value, enum_material_value)
+                        .into_iter()
+                        .for_each(|v| characteristics.push(EnumCharacteristic::Material(v)));
+                    parsed_indexes.push(title_index);
+                }
+                _ => (),
+            }
+        }
+
+        for (title_index, title) in titles.into_iter().enumerate() {
+            let value = values.get(title_index).unwrap();
+            let characteristic: Option<EnumCharacteristic> = match title.as_str() {
                 "Тип разъема для зарядки" => parse_and_capture(
                     &title,
                     external_id,
                     &value,
-                    string_charging_connector_type_value,
+                    enum_charging_connector_type_value,
                 )
-                .map_or(None, |v| {
-                    Some(StringCharacteristic::ChargingConnectorType(v))
-                }),
+                .map_or(None, |v| Some(EnumCharacteristic::ChargingConnectorType(v))),
                 "Слот для карты памяти" => {
-                    parse_and_capture(&title, external_id, &value, string_memory_card_slot_value)
-                        .map_or(None, |v| Some(StringCharacteristic::MemoryCardSlot(v)))
+                    parse_and_capture(&title, external_id, &value, enum_memory_card_slot_value)
+                        .map_or(None, |v| Some(EnumCharacteristic::MemoryCardSlot(v)))
                 }
                 "Страна производитель" => {
-                    parse_and_capture(&title, external_id, &value, string_country_value)
-                        .map_or(None, |v| Some(StringCharacteristic::ProducingCountry(v)))
+                    parse_and_capture(&title, external_id, &value, enum_country_value)
+                        .map_or(None, |v| Some(EnumCharacteristic::ProducingCountry(v)))
                 }
                 "Аудиоразъем" | "Вход аудио" => {
                     if let Some(value) = NO_DESCRIPTION_RE.captures_iter(value).next() {
@@ -501,20 +530,20 @@ impl MiShopComCrawler {
                             &title,
                             external_id,
                             &value.get(0).unwrap().as_str(),
-                            string_audio_jack_value,
+                            enum_audio_jack_value,
                         )
-                        .map_or(None, |v| Some(StringCharacteristic::AudioJack(v)))
+                        .map_or(None, |v| Some(EnumCharacteristic::AudioJack(v)))
                     } else {
                         None
                     }
                 }
                 "Аккумулятор" => {
-                    parse_and_capture(&title, external_id, &value, string_battery_type_value)
-                        .map_or(None, |v| Some(StringCharacteristic::BatteryType(v)))
+                    parse_and_capture(&title, external_id, &value, enum_battery_type_value)
+                        .map_or(None, |v| Some(EnumCharacteristic::BatteryType(v)))
                 }
                 "Тип дисплея" => {
-                    parse_and_capture(&title, external_id, &value, string_display_type_value)
-                        .map_or(None, |v| Some(StringCharacteristic::DisplayType(v)))
+                    parse_and_capture(&title, external_id, &value, enum_display_type_value)
+                        .map_or(None, |v| Some(EnumCharacteristic::DisplayType(v)))
                 }
                 _ => None,
             };
@@ -730,7 +759,7 @@ fn multiple_string_media_format_value(
         .to_vec();
 
     for v in values {
-        let mapped = string_media_format_value(v);
+        let mapped = enum_media_format_value(v);
         let exceptions = btreemap! {
             "AAC+eAAC+" => vec![MediaFormat::AAC_plus, MediaFormat::eAAC_plus],
             "H.264 HEVC" => vec![MediaFormat::H264, MediaFormat::H265],
@@ -768,7 +797,7 @@ fn multiple_string_media_format_value(
 #[cfg(test)]
 mod tests {
     use crate::parse::crawler::mi_shop_com::multiple_string_media_format_value;
-    use crate::parse::dto::characteristic::string_characteristic::MediaFormat;
+    use crate::parse::dto::characteristic::enum_characteristic::MediaFormat;
 
     #[test]
     fn it_parses_media_format() {

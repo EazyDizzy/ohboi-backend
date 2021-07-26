@@ -1,5 +1,5 @@
 CREATE TYPE characteristic_visualisation_type AS ENUM ('range', 'multi_selector', 'single_selector', 'bool');
-CREATE TYPE characteristic_value_type AS ENUM ('float', 'int', 'string', 'bool');
+CREATE TYPE characteristic_value_type AS ENUM ('float', 'int', 'string', 'enum_string','bool');
 
 CREATE TABLE characteristic (
     id                  serial primary key,

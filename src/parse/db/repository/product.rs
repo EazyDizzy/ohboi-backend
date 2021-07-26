@@ -39,8 +39,9 @@ pub fn update_details(existent_product: &Product, additional_info: &AdditionalPa
                 let char_value = v.value();
                 println!("char_value {}", char_value);
             }
-            TypedCharacteristic::Int(v) => {}
-            TypedCharacteristic::String(v) => {}
+            TypedCharacteristic::Int(_) => {}
+            TypedCharacteristic::String(_) => {}
+            TypedCharacteristic::Enum(_) => {}
         });
 
     panic!("her");

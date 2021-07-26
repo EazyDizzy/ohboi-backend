@@ -20,10 +20,11 @@ pub enum CurrencyEnum {
 #[derive(diesel_derive_enum::DbEnum, Debug, Serialize, Deserialize, Copy, Clone)]
 #[DieselType = "Characteristic_value_type"]
 pub enum CharacteristicValueType {
-    FLOAT,
-    INT,
-    STRING,
-    BOOL,
+    Float,
+    Int,
+    String,
+    EnumString,
+    Bool,
 }
 
 #[derive(diesel_derive_enum::DbEnum, Debug, Serialize, Deserialize, Copy, Clone)]
