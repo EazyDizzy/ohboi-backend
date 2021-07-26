@@ -16,6 +16,7 @@ path = "src/main.rs"
 codegen-units = 1256
 
 [profile.release]
+overflow-checks = true
 #codegen-units = 1
 #lto = "fat"
 
@@ -56,6 +57,8 @@ log = "0.4.13"
 env_logger = "0.8.2" # configuration for logger via env
 maplit = "1.0.2" # btreemap macros
 rand = "0.8.3"
+strum = { version = "0.21", features = ["derive"] } # enum iterators
+strum_macros = "0.21"
 
 [dev-dependencies]
 actix-rt = "^1.1.1"

@@ -51,10 +51,7 @@ pub enum SimCard {
 pub enum DisplayType {
     Oled,
     Amoled,
-    LCD,
-    TFT,
     IPS,
-    Retina,
 }
 
 #[derive(Serialize, Debug, PartialEq)]

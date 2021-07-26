@@ -79,16 +79,6 @@ table! {
     use diesel::sql_types::*;
     use crate::my_enum::*;
 
-    product_characteristic_enum_value (id) {
-        id -> Int4,
-        value -> Int2,
-    }
-}
-
-table! {
-    use diesel::sql_types::*;
-    use crate::my_enum::*;
-
     product_characteristic_float_value (id) {
         id -> Int4,
         value -> Float8,
@@ -203,7 +193,6 @@ allow_tables_to_appear_in_same_query!(
     exchange_rate,
     product,
     product_characteristic,
-    product_characteristic_enum_value,
     product_characteristic_float_value,
     product_characteristic_int_value,
     product_characteristic_string_value,

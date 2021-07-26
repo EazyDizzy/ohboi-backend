@@ -554,7 +554,7 @@ impl MiShopComCrawler {
                         .map_or(None, |v| Some(FloatCharacteristic::ScreenDiagonal(v)))
                 }
                 "Bluetooth" => float_value(&title, external_id, &value)
-                    .map_or(None, |v| Some(FloatCharacteristic::Bluetooth(v))),
+                    .map_or(None, |v| Some(FloatCharacteristic::BluetoothVersion(v))),
                 "Частота" => float_ghz_value(&title, external_id, &value)
                     .map_or(None, |v| Some(FloatCharacteristic::CPUFrequency_Ghz(v))),
                 "Вес (г)" => float_value(&title, external_id, &value)

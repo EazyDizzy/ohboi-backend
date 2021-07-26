@@ -1,6 +1,6 @@
 use bigdecimal::Num;
 
-pub fn float_android_version_value(title: &str, external_id: &str, mut value: &str) -> Option<f32> {
+pub fn float_android_version_value(title: &str, external_id: &str, value: &str) -> Option<f32> {
     float_version_value(
         title,
         external_id,

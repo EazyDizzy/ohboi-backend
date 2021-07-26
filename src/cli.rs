@@ -23,6 +23,7 @@ use crate::parse::db::entity::category::CategorySlug;
 use crate::parse::db::entity::source::SourceName;
 use crate::parse::queue::declare_queue;
 use crate::parse::service::parser::parse_category;
+use crate::parse::db::repository::sync_characteristic_enum;
 
 mod common;
 mod local_sentry;
@@ -32,7 +33,7 @@ mod schema;
 
 #[derive(StructOpt, Debug)]
 struct Cli {
-    #[structopt(possible_values = & ["consumer", "producer", "queue_config"], case_insensitive = true)]
+    #[structopt(possible_values = & ["consumer", "producer", "queue_config", "characteristic_enum_sync"], case_insensitive = true)]
     worker_type: String,
     #[structopt(short, possible_values = & ConsumerName::variants(), case_insensitive = true, required_if("worker-type", "consumer"))]
     consumer_name: Option<ConsumerName>,
@@ -72,6 +73,10 @@ async fn main() {
 
     let args: Cli = Cli::from_args();
 
+    if args.worker_type == "characteristic_enum_sync" {
+        sync_characteristic_enum();
+        return;
+    }
     if args.worker_type == "queue_config" {
         let _ = parse_category(SourceName::MiShopCom, CategorySlug::Smartphone).await;
 

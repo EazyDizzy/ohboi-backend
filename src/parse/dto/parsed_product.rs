@@ -1,6 +1,5 @@
 use serde::Serialize;
 
-use crate::parse::dto::characteristic::bool_characteristic::BoolCharacteristic;
 use crate::parse::dto::characteristic::float_characteristic::FloatCharacteristic;
 use crate::parse::dto::characteristic::int_characteristic::IntCharacteristic;
 use crate::parse::dto::characteristic::string_characteristic::StringCharacteristic;
@@ -35,5 +34,4 @@ pub enum TypedCharacteristic {
     Float(FloatCharacteristic),
     Int(IntCharacteristic),
     String(StringCharacteristic),
-    Bool(BoolCharacteristic),
 }
