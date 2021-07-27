@@ -5,14 +5,20 @@ use strum::VariantNames;
 use crate::common::db;
 use crate::diesel::prelude::*;
 use crate::my_enum::{CharacteristicValueType, CharacteristicVisualisationType};
+use crate::parse::db::entity::category::CategorySlug;
+use crate::parse::db::entity::characteristic::category_characteristic::{
+    CategoryCharacteristic, NewCategoryCharacteristic,
+};
 use crate::parse::db::entity::characteristic::characteristic::{Characteristic, NewCharacteristic};
 use crate::parse::db::entity::characteristic::product_characteristic_enum_value::{
     NewProductCharacteristicEnumValue, ProductCharacteristicEnumValue,
 };
+use crate::parse::db::repository::category::get_category;
 use crate::parse::dto::characteristic::enum_characteristic::*;
 use crate::parse::dto::characteristic::float_characteristic::FloatCharacteristic;
 use crate::parse::dto::characteristic::int_characteristic::IntCharacteristic;
 use crate::parse::dto::characteristic::string_characteristic::StringCharacteristic;
+use crate::schema::category_characteristic;
 use crate::schema::characteristic;
 use crate::schema::product_characteristic_enum_value;
 
@@ -23,8 +29,6 @@ pub fn sync_characteristic_enum() -> () {
     sync_int_chars();
     sync_string_chars();
     sync_enum_chars();
-
-    match_characteristics_to_categories();
 }
 
 fn sync_float_chars() {
@@ -47,8 +51,9 @@ fn sync_float_chars() {
                 .get_result(connection);
 
         match insert_result {
-            Ok(_) => {
+            Ok(new_char) => {
                 log::info!("Float {} characteristic was created", new_char.slug);
+                connect_char_to_category(new_char, CategorySlug::Smartphone);
             }
             Err(e) => {
                 if let Error::DatabaseError(DatabaseErrorKind::UniqueViolation, _) = e {
@@ -105,8 +110,9 @@ fn sync_int_chars() {
                 .get_result(connection);
 
         match insert_result {
-            Ok(_) => {
+            Ok(new_char) => {
                 log::info!("Int {} characteristic was created", new_char.slug);
+                connect_char_to_category(new_char, CategorySlug::Smartphone);
             }
             Err(e) => {
                 if let Error::DatabaseError(DatabaseErrorKind::UniqueViolation, _) = e {
@@ -166,8 +172,9 @@ fn sync_string_chars() {
                 .get_result(connection);
 
         match insert_result {
-            Ok(_) => {
+            Ok(new_char) => {
                 log::info!("String {} characteristic was created", new_char.slug);
+                connect_char_to_category(new_char, CategorySlug::Smartphone);
             }
             Err(e) => {
                 if let Error::DatabaseError(DatabaseErrorKind::UniqueViolation, _) = e {
@@ -207,8 +214,9 @@ fn sync_enum_chars() {
                 .get_result(connection);
 
         match insert_result {
-            Ok(_) => {
+            Ok(new_char) => {
                 log::info!("Enum {} characteristic was created", new_char.slug);
+                connect_char_to_category(new_char, CategorySlug::Smartphone);
             }
             Err(e) => {
                 if let Error::DatabaseError(DatabaseErrorKind::UniqueViolation, _) = e {
@@ -315,6 +323,37 @@ fn sync_one_enum_char_values(char: EnumCharacteristic) {
     }
 }
 
-fn match_characteristics_to_categories() {
-    todo!()
+fn connect_char_to_category(char: Characteristic, category: CategorySlug) {
+    let connection = &db::establish_connection();
+    let category_id = get_category(category).id;
+
+    let new_category_char = NewCategoryCharacteristic {
+        characteristic_id: char.id,
+        category_id,
+    };
+
+    let insert_result: Result<CategoryCharacteristic, diesel::result::Error> =
+        diesel::insert_into(category_characteristic::table)
+            .values(&new_category_char)
+            .get_result(connection);
+
+    match insert_result {
+        Ok(_) => {
+            log::info!(
+                "Characteristic {} was successfully matched to {} category",
+                char.slug,
+                category
+            );
+        }
+        Err(e) => {
+            sentry::capture_message(
+                format!(
+                    "Characteristic {} can't be matched to {} category. {:?}",
+                    char.slug, category, e
+                )
+                .as_str(),
+                sentry::Level::Warning,
+            );
+        }
+    }
 }

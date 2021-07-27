@@ -20,7 +20,9 @@ CREATE TABLE category_characteristic (
                       on delete cascade,
     foreign key(category_id)
                   references category(id)
-                  on delete cascade
+                  on delete cascade,
+
+    UNIQUE (characteristic_id, category_id)
 );
 
 CREATE TABLE product_characteristic (
