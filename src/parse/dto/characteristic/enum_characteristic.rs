@@ -4,7 +4,7 @@ use serde::Serialize;
 use strum_macros::EnumIter;
 use strum_macros::EnumVariantNames;
 
-#[derive(Serialize, Debug, PartialEq, Clone)]
+#[derive(Serialize, Debug, PartialEq, Clone, EnumVariantNames)]
 pub enum EnumCharacteristic {
     ChargingConnectorType(ChargingConnectorType),
     BatteryType(BatteryType),
@@ -18,7 +18,7 @@ pub enum EnumCharacteristic {
     TechnologySupport(Technology),
     ProducingCountry(Country),
     MemoryCardSlot(MemoryCardSlot),
-    SupportedMediaFormats(MediaFormat),
+    SupportedMediaFormat(MediaFormat),
 }
 
 impl fmt::Display for EnumCharacteristic {
@@ -50,7 +50,7 @@ impl EnumCharacteristic {
             TechnologySupport(e) => format!("{:?}", e),
             ProducingCountry(e) => format!("{:?}", e),
             MemoryCardSlot(e) => format!("{:?}", e),
-            SupportedMediaFormats(e) => format!("{:?}", e),
+            SupportedMediaFormat(e) => format!("{:?}", e),
         }
     }
 }

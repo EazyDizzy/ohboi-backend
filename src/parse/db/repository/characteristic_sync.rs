@@ -1,16 +1,20 @@
 use diesel::result::{DatabaseErrorKind, Error};
 use strum::IntoEnumIterator;
-use strum_macros::EnumIter;
+use strum::VariantNames;
 
 use crate::common::db;
 use crate::diesel::prelude::*;
 use crate::my_enum::{CharacteristicValueType, CharacteristicVisualisationType};
 use crate::parse::db::entity::characteristic::characteristic::{Characteristic, NewCharacteristic};
+use crate::parse::db::entity::characteristic::product_characteristic_enum_value::{
+    NewProductCharacteristicEnumValue, ProductCharacteristicEnumValue,
+};
+use crate::parse::dto::characteristic::enum_characteristic::*;
 use crate::parse::dto::characteristic::float_characteristic::FloatCharacteristic;
 use crate::parse::dto::characteristic::int_characteristic::IntCharacteristic;
 use crate::parse::dto::characteristic::string_characteristic::StringCharacteristic;
-use crate::parse::dto::parsed_product::TypedCharacteristic;
 use crate::schema::characteristic;
+use crate::schema::product_characteristic_enum_value;
 
 // TODO update if sth changed
 // TODO delete removed
@@ -18,6 +22,7 @@ pub fn sync_characteristic_enum() -> () {
     sync_float_chars();
     sync_int_chars();
     sync_string_chars();
+    sync_enum_chars();
 
     match_characteristics_to_categories();
 }
@@ -172,6 +177,134 @@ fn sync_string_chars() {
                         format!(
                             "String {} characteristic has an error: {:?}",
                             new_char.slug, e
+                        )
+                        .as_str(),
+                        sentry::Level::Warning,
+                    );
+                }
+            }
+        }
+    }
+}
+
+fn sync_enum_chars() {
+    let connection = &db::establish_connection();
+
+    for item in EnumCharacteristic::VARIANTS {
+        let value_type = CharacteristicValueType::Enum;
+        let visualisation_type = CharacteristicVisualisationType::MultiSelector;
+
+        let new_char = NewCharacteristic {
+            slug: item.to_string(),
+            enabled: true,
+            visualisation_type,
+            value_type,
+        };
+
+        let insert_result: Result<Characteristic, diesel::result::Error> =
+            diesel::insert_into(characteristic::table)
+                .values(&new_char)
+                .get_result(connection);
+
+        match insert_result {
+            Ok(_) => {
+                log::info!("Enum {} characteristic was created", new_char.slug);
+            }
+            Err(e) => {
+                if let Error::DatabaseError(DatabaseErrorKind::UniqueViolation, _) = e {
+                    log::info!("Enum {} characteristic already exists", new_char.slug);
+                } else {
+                    sentry::capture_message(
+                        format!(
+                            "Enum {} characteristic has an error: {:?}",
+                            new_char.slug, e
+                        )
+                        .as_str(),
+                        sentry::Level::Warning,
+                    );
+                }
+            }
+        }
+    }
+
+    sync_enum_char_values();
+}
+
+fn sync_enum_char_values() {
+    sync_one_enum_char_values(EnumCharacteristic::ChargingConnectorType(
+        ChargingConnectorType::USBTypeC,
+    ));
+    sync_one_enum_char_values(EnumCharacteristic::BatteryType(BatteryType::LithiumIon));
+    sync_one_enum_char_values(EnumCharacteristic::SimCard(SimCard::Mini));
+    sync_one_enum_char_values(EnumCharacteristic::Material(Material::Plastic));
+    sync_one_enum_char_values(EnumCharacteristic::DisplayType(DisplayType::Oled));
+    sync_one_enum_char_values(EnumCharacteristic::InternetConnectionTechnology(
+        InternetConnectionTechnology::_4G,
+    ));
+    sync_one_enum_char_values(EnumCharacteristic::SatelliteNavigation(
+        SatelliteNavigation::Galileo,
+    ));
+    sync_one_enum_char_values(EnumCharacteristic::WifiStandard(WifiStandard::_5));
+    sync_one_enum_char_values(EnumCharacteristic::AudioJack(AudioJack::USBTypeC));
+    sync_one_enum_char_values(EnumCharacteristic::TechnologySupport(
+        Technology::FastCharging,
+    ));
+    sync_one_enum_char_values(EnumCharacteristic::ProducingCountry(Country::China));
+    sync_one_enum_char_values(EnumCharacteristic::MemoryCardSlot(MemoryCardSlot::Separate));
+    sync_one_enum_char_values(EnumCharacteristic::SupportedMediaFormat(MediaFormat::H264));
+}
+
+/// This code was moved to separate function just to force compiler to fail when new variant was added
+/// Don't forget to add new variant to sync_enum_char_values when adding below
+fn sync_one_enum_char_values(char: EnumCharacteristic) {
+    let connection = &db::establish_connection();
+
+    let values = match char {
+        EnumCharacteristic::ChargingConnectorType(_) => ChargingConnectorType::VARIANTS,
+        EnumCharacteristic::BatteryType(_) => BatteryType::VARIANTS,
+        EnumCharacteristic::SimCard(_) => SimCard::VARIANTS,
+        EnumCharacteristic::Material(_) => Material::VARIANTS,
+        EnumCharacteristic::DisplayType(_) => DisplayType::VARIANTS,
+        EnumCharacteristic::InternetConnectionTechnology(_) => {
+            InternetConnectionTechnology::VARIANTS
+        }
+        EnumCharacteristic::SatelliteNavigation(_) => SatelliteNavigation::VARIANTS,
+        EnumCharacteristic::WifiStandard(_) => WifiStandard::VARIANTS,
+        EnumCharacteristic::AudioJack(_) => AudioJack::VARIANTS,
+        EnumCharacteristic::TechnologySupport(_) => Technology::VARIANTS,
+        EnumCharacteristic::ProducingCountry(_) => Country::VARIANTS,
+        EnumCharacteristic::MemoryCardSlot(_) => MemoryCardSlot::VARIANTS,
+        EnumCharacteristic::SupportedMediaFormat(_) => MediaFormat::VARIANTS,
+    };
+
+    for value in values {
+        let new_enum_char_value = NewProductCharacteristicEnumValue {
+            value: [char.name().as_str(), ".", value].concat(),
+        };
+
+        let insert_result: Result<ProductCharacteristicEnumValue, diesel::result::Error> =
+            diesel::insert_into(product_characteristic_enum_value::table)
+                .values(&new_enum_char_value)
+                .get_result(connection);
+
+        match insert_result {
+            Ok(_) => {
+                log::info!(
+                    "Enum characteristic value {} was created",
+                    new_enum_char_value.value
+                );
+            }
+            Err(e) => {
+                if let Error::DatabaseError(DatabaseErrorKind::UniqueViolation, _) = e {
+                    log::info!(
+                        "Enum characteristic value {} already exists",
+                        new_enum_char_value.value
+                    );
+                } else {
+                    sentry::capture_message(
+                        format!(
+                            "Enum characteristic value {} has an error: {:?}",
+                            new_enum_char_value.value, e
                         )
                         .as_str(),
                         sentry::Level::Warning,

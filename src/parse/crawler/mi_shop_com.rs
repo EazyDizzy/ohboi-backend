@@ -457,7 +457,7 @@ impl MiShopComCrawler {
                     multiple_string_media_format_value(title, external_id, value)
                         .into_iter()
                         .for_each(|v| {
-                            characteristics.push(EnumCharacteristic::SupportedMediaFormats(v))
+                            characteristics.push(EnumCharacteristic::SupportedMediaFormat(v))
                         });
                     parsed_indexes.push(title_index);
                 }

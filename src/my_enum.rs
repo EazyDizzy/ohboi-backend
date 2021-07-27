@@ -23,7 +23,7 @@ pub enum CharacteristicValueType {
     Float,
     Int,
     String,
-    EnumString,
+    Enum,
     Bool,
 }
 
