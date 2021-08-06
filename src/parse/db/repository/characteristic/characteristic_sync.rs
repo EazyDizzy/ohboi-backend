@@ -14,13 +14,14 @@ use crate::parse::db::entity::characteristic::product_characteristic_enum_value:
     NewProductCharacteristicEnumValue, ProductCharacteristicEnumValue,
 };
 use crate::parse::db::repository::category::get_category;
+use crate::parse::db::repository::characteristic::{
+    characteristic, product_characteristic_enum_value,
+};
 use crate::parse::dto::characteristic::enum_characteristic::*;
 use crate::parse::dto::characteristic::float_characteristic::FloatCharacteristic;
 use crate::parse::dto::characteristic::int_characteristic::IntCharacteristic;
 use crate::parse::dto::characteristic::string_characteristic::StringCharacteristic;
 use crate::schema::category_characteristic;
-use crate::schema::characteristic;
-use crate::schema::product_characteristic_enum_value;
 
 // TODO update if sth changed
 // TODO delete removed
@@ -32,44 +33,13 @@ pub fn sync_characteristic_enum() -> () {
 }
 
 fn sync_float_chars() {
-    let connection = &db::establish_connection();
-
     for item in FloatCharacteristic::iter() {
         let value_type = CharacteristicValueType::Float;
         let visualisation_type = get_float_char_vis_type(item);
 
-        let new_char = NewCharacteristic {
-            slug: item.name(),
-            enabled: true,
-            visualisation_type,
-            value_type,
-        };
-
-        let insert_result: Result<Characteristic, diesel::result::Error> =
-            diesel::insert_into(characteristic::table)
-                .values(&new_char)
-                .get_result(connection);
-
-        match insert_result {
-            Ok(new_char) => {
-                log::info!("Float {} characteristic was created", new_char.slug);
-                connect_char_to_category(new_char, CategorySlug::Smartphone);
-            }
-            Err(e) => {
-                if let Error::DatabaseError(DatabaseErrorKind::UniqueViolation, _) = e {
-                    log::info!("Float {} characteristic already exists", new_char.slug);
-                } else {
-                    sentry::capture_message(
-                        format!(
-                            "Float {} characteristic has an error: {:?}",
-                            new_char.slug, e
-                        )
-                        .as_str(),
-                        sentry::Level::Warning,
-                    );
-                }
-            }
-        }
+        let created_char =
+            characteristic::create_if_not_exists(item.name(), visualisation_type, value_type);
+        created_char.and_then(|c| Some(connect_char_to_category(c, CategorySlug::Smartphone)));
     }
 }
 
@@ -91,41 +61,13 @@ fn get_float_char_vis_type(char: FloatCharacteristic) -> CharacteristicVisualisa
 }
 
 fn sync_int_chars() {
-    let connection = &db::establish_connection();
-
     for item in IntCharacteristic::iter() {
         let value_type = CharacteristicValueType::Int;
         let visualisation_type = get_int_char_vis_type(item);
 
-        let new_char = NewCharacteristic {
-            slug: item.name(),
-            enabled: true,
-            visualisation_type,
-            value_type,
-        };
-
-        let insert_result: Result<Characteristic, diesel::result::Error> =
-            diesel::insert_into(characteristic::table)
-                .values(&new_char)
-                .get_result(connection);
-
-        match insert_result {
-            Ok(new_char) => {
-                log::info!("Int {} characteristic was created", new_char.slug);
-                connect_char_to_category(new_char, CategorySlug::Smartphone);
-            }
-            Err(e) => {
-                if let Error::DatabaseError(DatabaseErrorKind::UniqueViolation, _) = e {
-                    log::info!("Int {} characteristic already exists", new_char.slug);
-                } else {
-                    sentry::capture_message(
-                        format!("Int {} characteristic has an error: {:?}", new_char.slug, e)
-                            .as_str(),
-                        sentry::Level::Warning,
-                    );
-                }
-            }
-        }
+        let created_char =
+            characteristic::create_if_not_exists(item.name(), visualisation_type, value_type);
+        created_char.and_then(|c| Some(connect_char_to_category(c, CategorySlug::Smartphone)));
     }
 }
 
@@ -159,80 +101,20 @@ fn sync_string_chars() {
         let value_type = CharacteristicValueType::String;
         let visualisation_type = CharacteristicVisualisationType::MultiSelector;
 
-        let new_char = NewCharacteristic {
-            slug: item.name(),
-            enabled: true,
-            visualisation_type,
-            value_type,
-        };
-
-        let insert_result: Result<Characteristic, diesel::result::Error> =
-            diesel::insert_into(characteristic::table)
-                .values(&new_char)
-                .get_result(connection);
-
-        match insert_result {
-            Ok(new_char) => {
-                log::info!("String {} characteristic was created", new_char.slug);
-                connect_char_to_category(new_char, CategorySlug::Smartphone);
-            }
-            Err(e) => {
-                if let Error::DatabaseError(DatabaseErrorKind::UniqueViolation, _) = e {
-                    log::info!("String {} characteristic already exists", new_char.slug);
-                } else {
-                    sentry::capture_message(
-                        format!(
-                            "String {} characteristic has an error: {:?}",
-                            new_char.slug, e
-                        )
-                        .as_str(),
-                        sentry::Level::Warning,
-                    );
-                }
-            }
-        }
+        let created_char =
+            characteristic::create_if_not_exists(item.name(), visualisation_type, value_type);
+        created_char.and_then(|c| Some(connect_char_to_category(c, CategorySlug::Smartphone)));
     }
 }
 
 fn sync_enum_chars() {
-    let connection = &db::establish_connection();
-
     for item in EnumCharacteristic::VARIANTS {
         let value_type = CharacteristicValueType::Enum;
         let visualisation_type = CharacteristicVisualisationType::MultiSelector;
 
-        let new_char = NewCharacteristic {
-            slug: item.to_string(),
-            enabled: true,
-            visualisation_type,
-            value_type,
-        };
-
-        let insert_result: Result<Characteristic, diesel::result::Error> =
-            diesel::insert_into(characteristic::table)
-                .values(&new_char)
-                .get_result(connection);
-
-        match insert_result {
-            Ok(new_char) => {
-                log::info!("Enum {} characteristic was created", new_char.slug);
-                connect_char_to_category(new_char, CategorySlug::Smartphone);
-            }
-            Err(e) => {
-                if let Error::DatabaseError(DatabaseErrorKind::UniqueViolation, _) = e {
-                    log::info!("Enum {} characteristic already exists", new_char.slug);
-                } else {
-                    sentry::capture_message(
-                        format!(
-                            "Enum {} characteristic has an error: {:?}",
-                            new_char.slug, e
-                        )
-                        .as_str(),
-                        sentry::Level::Warning,
-                    );
-                }
-            }
-        }
+        let created_char =
+            characteristic::create_if_not_exists(item.to_string(), visualisation_type, value_type);
+        created_char.and_then(|c| Some(connect_char_to_category(c, CategorySlug::Smartphone)));
     }
 
     sync_enum_char_values();
@@ -265,8 +147,6 @@ fn sync_enum_char_values() {
 /// This code was moved to separate function just to force compiler to fail when new variant was added
 /// Don't forget to add new variant to sync_enum_char_values when adding below
 fn sync_one_enum_char_values(char: EnumCharacteristic) {
-    let connection = &db::establish_connection();
-
     let values = match char {
         EnumCharacteristic::ChargingConnectorType(_) => ChargingConnectorType::VARIANTS,
         EnumCharacteristic::BatteryType(_) => BatteryType::VARIANTS,
@@ -286,40 +166,9 @@ fn sync_one_enum_char_values(char: EnumCharacteristic) {
     };
 
     for value in values {
-        let new_enum_char_value = NewProductCharacteristicEnumValue {
-            value: [char.name().as_str(), ".", value].concat(),
-        };
-
-        let insert_result: Result<ProductCharacteristicEnumValue, diesel::result::Error> =
-            diesel::insert_into(product_characteristic_enum_value::table)
-                .values(&new_enum_char_value)
-                .get_result(connection);
-
-        match insert_result {
-            Ok(_) => {
-                log::info!(
-                    "Enum characteristic value {} was created",
-                    new_enum_char_value.value
-                );
-            }
-            Err(e) => {
-                if let Error::DatabaseError(DatabaseErrorKind::UniqueViolation, _) = e {
-                    log::info!(
-                        "Enum characteristic value {} already exists",
-                        new_enum_char_value.value
-                    );
-                } else {
-                    sentry::capture_message(
-                        format!(
-                            "Enum characteristic value {} has an error: {:?}",
-                            new_enum_char_value.value, e
-                        )
-                        .as_str(),
-                        sentry::Level::Warning,
-                    );
-                }
-            }
-        }
+        product_characteristic_enum_value::create_if_not_exists(
+            [char.name().as_str(), ".", value].concat(),
+        );
     }
 }
 

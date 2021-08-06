@@ -4,7 +4,7 @@ use serde::Serialize;
 use strum_macros::EnumIter;
 use strum_macros::EnumVariantNames;
 
-#[derive(Serialize, Debug, PartialEq, Clone, EnumVariantNames)]
+#[derive(Serialize, Debug, PartialEq, Clone, Copy, EnumVariantNames)]
 pub enum EnumCharacteristic {
     ChargingConnectorType(ChargingConnectorType),
     BatteryType(BatteryType),
@@ -28,6 +28,13 @@ impl fmt::Display for EnumCharacteristic {
 }
 
 impl EnumCharacteristic {
+    pub fn full_name(&self) -> String {
+        let name = self.name();
+        let value = self.value();
+
+        [name, ".".to_string(), value].concat()
+    }
+
     pub fn name(&self) -> String {
         let name = self.to_string();
 
