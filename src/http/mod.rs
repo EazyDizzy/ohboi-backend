@@ -8,6 +8,7 @@ mod product;
 mod source_product;
 mod category;
 mod source;
+mod util;
 
 pub async fn run_server() -> std::io::Result<()> {
     HttpServer::new(|| {
@@ -24,6 +25,7 @@ pub async fn run_server() -> std::io::Result<()> {
             .service(web::resource("/categories").route(web::get().to(category::get_all_categories)))
             .service(web::resource("/sources").route(web::get().to(source::get_all_sources)))
             .service(web::resource("/products").route(web::post().to(product::get_products)))
+            .service(web::resource("/product").route(web::get().to(product::get_product)))
             // TODO return dates
             .service(web::resource("/source_products").route(web::post().to(source_product::get_source_products)))
             .default_service(

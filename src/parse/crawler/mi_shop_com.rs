@@ -179,7 +179,7 @@ impl Crawler for MiShopComCrawler {
             None
         } else {
             // We should not upload images if it is not valid product
-            // let image_urls = self.extract_images(document, external_id).await;
+            let image_urls = self.extract_images(document, external_id).await;
             let start = Instant::now();
             let characteristics = self.extract_characteristics(&document, external_id);
             let duration = start.elapsed();
@@ -188,7 +188,7 @@ impl Crawler for MiShopComCrawler {
                 duration
             );
             Some(AdditionalParsedProductInfo {
-                image_urls: vec![],
+                image_urls,
                 description: description.unwrap(),
                 available: available.unwrap(),
                 characteristics,
