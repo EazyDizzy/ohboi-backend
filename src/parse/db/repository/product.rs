@@ -9,11 +9,11 @@ use crate::parse::db::entity::category::CategorySlug;
 use crate::parse::db::entity::characteristic::product_characteristic::NewProductCharacteristic;
 use crate::parse::db::entity::product::{NewProduct, Product};
 use crate::parse::db::repository::category::get_category;
-use crate::parse::db::repository::characteristic::characteristic::get_char_by_name_and_type;
+use crate::parse::db::repository::characteristic::characteristic_id::get_characteristic_id;
 use crate::parse::db::repository::characteristic::product_characteristic::create_many_if_not_exists;
 use crate::parse::db::repository::characteristic::{
     product_characteristic_enum_value, product_characteristic_float_value,
-    product_characteristic_int_value, product_characteristic_string_value,
+    product_characteristic_string_value,
 };
 use crate::parse::dto::characteristic::float_characteristic::FloatCharacteristic;
 use crate::parse::dto::parsed_product::{
@@ -44,37 +44,31 @@ pub fn update_details(existent_product: &Product, additional_info: &AdditionalPa
         .characteristics
         .iter()
         .map(|tc| {
-            let (characteristic_id, value_id) = match tc {
+            let characteristic_id = get_characteristic_id(tc.clone());
+
+            let value_id = match tc {
                 TypedCharacteristic::Float(v) => {
                     let char_value = v.value();
                     let product_value =
                         product_characteristic_float_value::create_if_not_exists(char_value);
-                    // TODO know char ids in compile time (hardcode)
-                    let char = get_char_by_name_and_type(v.name(), CharacteristicValueType::Float);
-                    (char.id, product_value.and_then(|v| Some(v.id)))
+
+                    product_value.and_then(|v| Some(v.id))
                 }
                 TypedCharacteristic::Int(v) => {
-                    // TODO use int value as id, without additional join
-                    let char_value = v.value();
-                    let product_value =
-                        product_characteristic_int_value::create_if_not_exists(char_value);
-                    let char = get_char_by_name_and_type(v.name(), CharacteristicValueType::Int);
-
-                    (char.id, product_value.and_then(|v| Some(v.id)))
+                    // Use raw int value as value_id, without additional join
+                    Some(v.value())
                 }
                 TypedCharacteristic::String(v) => {
                     let char_value = v.value();
                     let product_value =
                         product_characteristic_string_value::create_if_not_exists(char_value);
-                    let char = get_char_by_name_and_type(v.name(), CharacteristicValueType::String);
 
-                    (char.id, product_value.and_then(|v| Some(v.id)))
+                    product_value.and_then(|v| Some(v.id))
                 }
                 TypedCharacteristic::Enum(v) => {
                     let product_value = product_characteristic_enum_value::get_value_by_enum(*v);
-                    let char = get_char_by_name_and_type(v.name(), CharacteristicValueType::Enum);
 
-                    (char.id, Some(product_value.id))
+                    Some(product_value.id)
                 }
             };
 

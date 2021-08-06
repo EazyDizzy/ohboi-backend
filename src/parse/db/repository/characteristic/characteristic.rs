@@ -6,27 +6,8 @@ use crate::my_enum::{CharacteristicValueType, CharacteristicVisualisationType};
 use crate::parse::db::entity::characteristic::characteristic::{Characteristic, NewCharacteristic};
 use crate::schema::characteristic;
 
-pub fn get_char_by_name_and_type(
-    searched_slug: String,
-    searched_value_type: CharacteristicValueType,
-) -> Characteristic {
-    use crate::schema::characteristic::dsl::{characteristic, slug, value_type};
-    let connection = &db::establish_connection();
-
-    let filter = slug
-        .eq(searched_slug)
-        .and(value_type.eq(searched_value_type));
-
-    let results: Vec<Characteristic> = characteristic
-        .filter(filter)
-        .limit(1)
-        .load::<Characteristic>(connection)
-        .expect("Cannot load characteristic");
-
-    results.into_iter().next().unwrap()
-}
-
 pub fn create_if_not_exists(
+    id: i16,
     slug: String,
     visualisation_type: CharacteristicVisualisationType,
     value_type: CharacteristicValueType,
@@ -34,6 +15,7 @@ pub fn create_if_not_exists(
     let connection = &db::establish_connection();
 
     let new_char = NewCharacteristic {
+        id,
         slug,
         enabled: true,
         visualisation_type,

@@ -5,7 +5,7 @@ use crate::schema::characteristic;
 
 #[derive(Serialize, Queryable)]
 pub struct Characteristic {
-    pub id: i32,
+    pub id: i16,
     pub slug: String,
     pub enabled: bool,
     pub visualisation_type: CharacteristicVisualisationType,
@@ -15,6 +15,7 @@ pub struct Characteristic {
 #[derive(Insertable, Debug)]
 #[table_name = "characteristic"]
 pub struct NewCharacteristic {
+    pub id: i16,
     pub slug: String,
     pub enabled: bool,
     pub visualisation_type: CharacteristicVisualisationType,

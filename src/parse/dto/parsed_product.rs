@@ -30,7 +30,7 @@ pub struct AdditionalParsedProductInfo {
     pub characteristics: Vec<TypedCharacteristic>,
 }
 
-#[derive(Serialize, Debug, PartialEq)]
+#[derive(Serialize, Debug, PartialEq, Clone)]
 pub enum TypedCharacteristic {
     Float(FloatCharacteristic),
     Int(IntCharacteristic),

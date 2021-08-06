@@ -16,7 +16,7 @@ table! {
     category_characteristic (id) {
         id -> Int4,
         category_id -> Int4,
-        characteristic_id -> Int4,
+        characteristic_id -> Int2,
     }
 }
 
@@ -25,7 +25,7 @@ table! {
     use crate::my_enum::*;
 
     characteristic (id) {
-        id -> Int4,
+        id -> Int2,
         slug -> Varchar,
         enabled -> Bool,
         visualisation_type -> Characteristic_visualisation_type,
@@ -70,7 +70,7 @@ table! {
     product_characteristic (id) {
         id -> Int4,
         product_id -> Int4,
-        characteristic_id -> Int4,
+        characteristic_id -> Int2,
         value_id -> Int4,
     }
 }
@@ -92,16 +92,6 @@ table! {
     product_characteristic_float_value (id) {
         id -> Int4,
         value -> Numeric,
-    }
-}
-
-table! {
-    use diesel::sql_types::*;
-    use crate::my_enum::*;
-
-    product_characteristic_int_value (id) {
-        id -> Int4,
-        value -> Int4,
     }
 }
 
@@ -188,7 +178,6 @@ table! {
 joinable!(category_characteristic -> category (category_id));
 joinable!(category_characteristic -> characteristic (characteristic_id));
 joinable!(product -> category (category));
-joinable!(product_characteristic -> characteristic (characteristic_id));
 joinable!(product_characteristic -> product (product_id));
 joinable!(source_product -> product (product_id));
 joinable!(source_product -> source (source_id));
@@ -205,7 +194,6 @@ allow_tables_to_appear_in_same_query!(
     product_characteristic,
     product_characteristic_enum_value,
     product_characteristic_float_value,
-    product_characteristic_int_value,
     product_characteristic_string_value,
     source,
     source_product,

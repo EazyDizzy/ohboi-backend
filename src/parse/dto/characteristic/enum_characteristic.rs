@@ -60,6 +60,33 @@ impl EnumCharacteristic {
             SupportedMediaFormat(e) => format!("{:?}", e),
         }
     }
+
+    pub fn type_from_name(name: &str) -> EnumCharacteristic {
+        match name {
+            "ChargingConnectorType" => {
+                EnumCharacteristic::ChargingConnectorType(ChargingConnectorType::MicroUSB)
+            }
+            "BatteryType" => EnumCharacteristic::BatteryType(BatteryType::LithiumIon),
+            "SimCard" => EnumCharacteristic::SimCard(SimCard::Embedded),
+            "Material" => EnumCharacteristic::Material(Material::Aluminum),
+            "DisplayType" => EnumCharacteristic::DisplayType(DisplayType::Amoled),
+            "InternetConnectionTechnology" => {
+                EnumCharacteristic::InternetConnectionTechnology(InternetConnectionTechnology::_3G)
+            }
+            "SatelliteNavigation" => {
+                EnumCharacteristic::SatelliteNavigation(SatelliteNavigation::A_GPS)
+            }
+            "WifiStandard" => EnumCharacteristic::WifiStandard(WifiStandard::_4),
+            "AudioJack" => EnumCharacteristic::AudioJack(AudioJack::_3_5mm),
+            "TechnologySupport" => EnumCharacteristic::TechnologySupport(Technology::Autofocus),
+            "ProducingCountry" => EnumCharacteristic::ProducingCountry(Country::China),
+            "MemoryCardSlot" => EnumCharacteristic::MemoryCardSlot(MemoryCardSlot::Hybrid),
+            "SupportedMediaFormat" => EnumCharacteristic::SupportedMediaFormat(MediaFormat::_3GI),
+            en => {
+                panic!("Unknown enum type {}", en)
+            }
+        }
+    }
 }
 
 #[derive(Serialize, Debug, PartialEq, Copy, Clone, EnumVariantNames)]
