@@ -67,8 +67,7 @@ table! {
     use diesel::sql_types::*;
     use crate::my_enum::*;
 
-    product_characteristic (id) {
-        id -> Int4,
+    product_characteristic (product_id, characteristic_id, value_id) {
         product_id -> Int4,
         characteristic_id -> Int2,
         value_id -> Int4,

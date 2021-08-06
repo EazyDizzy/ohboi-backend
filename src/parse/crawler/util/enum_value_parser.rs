@@ -38,7 +38,7 @@ pub fn enum_media_format_value(value: &str) -> Option<MediaFormat> {
         "WMA" => Some(MediaFormat::WMA),
         "AWB" => Some(MediaFormat::AWB),
         e => {
-            println!("unknown '{}'", e);
+            println!("Unknown media format '{}'", e);
             None
         }
     }

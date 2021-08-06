@@ -26,7 +26,6 @@ CREATE TABLE category_characteristic (
 );
 
 CREATE TABLE product_characteristic (
-    id                  serial primary key,
     product_id          int not null,
     characteristic_id   smallint not null,
     value_id            int not null,
@@ -35,7 +34,7 @@ CREATE TABLE product_characteristic (
             	  references product(id)
             	  on delete cascade,
 
-   UNIQUE (product_id, characteristic_id, value_id)
+   PRIMARY KEY (product_id, characteristic_id, value_id)
 );
 
 CREATE TABLE product_characteristic_string_value (
