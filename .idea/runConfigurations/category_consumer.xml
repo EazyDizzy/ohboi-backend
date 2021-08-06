@@ -1,0 +1,28 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="category consumer" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
+    <option name="command" value="run --bin daemon consumer -c ParseCategory" />
+    <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+    <option name="channel" value="DEFAULT" />
+    <option name="requiredFeatures" value="true" />
+    <option name="allFeatures" value="false" />
+    <option name="emulateTerminal" value="false" />
+    <option name="withSudo" value="false" />
+    <option name="backtrace" value="SHORT" />
+    <envs>
+      <env name="AWS_ACCESS_KEY_ID" value="AKIAIWQAIEO2WRAUNW7Q" />
+      <env name="AWS_SECRET_ACCESS_KEY" value="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" />
+      <env name="SENTRY_DSN" value="https://45be5c2348a542b4913b2f8e565bfc9e@o497964.ingest.sentry.io/5580300" />
+      <env name="S3_BUCKET" value="ohboi" />
+      <env name="GOOGLE_CLIENT_ID" value="873890700414-pm8akjed7031lf2v26pupnqijnd8ijb2.apps.googleusercontent.com" />
+      <env name="DATABASE_URL" value="postgres://postgres:password@localhost/postgres" />
+      <env name="RUST_LOG" value="daemon" />
+      <env name="AMQP_ADDR" value="amqp://root:root@localhost:5672/%2f" />
+    </envs>
+    <option name="isRedirectInput" value="false" />
+    <option name="redirectInputPath" value="" />
+    <method v="2">
+      <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+    </method>
+  </configuration>
+</component>

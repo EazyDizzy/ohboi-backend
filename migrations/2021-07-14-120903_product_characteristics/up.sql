@@ -24,7 +24,7 @@ CREATE TABLE category_characteristic (
 
     UNIQUE (characteristic_id, category_id)
 );
-
+-- TODO there is a big chance that characteristic_id join will not be needed, remove it if yes
 CREATE TABLE product_characteristic (
     id                  serial primary key,
     product_id          int not null,
@@ -36,7 +36,9 @@ CREATE TABLE product_characteristic (
             	  on delete cascade,
     foreign key(characteristic_id)
             	  references characteristic(id)
-            	  on delete cascade
+            	  on delete cascade,
+
+   UNIQUE (product_id, characteristic_id, value_id)
 );
 
 CREATE TABLE product_characteristic_string_value (

@@ -187,7 +187,6 @@ impl Crawler for MiShopComCrawler {
                 "Time elapsed in extract_characteristics() is: {:?}",
                 duration
             );
-            println!("characteristics {:?}", characteristics);
             Some(AdditionalParsedProductInfo {
                 image_urls: vec![],
                 description: description.unwrap(),

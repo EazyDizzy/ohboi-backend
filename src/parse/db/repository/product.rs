@@ -4,9 +4,13 @@ use diesel::{sql_query, QueryDsl, RunQueryDsl};
 
 use crate::common::db;
 use crate::diesel::prelude::*;
+use crate::my_enum::CharacteristicValueType;
 use crate::parse::db::entity::category::CategorySlug;
+use crate::parse::db::entity::characteristic::product_characteristic::NewProductCharacteristic;
 use crate::parse::db::entity::product::{NewProduct, Product};
 use crate::parse::db::repository::category::get_category;
+use crate::parse::db::repository::characteristic::characteristic::get_char_by_name_and_type;
+use crate::parse::db::repository::characteristic::product_characteristic::create_many_if_not_exists;
 use crate::parse::db::repository::characteristic::{
     product_characteristic_enum_value, product_characteristic_float_value,
     product_characteristic_int_value, product_characteristic_string_value,
@@ -36,36 +40,62 @@ pub fn update_details(existent_product: &Product, additional_info: &AdditionalPa
     let connection = &db::establish_connection();
     let target = product.filter(id.eq(existent_product.id));
 
-    let product_id = existent_product.id;
-    additional_info.characteristics.iter().for_each(|tc| {
-        let value_id: Option<i32> = match tc {
-            TypedCharacteristic::Float(v) => {
-                let char_value = v.value();
-                let product_value =
-                    product_characteristic_float_value::create_if_not_exists(char_value);
-                product_value.and_then(|v| Some(v.id))
-            }
-            TypedCharacteristic::Int(v) => {
-                let char_value = v.value();
-                let product_value =
-                    product_characteristic_int_value::create_if_not_exists(char_value);
-                product_value.and_then(|v| Some(v.id))
-            }
-            TypedCharacteristic::String(v) => {
-                let char_value = v.value();
-                let product_value =
-                    product_characteristic_string_value::create_if_not_exists(char_value);
-                product_value.and_then(|v| Some(v.id))
-            }
-            TypedCharacteristic::Enum(v) => {
-                let product_value =
-                    product_characteristic_enum_value::get_value_by_enum(*v);
-                Some(product_value.id)
-            }
-        };
-    });
+    let product_characteristics: Vec<Option<NewProductCharacteristic>> = additional_info
+        .characteristics
+        .iter()
+        .map(|tc| {
+            let (characteristic_id, value_id) = match tc {
+                TypedCharacteristic::Float(v) => {
+                    let char_value = v.value();
+                    let product_value =
+                        product_characteristic_float_value::create_if_not_exists(char_value);
+                    // TODO know char ids in compile time (hardcode)
+                    let char = get_char_by_name_and_type(v.name(), CharacteristicValueType::Float);
+                    (char.id, product_value.and_then(|v| Some(v.id)))
+                }
+                TypedCharacteristic::Int(v) => {
+                    // TODO use int value as id, without additional join
+                    let char_value = v.value();
+                    let product_value =
+                        product_characteristic_int_value::create_if_not_exists(char_value);
+                    let char = get_char_by_name_and_type(v.name(), CharacteristicValueType::Int);
 
-    panic!("her");
+                    (char.id, product_value.and_then(|v| Some(v.id)))
+                }
+                TypedCharacteristic::String(v) => {
+                    let char_value = v.value();
+                    let product_value =
+                        product_characteristic_string_value::create_if_not_exists(char_value);
+                    let char = get_char_by_name_and_type(v.name(), CharacteristicValueType::String);
+
+                    (char.id, product_value.and_then(|v| Some(v.id)))
+                }
+                TypedCharacteristic::Enum(v) => {
+                    let product_value = product_characteristic_enum_value::get_value_by_enum(*v);
+                    let char = get_char_by_name_and_type(v.name(), CharacteristicValueType::Enum);
+
+                    (char.id, Some(product_value.id))
+                }
+            };
+
+            value_id.map_or(None, |v| {
+                Some(NewProductCharacteristic {
+                    product_id: existent_product.id,
+                    characteristic_id,
+                    value_id: v,
+                })
+            })
+        })
+        .collect();
+
+    create_many_if_not_exists(
+        product_characteristics
+            .into_iter()
+            .filter(Option::is_some)
+            .map(Option::unwrap)
+            .collect::<Vec<NewProductCharacteristic>>(),
+    );
+
     diesel::update(target)
         .set((
             description.eq(&additional_info.description),
