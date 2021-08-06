@@ -91,7 +91,7 @@ table! {
 
     product_characteristic_float_value (id) {
         id -> Int4,
-        value -> Float8,
+        value -> Numeric,
     }
 }
 

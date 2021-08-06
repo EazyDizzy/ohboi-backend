@@ -41,7 +41,7 @@ CREATE TABLE product_characteristic (
 
 CREATE TABLE product_characteristic_string_value (
     id          serial primary key,
-    value       varchar not null
+    value       varchar not null UNIQUE
 );
 CREATE TABLE product_characteristic_enum_value (
     id          serial primary key,
@@ -49,9 +49,9 @@ CREATE TABLE product_characteristic_enum_value (
 );
 CREATE TABLE product_characteristic_float_value (
     id          serial primary key,
-    value       float not null
+    value       numeric not null UNIQUE
 );
 CREATE TABLE product_characteristic_int_value (
     id          serial primary key,
-    value       int not null
+    value       int not null UNIQUE
 );

@@ -1,7 +1,6 @@
-pub use characteristic_sync::sync_characteristic_enum;
+pub use characteristic::characteristic_sync::sync_characteristic_enum;
 
 pub mod category;
-mod characteristic_sync;
 pub mod exchange_rate;
 pub mod product;
 pub mod source;
