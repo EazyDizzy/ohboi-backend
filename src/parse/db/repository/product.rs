@@ -7,7 +7,7 @@ use crate::diesel::prelude::*;
 use crate::parse::db::entity::category::CategorySlug;
 use crate::parse::db::entity::product::{NewProduct, Product};
 use crate::parse::db::repository::category::get_category;
-use crate::parse::db::repository::characteristic::{product_characteristic_float_value, product_characteristic_int_value};
+use crate::parse::db::repository::characteristic::{product_characteristic_float_value, product_characteristic_int_value, product_characteristic_string_value};
 use crate::parse::dto::characteristic::float_characteristic::FloatCharacteristic;
 use crate::parse::dto::parsed_product::{
     AdditionalParsedProductInfo, InternationalParsedProduct, TypedCharacteristic,
@@ -46,7 +46,12 @@ pub fn update_details(existent_product: &Product, additional_info: &AdditionalPa
                     product_characteristic_int_value::create_if_not_exists(char_value);
                 product_value.and_then(|v| Some(v.id))
             },
-            TypedCharacteristic::String(_) => None,
+            TypedCharacteristic::String(v) => {
+                let char_value = v.value();
+                let product_value =
+                    product_characteristic_string_value::create_if_not_exists(char_value);
+                product_value.and_then(|v| Some(v.id))
+            },
             TypedCharacteristic::Enum(_) => None,
         };
     });
