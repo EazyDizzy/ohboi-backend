@@ -15,7 +15,7 @@ use crate::parse::db::repository::characteristic::{
     product_characteristic_enum_value, product_characteristic_float_value,
     product_characteristic_string_value,
 };
-use crate::parse::dto::characteristic::float_characteristic::FloatCharacteristic;
+use crate::common::dto::characteristic::float_characteristic::FloatCharacteristic;
 use crate::parse::dto::parsed_product::{
     AdditionalParsedProductInfo, InternationalParsedProduct, TypedCharacteristic,
 };

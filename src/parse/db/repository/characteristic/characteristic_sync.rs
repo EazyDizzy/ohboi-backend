@@ -3,6 +3,10 @@ use strum::IntoEnumIterator;
 use strum::VariantNames;
 
 use crate::common::db;
+use crate::common::dto::characteristic::enum_characteristic::*;
+use crate::common::dto::characteristic::float_characteristic::FloatCharacteristic;
+use crate::common::dto::characteristic::int_characteristic::IntCharacteristic;
+use crate::common::dto::characteristic::string_characteristic::StringCharacteristic;
 use crate::diesel::prelude::*;
 use crate::my_enum::{CharacteristicValueType, CharacteristicVisualisationType};
 use crate::parse::db::entity::category::CategorySlug;
@@ -14,16 +18,11 @@ use crate::parse::db::entity::characteristic::product_characteristic_enum_value:
     NewProductCharacteristicEnumValue, ProductCharacteristicEnumValue,
 };
 use crate::parse::db::repository::category::get_category;
-use crate::parse::db::repository::characteristic::characteristic_id::get_characteristic_id;
 use crate::parse::db::repository::characteristic::{
     characteristic, product_characteristic_enum_value,
 };
-use crate::parse::dto::characteristic::enum_characteristic::*;
-use crate::parse::dto::characteristic::float_characteristic::FloatCharacteristic;
-use crate::parse::dto::characteristic::int_characteristic::IntCharacteristic;
-use crate::parse::dto::characteristic::string_characteristic::StringCharacteristic;
-use crate::parse::dto::parsed_product::TypedCharacteristic;
 use crate::schema::category_characteristic;
+use crate::common::util::characteristic_id::get_characteristic_id;
 
 // TODO update if sth changed
 // TODO delete removed

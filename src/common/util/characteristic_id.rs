@@ -1,8 +1,8 @@
-use crate::parse::dto::characteristic::enum_characteristic::EnumCharacteristic;
-use crate::parse::dto::characteristic::float_characteristic::FloatCharacteristic;
-use crate::parse::dto::characteristic::int_characteristic::IntCharacteristic;
-use crate::parse::dto::characteristic::string_characteristic::StringCharacteristic;
-use crate::parse::dto::parsed_product::TypedCharacteristic;
+use crate::common::dto::characteristic::enum_characteristic::EnumCharacteristic;
+use crate::common::dto::characteristic::float_characteristic::FloatCharacteristic;
+use crate::common::dto::characteristic::int_characteristic::IntCharacteristic;
+use crate::common::dto::characteristic::string_characteristic::StringCharacteristic;
+use crate::common::dto::characteristic::TypedCharacteristic;
 
 pub fn get_characteristic_id(char: TypedCharacteristic) -> i16 {
     match char {

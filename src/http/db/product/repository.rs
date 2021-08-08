@@ -2,26 +2,46 @@ use bigdecimal::BigDecimal;
 use diesel::{QueryDsl, RunQueryDsl};
 
 use crate::common::db;
+use crate::common::db::repository::exchange_rate::try_get_exchange_rate_by_code;
 use crate::common::service::currency_converter::convert_from;
 use crate::diesel::prelude::*;
 use crate::http::db::lower;
 use crate::http::db::product::entity::Product;
+use crate::http::db::product_characteristic::repository::get_all_characteristics_of_product;
+use crate::http::dto::product::ProductInfo;
 use crate::http::product::{ProductFilters, ProductParams};
+use crate::http::util::product::convert_product_prices;
 use crate::schema::product;
 use crate::schema::product::dsl::{category, enabled, highest_price, id, lowest_price, title};
 use crate::schema::source_product;
 
-pub fn get_product_info(params: &ProductParams) -> Option<Product> {
+pub fn get_product_info(params: &ProductParams) -> Option<ProductInfo> {
     let connection = &db::establish_connection();
     use crate::schema::product::dsl::id;
 
     let targets = product::table.filter(id.eq(params.id).and(enabled.eq(true)));
 
-    targets
+    let product: Option<Product> = targets
         .load::<Product>(connection)
         .expect("Error loading source products")
         .into_iter()
-        .next()
+        .next();
+
+    product.and_then(|mut p| {
+        let rate = try_get_exchange_rate_by_code(params.currency);
+        convert_product_prices(&mut p, rate);
+        let characteristics = get_all_characteristics_of_product(p.id);
+        Some(ProductInfo {
+            id: p.id,
+            title: p.title,
+            description: p.description,
+            lowest_price: p.lowest_price,
+            highest_price: p.highest_price,
+            images: p.images,
+            category: p.category,
+            characteristics,
+        })
+    })
 }
 
 pub fn get_filtered_products(filters: &ProductFilters) -> Vec<Product> {

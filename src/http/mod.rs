@@ -9,6 +9,7 @@ mod source_product;
 mod category;
 mod source;
 mod util;
+mod dto;
 
 pub async fn run_server() -> std::io::Result<()> {
     HttpServer::new(|| {

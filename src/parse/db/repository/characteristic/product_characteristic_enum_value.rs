@@ -5,7 +5,7 @@ use crate::diesel::prelude::*;
 use crate::parse::db::entity::characteristic::product_characteristic_enum_value::{
     NewProductCharacteristicEnumValue, ProductCharacteristicEnumValue,
 };
-use crate::parse::dto::characteristic::enum_characteristic::EnumCharacteristic;
+use crate::common::dto::characteristic::enum_characteristic::EnumCharacteristic;
 
 pub fn get_value_by_enum(enm: EnumCharacteristic) -> ProductCharacteristicEnumValue {
     use crate::schema::product_characteristic_enum_value::dsl::{

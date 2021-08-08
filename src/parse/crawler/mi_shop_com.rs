@@ -15,12 +15,12 @@ use crate::parse::crawler::crawler::{get_html_nodes, Crawler, ProductHtmlSelecto
 use crate::parse::crawler::util::*;
 use crate::parse::db::entity::category::CategorySlug;
 use crate::parse::db::entity::source::SourceName;
-use crate::parse::dto::characteristic::enum_characteristic::{
+use crate::common::dto::characteristic::enum_characteristic::{
     BatteryType, DisplayType, EnumCharacteristic, MediaFormat, SimCard, Technology,
 };
-use crate::parse::dto::characteristic::float_characteristic::FloatCharacteristic;
-use crate::parse::dto::characteristic::int_characteristic::IntCharacteristic;
-use crate::parse::dto::characteristic::string_characteristic::StringCharacteristic;
+use crate::common::dto::characteristic::float_characteristic::FloatCharacteristic;
+use crate::common::dto::characteristic::int_characteristic::IntCharacteristic;
+use crate::common::dto::characteristic::string_characteristic::StringCharacteristic;
 use crate::parse::dto::parsed_product::{
     AdditionalParsedProductInfo, LocalParsedProduct, TypedCharacteristic,
 };
@@ -796,7 +796,7 @@ fn multiple_string_media_format_value(
 #[cfg(test)]
 mod tests {
     use crate::parse::crawler::mi_shop_com::multiple_string_media_format_value;
-    use crate::parse::dto::characteristic::enum_characteristic::MediaFormat;
+    use crate::common::dto::characteristic::enum_characteristic::MediaFormat;
 
     #[test]
     fn it_parses_media_format() {

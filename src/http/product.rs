@@ -16,9 +16,7 @@ pub async fn get_product(params: Query<ProductParams>) -> HttpResponse {
         return HttpResponse::NotFound().json("Not found");
     }
 
-    let mut product = product.unwrap();
-    let rate = try_get_exchange_rate_by_code(params.currency);
-    convert_product_prices(&mut product, rate);
+    let product = product.unwrap();
 
     HttpResponse::Ok().json(product)
 }
