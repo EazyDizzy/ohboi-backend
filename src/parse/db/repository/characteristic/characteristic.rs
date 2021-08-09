@@ -3,8 +3,9 @@ use diesel::result::{DatabaseErrorKind, Error};
 use crate::common::db;
 use crate::diesel::prelude::*;
 use crate::my_enum::{CharacteristicValueType, CharacteristicVisualisationType};
-use crate::parse::db::entity::characteristic::characteristic::{Characteristic, NewCharacteristic};
+use crate::parse::db::entity::characteristic::characteristic::NewCharacteristic;
 use crate::schema::characteristic;
+use crate::common::db::entity::characteristic::Characteristic;
 
 pub fn create_if_not_exists(
     id: i16,

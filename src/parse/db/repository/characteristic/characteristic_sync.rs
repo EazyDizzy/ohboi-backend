@@ -3,17 +3,21 @@ use strum::IntoEnumIterator;
 use strum::VariantNames;
 
 use crate::common::db;
+use crate::common::db::entity::characteristic::Characteristic;
 use crate::common::dto::characteristic::enum_characteristic::*;
 use crate::common::dto::characteristic::float_characteristic::FloatCharacteristic;
 use crate::common::dto::characteristic::int_characteristic::IntCharacteristic;
 use crate::common::dto::characteristic::string_characteristic::StringCharacteristic;
+use crate::common::dto::characteristic::TypedCharacteristic;
+use crate::common::util::all_characteristics::*;
+use crate::common::util::characteristic_id::get_characteristic_id;
 use crate::diesel::prelude::*;
 use crate::my_enum::{CharacteristicValueType, CharacteristicVisualisationType};
 use crate::parse::db::entity::category::CategorySlug;
 use crate::parse::db::entity::characteristic::category_characteristic::{
     CategoryCharacteristic, NewCategoryCharacteristic,
 };
-use crate::parse::db::entity::characteristic::characteristic::{Characteristic, NewCharacteristic};
+use crate::parse::db::entity::characteristic::characteristic::NewCharacteristic;
 use crate::parse::db::entity::characteristic::product_characteristic_enum_value::{
     NewProductCharacteristicEnumValue, ProductCharacteristicEnumValue,
 };
@@ -22,8 +26,6 @@ use crate::parse::db::repository::characteristic::{
     characteristic, product_characteristic_enum_value,
 };
 use crate::schema::category_characteristic;
-use crate::common::util::characteristic_id::get_characteristic_id;
-use crate::common::dto::characteristic::TypedCharacteristic;
 
 // TODO update if sth changed
 // TODO delete removed
@@ -35,94 +37,48 @@ pub fn sync_characteristic_enum() -> () {
 }
 
 fn sync_float_chars() {
-    for item in FloatCharacteristic::iter() {
-        let value_type = CharacteristicValueType::Float;
-        let visualisation_type = get_float_char_vis_type(item);
-        let id = get_characteristic_id(TypedCharacteristic::Float(item));
-
-        let created_char =
-            characteristic::create_if_not_exists(id, item.name(), visualisation_type, value_type);
+    for item in get_float_characteristics() {
+        let created_char = characteristic::create_if_not_exists(
+            item.id,
+            item.slug,
+            item.visualisation_type,
+            item.value_type,
+        );
         created_char.and_then(|c| Some(connect_char_to_category(c, CategorySlug::Smartphone)));
-    }
-}
-
-fn get_float_char_vis_type(char: FloatCharacteristic) -> CharacteristicVisualisationType {
-    use FloatCharacteristic::*;
-
-    match char {
-        Width_mm(_) => CharacteristicVisualisationType::Range,
-        Height_mm(_) => CharacteristicVisualisationType::Range,
-        Thickness_mm(_) => CharacteristicVisualisationType::Range,
-        ScreenDiagonal(_) => CharacteristicVisualisationType::MultiSelector,
-        BluetoothVersion(_) => CharacteristicVisualisationType::MultiSelector,
-        CPUFrequency_Ghz(_) => CharacteristicVisualisationType::MultiSelector,
-        Weight_gr(_) => CharacteristicVisualisationType::Range,
-        MIUIVersion(_) => CharacteristicVisualisationType::MultiSelector,
-        AndroidVersion(_) => CharacteristicVisualisationType::MultiSelector,
-        Aperture(_) => CharacteristicVisualisationType::MultiSelector,
     }
 }
 
 fn sync_int_chars() {
-    for item in IntCharacteristic::iter() {
-        let value_type = CharacteristicValueType::Int;
-        let visualisation_type = get_int_char_vis_type(item);
-        let id = get_characteristic_id(TypedCharacteristic::Int(item));
-
-        let created_char =
-            characteristic::create_if_not_exists(id, item.name(), visualisation_type, value_type);
+    for item in get_int_characteristics() {
+        let created_char = characteristic::create_if_not_exists(
+            item.id,
+            item.slug,
+            item.visualisation_type,
+            item.value_type,
+        );
         created_char.and_then(|c| Some(connect_char_to_category(c, CategorySlug::Smartphone)));
     }
 }
 
-fn get_int_char_vis_type(char: IntCharacteristic) -> CharacteristicVisualisationType {
-    use IntCharacteristic::*;
-
-    match char {
-        BatteryCapacity_mA_h(_) => CharacteristicVisualisationType::MultiSelector,
-        NumberOfProcessorCores(_) => CharacteristicVisualisationType::MultiSelector,
-        BuiltInMemory_GB(_) => CharacteristicVisualisationType::MultiSelector,
-        Ram_GB(_) => CharacteristicVisualisationType::MultiSelector,
-        FrontCamera_MP(_) => CharacteristicVisualisationType::MultiSelector,
-        VideoResolution_Pix(_) => CharacteristicVisualisationType::MultiSelector,
-        AmountOfSimCards(_) => CharacteristicVisualisationType::MultiSelector,
-        PPI(_) => CharacteristicVisualisationType::MultiSelector,
-        Fps(_) => CharacteristicVisualisationType::MultiSelector,
-        Brightness_cd_m2(_) => CharacteristicVisualisationType::MultiSelector,
-        UpdateFrequency_Hz(_) => CharacteristicVisualisationType::MultiSelector,
-        Camera_mp(_) => CharacteristicVisualisationType::MultiSelector,
-        LTEDiapason(_) => CharacteristicVisualisationType::MultiSelector,
-        GSMDiapason(_) => CharacteristicVisualisationType::MultiSelector,
-        UMTSDiapason(_) => CharacteristicVisualisationType::MultiSelector,
-        Warranty_month(_) => CharacteristicVisualisationType::MultiSelector,
-        MaxMemoryCardSize_GB(_) => CharacteristicVisualisationType::MultiSelector,
-    }
-}
 fn sync_string_chars() {
-    for item in StringCharacteristic::iter() {
-        let value_type = CharacteristicValueType::String;
-        let visualisation_type = CharacteristicVisualisationType::MultiSelector;
-        let id = get_characteristic_id(TypedCharacteristic::String(item.clone()));
-
-        let created_char =
-            characteristic::create_if_not_exists(id, item.name(), visualisation_type, value_type);
+    for item in get_string_characteristics() {
+        let created_char = characteristic::create_if_not_exists(
+            item.id,
+            item.slug,
+            item.visualisation_type,
+            item.value_type,
+        );
         created_char.and_then(|c| Some(connect_char_to_category(c, CategorySlug::Smartphone)));
     }
 }
 
 fn sync_enum_chars() {
-    for item in EnumCharacteristic::VARIANTS {
-        let value_type = CharacteristicValueType::Enum;
-        let visualisation_type = CharacteristicVisualisationType::MultiSelector;
-        let id = get_characteristic_id(TypedCharacteristic::Enum(
-            EnumCharacteristic::type_from_name(item),
-        ));
-
+    for item in get_enum_characteristics() {
         let created_char = characteristic::create_if_not_exists(
-            id,
-            item.to_string(),
-            visualisation_type,
-            value_type,
+            item.id,
+            item.slug,
+            item.visualisation_type,
+            item.value_type,
         );
         created_char.and_then(|c| Some(connect_char_to_category(c, CategorySlug::Smartphone)));
     }
