@@ -13,6 +13,30 @@ table! {
     use diesel::sql_types::*;
     use crate::my_enum::*;
 
+    category_characteristic (id) {
+        id -> Int4,
+        category_id -> Int4,
+        characteristic_id -> Int2,
+    }
+}
+
+table! {
+    use diesel::sql_types::*;
+    use crate::my_enum::*;
+
+    characteristic (id) {
+        id -> Int2,
+        slug -> Varchar,
+        enabled -> Bool,
+        visualisation_type -> Characteristic_visualisation_type,
+        value_type -> Characteristic_value_type,
+    }
+}
+
+table! {
+    use diesel::sql_types::*;
+    use crate::my_enum::*;
+
     exchange_rate (id) {
         id -> Int4,
         currency -> Currency_enum,
@@ -36,6 +60,47 @@ table! {
         enabled -> Bool,
         created_at -> Timestamp,
         updated_at -> Timestamp,
+    }
+}
+
+table! {
+    use diesel::sql_types::*;
+    use crate::my_enum::*;
+
+    product_characteristic (product_id, characteristic_id, value_id) {
+        product_id -> Int4,
+        characteristic_id -> Int2,
+        value_id -> Int4,
+    }
+}
+
+table! {
+    use diesel::sql_types::*;
+    use crate::my_enum::*;
+
+    product_characteristic_enum_value (id) {
+        id -> Int4,
+        value -> Varchar,
+    }
+}
+
+table! {
+    use diesel::sql_types::*;
+    use crate::my_enum::*;
+
+    product_characteristic_float_value (id) {
+        id -> Int4,
+        value -> Numeric,
+    }
+}
+
+table! {
+    use diesel::sql_types::*;
+    use crate::my_enum::*;
+
+    product_characteristic_string_value (id) {
+        id -> Int4,
+        value -> Varchar,
     }
 }
 
@@ -109,7 +174,10 @@ table! {
     }
 }
 
+joinable!(category_characteristic -> category (category_id));
+joinable!(category_characteristic -> characteristic (characteristic_id));
 joinable!(product -> category (category));
+joinable!(product_characteristic -> product (product_id));
 joinable!(source_product -> product (product_id));
 joinable!(source_product -> source (source_id));
 joinable!(source_product_price_history -> product (product_id));
@@ -118,8 +186,14 @@ joinable!(user_registration -> users (user_id));
 
 allow_tables_to_appear_in_same_query!(
     category,
+    category_characteristic,
+    characteristic,
     exchange_rate,
     product,
+    product_characteristic,
+    product_characteristic_enum_value,
+    product_characteristic_float_value,
+    product_characteristic_string_value,
     source,
     source_product,
     source_product_price_history,

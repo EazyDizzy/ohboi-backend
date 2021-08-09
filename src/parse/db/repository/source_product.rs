@@ -3,11 +3,13 @@ use chrono::Utc;
 use diesel::{BoolExpressionMethods, ExpressionMethods, QueryDsl, RunQueryDsl};
 
 use crate::common::db;
-use crate::parse::db::entity::{NewSourceProduct, Product, SourceName, SourceProduct};
+use crate::parse::db::entity::product::Product;
+use crate::parse::db::entity::source::SourceName;
+use crate::parse::db::entity::source_product::{NewSourceProduct, SourceProduct};
 use crate::parse::db::repository::product::update_price_range_if_needed;
 use crate::parse::db::repository::source::get_source;
 use crate::parse::db::repository::source_product_price_history::add_to_history_if_not_exists;
-use crate::parse::parsed_product::InternationalParsedProduct;
+use crate::parse::dto::parsed_product::InternationalParsedProduct;
 use crate::schema::source_product;
 
 pub fn get_by_source_and_external_id(source: SourceName, expected_external_id: String) -> Option<SourceProduct> {

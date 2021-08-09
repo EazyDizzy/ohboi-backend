@@ -16,3 +16,22 @@ pub enum CurrencyEnum {
     UAH,
     USD,
 }
+
+#[derive(diesel_derive_enum::DbEnum, Debug, Serialize, Deserialize, Copy, Clone)]
+#[DieselType = "Characteristic_value_type"]
+pub enum CharacteristicValueType {
+    Float,
+    Int,
+    String,
+    Enum,
+    Bool,
+}
+
+#[derive(diesel_derive_enum::DbEnum, Debug, Serialize, Deserialize, Copy, Clone)]
+#[DieselType = "Characteristic_visualisation_type"]
+pub enum CharacteristicVisualisationType {
+    Range,
+    MultiSelector,
+    SingleSelector,
+    Bool,
+}

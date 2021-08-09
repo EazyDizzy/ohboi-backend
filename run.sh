@@ -2,6 +2,7 @@ sleep 20
 ./bin/diesel migration run
 
 ./daemon queue_config
+./daemon characteristic_enum_sync
 (
   env
   echo "0 0 * * *  /app/daemon producer -p PullExchangeRates 2>&1 | tee /app/logs/PullExchangeRatesProducer.log &"

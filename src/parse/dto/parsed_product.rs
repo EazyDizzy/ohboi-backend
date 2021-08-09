@@ -1,5 +1,7 @@
 use serde::Serialize;
 
+use crate::common::dto::characteristic::TypedCharacteristic;
+
 #[derive(Serialize, Debug, PartialEq, Clone)]
 pub struct LocalParsedProduct {
     pub title: String,
@@ -22,4 +24,5 @@ pub struct AdditionalParsedProductInfo {
     pub image_urls: Vec<String>,
     pub description: String,
     pub available: bool,
+    pub characteristics: Vec<TypedCharacteristic>,
 }

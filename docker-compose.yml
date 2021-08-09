@@ -1,24 +1,24 @@
 version: "3"
 services:
-   ohboi_backend:
-       container_name: ohboi
-       depends_on:
-           - ohboi_postgres
-           - ohboi_rabbitmq
-       networks:
-           - shopily
-       build:
-           context: .
-           dockerfile: dev.Dockerfile
-       command: bash run.sh
-       env_file:
-           - .env
-       ports:
-           - 8888:8888
-       volumes:
-           - ./logs:/app/logs
-           - ./migrations:/app/migrations
-           - ./run.sh:/app/run.sh
+    ohboi_backend:
+        container_name: ohboi
+        depends_on:
+            - ohboi_postgres
+            - ohboi_rabbitmq
+        networks:
+            - shopily
+        build:
+            context: .
+            dockerfile: dev.Dockerfile
+        command: bash run.sh
+        env_file:
+            - .env
+        ports:
+            - 8888:8888
+        volumes:
+            - ./logs:/app/logs
+            - ./migrations:/app/migrations
+            - ./run.sh:/app/run.sh
 
     ohboi_rabbitmq:
         networks:

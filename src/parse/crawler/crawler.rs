@@ -13,8 +13,9 @@ use scraper::html::Select;
 use crate::local_sentry::add_category_breadcrumb;
 use crate::my_enum::CurrencyEnum;
 use crate::parse::consumer::parse_image::UploadImageMessage;
-use crate::parse::db::entity::{CategorySlug, SourceName};
-use crate::parse::parsed_product::{AdditionalParsedProductInfo, LocalParsedProduct};
+use crate::parse::db::entity::category::CategorySlug;
+use crate::parse::db::entity::source::SourceName;
+use crate::parse::dto::parsed_product::{AdditionalParsedProductInfo, LocalParsedProduct};
 use crate::parse::queue::postpone_image_parsing;
 use crate::parse::service::cloud_uploader::upload_image_to_cloud;
 use crate::parse::service::html_cleaner::clean_html;
@@ -256,8 +257,9 @@ mod tests {
 
     use crate::my_enum::CurrencyEnum;
     use crate::parse::crawler::crawler::Crawler;
-    use crate::parse::db::entity::{CategorySlug, SourceName};
-    use crate::parse::parsed_product::{AdditionalParsedProductInfo, LocalParsedProduct};
+    use crate::parse::db::entity::category::CategorySlug;
+    use crate::parse::db::entity::source::SourceName;
+    use crate::parse::dto::parsed_product::{AdditionalParsedProductInfo, LocalParsedProduct};
 
     #[derive(Clone)]
     pub struct EmptyCrawler {}

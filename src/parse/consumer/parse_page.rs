@@ -5,7 +5,8 @@ use sentry::protocol::map::BTreeMap;
 use serde::{Deserialize, Serialize};
 
 use crate::local_sentry::add_category_breadcrumb;
-use crate::parse::db::entity::{CategorySlug, SourceName};
+use crate::parse::db::entity::category::CategorySlug;
+use crate::parse::db::entity::source::SourceName;
 use crate::parse::queue::get_channel;
 use crate::parse::service::parser::parse_page;
 use crate::SETTINGS;

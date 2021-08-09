@@ -1,25 +1,33 @@
 use bigdecimal::{BigDecimal, ToPrimitive};
 use chrono::Utc;
-use diesel::{QueryDsl, RunQueryDsl, sql_query};
+use diesel::{sql_query, QueryDsl, RunQueryDsl};
 
 use crate::common::db;
+use crate::common::dto::characteristic::TypedCharacteristic;
+use crate::common::util::characteristic_id::get_characteristic_id;
 use crate::diesel::prelude::*;
-use crate::parse::db::entity::{CategorySlug, NewProduct, Product};
+use crate::parse::db::entity::category::CategorySlug;
+use crate::parse::db::entity::characteristic::product_characteristic::NewProductCharacteristic;
+use crate::parse::db::entity::product::{NewProduct, Product};
 use crate::parse::db::repository::category::get_category;
-use crate::parse::parsed_product::{AdditionalParsedProductInfo, InternationalParsedProduct};
+use crate::parse::db::repository::characteristic::product_characteristic::create_many_if_not_exists;
+use crate::parse::db::repository::characteristic::{
+    product_characteristic_enum_value, product_characteristic_float_value,
+    product_characteristic_string_value,
+};
+use crate::parse::dto::parsed_product::{AdditionalParsedProductInfo, InternationalParsedProduct};
 use crate::schema::product;
 
 pub fn add_image_to_product_details(existent_product_id: i32, file_path: &str) {
     let connection = &db::establish_connection();
 
-    sql_query(
-        format!(
-            "UPDATE product SET images = array_append(images, '{file_path}') WHERE id = {id}",
-            file_path = file_path,
-            id = existent_product_id
-        )
-    ).execute(connection)
-        .expect("Failed pushing new image to the list");
+    sql_query(format!(
+        "UPDATE product SET images = array_append(images, '{file_path}') WHERE id = {id}",
+        file_path = file_path,
+        id = existent_product_id
+    ))
+    .execute(connection)
+    .expect("Failed pushing new image to the list");
     // TODO enable?
 }
 
@@ -29,33 +37,84 @@ pub fn update_details(existent_product: &Product, additional_info: &AdditionalPa
     let connection = &db::establish_connection();
     let target = product.filter(id.eq(existent_product.id));
 
+    let product_characteristics: Vec<Option<NewProductCharacteristic>> = additional_info
+        .characteristics
+        .iter()
+        .map(|tc| {
+            let characteristic_id = get_characteristic_id(tc.clone());
+
+            let value_id = match tc {
+                TypedCharacteristic::Float(v) => {
+                    let char_value = v.value();
+                    let product_value =
+                        product_characteristic_float_value::create_if_not_exists(char_value);
+
+                    product_value.and_then(|v| Some(v.id))
+                }
+                TypedCharacteristic::Int(v) => {
+                    // Use raw int value as value_id, without additional join
+                    Some(v.value())
+                }
+                TypedCharacteristic::String(v) => {
+                    let char_value = v.value();
+                    let product_value =
+                        product_characteristic_string_value::create_if_not_exists(char_value);
+
+                    product_value.and_then(|v| Some(v.id))
+                }
+                TypedCharacteristic::Enum(v) => {
+                    let product_value = product_characteristic_enum_value::get_value_by_enum(*v);
+
+                    Some(product_value.id)
+                }
+            };
+
+            value_id.map_or(None, |v| {
+                Some(NewProductCharacteristic {
+                    product_id: existent_product.id,
+                    characteristic_id,
+                    value_id: v,
+                })
+            })
+        })
+        .collect();
+
+    create_many_if_not_exists(
+        product_characteristics
+            .into_iter()
+            .filter(Option::is_some)
+            .map(Option::unwrap)
+            .collect::<Vec<NewProductCharacteristic>>(),
+    );
+
     diesel::update(target)
         .set((
             description.eq(&additional_info.description),
             images.eq(&additional_info.image_urls),
-            enabled.eq(
-                (existent_product.enabled || additional_info.available)
-                    && !additional_info.image_urls.is_empty()
-                    && !additional_info.description.is_empty()
-            )
+            enabled.eq((existent_product.enabled || additional_info.available)
+                && !additional_info.image_urls.is_empty()
+                && !additional_info.description.is_empty()),
         ))
         .execute(connection)
         .expect("Failed to update product price");
 }
 
-pub fn create_if_not_exists(parsed_product: &InternationalParsedProduct, product_category: CategorySlug) -> Product {
+pub fn create_if_not_exists(
+    parsed_product: &InternationalParsedProduct,
+    product_category: CategorySlug,
+) -> Product {
     let existed_product = get_product_by_title(parsed_product.title.as_str());
 
-    existed_product.map_or_else(|| create(
-        parsed_product,
-        product_category,
-    ), |current_product| {
-        if parsed_product.available && !current_product.enabled {
-            enable_product(current_product.id);
-        }
+    existed_product.map_or_else(
+        || create(parsed_product, product_category),
+        |current_product| {
+            if parsed_product.available && !current_product.enabled {
+                enable_product(current_product.id);
+            }
 
-        current_product
-    })
+            current_product
+        },
+    )
 }
 
 pub fn update_price_range_if_needed(product_id: i32, new_price: f64) {
@@ -67,14 +126,10 @@ pub fn update_price_range_if_needed(product_id: i32, new_price: f64) {
     let current_lowest_price = existing_product.lowest_price.to_f64().unwrap();
     let current_highest_price = existing_product.highest_price.to_f64().unwrap();
 
-    let fresh_product_is_cheaper = new_price.lt(
-        &current_lowest_price
-    );
+    let fresh_product_is_cheaper = new_price.lt(&current_lowest_price);
     let current_product_has_zero_price = current_lowest_price.eq(&0.to_f64().unwrap());
     let should_update_lowest_price = fresh_product_is_cheaper || current_product_has_zero_price;
-    let should_update_highest_price = new_price.gt(
-        &current_highest_price
-    );
+    let should_update_highest_price = new_price.gt(&current_highest_price);
 
     let mut new_lowest_price = current_lowest_price;
     let mut new_highest_price = current_highest_price;
@@ -93,7 +148,7 @@ pub fn update_price_range_if_needed(product_id: i32, new_price: f64) {
             .set((
                 lowest_price.eq(BigDecimal::from(new_lowest_price)),
                 highest_price.eq(BigDecimal::from(new_highest_price)),
-                updated_at.eq(&now.naive_utc())
+                updated_at.eq(&now.naive_utc()),
             ))
             .execute(connection)
             .expect("Failed to update product price");
