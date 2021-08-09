@@ -4,6 +4,7 @@ use crate::common::dto::characteristic::float_characteristic::FloatCharacteristi
 use crate::common::dto::characteristic::int_characteristic::IntCharacteristic;
 use crate::common::dto::characteristic::string_characteristic::StringCharacteristic;
 use crate::common::dto::characteristic::enum_characteristic::EnumCharacteristic;
+use crate::common::dto::characteristic::TypedCharacteristic;
 
 #[derive(Serialize, Debug, PartialEq, Clone)]
 pub struct LocalParsedProduct {

@@ -23,6 +23,7 @@ use crate::parse::db::repository::characteristic::{
 };
 use crate::schema::category_characteristic;
 use crate::common::util::characteristic_id::get_characteristic_id;
+use crate::common::dto::characteristic::TypedCharacteristic;
 
 // TODO update if sth changed
 // TODO delete removed

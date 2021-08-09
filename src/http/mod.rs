@@ -10,6 +10,7 @@ mod category;
 mod source;
 mod util;
 mod dto;
+mod characteristic;
 
 pub async fn run_server() -> std::io::Result<()> {
     HttpServer::new(|| {
@@ -24,6 +25,7 @@ pub async fn run_server() -> std::io::Result<()> {
             // TODO product by id
             .service(web::resource("/user").route(web::post().to(user::create)))
             .service(web::resource("/categories").route(web::get().to(category::get_all_categories)))
+            .service(web::resource("/characteristics").route(web::get().to(characteristic::get_all_characteristics)))
             .service(web::resource("/sources").route(web::get().to(source::get_all_sources)))
             .service(web::resource("/products").route(web::post().to(product::get_products)))
             .service(web::resource("/product").route(web::get().to(product::get_product)))

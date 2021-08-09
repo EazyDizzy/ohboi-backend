@@ -10,20 +10,19 @@ use scraper::element_ref::Select;
 use scraper::{ElementRef, Html, Selector};
 use validator::HasLen;
 
-use crate::my_enum::CurrencyEnum;
-use crate::parse::crawler::crawler::{get_html_nodes, Crawler, ProductHtmlSelectors};
-use crate::parse::crawler::util::*;
-use crate::parse::db::entity::category::CategorySlug;
-use crate::parse::db::entity::source::SourceName;
 use crate::common::dto::characteristic::enum_characteristic::{
     BatteryType, DisplayType, EnumCharacteristic, MediaFormat, SimCard, Technology,
 };
 use crate::common::dto::characteristic::float_characteristic::FloatCharacteristic;
 use crate::common::dto::characteristic::int_characteristic::IntCharacteristic;
 use crate::common::dto::characteristic::string_characteristic::StringCharacteristic;
-use crate::parse::dto::parsed_product::{
-    AdditionalParsedProductInfo, LocalParsedProduct, TypedCharacteristic,
-};
+use crate::common::dto::characteristic::TypedCharacteristic;
+use crate::my_enum::CurrencyEnum;
+use crate::parse::crawler::crawler::{get_html_nodes, Crawler, ProductHtmlSelectors};
+use crate::parse::crawler::util::*;
+use crate::parse::db::entity::category::CategorySlug;
+use crate::parse::db::entity::source::SourceName;
+use crate::parse::dto::parsed_product::{AdditionalParsedProductInfo, LocalParsedProduct};
 use crate::parse::service::html_cleaner::inner_text;
 
 static SITE_BASE: &str = "https://mi-shop.com";
@@ -485,14 +484,9 @@ impl MiShopComCrawler {
                     parsed_indexes.push(title_index);
                 }
                 "Wi-Fi (802.11)" => {
-                    multiple_parse_and_capture(
-                        title,
-                        external_id,
-                        value,
-                        enum_wifi_standard_value,
-                    )
-                    .into_iter()
-                    .for_each(|v| characteristics.push(EnumCharacteristic::WifiStandard(v)));
+                    multiple_parse_and_capture(title, external_id, value, enum_wifi_standard_value)
+                        .into_iter()
+                        .for_each(|v| characteristics.push(EnumCharacteristic::WifiStandard(v)));
                     parsed_indexes.push(title_index);
                 }
                 "Материал" => {
@@ -795,8 +789,8 @@ fn multiple_string_media_format_value(
 
 #[cfg(test)]
 mod tests {
-    use crate::parse::crawler::mi_shop_com::multiple_string_media_format_value;
     use crate::common::dto::characteristic::enum_characteristic::MediaFormat;
+    use crate::parse::crawler::mi_shop_com::multiple_string_media_format_value;
 
     #[test]
     fn it_parses_media_format() {
