@@ -1,7 +1,6 @@
 use serde::Serialize;
 
 use crate::my_enum::{CharacteristicValueType, CharacteristicVisualisationType};
-use crate::schema::characteristic;
 
 #[derive(Serialize, Queryable)]
 pub struct Characteristic {

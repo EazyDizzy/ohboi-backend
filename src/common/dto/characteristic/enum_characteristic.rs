@@ -1,7 +1,8 @@
+#![allow(non_camel_case_types)]
+
 use std::fmt;
 
 use serde::Serialize;
-use strum_macros::EnumIter;
 use strum_macros::EnumVariantNames;
 
 #[derive(Serialize, Debug, PartialEq, Clone, Copy, EnumVariantNames)]

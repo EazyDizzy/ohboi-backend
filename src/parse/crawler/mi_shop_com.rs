@@ -1,17 +1,12 @@
-use std::num::ParseIntError;
-use std::str::FromStr;
 use std::time::Instant;
 
 use async_trait::async_trait;
-use bigdecimal::Num;
 use maplit::btreemap;
-use regex::{Captures, Regex};
-use scraper::element_ref::Select;
+use regex::Regex;
 use scraper::{ElementRef, Html, Selector};
-use validator::HasLen;
 
 use crate::common::dto::characteristic::enum_characteristic::{
-    BatteryType, DisplayType, EnumCharacteristic, MediaFormat, SimCard, Technology,
+    EnumCharacteristic, MediaFormat, Technology,
 };
 use crate::common::dto::characteristic::float_characteristic::FloatCharacteristic;
 use crate::common::dto::characteristic::int_characteristic::IntCharacteristic;
@@ -859,7 +854,7 @@ mod tests {
         );
         assert_eq!(
             multiple_string_media_format_value("_", "_", "Поддерживает H.263, H264 (базовый профиль / основной профиль), H.264 HEVC, MPEG4 (простой профиль / ASP), XVID, ASF / WMV, 3GI, MKV / WEBM, M4V, FLV и другие видеоформаты.Поддерживает аудиоформаты, такие как AAC / AAC +, MP3, AMR - NB и WB, FLAC, MIDI / PCM / WAVE"),
-            vec![MediaFormat::H263, MediaFormat::H264, MediaFormat::MPEG4, MediaFormat::XVID, MediaFormat::ASF, MediaFormat::WMV, MediaFormat::_3GI, MediaFormat::MKV, MediaFormat::WEBM, MediaFormat::M4V, MediaFormat::FLV, MediaFormat::AAC, MediaFormat::AAC_plus, MediaFormat::MP3, MediaFormat::AMR_NB, MediaFormat::WB, MediaFormat::FLAC, MediaFormat::MIDI, MediaFormat::PCM, MediaFormat::WAVE]
+            vec![MediaFormat::H263, MediaFormat::H264, MediaFormat::H265, MediaFormat::MPEG4, MediaFormat::XVID, MediaFormat::ASF, MediaFormat::WMV, MediaFormat::_3GI, MediaFormat::MKV, MediaFormat::WEBM, MediaFormat::M4V, MediaFormat::FLV, MediaFormat::AAC, MediaFormat::AAC_plus, MediaFormat::MP3, MediaFormat::AMR_NB, MediaFormat::WB, MediaFormat::FLAC, MediaFormat::MIDI, MediaFormat::PCM, MediaFormat::WAVE]
         );
         assert_eq!(
             multiple_string_media_format_value("_", "_", "Видео форматы: H.265 / HEVC (основной профиль), H.264 (базовый/основной/высокий), MPEG4 (обычный/ASP) и другие. Аудио форматы: PCM, AAC / AAC + / eAAC +, MP3, AMR - NB и WB, FLAC, WAV."),

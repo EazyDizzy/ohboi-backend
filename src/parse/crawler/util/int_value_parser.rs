@@ -68,7 +68,7 @@ pub fn pix_int_value(title: &str, external_id: &str, value: &str) -> Option<i32>
     int_value(
         title,
         external_id,
-        &value
+        &cut_value
             .replace("K", "000")
             .replace("К", "000")
             .replace("px", "")

@@ -1,17 +1,15 @@
 use actix_web::HttpResponse;
 use actix_web_validator::{Json, Query};
-use bigdecimal::{BigDecimal, ToPrimitive};
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
 use crate::common::db::repository::exchange_rate::try_get_exchange_rate_by_code;
-use crate::common::service::currency_converter::convert_to_with_rate;
 use crate::http::db::product::repository::{get_filtered_products, get_product_info};
 use crate::http::util::product::convert_product_prices;
 use crate::my_enum::CurrencyEnum;
 
 pub async fn get_product(params: Query<ProductParams>) -> HttpResponse {
-    let mut product = get_product_info(params.as_ref());
+    let product = get_product_info(params.as_ref());
     if product.is_none() {
         return HttpResponse::NotFound().json("Not found");
     }

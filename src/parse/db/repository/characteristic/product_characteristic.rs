@@ -2,9 +2,7 @@ use diesel::result::{DatabaseErrorKind, Error};
 use diesel::RunQueryDsl;
 
 use crate::common::db;
-use crate::parse::db::entity::characteristic::product_characteristic::{
-    NewProductCharacteristic, ProductCharacteristic,
-};
+use crate::parse::db::entity::characteristic::product_characteristic::NewProductCharacteristic;
 use crate::schema::product_characteristic;
 
 pub fn create_many_if_not_exists(product_chars: Vec<NewProductCharacteristic>) {

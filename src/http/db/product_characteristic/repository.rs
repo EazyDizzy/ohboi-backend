@@ -1,5 +1,4 @@
 use bigdecimal::ToPrimitive;
-use serde::Serialize;
 
 use crate::common::db;
 use crate::common::dto::characteristic::TypedCharacteristic;
@@ -10,7 +9,6 @@ use crate::http::db::product_characteristic::product_characteristic_enum_value::
 use crate::http::db::product_characteristic::product_characteristic_float_value::ProductCharacteristicFloatValue;
 use crate::http::db::product_characteristic::product_characteristic_string_value::ProductCharacteristicStringValue;
 use crate::http::dto::product::*;
-use crate::my_enum;
 use crate::schema::product_characteristic;
 use crate::schema::product_characteristic_enum_value;
 use crate::schema::product_characteristic_float_value;

@@ -19,11 +19,8 @@ use structopt::StructOpt;
 
 use parse::settings::Settings;
 
-use crate::parse::db::entity::category::CategorySlug;
-use crate::parse::db::entity::source::SourceName;
-use crate::parse::queue::declare_queue;
-use crate::parse::service::parser::parse_category;
 use crate::parse::db::repository::sync_characteristic_enum;
+use crate::parse::queue::declare_queue;
 
 mod common;
 mod local_sentry;
