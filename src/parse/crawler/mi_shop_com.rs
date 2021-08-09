@@ -157,7 +157,6 @@ impl Crawler for MiShopComCrawler {
         document: &Html,
         external_id: &str,
     ) -> Option<AdditionalParsedProductInfo> {
-        // TODO replace tags to some standard
         let description = self.abstract_extract_description(
             &document,
             Selector::parse(".detail__tab-description").unwrap(),
@@ -228,7 +227,6 @@ impl MiShopComCrawler {
             .map(|title| inner_text(&title.inner_html()))
             .collect();
 
-        println!("{}", external_id);
         let (int_characteristics, mut parsed_indexes) =
             self.extract_int_characteristics(external_id, &titles, &values);
         for int_char in int_characteristics {
@@ -244,7 +242,7 @@ impl MiShopComCrawler {
         self.remove_parsed_indexes(&mut titles, &mut values, &mut parsed_indexes);
 
         let (string_characteristics, mut parsed_indexes) =
-            self.extract_string_characteristics(external_id, &titles, &values);
+            self.extract_string_characteristics(&titles, &values);
         for string_char in string_characteristics {
             characteristics.push(TypedCharacteristic::String(string_char));
         }
@@ -288,7 +286,7 @@ impl MiShopComCrawler {
         titles: &mut Vec<String>,
         values: &mut Vec<String>,
         parsed_indexes: &mut Vec<usize>,
-    ) -> () {
+    ) {
         parsed_indexes.sort_by(|a, b| b.cmp(a));
         for index in parsed_indexes {
             titles.remove(*index);
@@ -327,10 +325,15 @@ impl MiShopComCrawler {
 
         for (title_index, title) in titles.into_iter().enumerate() {
             let value = values.get(title_index).unwrap();
+            let context = CharacteristicParsingContext {
+                title: &title,
+                external_id,
+                source: self.get_source(),
+            };
             let characteristic: Option<Technology> = match title.as_str() {
                 "NFC" => {
                     parsed_indexes.push(title_index);
-                    bool_value(&title, external_id, &value).map_or(None, |v| {
+                    bool_value(&context, &value).and_then(|v| {
                         if v {
                             Some(Technology::NFC)
                         } else {
@@ -340,7 +343,7 @@ impl MiShopComCrawler {
                 }
                 "Автофокус" => {
                     parsed_indexes.push(title_index);
-                    bool_value(&title, external_id, &value).map_or(None, |v| {
+                    bool_value(&context, &value).and_then(|v| {
                         if v {
                             Some(Technology::Autofocus)
                         } else {
@@ -350,7 +353,7 @@ impl MiShopComCrawler {
                 }
                 "Быстрая зарядка" => {
                     parsed_indexes.push(title_index);
-                    bool_value(&title, external_id, &value).map_or(None, |v| {
+                    bool_value(&context, &value).and_then(|v| {
                         if v {
                             Some(Technology::FastCharging)
                         } else {
@@ -360,7 +363,7 @@ impl MiShopComCrawler {
                 }
                 "ИК-порт" => {
                     parsed_indexes.push(title_index);
-                    bool_value(&title, external_id, &value).map_or(None, |v| {
+                    bool_value(&context, &value).and_then(|v| {
                         if v {
                             Some(Technology::InfraredPort)
                         } else {
@@ -370,7 +373,7 @@ impl MiShopComCrawler {
                 }
                 "Беспроводная зарядка" => {
                     parsed_indexes.push(title_index);
-                    bool_value(&title, external_id, &value).map_or(None, |v| {
+                    bool_value(&context, &value).and_then(|v| {
                         if v {
                             Some(Technology::WirelessCharger)
                         } else {
@@ -391,7 +394,6 @@ impl MiShopComCrawler {
 
     fn extract_string_characteristics(
         &self,
-        external_id: &str,
         titles: &Vec<String>,
         values: &Vec<String>,
     ) -> (Vec<StringCharacteristic>, Vec<usize>) {
@@ -438,16 +440,21 @@ impl MiShopComCrawler {
 
         for (title_index, title) in titles.into_iter().enumerate() {
             let value = values.get(title_index).unwrap();
+            let context = CharacteristicParsingContext {
+                title: &title,
+                external_id,
+                source: self.get_source(),
+            };
 
             match title.as_str() {
                 "SIM-карта" => {
-                    multiple_parse_and_capture(title, external_id, value, enum_sim_card_value)
+                    multiple_parse_and_capture(&context, value, enum_sim_card_value)
                         .into_iter()
                         .for_each(|v| characteristics.push(EnumCharacteristic::SimCard(v)));
                     parsed_indexes.push(title_index);
                 }
                 "Поддерживаемые медиа форматы" => {
-                    multiple_string_media_format_value(title, external_id, value)
+                    multiple_string_media_format_value(&context, value)
                         .into_iter()
                         .for_each(|v| {
                             characteristics.push(EnumCharacteristic::SupportedMediaFormat(v))
@@ -456,8 +463,7 @@ impl MiShopComCrawler {
                 }
                 "Интернет" => {
                     multiple_parse_and_capture(
-                        title,
-                        external_id,
+                        &context,
                         value,
                         enum_internet_connection_technology_value,
                     )
@@ -468,24 +474,21 @@ impl MiShopComCrawler {
                     parsed_indexes.push(title_index);
                 }
                 "Спутниковая навигация" => {
-                    multiple_parse_and_capture(
-                        title,
-                        external_id,
-                        value,
-                        enum_satellite_navigation_value,
-                    )
-                    .into_iter()
-                    .for_each(|v| characteristics.push(EnumCharacteristic::SatelliteNavigation(v)));
+                    multiple_parse_and_capture(&context, value, enum_satellite_navigation_value)
+                        .into_iter()
+                        .for_each(|v| {
+                            characteristics.push(EnumCharacteristic::SatelliteNavigation(v))
+                        });
                     parsed_indexes.push(title_index);
                 }
                 "Wi-Fi (802.11)" => {
-                    multiple_parse_and_capture(title, external_id, value, enum_wifi_standard_value)
+                    multiple_parse_and_capture(&context, value, enum_wifi_standard_value)
                         .into_iter()
                         .for_each(|v| characteristics.push(EnumCharacteristic::WifiStandard(v)));
                     parsed_indexes.push(title_index);
                 }
                 "Материал" => {
-                    multiple_parse_and_capture(title, external_id, value, enum_material_value)
+                    multiple_parse_and_capture(&context, value, enum_material_value)
                         .into_iter()
                         .for_each(|v| characteristics.push(EnumCharacteristic::Material(v)));
                     parsed_indexes.push(title_index);
@@ -495,43 +498,44 @@ impl MiShopComCrawler {
         }
 
         for (title_index, title) in titles.into_iter().enumerate() {
+            let context = CharacteristicParsingContext {
+                title: &title,
+                external_id,
+                source: self.get_source(),
+            };
             let value = values.get(title_index).unwrap();
             let characteristic: Option<EnumCharacteristic> = match title.as_str() {
-                "Тип разъема для зарядки" => parse_and_capture(
-                    &title,
-                    external_id,
-                    &value,
-                    enum_charging_connector_type_value,
-                )
-                .map_or(None, |v| Some(EnumCharacteristic::ChargingConnectorType(v))),
+                "Тип разъема для зарядки" => {
+                    parse_and_capture(&context, &value, enum_charging_connector_type_value)
+                        .and_then(|v| Some(EnumCharacteristic::ChargingConnectorType(v)))
+                }
                 "Слот для карты памяти" => {
-                    parse_and_capture(&title, external_id, &value, enum_memory_card_slot_value)
-                        .map_or(None, |v| Some(EnumCharacteristic::MemoryCardSlot(v)))
+                    parse_and_capture(&context, &value, enum_memory_card_slot_value)
+                        .and_then(|v| Some(EnumCharacteristic::MemoryCardSlot(v)))
                 }
                 "Страна производитель" => {
-                    parse_and_capture(&title, external_id, &value, enum_country_value)
-                        .map_or(None, |v| Some(EnumCharacteristic::ProducingCountry(v)))
+                    parse_and_capture(&context, &value, enum_country_value)
+                        .and_then(|v| Some(EnumCharacteristic::ProducingCountry(v)))
                 }
                 "Аудиоразъем" | "Вход аудио" => {
                     if let Some(value) = NO_DESCRIPTION_RE.captures_iter(value).next() {
                         parse_and_capture(
-                            &title,
-                            external_id,
+                            &context,
                             &value.get(0).unwrap().as_str(),
                             enum_audio_jack_value,
                         )
-                        .map_or(None, |v| Some(EnumCharacteristic::AudioJack(v)))
+                        .and_then(|v| Some(EnumCharacteristic::AudioJack(v)))
                     } else {
                         None
                     }
                 }
                 "Аккумулятор" => {
-                    parse_and_capture(&title, external_id, &value, enum_battery_type_value)
-                        .map_or(None, |v| Some(EnumCharacteristic::BatteryType(v)))
+                    parse_and_capture(&context, &value, enum_battery_type_value)
+                        .and_then(|v| Some(EnumCharacteristic::BatteryType(v)))
                 }
                 "Тип дисплея" => {
-                    parse_and_capture(&title, external_id, &value, enum_display_type_value)
-                        .map_or(None, |v| Some(EnumCharacteristic::DisplayType(v)))
+                    parse_and_capture(&context, &value, enum_display_type_value)
+                        .and_then(|v| Some(EnumCharacteristic::DisplayType(v)))
                 }
                 _ => None,
             };
@@ -556,30 +560,33 @@ impl MiShopComCrawler {
 
         for (title_index, title) in titles.into_iter().enumerate() {
             let value = values.get(title_index).unwrap();
+            let context = CharacteristicParsingContext {
+                title: &title,
+                external_id,
+                source: self.get_source(),
+            };
 
             let characteristic: Option<FloatCharacteristic> = match title.as_str() {
-                "Толщина (мм)" => float_value(&title, external_id, &value)
-                    .map_or(None, |v| Some(FloatCharacteristic::Thickness_mm(v))),
-                "Апертура" => float_aperture_value(&title, external_id, &value)
-                    .map_or(None, |v| Some(FloatCharacteristic::Aperture(v))),
-                "Ширина (мм)" => float_value(&title, external_id, &value)
-                    .map_or(None, |v| Some(FloatCharacteristic::Width_mm(v))),
-                "Высота (мм)" => float_value(&title, external_id, &value)
-                    .map_or(None, |v| Some(FloatCharacteristic::Height_mm(v))),
-                "Диагональ экрана" => {
-                    float_diagonal_value(&title, external_id, &value)
-                        .map_or(None, |v| Some(FloatCharacteristic::ScreenDiagonal(v)))
-                }
-                "Bluetooth" => float_value(&title, external_id, &value)
-                    .map_or(None, |v| Some(FloatCharacteristic::BluetoothVersion(v))),
-                "Частота" => float_ghz_value(&title, external_id, &value)
-                    .map_or(None, |v| Some(FloatCharacteristic::CPUFrequency_Ghz(v))),
-                "Вес (г)" => float_value(&title, external_id, &value)
-                    .map_or(None, |v| Some(FloatCharacteristic::Weight_gr(v))),
-                "Версия MIUI" => float_miui_version_value(&title, external_id, &value)
-                    .map_or(None, |v| Some(FloatCharacteristic::MIUIVersion(v))),
-                "Версия Android" => float_android_version_value(&title, external_id, &value)
-                    .map_or(None, |v| Some(FloatCharacteristic::AndroidVersion(v))),
+                "Толщина (мм)" => float_value(&context, &value)
+                    .and_then(|v| Some(FloatCharacteristic::Thickness_mm(v))),
+                "Апертура" => float_aperture_value(&context, &value)
+                    .and_then(|v| Some(FloatCharacteristic::Aperture(v))),
+                "Ширина (мм)" => float_value(&context, &value)
+                    .and_then(|v| Some(FloatCharacteristic::Width_mm(v))),
+                "Высота (мм)" => float_value(&context, &value)
+                    .and_then(|v| Some(FloatCharacteristic::Height_mm(v))),
+                "Диагональ экрана" => float_diagonal_value(&context, &value)
+                    .and_then(|v| Some(FloatCharacteristic::ScreenDiagonal(v))),
+                "Bluetooth" => float_value(&context, &value)
+                    .and_then(|v| Some(FloatCharacteristic::BluetoothVersion(v))),
+                "Частота" => float_ghz_value(&context, &value)
+                    .and_then(|v| Some(FloatCharacteristic::CPUFrequency_Ghz(v))),
+                "Вес (г)" => float_value(&context, &value)
+                    .and_then(|v| Some(FloatCharacteristic::Weight_gr(v))),
+                "Версия MIUI" => float_miui_version_value(&context, &value)
+                    .and_then(|v| Some(FloatCharacteristic::MIUIVersion(v))),
+                "Версия Android" => float_android_version_value(&context, &value)
+                    .and_then(|v| Some(FloatCharacteristic::AndroidVersion(v))),
                 _ => None,
             };
 
@@ -603,22 +610,27 @@ impl MiShopComCrawler {
 
         for (title_index, title) in titles.into_iter().enumerate() {
             let value = values.get(title_index).unwrap();
+            let context = CharacteristicParsingContext {
+                title: &title,
+                external_id,
+                source: self.get_source(),
+            };
 
             match title.as_str() {
                 "Диапазоны LTE" => {
-                    multiple_int_value(title, external_id, value)
+                    multiple_int_value(&context, value)
                         .into_iter()
                         .for_each(|v| characteristics.push(IntCharacteristic::LTEDiapason(v)));
                     parsed_indexes.push(title_index);
                 }
                 "Диапазоны GSM" => {
-                    multiple_int_value(title, external_id, value)
+                    multiple_int_value(&context, value)
                         .into_iter()
                         .for_each(|v| characteristics.push(IntCharacteristic::GSMDiapason(v)));
                     parsed_indexes.push(title_index);
                 }
                 "Диапазоны UMTS" => {
-                    multiple_int_value(title, external_id, value)
+                    multiple_int_value(&context, value)
                         .into_iter()
                         .for_each(|v| characteristics.push(IntCharacteristic::UMTSDiapason(v)));
                     parsed_indexes.push(title_index);
@@ -628,54 +640,50 @@ impl MiShopComCrawler {
         }
         for (title_index, title) in titles.into_iter().enumerate() {
             let value = values.get(title_index).unwrap();
+            let context = CharacteristicParsingContext {
+                title: &title,
+                external_id,
+                source: self.get_source(),
+            };
 
             let characteristic: Option<IntCharacteristic> = match title.as_str() {
-                "Количество ядер процессора" => {
-                    int_value(&title, external_id, &value)
-                        .map_or(None, |v| Some(IntCharacteristic::NumberOfProcessorCores(v)))
-                }
-                "Гарантия (мес)" => int_guarantee_value(&title, external_id, &value)
-                    .map_or(None, |v| Some(IntCharacteristic::Warranty_month(v))),
-                "Встроенная память (ГБ)" => {
-                    int_value(&title, external_id, &value)
-                        .map_or(None, |v| Some(IntCharacteristic::BuiltInMemory_GB(v)))
-                }
+                "Количество ядер процессора" => int_value(&context, &value)
+                    .and_then(|v| Some(IntCharacteristic::NumberOfProcessorCores(v))),
+                "Гарантия (мес)" => int_guarantee_value(&context, &value)
+                    .and_then(|v| Some(IntCharacteristic::Warranty_month(v))),
+                "Встроенная память (ГБ)" => int_value(&context, &value)
+                    .and_then(|v| Some(IntCharacteristic::BuiltInMemory_GB(v))),
                 "Оперативная память (ГБ)" => {
-                    int_value(&title, external_id, &value)
-                        .map_or(None, |v| Some(IntCharacteristic::Ram_GB(v)))
+                    int_value(&context, &value).and_then(|v| Some(IntCharacteristic::Ram_GB(v)))
                 }
-                "Фронтальная камера (Мп)" => {
-                    int_mp_value(&title, external_id, &value)
-                        .map_or(None, |v| Some(IntCharacteristic::FrontCamera_MP(v)))
-                }
+                "Фронтальная камера (Мп)" => int_mp_value(&context, &value)
+                    .and_then(|v| Some(IntCharacteristic::FrontCamera_MP(v))),
                 "Разрешение видеосъемки (пикс)" => {
-                    pix_int_value(&title, external_id, &value)
-                        .map_or(None, |v| Some(IntCharacteristic::VideoResolution_Pix(v)))
+                    pix_int_value(&context, &value)
+                        .and_then(|v| Some(IntCharacteristic::VideoResolution_Pix(v)))
                 }
                 "Емкость аккумулятора (мА*ч)" => {
-                    int_ma_h_value(&title, external_id, &value)
-                        .map_or(None, |v| Some(IntCharacteristic::BatteryCapacity_mA_h(v)))
+                    int_ma_h_value(&context, &value)
+                        .and_then(|v| Some(IntCharacteristic::BatteryCapacity_mA_h(v)))
                 }
-                "Кол-во SIM-карт" => int_value(&title, external_id, &value)
-                    .map_or(None, |v| Some(IntCharacteristic::AmountOfSimCards(v))),
+                "Кол-во SIM-карт" => int_value(&context, &value)
+                    .and_then(|v| Some(IntCharacteristic::AmountOfSimCards(v))),
                 "Частота кадров видеосъемки" => {
-                    int_fps_value(&title, external_id, &value)
-                        .map_or(None, |v| Some(IntCharacteristic::Fps(v)))
+                    int_fps_value(&context, &value).and_then(|v| Some(IntCharacteristic::Fps(v)))
                 }
                 "Плотность пикселей (PPI)" => {
-                    int_value(&title, external_id, &value)
-                        .map_or(None, |v| Some(IntCharacteristic::PPI(v)))
+                    int_value(&context, &value).and_then(|v| Some(IntCharacteristic::PPI(v)))
                 }
                 "Максимальный объем карты памяти" => {
-                    int_memory_value(&title, external_id, &value)
-                        .map_or(None, |v| Some(IntCharacteristic::MaxMemoryCardSize_GB(v)))
+                    int_memory_value(&context, &value)
+                        .and_then(|v| Some(IntCharacteristic::MaxMemoryCardSize_GB(v)))
                 }
-                "Яркость (кд/м²)" => int_nit_value(&title, external_id, &value)
-                    .map_or(None, |v| Some(IntCharacteristic::Brightness_cd_m2(v))),
-                "Частота обновления" => int_hz_value(&title, external_id, &value)
-                    .map_or(None, |v| Some(IntCharacteristic::UpdateFrequency_Hz(v))),
-                "Фотокамера (Мп)" => int_mp_value(&title, external_id, &value)
-                    .map_or(None, |v| Some(IntCharacteristic::Camera_mp(v))),
+                "Яркость (кд/м²)" => int_nit_value(&context, &value)
+                    .and_then(|v| Some(IntCharacteristic::Brightness_cd_m2(v))),
+                "Частота обновления" => int_hz_value(&context, &value)
+                    .and_then(|v| Some(IntCharacteristic::UpdateFrequency_Hz(v))),
+                "Фотокамера (Мп)" => int_mp_value(&context, &value)
+                    .and_then(|v| Some(IntCharacteristic::Camera_mp(v))),
                 _ => None,
             };
 
@@ -690,8 +698,7 @@ impl MiShopComCrawler {
 }
 
 fn multiple_string_media_format_value(
-    title: &str,
-    external_id: &str,
+    context: &CharacteristicParsingContext,
     mut value: &str,
 ) -> Vec<MediaFormat> {
     let mut formats: Vec<MediaFormat> = vec![];
@@ -768,10 +775,11 @@ fn multiple_string_media_format_value(
         } else {
             sentry::capture_message(
                 format!(
-                    "Can't parse media format characteristic ({title}) with value ({value}) for [{external_id}]: Unknown value",
-                    title = title,
+                    "[{source}] Can't parse media format characteristic ({title}) with value ({value}) for [{external_id}]: Unknown value",
+                    source = context.source,
+                    title = context.title,
                     value = v,
-                    external_id = external_id
+                    external_id = context.external_id
                 )
                     .as_str(),
                 sentry::Level::Warning,
@@ -786,13 +794,22 @@ fn multiple_string_media_format_value(
 mod tests {
     use crate::common::dto::characteristic::enum_characteristic::MediaFormat;
     use crate::parse::crawler::mi_shop_com::multiple_string_media_format_value;
+    use crate::parse::crawler::util::CharacteristicParsingContext;
+    use crate::parse::db::entity::source::SourceName;
+
+    fn get_context() -> CharacteristicParsingContext {
+        CharacteristicParsingContext {
+            title: "_",
+            external_id: "_",
+            source: SourceName::MiShopCom,
+        }
+    }
 
     #[test]
     fn it_parses_media_format() {
         assert_eq!(
             multiple_string_media_format_value(
-                "_",
-                "_",
+                &get_context(),
                 "MP4; M4V; MKV;XVID; WAV; AAC; MP3; AMR; FLAC; APE",
             ),
             vec![
@@ -811,8 +828,7 @@ mod tests {
 
         assert_eq!(
             multiple_string_media_format_value(
-                "_",
-                "_",
+                &get_context(),
                 "MP4; M4V; MKV; XVID; WAV; AAC/AAC+/eAAC+; MP3; AMR-NB/WB; FLAC; PCM",
             ),
             vec![
@@ -833,8 +849,7 @@ mod tests {
         );
         assert_eq!(
             multiple_string_media_format_value(
-                "_",
-                "_",
+                &get_context(),
                 "PCM, AAC / AAC+, MP3, AMR–NB and WB, Opus, PCM/WAVE",
             ),
             vec![
@@ -849,15 +864,15 @@ mod tests {
             ]
         );
         assert_eq!(
-            multiple_string_media_format_value("_", "_", "PCM, PCM/WAVE"),
+            multiple_string_media_format_value(&get_context(), "PCM, PCM/WAVE"),
             vec![MediaFormat::PCM, MediaFormat::WAVE,]
         );
         assert_eq!(
-            multiple_string_media_format_value("_", "_", "Поддерживает H.263, H264 (базовый профиль / основной профиль), H.264 HEVC, MPEG4 (простой профиль / ASP), XVID, ASF / WMV, 3GI, MKV / WEBM, M4V, FLV и другие видеоформаты.Поддерживает аудиоформаты, такие как AAC / AAC +, MP3, AMR - NB и WB, FLAC, MIDI / PCM / WAVE"),
+            multiple_string_media_format_value(&get_context(), "Поддерживает H.263, H264 (базовый профиль / основной профиль), H.264 HEVC, MPEG4 (простой профиль / ASP), XVID, ASF / WMV, 3GI, MKV / WEBM, M4V, FLV и другие видеоформаты.Поддерживает аудиоформаты, такие как AAC / AAC +, MP3, AMR - NB и WB, FLAC, MIDI / PCM / WAVE"),
             vec![MediaFormat::H263, MediaFormat::H264, MediaFormat::H265, MediaFormat::MPEG4, MediaFormat::XVID, MediaFormat::ASF, MediaFormat::WMV, MediaFormat::_3GI, MediaFormat::MKV, MediaFormat::WEBM, MediaFormat::M4V, MediaFormat::FLV, MediaFormat::AAC, MediaFormat::AAC_plus, MediaFormat::MP3, MediaFormat::AMR_NB, MediaFormat::WB, MediaFormat::FLAC, MediaFormat::MIDI, MediaFormat::PCM, MediaFormat::WAVE]
         );
         assert_eq!(
-            multiple_string_media_format_value("_", "_", "Видео форматы: H.265 / HEVC (основной профиль), H.264 (базовый/основной/высокий), MPEG4 (обычный/ASP) и другие. Аудио форматы: PCM, AAC / AAC + / eAAC +, MP3, AMR - NB и WB, FLAC, WAV."),
+            multiple_string_media_format_value(&get_context(), "Видео форматы: H.265 / HEVC (основной профиль), H.264 (базовый/основной/высокий), MPEG4 (обычный/ASP) и другие. Аудио форматы: PCM, AAC / AAC + / eAAC +, MP3, AMR - NB и WB, FLAC, WAV."),
             vec![MediaFormat::H265, MediaFormat::H264,MediaFormat::MPEG4,MediaFormat::PCM,MediaFormat::AAC,MediaFormat::AAC_plus,MediaFormat::eAAC_plus,MediaFormat::MP3,MediaFormat::AMR_NB,MediaFormat::WB,MediaFormat::FLAC,MediaFormat::WAV]
         );
     }

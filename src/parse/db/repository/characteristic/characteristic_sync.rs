@@ -17,7 +17,7 @@ use crate::schema::category_characteristic;
 
 // TODO update if sth changed
 // TODO delete removed
-pub fn sync_characteristic_enum() -> () {
+pub fn sync_characteristic_enum() {
     sync_float_chars();
     sync_int_chars();
     sync_string_chars();
