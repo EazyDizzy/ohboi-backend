@@ -78,20 +78,18 @@ async fn main() {
         return;
     }
     if args.worker_type == "queue_config" {
-        let _ = parse_category(SourceName::MiShopCom, CategorySlug::Smartphone).await;
-
-        // let queues = [
-        //     &SETTINGS.amqp.queues.parse_category.name,
-        //     &SETTINGS.amqp.queues.parse_image.name,
-        //     &SETTINGS.amqp.queues.parse_page.name,
-        //     &SETTINGS.amqp.queues.pull_exchange_rates.name,
-        // ];
-        // for queue_name in &queues {
-        //     let declare = declare_queue(queue_name).await;
-        //     if declare.is_err() {
-        //         log::error!("Queue declaration failed. {} {:?}", queue_name, declare);
-        //     }
-        // }
+        let queues = [
+            &SETTINGS.amqp.queues.parse_category.name,
+            &SETTINGS.amqp.queues.parse_image.name,
+            &SETTINGS.amqp.queues.parse_page.name,
+            &SETTINGS.amqp.queues.pull_exchange_rates.name,
+        ];
+        for queue_name in &queues {
+            let declare = declare_queue(queue_name).await;
+            if declare.is_err() {
+                log::error!("Queue declaration failed. {} {:?}", queue_name, declare);
+            }
+        }
         return;
     }
 

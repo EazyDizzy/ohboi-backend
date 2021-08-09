@@ -1,35 +1,35 @@
 version: "3"
 services:
-#    ohboi_backend:
-#        container_name: ohboi
-#        depends_on:
-#            - ohboi_postgres
-#            - ohboi_rabbitmq
-#        networks:
-#            - shopily
-#        build:
-#            context: .
-#            dockerfile: dev.Dockerfile
-#        command: bash run.sh
-#        env_file:
-#            - .env
-#        ports:
-#            - 8888:8888
-#        volumes:
-#            - ./logs:/app/logs
-#            - ./migrations:/app/migrations
-#            - ./run.sh:/app/run.sh
+    ohboi_backend:
+        container_name: ohboi
+        depends_on:
+            - ohboi_postgres
+            - ohboi_rabbitmq
+        networks:
+            - shopily
+        build:
+            context: .
+            dockerfile: dev.Dockerfile
+        command: bash run.sh
+        env_file:
+            - .env
+        ports:
+            - 8888:8888
+        volumes:
+            - ./logs:/app/logs
+            - ./migrations:/app/migrations
+            - ./run.sh:/app/run.sh
 
-#    ohboi_rabbitmq:
-#        networks:
-#            - shopily
-#        image: library/rabbitmq:3.8.9-management
-#        ports:
-#            - 15672:15672
-#            - 5672:5672
-#        environment:
-#            RABBITMQ_DEFAULT_USER: root
-#            RABBITMQ_DEFAULT_PASS: root
+    ohboi_rabbitmq:
+        networks:
+            - shopily
+        image: library/rabbitmq:3.8.9-management
+        ports:
+            - 15672:15672
+            - 5672:5672
+        environment:
+            RABBITMQ_DEFAULT_USER: root
+            RABBITMQ_DEFAULT_PASS: root
 
     ohboi_postgres:
         command: [ "postgres", "-c", "log_statement=all", "-c", "log_destination=stderr" ]
