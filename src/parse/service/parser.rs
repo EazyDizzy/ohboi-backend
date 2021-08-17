@@ -200,6 +200,7 @@ async fn save_parsed_product(
     let product = create_if_not_exists(&international_parsed_product, category);
 
     if product.description.is_none() || product.images.is_none() {
+        // TODO create separate job to attach this info
         let details =
             extract_additional_info(&international_parsed_product.external_id, crawler).await;
 
