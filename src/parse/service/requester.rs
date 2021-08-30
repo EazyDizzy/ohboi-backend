@@ -1,4 +1,3 @@
-use actix_web::web::Bytes;
 use rand::distributions::Uniform;
 use rand::prelude::Distribution;
 use reqwest::header::{ACCEPT, ACCEPT_ENCODING, ACCEPT_LANGUAGE, CONNECTION, REFERER, USER_AGENT};
@@ -16,10 +15,10 @@ pub async fn get_data(url: &str) -> Result<String, reqwest::Error> {
     Ok(text)
 }
 
-pub async fn get_bytes(url: &str) -> Result<Bytes, reqwest::Error> {
+pub async fn get_bytes(url: &str) -> Result<Vec<u8>, reqwest::Error> {
     let response = get_request(url).await?;
 
-    Ok(response.bytes().await?)
+    Ok(response.bytes().await?.to_vec())
 }
 
 async fn get_request(url: &str) -> Result<Response, reqwest::Error> {

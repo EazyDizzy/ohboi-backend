@@ -3,6 +3,7 @@ use std::time::Instant;
 use async_trait::async_trait;
 use maplit::btreemap;
 use regex::Regex;
+use scraper::html::Select;
 use scraper::{ElementRef, Html, Selector};
 
 use crate::common::dto::characteristic::enum_characteristic::{
@@ -13,7 +14,9 @@ use crate::common::dto::characteristic::int_characteristic::IntCharacteristic;
 use crate::common::dto::characteristic::string_characteristic::StringCharacteristic;
 use crate::common::dto::characteristic::TypedCharacteristic;
 use crate::my_enum::CurrencyEnum;
-use crate::parse::crawler::crawler::{get_html_nodes, Crawler, ProductHtmlSelectors};
+use crate::parse::crawler::crawler::{
+    get_html_nodes, upload_extracted_images, Crawler, ProductHtmlSelectors,
+};
 use crate::parse::crawler::util::*;
 use crate::parse::db::entity::category::CategorySlug;
 use crate::parse::db::entity::source::SourceName;
@@ -31,8 +34,11 @@ lazy_static! {
 #[derive(Clone)]
 pub struct MiShopComCrawler {}
 
-#[async_trait(? Send)]
 impl Crawler for MiShopComCrawler {
+    fn get_site_base(&self) -> String {
+        SITE_BASE.to_string()
+    }
+
     fn get_source(&self) -> SourceName {
         SourceName::MiShopCom
     }
@@ -152,7 +158,7 @@ impl Crawler for MiShopComCrawler {
         format!("{}{}", SITE_BASE, external_id)
     }
 
-    async fn extract_additional_info(
+    fn extract_additional_info(
         &self,
         document: &Html,
         external_id: &str,
@@ -168,11 +174,11 @@ impl Crawler for MiShopComCrawler {
             Selector::parse("#subscribe-product").unwrap(),
         );
 
+        // We should not upload images if it is not valid product
         if description.is_none() || available.is_none() {
             None
         } else {
-            // We should not upload images if it is not valid product
-            let image_urls = self.extract_images(document, external_id).await;
+            let image_urls = self.extract_images(document);
             let start = Instant::now();
             let characteristics = self.extract_characteristics(&document, external_id);
             let duration = start.elapsed();
@@ -191,13 +197,12 @@ impl Crawler for MiShopComCrawler {
 }
 
 impl MiShopComCrawler {
-    async fn extract_images(&self, document: &Html, external_id: &str) -> Vec<String> {
+    fn extract_images(&self, document: &Html) -> Vec<String> {
         let images_selector = Selector::parse(".detail-modal .detail__slides img").unwrap();
         let image_nodes = document.select(&images_selector);
         let image_urls = self.abstract_extract_image_urls(image_nodes, "data-lazy");
 
-        self.abstract_extract_images(image_urls, external_id, SITE_BASE)
-            .await
+        image_urls
     }
 
     fn extract_characteristics(

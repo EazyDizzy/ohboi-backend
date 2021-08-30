@@ -1,9 +1,8 @@
-use async_trait::async_trait;
 use regex::Regex;
 use scraper::{Html, Selector};
 
 use crate::my_enum::CurrencyEnum;
-use crate::parse::crawler::crawler::{Crawler, get_html_nodes, ProductHtmlSelectors};
+use crate::parse::crawler::crawler::{get_html_nodes, Crawler, ProductHtmlSelectors};
 use crate::parse::db::entity::category::CategorySlug;
 use crate::parse::db::entity::source::SourceName;
 use crate::parse::dto::parsed_product::{AdditionalParsedProductInfo, LocalParsedProduct};
@@ -13,18 +12,20 @@ static SITE_BASE: &str = "https://samsungshop.com.ua";
 #[derive(Clone)]
 pub struct SamsungShopComUaCrawler {}
 
-#[async_trait(? Send)]
 impl Crawler for SamsungShopComUaCrawler {
-    fn get_source(&self) -> SourceName { SourceName::SamsungShopComUa }
+    fn get_site_base(&self) -> String {
+        SITE_BASE.to_string()
+    }
+    fn get_source(&self) -> SourceName {
+        SourceName::SamsungShopComUa
+    }
 
     fn get_currency(&self) -> CurrencyEnum {
         CurrencyEnum::UAH
     }
 
     fn get_categories(&self) -> Vec<CategorySlug> {
-        vec![
-            CategorySlug::Watches,
-        ]
+        vec![CategorySlug::Watches]
     }
 
     fn get_next_page_urls(&self, category: CategorySlug) -> Vec<String> {
@@ -38,9 +39,9 @@ impl Crawler for SamsungShopComUaCrawler {
             }
         };
 
-        urls.into_iter().map(|url| {
-            [&base, url, pagination].concat()
-        }).collect()
+        urls.into_iter()
+            .map(|url| [&base, url, pagination].concat())
+            .collect()
     }
 
     fn extract_products(&self, document: &Html) -> Vec<LocalParsedProduct> {
@@ -78,8 +79,11 @@ impl Crawler for SamsungShopComUaCrawler {
             let price: f64 = {
                 let price_html = product_nodes.price.inner_html();
 
-                let price_text = price_re.find(price_html.as_str()).unwrap()
-                    .as_str().to_string()
+                let price_text = price_re
+                    .find(price_html.as_str())
+                    .unwrap()
+                    .as_str()
+                    .to_string()
                     .replace(" ", "")
                     .parse::<f64>();
 
@@ -97,7 +101,8 @@ impl Crawler for SamsungShopComUaCrawler {
                 price_text.unwrap()
             };
 
-            let available = product_nodes.available.is_some() && product_nodes.unavailable.is_none();
+            let available =
+                product_nodes.available.is_some() && product_nodes.unavailable.is_none();
             let external_id = product_nodes.id.value().attr("href").unwrap().to_string();
 
             if title.is_empty() || external_id.is_empty() {
@@ -127,7 +132,11 @@ impl Crawler for SamsungShopComUaCrawler {
         format!("{}{}", SITE_BASE, external_id)
     }
 
-    async fn extract_additional_info(&self, document: &Html, external_id: &str) -> Option<AdditionalParsedProductInfo> {
+    fn extract_additional_info(
+        &self,
+        document: &Html,
+        external_id: &str,
+    ) -> Option<AdditionalParsedProductInfo> {
         let description = self.abstract_extract_description(
             &document,
             Selector::parse(".acardeon-item-content-main").unwrap(),
@@ -142,7 +151,7 @@ impl Crawler for SamsungShopComUaCrawler {
         if description.is_none() || available.is_none() {
             None
         } else {
-            let image_urls = self.extract_images(document, external_id).await;
+            let image_urls = self.extract_images(document, external_id);
             Some(AdditionalParsedProductInfo {
                 image_urls,
                 description: description.unwrap(),
@@ -157,11 +166,11 @@ lazy_static! {
     static ref DESCRIPTION_RE: Regex = Regex::new(r"(?ms)<big>.*?</big>|<h3>.*?</h3>").unwrap();
 }
 impl SamsungShopComUaCrawler {
-    async fn extract_images(&self, document: &Html, external_id: &str) -> Vec<String> {
+    fn extract_images(&self, document: &Html, external_id: &str) -> Vec<String> {
         let images_selector = Selector::parse(".sp-slide img.sp-image").unwrap();
         let image_nodes = document.select(&images_selector);
         let images_urls = self.abstract_extract_image_urls(image_nodes, "data-src");
 
-        self.abstract_extract_images(images_urls, external_id, SITE_BASE).await
+        images_urls
     }
 }

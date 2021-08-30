@@ -1,0 +1,4 @@
+[alias]
+# cargo-bloat measures what takes most of the space or build time in executable
+bloat_time = "bloat --release --time -n 200"
+bloat_memory = "bloat --release--crates -n 200"

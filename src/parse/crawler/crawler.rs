@@ -1,14 +1,14 @@
 use std::sync::Mutex;
 
 use async_trait::async_trait;
-use futures::future::{err, ok};
 use futures::future::join_all;
+use futures::future::{err, ok};
 use futures::FutureExt;
 use inflector::Inflector;
 use maplit::btreemap;
 use regex::Regex;
-use scraper::{ElementRef, Html, Selector};
 use scraper::html::Select;
+use scraper::{ElementRef, Html, Selector};
 
 use crate::local_sentry::add_category_breadcrumb;
 use crate::my_enum::CurrencyEnum;
@@ -21,8 +21,9 @@ use crate::parse::service::cloud_uploader::upload_image_to_cloud;
 use crate::parse::service::html_cleaner::clean_html;
 use crate::SETTINGS;
 
-#[async_trait(? Send)]
-pub trait Crawler {
+pub trait Crawler: Sync + Send {
+    fn get_site_base(&self) -> String;
+
     fn get_source(&self) -> SourceName;
 
     fn get_currency(&self) -> CurrencyEnum;
@@ -35,69 +36,17 @@ pub trait Crawler {
 
     fn get_additional_info_url(&self, external_id: &str) -> String;
 
-    async fn extract_additional_info(&self, document: &Html, external_id: &str) -> Option<AdditionalParsedProductInfo>;
+    fn extract_additional_info(
+        &self,
+        document: &Html,
+        external_id: &str,
+    ) -> Option<AdditionalParsedProductInfo>;
 
-    async fn abstract_extract_images(&self, image_urls: Vec<String>, external_id: &str, base: &str) -> Vec<String> {
-        add_category_breadcrumb(
-            "updating product",
-            btreemap! {
-                    "external_id" => external_id.to_string(),
-                    "image_urls" => format!("{:?}", &image_urls),
-                    "source" => self.get_source().to_string(),
-                },
-            ["consumer.", &SETTINGS.amqp.queues.parse_category.name].join(""),
-        );
-
-        let mut uploaded_urls: Vec<String> = vec![];
-        let mut uploads: Vec<_> = vec![];
-
-        let upload_later = Mutex::new(vec![]);
-        for image_url in image_urls {
-            let file_path = [
-                "product_images/",
-                &self.get_source().to_string().to_snake_case(),
-                &image_url
-            ].concat();
-
-            let url: String = [base, &image_url].concat();
-
-            uploads.push(
-                upload_image_to_cloud(file_path.clone(), url.clone(),
-                ).then(|success| {
-                    if success {
-                        ok(file_path)
-                    } else {
-                        upload_later
-                            .lock()
-                            .unwrap()
-                            .push(UploadImageMessage {
-                                file_path: file_path.clone(),
-                                image_url: url,
-                                external_id: external_id.to_string(),
-                                source: self.get_source(),
-                            });
-                        err(file_path)
-                    }
-                })
-            );
-        }
-
-        let uploaded_images = join_all(uploads).await;
-
-        for filename in uploaded_images {
-            if filename.is_ok() {
-                uploaded_urls.push(filename.unwrap());
-            }
-        }
-
-        for message in upload_later.lock().unwrap().to_vec() {
-            let _schedule_result = postpone_image_parsing(message).await;
-        }
-
-        uploaded_urls
-    }
-
-    fn abstract_extract_image_urls(&self, image_nodes: Select, lazy_attribute: &str) -> Vec<String> {
+    fn abstract_extract_image_urls(
+        &self,
+        image_nodes: Select,
+        lazy_attribute: &str,
+    ) -> Vec<String> {
         let mut images_urls: Vec<String> = vec![];
 
         for image in image_nodes {
@@ -126,7 +75,12 @@ pub trait Crawler {
         images_urls
     }
 
-    fn abstract_extract_description(&self, document: &Html, selector: Selector, re: &Regex) -> Option<String> {
+    fn abstract_extract_description(
+        &self,
+        document: &Html,
+        selector: Selector,
+        re: &Regex,
+    ) -> Option<String> {
         let description_node = document.select(&selector).next();
 
         if description_node.is_none() {
@@ -184,11 +138,78 @@ pub trait Crawler {
     }
 }
 
+pub async fn upload_extracted_images(
+    source: SourceName,
+    image_urls: Vec<String>,
+    external_id: &str,
+    base: &str,
+) -> Vec<String> {
+    add_category_breadcrumb(
+        "updating product",
+        btreemap! {
+            "external_id" => external_id.to_string(),
+            "image_urls" => format!("{:?}", &image_urls),
+            "source" => source.to_string(),
+        },
+        ["consumer.", &SETTINGS.amqp.queues.parse_category.name].join(""),
+    );
+
+    let mut uploaded_urls: Vec<String> = vec![];
+    let mut uploads: Vec<_> = vec![];
+
+    let upload_later = Mutex::new(vec![]);
+    for image_url in image_urls {
+        let file_path = [
+            "product_images/",
+            &source.to_string().to_snake_case(),
+            &image_url,
+        ]
+        .concat();
+
+        let url: String = [base, &image_url].concat();
+
+        uploads.push(
+            upload_image_to_cloud(file_path.clone(), url.clone()).then(|success| {
+                if success {
+                    ok(file_path)
+                } else {
+                    upload_later.lock().unwrap().push(UploadImageMessage {
+                        file_path: file_path.clone(),
+                        image_url: url,
+                        external_id: external_id.to_string(),
+                        source,
+                    });
+                    err(file_path)
+                }
+            }),
+        );
+    }
+
+    let uploaded_images = join_all(uploads).await;
+
+    for filename in uploaded_images {
+        if filename.is_ok() {
+            uploaded_urls.push(filename.unwrap());
+        }
+    }
+
+    let messages = upload_later.lock().unwrap().to_vec();
+    for message in messages {
+        let _schedule_result = postpone_image_parsing(message).await;
+    }
+
+    uploaded_urls
+}
+
 fn is_valid_url(url: &str) -> bool {
     url.starts_with('/') || url.starts_with("http")
 }
 
-pub fn get_html_nodes<'result>(selectors: &'result ProductHtmlSelectors, element: &'result ElementRef, source: SourceName) -> Option<ProductHtmlNodes<'result>> {
+pub fn get_html_nodes<'result>(
+    selectors: &'result ProductHtmlSelectors,
+    element: &'result ElementRef,
+    source: SourceName,
+) -> Option<ProductHtmlNodes<'result>> {
     let id_node = element.select(&selectors.id).next();
     let title_node = element.select(&selectors.title).next();
     let price_node = element.select(&selectors.price).next();
@@ -214,7 +235,10 @@ pub fn get_html_nodes<'result>(selectors: &'result ProductHtmlSelectors, element
     }
 
     if available_node.is_none() && unavailable_node.is_none() {
-        let message = format!("both available_node & unavailable_node not found! [{source}]", source = source);
+        let message = format!(
+            "both available_node & unavailable_node not found! [{source}]",
+            source = source
+        );
         sentry::capture_message(message.as_str(), sentry::Level::Warning);
         valid = false;
     }
@@ -248,10 +272,8 @@ pub struct ProductHtmlNodes<'a> {
     pub unavailable: Option<ElementRef<'a>>,
 }
 
-
 #[cfg(test)]
 mod tests {
-    use async_trait::async_trait;
     use regex::Regex;
     use scraper::{Html, Selector};
 
@@ -264,21 +286,42 @@ mod tests {
     #[derive(Clone)]
     pub struct EmptyCrawler {}
 
-    #[async_trait(? Send)]
     impl Crawler for EmptyCrawler {
-        fn get_source(&self) -> SourceName { SourceName::MiShopCom }
+        fn get_site_base(&self) -> String {
+            "her".to_string()
+        }
 
-        fn get_currency(&self) -> CurrencyEnum { CurrencyEnum::RUB }
+        fn get_source(&self) -> SourceName {
+            SourceName::MiShopCom
+        }
 
-        fn get_categories(&self) -> Vec<CategorySlug> { vec![] }
+        fn get_currency(&self) -> CurrencyEnum {
+            CurrencyEnum::RUB
+        }
 
-        fn get_next_page_urls(&self, category: CategorySlug) -> Vec<String> { vec![] }
+        fn get_categories(&self) -> Vec<CategorySlug> {
+            vec![]
+        }
 
-        fn extract_products(&self, document: &Html) -> Vec<LocalParsedProduct> { vec![] }
+        fn get_next_page_urls(&self, category: CategorySlug) -> Vec<String> {
+            vec![]
+        }
 
-        fn get_additional_info_url(&self, external_id: &str) -> String { "todo".to_string() }
+        fn extract_products(&self, document: &Html) -> Vec<LocalParsedProduct> {
+            vec![]
+        }
 
-        async fn extract_additional_info(&self, document: &Html, external_id: &str) -> Option<AdditionalParsedProductInfo> { None }
+        fn get_additional_info_url(&self, external_id: &str) -> String {
+            "todo".to_string()
+        }
+
+        async fn extract_additional_info(
+            &self,
+            document: &Html,
+            external_id: &str,
+        ) -> Option<AdditionalParsedProductInfo> {
+            None
+        }
     }
 
     impl EmptyCrawler {
@@ -314,18 +357,22 @@ mod tests {
 
     #[test]
     fn it_doesnt_fail_on_no_src_tags() {
-        let document = Html::parse_document("<div>\
+        let document = Html::parse_document(
+            "<div>\
          <img not-src=\"url.jpg\">
-        </div>");
+        </div>",
+        );
 
         assert!(CRAWLER.extract_image_urls(&document, "her").is_empty());
     }
 
     #[test]
     fn it_finds_src_tags() {
-        let document = Html::parse_document("<div>\
+        let document = Html::parse_document(
+            "<div>\
          <img src=\"/url.jpg\">
-        </div>");
+        </div>",
+        );
 
         let result = CRAWLER.extract_image_urls(&document, "her");
         assert_eq!(result.len(), 1);
@@ -334,10 +381,12 @@ mod tests {
 
     #[test]
     fn it_finds_lazy_tags() {
-        let document = Html::parse_document("<div>\
+        let document = Html::parse_document(
+            "<div>\
             <img src=\"/src.jpg\">
             <img data-lazy=\"/lazy.jpg\">
-        </div>");
+        </div>",
+        );
 
         let result = CRAWLER.extract_image_urls(&document, "her");
         assert_eq!(result.len(), 2);
@@ -347,10 +396,12 @@ mod tests {
 
     #[test]
     fn it_doesnt_return_invalid_urls() {
-        let document = Html::parse_document("<div>\
+        let document = Html::parse_document(
+            "<div>\
             <img src=\"/src.jpg\">
             <img data-lazy=\"data:,\">
-        </div>");
+        </div>",
+        );
 
         let result = CRAWLER.extract_image_urls(&document, "her");
         assert_eq!(result.len(), 1);
@@ -359,62 +410,78 @@ mod tests {
 
     #[test]
     fn it_doesnt_fail_when_no_tags_presented() {
-        let document = Html::parse_document("<div>\
-        </div>");
+        let document = Html::parse_document(
+            "<div>\
+        </div>",
+        );
 
         assert_eq!(CRAWLER.parse_availability(&document), None);
     }
 
     #[test]
     fn it_parses_availability() {
-        let document = Html::parse_document("<div>\
+        let document = Html::parse_document(
+            "<div>\
             <available/>
-        </div>");
+        </div>",
+        );
 
         assert_eq!(CRAWLER.parse_availability(&document), Some(true));
     }
 
     #[test]
     fn it_parses_unavailability() {
-        let document = Html::parse_document("<div>\
+        let document = Html::parse_document(
+            "<div>\
             <unavailable/>
-        </div>");
+        </div>",
+        );
 
         assert_eq!(CRAWLER.parse_availability(&document), Some(false));
     }
 
     #[test]
     fn it_parses_as_unavailability_when_both_tags_presented() {
-        let document = Html::parse_document("<div>\
+        let document = Html::parse_document(
+            "<div>\
             <unavailable/>
             <available/>
-        </div>");
+        </div>",
+        );
 
         assert_eq!(CRAWLER.parse_availability(&document), Some(false));
     }
 
     #[test]
     fn it_doesnt_fail_on_no_description() {
-        let document = Html::parse_document("<div>\
-        </div>");
+        let document = Html::parse_document(
+            "<div>\
+        </div>",
+        );
 
         assert_eq!(CRAWLER.extract_description(&document), None);
     }
 
     #[test]
     fn it_extracts_one_word_description() {
-        let document = Html::parse_document("<div>\
+        let document = Html::parse_document(
+            "<div>\
             <description>
                 her
             </description>
-        </div>");
+        </div>",
+        );
 
-        assert_eq!(CRAWLER.extract_description(&document), Some(r"<p>her<\p>".to_string()));
+        assert_eq!(
+            CRAWLER.extract_description(&document),
+            Some(r"<p>her<\p>".to_string())
+        );
     }
 
     #[test]
     fn it_extracts_only_valid_text() {
-        let document = Html::parse_document(r"<div>
+        let document = Html::parse_document(
+            r"<div>
             <description>
                 <p>her<\p>
                     <ul>
@@ -422,8 +489,12 @@ mod tests {
                         <li>2</li>
                     </ul>
             </description>
-        </div>");
+        </div>",
+        );
 
-        assert_eq!(CRAWLER.extract_description(&document), Some(r"<p>her<\p></p><ul><li>1</li><li>2</li></ul>".to_string()));
+        assert_eq!(
+            CRAWLER.extract_description(&document),
+            Some(r"<p>her<\p></p><ul><li>1</li><li>2</li></ul>".to_string())
+        );
     }
 }

@@ -6,6 +6,7 @@ use crate::parse::service::cloud_uploader::add_uploader_breadcrumb;
 use crate::parse::consumer::parse_image::UploadImageMessage;
 use crate::parse::consumer::parse_page::ParsePageMessage;
 use crate::SETTINGS;
+use crate::parse::consumer::parse_details::ParseDetailsMessage;
 
 pub async fn declare_queue(name: &str) -> Result<Queue> {
     let channel = get_channel().await?;
@@ -66,6 +67,39 @@ pub async fn postpone_page_parsing(message: ParsePageMessage) -> Result<()> {
         let message = format!(
             "Message is not acknowledged! Queue: {queue_name}",
             queue_name = SETTINGS.amqp.queues.parse_page.name
+        );
+        sentry::capture_message(message.as_str(), sentry::Level::Warning);
+    } else {
+        log::info!("Message acknowledged");
+    }
+
+    Ok(())
+}
+pub async fn postpone_details_parsing(message: ParseDetailsMessage) -> Result<()> {
+    let breadcrumb_data = btreemap! {
+                    "source" => message.source.to_string(),
+                    "external_id" => message.external_id.to_string()
+                };
+    add_uploader_breadcrumb("scheduling later parse", breadcrumb_data);
+
+    let channel = get_channel().await?;
+
+    let payload_json = serde_json::to_string(&message);
+    let confirm = channel
+        .basic_publish(
+            "",
+            &SETTINGS.amqp.queues.parse_details.name,
+            BasicPublishOptions::default(),
+            payload_json.unwrap().into_bytes(),
+            BasicProperties::default(),
+        )
+        .await?
+        .await?;
+
+    if confirm.is_nack() {
+        let message = format!(
+            "Message is not acknowledged! Queue: {queue_name}",
+            queue_name = SETTINGS.amqp.queues.parse_details.name
         );
         sentry::capture_message(message.as_str(), sentry::Level::Warning);
     } else {

@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use futures::future::join_all;
 use maplit::btreemap;
 use scraper::Html;
@@ -6,18 +8,20 @@ use sentry::types::protocol::latest::map::BTreeMap;
 use crate::common::db::repository::exchange_rate::try_get_exchange_rate_by_code;
 use crate::common::service::currency_converter::convert_from_with_rate;
 use crate::local_sentry::add_category_breadcrumb;
+use crate::my_enum::CurrencyEnum;
+use crate::parse::consumer::parse_details::ParseDetailsMessage;
 use crate::parse::consumer::parse_page::ParsePageMessage;
 use crate::parse::crawler::crawler::Crawler;
 use crate::parse::crawler::mi_shop_com::MiShopComCrawler;
 use crate::parse::crawler::samsung_shop_com_ua::SamsungShopComUaCrawler;
 use crate::parse::db::entity::category::CategorySlug;
 use crate::parse::db::entity::source::SourceName;
-use crate::parse::db::repository::product::{create_if_not_exists, update_details};
+use crate::parse::db::repository::product::create_if_not_exists;
 use crate::parse::db::repository::source_product::link_to_product;
 use crate::parse::dto::parsed_product::{
     AdditionalParsedProductInfo, InternationalParsedProduct, LocalParsedProduct,
 };
-use crate::parse::queue::postpone_page_parsing;
+use crate::parse::queue::{postpone_details_parsing, postpone_page_parsing};
 use crate::parse::service::requester::{get_data, get_data_s};
 use crate::SETTINGS;
 
@@ -49,7 +53,13 @@ pub async fn parse_page(
         },
     );
 
-    save_parsed_products(crawler, products, category).await;
+    save_parsed_products(
+        crawler.get_source(),
+        crawler.get_currency(),
+        products,
+        category,
+    )
+    .await;
 
     Ok(())
 }
@@ -58,8 +68,6 @@ pub async fn parse_category(
     source: SourceName,
     category: CategorySlug,
 ) -> Result<(), reqwest::Error> {
-    let crawler = get_crawler(&source);
-
     add_parse_breadcrumb(
         "in progress",
         btreemap! {
@@ -70,6 +78,8 @@ pub async fn parse_category(
 
     let mut products: Vec<LocalParsedProduct> = vec![];
     let concurrent_pages = 1; // TODO move to the db settings of specific crawler
+
+    let crawler = get_crawler(&source);
 
     for url in crawler.get_next_page_urls(category) {
         for page in (1..10000).step_by(concurrent_pages) {
@@ -106,8 +116,8 @@ pub async fn parse_category(
                             }
                         });
                         all_successful = all_successful
-                            && !parsed.is_empty() // Some sites return empty page
-                            && amount_of_duplicates != parsed.len(); // But some return the last page (samsung)
+                                && !parsed.is_empty() // Some sites return empty page
+                                && amount_of_duplicates != parsed.len(); // But some return the last page (samsung)
                     }
                     Err(e) => {
                         amount_of_fails += 1;
@@ -139,34 +149,33 @@ pub async fn parse_category(
             }
         }
     }
-
     dedup_products(&mut products, source);
 
     add_parse_breadcrumb(
         "parsed",
         btreemap! {
-            "crawler" => crawler.get_source().to_string(),
+            "crawler" => source.to_string(),
             "category" => category.to_string(),
             "length" => products.len().to_string()
         },
     );
 
-    save_parsed_products(crawler, products, category).await;
+    save_parsed_products(source, crawler.get_currency(), products, category).await;
 
     Ok(())
 }
 
 async fn save_parsed_products(
-    crawler: &dyn Crawler,
+    source: SourceName,
+    currency: CurrencyEnum,
     products: Vec<LocalParsedProduct>,
     category: CategorySlug,
 ) {
     let mut savings_in_progress = vec![];
-    let currency = crawler.get_currency();
     let rate = try_get_exchange_rate_by_code(currency);
 
     for parsed_product in products {
-        savings_in_progress.push(save_parsed_product(crawler, parsed_product, category, rate));
+        savings_in_progress.push(save_parsed_product(source, parsed_product, category, rate));
 
         if savings_in_progress.len() == SETTINGS.database.product_save_concurrency {
             join_all(savings_in_progress).await;
@@ -178,14 +187,14 @@ async fn save_parsed_products(
     add_parse_breadcrumb(
         "saved",
         btreemap! {
-            "crawler" => crawler.get_source().to_string(),
+            "source" => source.to_string(),
             "category" => category.to_string(),
         },
     );
 }
 
 async fn save_parsed_product(
-    crawler: &dyn Crawler,
+    source: SourceName,
     parsed_product: LocalParsedProduct,
     category: CategorySlug,
     rate: f64,
@@ -200,33 +209,15 @@ async fn save_parsed_product(
     let product = create_if_not_exists(&international_parsed_product, category);
 
     if product.description.is_none() || product.images.is_none() {
-        // TODO create separate job to attach this info
-        let details =
-            extract_additional_info(&international_parsed_product.external_id, crawler).await;
-
-        match details {
-            None => {
-                sentry::capture_message(
-                    format!(
-                        "No additional info found [{source}] for: {id}",
-                        source = crawler.get_source().to_string(),
-                        id = international_parsed_product.external_id
-                    )
-                    .as_str(),
-                    sentry::Level::Warning,
-                );
-            }
-            Some(details) => {
-                update_details(&product, &details);
-            }
-        }
+        postpone_details_parsing(ParseDetailsMessage {
+            external_id: international_parsed_product.external_id.clone(),
+            source,
+            product_id: product.id,
+        })
+        .await;
     }
 
-    link_to_product(
-        &product,
-        &international_parsed_product,
-        crawler.get_source(),
-    );
+    link_to_product(&product, &international_parsed_product, source);
 }
 
 fn parse_html(data: &str, crawler: &dyn Crawler) -> Vec<LocalParsedProduct> {
@@ -235,7 +226,7 @@ fn parse_html(data: &str, crawler: &dyn Crawler) -> Vec<LocalParsedProduct> {
     crawler.extract_products(&document)
 }
 
-async fn extract_additional_info(
+pub async fn extract_additional_info(
     external_id: &str,
     crawler: &dyn Crawler,
 ) -> Option<AdditionalParsedProductInfo> {
@@ -254,9 +245,7 @@ async fn extract_additional_info(
         Ok(data) => {
             let document = Html::parse_document(&data);
 
-            crawler
-                .extract_additional_info(&document, &external_id)
-                .await
+            crawler.extract_additional_info(&document, &external_id)
         }
         Err(e) => {
             let message = format!(
@@ -294,7 +283,7 @@ fn add_parse_breadcrumb(message: &str, data: BTreeMap<&str, String>) {
     add_category_breadcrumb(message, data, "parse".into());
 }
 
-fn get_crawler(source: &SourceName) -> &dyn Crawler {
+pub fn get_crawler(source: &SourceName) -> &dyn Crawler {
     match source {
         SourceName::MiShopCom => &MiShopComCrawler {},
         SourceName::SamsungShopComUa => &SamsungShopComUaCrawler {},

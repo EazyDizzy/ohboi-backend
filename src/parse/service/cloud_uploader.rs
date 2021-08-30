@@ -33,7 +33,7 @@ pub async fn upload_image_to_cloud(file_path: String, image_url: String) -> bool
         bucket: { &SETTINGS.s3.bucket }.to_string(),
         key: file_path,
         // TODO stream directly from http
-        body: Some(StreamingBody::from(data.unwrap().to_vec())),
+        body: Some(StreamingBody::from(data.unwrap())),
         ..Default::default()
     };
 

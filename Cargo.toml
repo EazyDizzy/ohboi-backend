@@ -17,8 +17,8 @@ codegen-units = 1256
 
 [profile.release]
 overflow-checks = true
-#codegen-units = 1
-#lto = "fat"
+codegen-units = 1
+lto = "fat"
 
 [dependencies]
 # http
@@ -39,19 +39,21 @@ r2d2 = "0.8.9" # connection pool
 # parsing
 structopt = { version = "0.3.22" } # parse command line arguments into struct
 clap = "2.33.3" # enums from cli arguments
-lapin = "1.7.1" # rabbitmq
+lapin = "1.8.0" # rabbitmq
 scraper = "0.12.0" # html parsing
-reqwest = { version = "0.10.9", features = ["gzip", "rustls-tls"] }
+reqwest = { version = "0.11.4", features = ["gzip", "rustls-tls"] }
 rusoto_core = "0.45.0"
 rusoto_s3 = "0.45.0"
 # util
+crossbeam = "0.8.1"
+tokio = {version = "1.0.2", features = ["macros"]}
 dotenv = "0.15.0"
 Inflector = "0.11.4" # string manipulations
 lazy_static = "1.4.0"
 futures = "0.3.8"
 termion = "1.5.5" # terminal colors etc
 regex = "1.4.2"
-async-trait = "0.1.42" # to allow async functions in traits
+async-trait = "0.1.51" # to allow async functions in traits
 sentry = { version = "0.22.0", features = ["debug-images"] }
 log = "0.4.13"
 env_logger = "0.8.2" # configuration for logger via env
@@ -59,6 +61,3 @@ maplit = "1.0.2" # btreemap macros
 rand = "0.8.3"
 strum = { version = "0.21", features = ["derive"] } # enum iterators
 strum_macros = "0.21"
-
-[dev-dependencies]
-actix-rt = "^1.1.1"

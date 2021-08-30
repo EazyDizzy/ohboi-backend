@@ -1,68 +1,50 @@
-use futures::StreamExt;
-use lapin::{options::{BasicAckOptions, BasicConsumeOptions, BasicNackOptions, BasicQosOptions}, Result, types::FieldTable};
-use maplit::btreemap;
-use sentry::protocol::map::BTreeMap;
+use crossbeam::channel;
+use diesel::query_dsl::InternalJoinDsl;
+use tokio::runtime::Handle;
 
-use crate::local_sentry::add_category_breadcrumb;
-use crate::parse::service::parser::parse_category;
+use crate::parse::consumer::retrieve_messages;
 use crate::parse::producer::parse_category::CrawlerCategoryMessage;
-use crate::parse::queue::get_channel;
+use crate::parse::service::parser::parse_category;
 use crate::SETTINGS;
 
-pub async fn start() -> Result<()> {
-    let channel = get_channel().await?;
-    channel.basic_qos(
-        SETTINGS.amqp.queues.parse_category.prefetch,
-        BasicQosOptions { global: true },
-    ).await?;
+pub async fn start() -> core::result::Result<(), ()> {
+    let _ = retrieve_messages(&SETTINGS.amqp.queues.parse_category, |data| {
+        let (snd, rcv) = channel::bounded(1);
 
-    let mut consumer = channel
-        .basic_consume(
-            &SETTINGS.amqp.queues.parse_category.name,
-            [&SETTINGS.amqp.queues.parse_category.name, "_consumer"].join("").as_str(),
-            BasicConsumeOptions::default(),
-            FieldTable::default(),
-        )
-        .await?;
+        let _ = Handle::current().spawn(async move {
+            let rs = execute(data).await;
+            let a = snd.send(rs);
 
-    while let Some(delivery) = consumer.next().await {
-        let (_, delivery) = delivery.expect("error in consumer");
+            println!("send_result {:?}", a);
+            rs
+        });
 
-        add_consumer_breadcrumb(
-            "got message",
-            btreemap! {},
-        );
+        let recieved = rcv.recv();
+        println!("recieved result {:?}", recieved);
 
-        // TODO why clone?
-        let decoded_data = String::from_utf8(delivery.data.clone());
-        let data = decoded_data.unwrap();
-
-        let parsed_json = serde_json::from_str(data.as_str());
-        let message: CrawlerCategoryMessage = parsed_json.unwrap();
-
-        let parse_result = parse_category(message.source, message.category).await;
-
-        if parse_result.is_err() {
-            let message = format!(
-                "Parsing failed! [{source}]({category}) {error:?}",
-                error = parse_result.err(),
-                source = message.source,
-                category = message.category
-            );
-            sentry::capture_message(message.as_str(), sentry::Level::Warning);
-            delivery.nack(BasicNackOptions { requeue: true, multiple: false }).await.expect("nack");
-        } else {
-            delivery.ack(BasicAckOptions { multiple: false }).await.expect("ack");
-        }
-    }
+        recieved.unwrap()
+    })
+    .await;
 
     Ok(())
 }
 
-fn add_consumer_breadcrumb(message: &str, data: BTreeMap<&str, String>) {
-    add_category_breadcrumb(
-        message,
-        data,
-        ["consumer.", &SETTINGS.amqp.queues.parse_category.name].join(""),
-    );
+async fn execute(data: String) -> Result<(), ()> {
+    let parsed_json = serde_json::from_str(&data);
+    let message: CrawlerCategoryMessage = parsed_json.unwrap();
+
+    let parse_result = parse_category(message.source, message.category).await;
+
+    if parse_result.is_err() {
+        let message = format!(
+            "Parsing failed! [{source}]({category}) {error:?}",
+            error = parse_result.err(),
+            source = message.source,
+            category = message.category
+        );
+        sentry::capture_message(message.as_str(), sentry::Level::Warning);
+        Err(())
+    } else {
+        Ok(())
+    }
 }

@@ -43,6 +43,7 @@ arg_enum! {
         ParseCategory,
         ParseImage,
         ParsePage,
+        ParseDetails,
         PullExchangeRates,
     }
 }
@@ -62,7 +63,7 @@ arg_enum! {
     }
 }
 
-#[actix_web::main]
+#[tokio::main]
 async fn main() {
     std::env::set_var("RUST_LOG", "daemon");
     env_logger::init();
@@ -80,6 +81,7 @@ async fn main() {
             &SETTINGS.amqp.queues.parse_image.name,
             &SETTINGS.amqp.queues.parse_page.name,
             &SETTINGS.amqp.queues.pull_exchange_rates.name,
+            &SETTINGS.amqp.queues.parse_details.name,
         ];
         for queue_name in &queues {
             let declare = declare_queue(queue_name).await;
@@ -112,6 +114,9 @@ async fn main() {
             }
             ConsumerName::PullExchangeRates => {
                 let _res = parse::consumer::pull_exchange_rates::start().await;
+            }
+            ConsumerName::ParseDetails => {
+                let _res = parse::consumer::parse_details::start().await;
             }
         }
     }

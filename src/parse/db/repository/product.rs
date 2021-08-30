@@ -31,11 +31,11 @@ pub fn add_image_to_product_details(existent_product_id: i32, file_path: &str) {
     // TODO enable?
 }
 
-pub fn update_details(existent_product: &Product, additional_info: &AdditionalParsedProductInfo) {
+pub fn update_details(existent_product_id: i32, additional_info: &AdditionalParsedProductInfo) {
     use crate::schema::product::dsl::{description, enabled, id, images, product};
 
     let connection = &db::establish_connection();
-    let target = product.filter(id.eq(existent_product.id));
+    let target = product.filter(id.eq(existent_product_id));
 
     let product_characteristics: Vec<Option<NewProductCharacteristic>> = additional_info
         .characteristics
@@ -71,7 +71,7 @@ pub fn update_details(existent_product: &Product, additional_info: &AdditionalPa
 
             value_id.map_or(None, |v| {
                 Some(NewProductCharacteristic {
-                    product_id: existent_product.id,
+                    product_id: existent_product_id,
                     characteristic_id,
                     value_id: v,
                 })
@@ -86,6 +86,9 @@ pub fn update_details(existent_product: &Product, additional_info: &AdditionalPa
             .map(Option::unwrap)
             .collect::<Vec<NewProductCharacteristic>>(),
     );
+
+    // TODO no sense to pull product at all
+    let existent_product = get_product_by_id(existent_product_id).unwrap();
 
     diesel::update(target)
         .set((

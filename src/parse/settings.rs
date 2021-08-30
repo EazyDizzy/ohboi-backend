@@ -18,6 +18,7 @@ pub struct AmqpQueues {
     pub pull_exchange_rates: AmqpQueueSettings,
     pub parse_image: AmqpQueueSettings,
     pub parse_page: AmqpQueueSettings,
+    pub parse_details: AmqpQueueSettings,
 }
 
 #[derive(Debug, Deserialize)]
@@ -95,6 +96,17 @@ impl Settings {
                 })
                 .unwrap().parse().unwrap(),
         };
+        let parse_details_settings = AmqpQueueSettings {
+            name: dotenv::var("AMQP_PARSE_DETAILS_QUEUE_NAME")
+                .or_else::<String, _>(|_| {
+                    Ok(String::from("parse.details"))
+                }).unwrap(),
+            prefetch: dotenv::var("AMQP_PARSE_DETAILS_QUEUE_PREFETCH_SIZE")
+                .or_else::<String, _>(|_| {
+                    Ok(String::from("2"))
+                })
+                .unwrap().parse().unwrap(),
+        };
 
         let pull_exchange_rates_settings = AmqpQueueSettings {
             name: dotenv::var("AMQP_PULL_EXCHANGE_RATES_QUEUE_NAME")
@@ -113,6 +125,7 @@ impl Settings {
             pull_exchange_rates: pull_exchange_rates_settings,
             parse_image: parse_upload_settings,
             parse_page: parse_page_settings,
+            parse_details: parse_details_settings,
         };
         Amqp {
             url: dotenv::var("AMQP_ADDR")
