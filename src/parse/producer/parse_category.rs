@@ -13,8 +13,8 @@ use crate::parse::db::entity::source::SourceName;
 use crate::parse::queue::get_channel;
 use crate::SETTINGS;
 
-#[derive(Serialize, Deserialize, Debug)]
-pub struct CrawlerCategoryMessage {
+#[derive(Serialize, Deserialize)]
+pub struct ParseCategoryMessage {
     pub category: CategorySlug,
     pub source: SourceName,
 }
@@ -32,7 +32,7 @@ async fn start_crawler<T>(crawler: T, channel: &Channel) -> Result<()>
 
     // TODO check if crawler is enabled
     for category in crawler.get_categories() {
-        let payload = CrawlerCategoryMessage {
+        let payload = ParseCategoryMessage {
             category,
             source: crawler.get_source(),
         };

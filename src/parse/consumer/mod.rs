@@ -12,7 +12,7 @@ use maplit::btreemap;
 use sentry::protocol::map::BTreeMap;
 
 use crate::local_sentry::add_category_breadcrumb;
-use crate::parse::producer::parse_category::CrawlerCategoryMessage;
+use crate::parse::producer::parse_category::ParseCategoryMessage;
 use crate::parse::queue::get_channel;
 use crate::parse::service::parser::parse_category;
 use crate::parse::settings::AmqpQueueSettings;
@@ -24,7 +24,7 @@ pub mod parse_page;
 pub mod pull_exchange_rates;
 type ConsumerCallBack = fn(String) -> core::result::Result<(), ()>;
 
-async fn retrieve_messages(
+async fn retrieve_queue_messages(
     settings: &AmqpQueueSettings,
     consumer_callback: ConsumerCallBack,
 ) -> Result<()> {
@@ -50,6 +50,7 @@ async fn retrieve_messages(
         // TODO why clone?
         let decoded_data = String::from_utf8(delivery.data.clone());
         let data = decoded_data.unwrap();
+        // Todo pass &str
         let job_result = consumer_callback(data);
 
         if job_result.is_ok() {
