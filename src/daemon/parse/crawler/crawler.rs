@@ -321,7 +321,7 @@ mod tests {
             "todo".to_string()
         }
 
-        async fn extract_additional_info(
+        fn extract_additional_info(
             &self,
             document: &Html,
             external_id: &str,

@@ -3,7 +3,7 @@ use maplit::btreemap;
 use serde::{Deserialize, Serialize};
 
 use crate::daemon::parse::crawler::crawler::Crawler;
-use crate::daemon::parse::crawler::mi_shop_com::MiShopComCrawler;
+use crate::daemon::parse::crawler::mi_shop_com::crawler::MiShopComCrawler;
 use crate::daemon::parse::crawler::samsung_shop_com_ua::SamsungShopComUaCrawler;
 use crate::daemon::db::entity::category::CategorySlug;
 use crate::daemon::db::entity::source::SourceName;

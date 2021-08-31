@@ -85,9 +85,9 @@ pub fn float_value(context: &CharacteristicParsingContext, value: &str) -> Optio
 
 #[cfg(test)]
 mod tests {
-    use crate::daemon::parse::crawler::util::*;
+    use crate::daemon::parse::crawler::characteristic_parser::*;
 
-    fn get_context() -> CharacteristicParsingContext {
+    fn get_context() -> CharacteristicParsingContext<'static> {
         CharacteristicParsingContext {
             title: "_",
             external_id: "_",
