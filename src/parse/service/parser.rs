@@ -17,7 +17,7 @@ use crate::parse::db::repository::source_product::link_to_product;
 use crate::parse::dto::parsed_product::{
     AdditionalParsedProductInfo, InternationalParsedProduct, LocalParsedProduct,
 };
-use crate::parse::queue::postpone::{postpone_details_parsing, postpone_page_parsing};
+use crate::parse::queue::pub_api::postpone::{postpone_details_parsing, postpone_page_parsing};
 use crate::parse::service::requester::{get_data, get_data_s};
 use crate::SETTINGS;
 
@@ -205,7 +205,7 @@ async fn save_parsed_product(
     let product = create_if_not_exists(&international_parsed_product, category);
 
     if product.description.is_none() || product.images.is_none() {
-        postpone_details_parsing(
+        let _res = postpone_details_parsing(
             international_parsed_product.external_id.clone(),
             source,
             product.id,

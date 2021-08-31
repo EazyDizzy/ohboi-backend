@@ -2,7 +2,6 @@ use std::time::Instant;
 
 use maplit::btreemap;
 use regex::Regex;
-use scraper::html::Select;
 use scraper::{ElementRef, Html, Selector};
 
 use crate::common::dto::characteristic::enum_characteristic::{
@@ -14,7 +13,7 @@ use crate::common::dto::characteristic::string_characteristic::StringCharacteris
 use crate::common::dto::characteristic::TypedCharacteristic;
 use crate::my_enum::CurrencyEnum;
 use crate::parse::crawler::crawler::{
-    get_html_nodes, upload_extracted_images, Crawler, ProductHtmlSelectors,
+    get_html_nodes, Crawler, ProductHtmlSelectors,
 };
 use crate::parse::crawler::util::*;
 use crate::parse::db::entity::category::CategorySlug;

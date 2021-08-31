@@ -4,8 +4,6 @@ pub use float_value_parser::*;
 pub use int_value_parser::*;
 pub use string_value_parser::*;
 
-use crate::parse::crawler::crawler::Crawler;
-use crate::parse::db::entity::category::CategorySlug;
 use crate::parse::db::entity::source::SourceName;
 
 mod bool_value_parser;

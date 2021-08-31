@@ -17,11 +17,11 @@ use diesel::r2d2::ConnectionManager;
 use diesel::PgConnection;
 use structopt::StructOpt;
 
-use parse::queue;
 use parse::settings::Settings;
 
 use crate::parse::db::repository::sync_characteristic_enum;
-use crate::parse::queue::{declare_queue, start_consumer, start_producer};
+use crate::parse::queue::pub_api::declare::{declare_queue, declare_all_queues};
+use crate::parse::queue::pub_api::launch::{start_consumer, start_producer};
 
 mod common;
 mod local_sentry;
@@ -70,19 +70,7 @@ async fn main() {
         return;
     }
     if args.worker_type == "queue_config" {
-        let queues = [
-            &SETTINGS.queue_broker.queues.parse_category.name,
-            &SETTINGS.queue_broker.queues.parse_image.name,
-            &SETTINGS.queue_broker.queues.parse_page.name,
-            &SETTINGS.queue_broker.queues.pull_exchange_rates.name,
-            &SETTINGS.queue_broker.queues.parse_details.name,
-        ];
-        for queue_name in &queues {
-            let declare = declare_queue(queue_name).await;
-            if declare.is_err() {
-                log::error!("Queue declaration failed. {} {:?}", queue_name, declare);
-            }
-        }
+        declare_all_queues().await;
         return;
     }
 

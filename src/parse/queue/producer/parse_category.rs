@@ -1,4 +1,4 @@
-use lapin::{Channel, Result};
+use lapin::Result;
 use maplit::btreemap;
 use serde::{Deserialize, Serialize};
 
@@ -7,7 +7,6 @@ use crate::parse::crawler::mi_shop_com::MiShopComCrawler;
 use crate::parse::crawler::samsung_shop_com_ua::SamsungShopComUaCrawler;
 use crate::parse::db::entity::category::CategorySlug;
 use crate::parse::db::entity::source::SourceName;
-use crate::parse::queue::get_channel;
 use crate::parse::queue::layer::produce::produce;
 use crate::parse::queue::producer::add_producer_breadcrumb;
 use crate::SETTINGS;
@@ -19,15 +18,14 @@ pub struct ParseCategoryMessage {
 }
 
 pub async fn start() -> Result<()> {
-    let channel = get_channel().await?;
     // TODO get crawler based on enum
-    produce_message_for_crawler(MiShopComCrawler {}, &channel).await?;
-    produce_message_for_crawler(SamsungShopComUaCrawler {}, &channel).await?;
+    produce_message_for_crawler(MiShopComCrawler {}).await?;
+    produce_message_for_crawler(SamsungShopComUaCrawler {}).await?;
 
     Ok(())
 }
 
-async fn produce_message_for_crawler<T>(crawler: T, channel: &Channel) -> Result<()>
+async fn produce_message_for_crawler<T>(crawler: T) -> Result<()>
 where
     T: Crawler,
 {
