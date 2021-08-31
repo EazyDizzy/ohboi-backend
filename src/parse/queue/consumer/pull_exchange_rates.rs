@@ -9,7 +9,7 @@ use crate::parse::queue::layer::consume::consume;
 use crate::parse::service::requester::get_data;
 use crate::SETTINGS;
 
-    #[derive(Deserialize)]
+#[derive(Deserialize)]
 struct ExchangeApiResponse {
     success: bool,
     rates: ExchangeApiRates,
@@ -32,7 +32,8 @@ pub async fn start() -> Result<(), ()> {
             let _ = snd.send(rs);
         });
 
-        rcv.recv().unwrap()
+        rcv.recv()
+            .expect("Failed to receive result of thread execution")
     })
     .await;
 
@@ -52,8 +53,9 @@ async fn execute() -> Result<(), ()> {
         return Err(());
     }
 
-    let api_response: SerdeResult<ExchangeApiResponse> =
-        serde_json::from_str(response.unwrap().as_str());
+    let api_response: SerdeResult<ExchangeApiResponse> = serde_json::from_str(
+        &response.expect("Failed to parse ExchangeApiResponse. Maybe response format has changed?"),
+    );
 
     if api_response.is_err() {
         let message = format!(
@@ -64,7 +66,8 @@ async fn execute() -> Result<(), ()> {
         return Err(());
     }
 
-    let response = api_response.unwrap();
+    // We have already checked for error
+    let response = api_response.expect("");
 
     if !response.success {
         sentry::capture_message("Response from api is not success!", sentry::Level::Warning);

@@ -1,5 +1,6 @@
 use std::str;
 
+use crossbeam::channel;
 use maplit::btreemap;
 use sentry::protocol::map::BTreeMap;
 use serde::{Deserialize, Serialize};
@@ -9,10 +10,9 @@ use crate::local_sentry::add_category_breadcrumb;
 use crate::parse::db::entity::source::SourceName;
 use crate::parse::db::repository::product::add_image_to_product_details;
 use crate::parse::db::repository::source_product::get_by_source_and_external_id;
+use crate::parse::queue::layer::consume::consume;
 use crate::parse::service::cloud_uploader::upload_image_to_cloud;
 use crate::SETTINGS;
-use crossbeam::channel;
-use crate::parse::queue::layer::consume::consume;
 
 #[derive(Serialize, Deserialize, Clone)]
 pub struct UploadImageMessage {
@@ -27,13 +27,15 @@ pub async fn start() -> core::result::Result<(), ()> {
         let (snd, rcv) = channel::bounded(1);
 
         let _ = Handle::current().spawn(async move {
-            let message: UploadImageMessage = serde_json::from_str(&message).unwrap();
+            let message: UploadImageMessage =
+                serde_json::from_str(&message).expect("Failed to parse UploadImageMessage");
 
             let rs = execute(message).await;
             let _ = snd.send(rs);
         });
 
-        rcv.recv().unwrap()
+        rcv.recv()
+            .expect("Failed to receive result of thread execution")
     })
     .await;
 
@@ -44,8 +46,11 @@ async fn execute(message: UploadImageMessage) -> Result<(), ()> {
     let result = upload_image_to_cloud(message.file_path.clone(), message.image_url).await;
 
     if result {
-        let source_product =
-            get_by_source_and_external_id(message.source, message.external_id).unwrap();
+        let source_product = get_by_source_and_external_id(message.source, &message.external_id)
+            .expect(&format!(
+                "SourceProduct doesn't exist. source: {} external_id: {}",
+                message.source, &message.external_id
+            ));
         add_consumer_breadcrumb(
             "updating product",
             btreemap! {

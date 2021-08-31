@@ -11,13 +11,15 @@ pub async fn start() -> core::result::Result<(), ()> {
         let (snd, rcv) = channel::bounded(1);
 
         let _ = Handle::current().spawn(async move {
-            let message: ParseCategoryMessage = serde_json::from_str(&message).unwrap();
+            let message: ParseCategoryMessage =
+                serde_json::from_str(&message).expect("Failed to parse ParseCategoryMessage");
 
             let rs = execute(message).await;
             let _ = snd.send(rs);
         });
 
-        rcv.recv().unwrap()
+        rcv.recv()
+            .expect("Failed to receive result of thread execution")
     })
     .await;
 

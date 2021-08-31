@@ -7,9 +7,9 @@ use tokio::runtime::Handle;
 use crate::local_sentry::add_category_breadcrumb;
 use crate::parse::db::entity::category::CategorySlug;
 use crate::parse::db::entity::source::SourceName;
+use crate::parse::queue::layer::consume::consume;
 use crate::parse::service::parser::parse_page;
 use crate::SETTINGS;
-use crate::parse::queue::layer::consume::consume;
 
 #[derive(Serialize, Deserialize)]
 pub struct ParsePageMessage {
@@ -23,13 +23,15 @@ pub async fn start() -> core::result::Result<(), ()> {
         let (snd, rcv) = channel::bounded(1);
 
         let _ = Handle::current().spawn(async move {
-            let message: ParsePageMessage = serde_json::from_str(&message).unwrap();
+            let message: ParsePageMessage =
+                serde_json::from_str(&message).expect("Failed to parse ParsePageMessage");
 
             let rs = execute(message).await;
             let _ = snd.send(rs);
         });
 
-        rcv.recv().unwrap()
+        rcv.recv()
+            .expect("Failed to receive result of thread execution")
     })
     .await;
 

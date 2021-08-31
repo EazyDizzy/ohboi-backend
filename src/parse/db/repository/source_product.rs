@@ -12,7 +12,7 @@ use crate::parse::db::repository::source_product_price_history::add_to_history_i
 use crate::parse::dto::parsed_product::InternationalParsedProduct;
 use crate::schema::source_product;
 
-pub fn get_by_source_and_external_id(source: SourceName, expected_external_id: String) -> Option<SourceProduct> {
+pub fn get_by_source_and_external_id(source: SourceName, expected_external_id: &str) -> Option<SourceProduct> {
     use crate::schema::source_product::dsl::{external_id, source_id, source_product};
 
     let connection = &db::establish_connection();

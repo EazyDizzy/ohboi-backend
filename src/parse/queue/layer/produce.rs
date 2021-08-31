@@ -5,19 +5,19 @@ use serde::Serialize;
 use crate::parse::queue::layer::get_channel;
 use crate::parse::settings::QueueSettings;
 
-pub async fn produce<T>(settings: &QueueSettings, message: &T) -> Result<()>
+pub async fn produce<Message>(settings: &QueueSettings, message: &Message) -> Result<()>
 where
-    T: ?Sized + Serialize,
+    Message: ?Sized + Serialize,
 {
     let channel = get_channel().await?;
 
-    let payload_json = serde_json::to_string(message);
+    let payload = serde_json::to_string(message).expect("Failed converting message to String");
     let confirm = channel
         .basic_publish(
             "",
             &settings.name,
             BasicPublishOptions::default(),
-            payload_json.unwrap().into_bytes(),
+            payload.into_bytes(),
             BasicProperties::default(),
         )
         .await?

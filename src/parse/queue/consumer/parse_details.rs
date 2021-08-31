@@ -2,10 +2,10 @@ use crossbeam::channel;
 use serde::{Deserialize, Serialize};
 use tokio::runtime::Handle;
 
-use crate::parse::queue::layer::consume::consume;
 use crate::parse::crawler::crawler::upload_extracted_images;
 use crate::parse::db::entity::source::SourceName;
 use crate::parse::db::repository::product::update_details;
+use crate::parse::queue::layer::consume::consume;
 use crate::parse::service::parser::{extract_additional_info, get_crawler};
 use crate::SETTINGS;
 
@@ -21,13 +21,15 @@ pub async fn start() -> core::result::Result<(), ()> {
         let (snd, rcv) = channel::bounded(1);
 
         let _ = Handle::current().spawn(async move {
-            let message: ParseDetailsMessage = serde_json::from_str(&message).unwrap();
+            let message: ParseDetailsMessage =
+                serde_json::from_str(&message).expect("Failed to parse ParseDetailsMessage");
 
             let rs = execute(message).await;
             let _ = snd.send(rs);
         });
 
-        rcv.recv().unwrap()
+        rcv.recv()
+            .expect("Failed to receive result of thread execution")
     })
     .await;
 
