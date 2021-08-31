@@ -11,7 +11,7 @@ use crate::parse::db::entity::source::SourceName;
 use crate::parse::db::repository::product::add_image_to_product_details;
 use crate::parse::db::repository::source_product::get_by_source_and_external_id;
 use crate::parse::queue::layer::consume::consume;
-use crate::parse::service::cloud_uploader::upload_image_to_cloud;
+use crate::parse::service::cloud::pub_api::upload_image_to_cloud;
 use crate::SETTINGS;
 
 #[derive(Serialize, Deserialize, Clone)]

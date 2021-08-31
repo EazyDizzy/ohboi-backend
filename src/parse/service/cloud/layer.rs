@@ -1,34 +1,26 @@
-use maplit::btreemap;
 use rusoto_core::Region;
-use rusoto_s3::{PutObjectRequest, S3, S3Client, StreamingBody};
-use sentry::protocol::map::BTreeMap;
+use rusoto_s3::{PutObjectRequest, S3Client, S3, StreamingBody};
 
-use crate::local_sentry::add_category_breadcrumb;
 use crate::parse::service::requester::get_bytes;
 use crate::SETTINGS;
 
-pub async fn upload_image_to_cloud(file_path: String, image_url: String) -> bool {
-    let breadcrumb_data = btreemap! {
-                    "file_path" => file_path.clone(),
-                    "image_url" => image_url.clone()
-                };
-    add_uploader_breadcrumb("uploading image", breadcrumb_data.clone());
-
+pub async fn upload_image_to_s3(file_path: String, image_url: String) -> bool {
     let data = get_bytes(&image_url).await;
 
     if data.is_err() {
         let message = format!(
-            "Cannot get image: {url} {error:?}",
+            "[cloud::image::upload] Cannot get image: {url} {error:?}",
             url = image_url,
             error = data.err().unwrap()
         );
+
         sentry::capture_message(message.as_str(), sentry::Level::Error);
 
         return false;
     }
 
     let client = S3Client::new(Region::EuWest2);
-    add_uploader_breadcrumb("uploading image", breadcrumb_data.clone());
+
     let request: PutObjectRequest = PutObjectRequest {
         bucket: { &SETTINGS.s3.bucket }.to_string(),
         key: file_path,
@@ -42,17 +34,12 @@ pub async fn upload_image_to_cloud(file_path: String, image_url: String) -> bool
 
     if !success {
         let message = format!(
-            "Image can't be uploaded to cloud! {url} {error:?}",
+            "[cloud::image::upload] Image can't be uploaded to cloud! {url} {error:?}",
             url = image_url,
             error = result.err()
         );
         sentry::capture_message(message.as_str(), sentry::Level::Error);
     }
-    add_uploader_breadcrumb("uploaded image", breadcrumb_data);
 
     success
-}
-
-fn add_uploader_breadcrumb(message: &str, data: BTreeMap<&str, String>) {
-    add_category_breadcrumb(message, data, "cloud.upload".into());
 }

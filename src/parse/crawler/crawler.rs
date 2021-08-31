@@ -14,7 +14,7 @@ use crate::parse::db::entity::category::CategorySlug;
 use crate::parse::db::entity::source::SourceName;
 use crate::parse::dto::parsed_product::{AdditionalParsedProductInfo, LocalParsedProduct};
 use crate::parse::queue::pub_api::postpone::postpone_image_parsing;
-use crate::parse::service::cloud_uploader::upload_image_to_cloud;
+use crate::parse::service::cloud::pub_api::upload_image_to_cloud;
 use crate::parse::service::html_cleaner::clean_html;
 use crate::SETTINGS;
 
