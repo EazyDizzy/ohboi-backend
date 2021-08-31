@@ -8,8 +8,8 @@ use maplit::btreemap;
 use sentry::protocol::map::BTreeMap;
 
 use crate::local_sentry::add_category_breadcrumb;
-use crate::parse::queue::get_channel;
 use crate::parse::settings::QueueSettings;
+use crate::parse::queue::layer::get_channel;
 
 type ConsumerCallBack = fn(String) -> core::result::Result<(), ()>;
 

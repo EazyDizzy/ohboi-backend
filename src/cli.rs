@@ -20,7 +20,7 @@ use structopt::StructOpt;
 use parse::settings::Settings;
 
 use crate::parse::db::repository::sync_characteristic_enum;
-use crate::parse::queue::pub_api::declare::{declare_queue, declare_all_queues};
+use crate::parse::queue::pub_api::declare::declare_all_queues;
 use crate::parse::queue::pub_api::launch::{start_consumer, start_producer};
 
 mod common;

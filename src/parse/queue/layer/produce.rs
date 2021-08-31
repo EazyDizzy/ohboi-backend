@@ -2,7 +2,7 @@ use lapin::options::BasicPublishOptions;
 use lapin::{BasicProperties, Result};
 use serde::Serialize;
 
-use crate::parse::queue::get_channel;
+use crate::parse::queue::layer::get_channel;
 use crate::parse::settings::QueueSettings;
 
 pub async fn produce<T>(settings: &QueueSettings, message: &T) -> Result<()>

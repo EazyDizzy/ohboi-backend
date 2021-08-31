@@ -1,9 +1,4 @@
-use lapin::options::QueueDeclareOptions;
-use lapin::{types::FieldTable, Queue, Result};
-
-use parse::settings::Settings;
-
-use crate::parse::queue::get_channel;
+use crate::parse::queue::layer::declare::declare_queue;
 use crate::SETTINGS;
 
 pub async fn declare_all_queues() {
@@ -21,23 +16,4 @@ pub async fn declare_all_queues() {
             log::error!("Queue declaration failed. {} {:?}", queue_name, declare);
         }
     }
-}
-
-pub async fn declare_queue(name: &str) -> Result<Queue> {
-    let channel = get_channel().await?;
-
-    let queue = channel
-        .queue_declare(
-            name,
-            QueueDeclareOptions {
-                passive: false,
-                durable: true,
-                exclusive: false,
-                auto_delete: false,
-                nowait: false,
-            },
-            FieldTable::default(),
-        )
-        .await?;
-    Ok(queue)
 }
