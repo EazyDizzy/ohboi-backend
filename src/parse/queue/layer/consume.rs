@@ -9,12 +9,12 @@ use sentry::protocol::map::BTreeMap;
 
 use crate::local_sentry::add_category_breadcrumb;
 use crate::parse::queue::get_channel;
-use crate::parse::settings::AmqpQueueSettings;
+use crate::parse::settings::QueueSettings;
 
 type ConsumerCallBack = fn(String) -> core::result::Result<(), ()>;
 
 pub async fn consume(
-    settings: &AmqpQueueSettings,
+    settings: &QueueSettings,
     consumer_callback: ConsumerCallBack,
 ) -> Result<()> {
     let channel = get_channel().await?;
@@ -32,15 +32,17 @@ pub async fn consume(
         .await?;
 
     while let Some(delivery) = consumer.next().await {
-        let (_, delivery) = delivery.expect("error in consumer");
+        let (_, delivery) =
+            delivery.expect(&format!("[{}] Can't consume queue message.", settings.name));
 
         add_consumer_breadcrumb("got message", btreemap! {}, &settings.name);
 
-        // TODO why clone?
-        let decoded_data = String::from_utf8(delivery.data.clone());
-        let data = decoded_data.unwrap();
+        let message = std::str::from_utf8(&delivery.data).expect(&format!(
+            "[{}] Message is not a valid ut8 string.",
+            settings.name
+        ));
         // Todo pass &str
-        let job_result = consumer_callback(data);
+        let job_result = consumer_callback(message.to_string());
 
         if job_result.is_ok() {
             delivery

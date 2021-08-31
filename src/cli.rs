@@ -17,10 +17,11 @@ use diesel::r2d2::ConnectionManager;
 use diesel::PgConnection;
 use structopt::StructOpt;
 
+use parse::queue;
 use parse::settings::Settings;
 
 use crate::parse::db::repository::sync_characteristic_enum;
-use crate::parse::queue::declare_queue;
+use crate::parse::queue::{declare_queue, start_consumer, start_producer};
 
 mod common;
 mod local_sentry;
@@ -38,8 +39,8 @@ struct Cli {
     producer_name: Option<ProducerName>,
 }
 arg_enum! {
-    #[derive(Debug)]
-    enum ConsumerName {
+    #[derive(Debug, Copy, Clone)]
+    pub enum ConsumerName {
         ParseCategory,
         ParseImage,
         ParsePage,
@@ -49,17 +50,10 @@ arg_enum! {
 }
 
 arg_enum! {
-    #[derive(Debug)]
-    enum ProducerName {
+    #[derive(Debug, Copy, Clone)]
+    pub enum ProducerName {
         ParseCategory,
         PullExchangeRates,
-    }
-}
-arg_enum! {
-    #[derive(Debug)]
-    enum WorkerType {
-        Consumer,
-        Producer,
     }
 }
 
@@ -77,11 +71,11 @@ async fn main() {
     }
     if args.worker_type == "queue_config" {
         let queues = [
-            &SETTINGS.amqp.queues.parse_category.name,
-            &SETTINGS.amqp.queues.parse_image.name,
-            &SETTINGS.amqp.queues.parse_page.name,
-            &SETTINGS.amqp.queues.pull_exchange_rates.name,
-            &SETTINGS.amqp.queues.parse_details.name,
+            &SETTINGS.queue_broker.queues.parse_category.name,
+            &SETTINGS.queue_broker.queues.parse_image.name,
+            &SETTINGS.queue_broker.queues.parse_page.name,
+            &SETTINGS.queue_broker.queues.pull_exchange_rates.name,
+            &SETTINGS.queue_broker.queues.parse_details.name,
         ];
         for queue_name in &queues {
             let declare = declare_queue(queue_name).await;
@@ -93,32 +87,17 @@ async fn main() {
     }
 
     if args.worker_type == "producer" {
-        match args.producer_name.unwrap() {
-            ProducerName::ParseCategory => {
-                let _res = parse::producer::parse_category::start().await;
-            }
-            ProducerName::PullExchangeRates => {
-                let _res = parse::producer::pull_exchange_rates::start().await;
-            }
-        }
+        let name = args.producer_name.expect("Failed to parse producer name.");
+
+        let _res = start_producer(name)
+            .await
+            .expect(&format!("[{}] Failed to run producer.", &name));
     } else {
-        match args.consumer_name.unwrap() {
-            ConsumerName::ParseCategory => {
-                let _res = parse::consumer::parse_category::start().await;
-            }
-            ConsumerName::ParseImage => {
-                let _res = parse::consumer::parse_image::start().await;
-            }
-            ConsumerName::ParsePage => {
-                let _res = parse::consumer::parse_page::start().await;
-            }
-            ConsumerName::PullExchangeRates => {
-                let _res = parse::consumer::pull_exchange_rates::start().await;
-            }
-            ConsumerName::ParseDetails => {
-                let _res = parse::consumer::parse_details::start().await;
-            }
-        }
+        let name = args.consumer_name.expect("Failed to parse consumer name.");
+
+        let _res = start_consumer(name)
+            .await
+            .expect(&format!("[{}] Failed to run consumer.", &name));
     }
 
     let close_result = guard.close(None);

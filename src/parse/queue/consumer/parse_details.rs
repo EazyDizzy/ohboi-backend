@@ -2,7 +2,7 @@ use crossbeam::channel;
 use serde::{Deserialize, Serialize};
 use tokio::runtime::Handle;
 
-use crate::parse::consumer::layer::consume::consume;
+use crate::parse::queue::layer::consume::consume;
 use crate::parse::crawler::crawler::upload_extracted_images;
 use crate::parse::db::entity::source::SourceName;
 use crate::parse::db::repository::product::update_details;
@@ -17,7 +17,7 @@ pub struct ParseDetailsMessage {
 }
 
 pub async fn start() -> core::result::Result<(), ()> {
-    let _ = consume(&SETTINGS.amqp.queues.parse_details, |message| {
+    let _ = consume(&SETTINGS.queue_broker.queues.parse_details, |message| {
         let (snd, rcv) = channel::bounded(1);
 
         let _ = Handle::current().spawn(async move {

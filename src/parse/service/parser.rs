@@ -1,5 +1,3 @@
-use std::sync::Arc;
-
 use futures::future::join_all;
 use maplit::btreemap;
 use scraper::Html;
@@ -9,8 +7,6 @@ use crate::common::db::repository::exchange_rate::try_get_exchange_rate_by_code;
 use crate::common::service::currency_converter::convert_from_with_rate;
 use crate::local_sentry::add_category_breadcrumb;
 use crate::my_enum::CurrencyEnum;
-use crate::parse::consumer::parse_details::ParseDetailsMessage;
-use crate::parse::consumer::parse_page::ParsePageMessage;
 use crate::parse::crawler::crawler::Crawler;
 use crate::parse::crawler::mi_shop_com::MiShopComCrawler;
 use crate::parse::crawler::samsung_shop_com_ua::SamsungShopComUaCrawler;
@@ -21,7 +17,7 @@ use crate::parse::db::repository::source_product::link_to_product;
 use crate::parse::dto::parsed_product::{
     AdditionalParsedProductInfo, InternationalParsedProduct, LocalParsedProduct,
 };
-use crate::parse::queue::{postpone_details_parsing, postpone_page_parsing};
+use crate::parse::queue::postpone::{postpone_details_parsing, postpone_page_parsing};
 use crate::parse::service::requester::{get_data, get_data_s};
 use crate::SETTINGS;
 
@@ -131,11 +127,11 @@ pub async fn parse_category(
                             sentry::Level::Warning,
                         );
 
-                        let _result = postpone_page_parsing(ParsePageMessage {
-                            url: url.replace("{page}", (current_page).to_string().as_ref()),
+                        let _result = postpone_page_parsing(
+                            url.replace("{page}", (current_page).to_string().as_ref()),
                             source,
                             category,
-                        })
+                        )
                         .await;
                     }
                 }
@@ -209,11 +205,11 @@ async fn save_parsed_product(
     let product = create_if_not_exists(&international_parsed_product, category);
 
     if product.description.is_none() || product.images.is_none() {
-        postpone_details_parsing(ParseDetailsMessage {
-            external_id: international_parsed_product.external_id.clone(),
+        postpone_details_parsing(
+            international_parsed_product.external_id.clone(),
             source,
-            product_id: product.id,
-        })
+            product.id,
+        )
         .await;
     }
 

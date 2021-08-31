@@ -1,6 +1,6 @@
 use std::sync::Mutex;
 
-use futures::future::{err, ok, join_all};
+use futures::future::{err, join_all, ok};
 use futures::FutureExt;
 use inflector::Inflector;
 use maplit::btreemap;
@@ -10,14 +10,17 @@ use scraper::{ElementRef, Html, Selector};
 
 use crate::local_sentry::add_category_breadcrumb;
 use crate::my_enum::CurrencyEnum;
-use crate::parse::consumer::parse_image::UploadImageMessage;
 use crate::parse::db::entity::category::CategorySlug;
 use crate::parse::db::entity::source::SourceName;
 use crate::parse::dto::parsed_product::{AdditionalParsedProductInfo, LocalParsedProduct};
-use crate::parse::queue::postpone_image_parsing;
+use crate::parse::queue::postpone::postpone_image_parsing;
 use crate::parse::service::cloud_uploader::upload_image_to_cloud;
 use crate::parse::service::html_cleaner::clean_html;
 use crate::SETTINGS;
+
+#[derive(Clone)]
+struct UploadImageLaterMessage(String, String, String, SourceName);
+
 
 pub trait Crawler: Sync + Send {
     fn get_site_base(&self) -> String;
@@ -149,7 +152,11 @@ pub async fn upload_extracted_images(
             "image_urls" => format!("{:?}", &image_urls),
             "source" => source.to_string(),
         },
-        ["consumer.", &SETTINGS.amqp.queues.parse_category.name].join(""),
+        [
+            "consumer.",
+            &SETTINGS.queue_broker.queues.parse_category.name,
+        ]
+        .join(""),
     );
 
     let mut uploaded_urls: Vec<String> = vec![];
@@ -171,12 +178,12 @@ pub async fn upload_extracted_images(
                 if success {
                     ok(file_path)
                 } else {
-                    upload_later.lock().unwrap().push(UploadImageMessage {
-                        file_path: file_path.clone(),
-                        image_url: url,
-                        external_id: external_id.to_string(),
+                    upload_later.lock().unwrap().push(UploadImageLaterMessage(
+                        file_path.clone(),
+                        url,
+                        external_id.to_string(),
                         source,
-                    });
+                    ));
                     err(file_path)
                 }
             }),
@@ -193,7 +200,8 @@ pub async fn upload_extracted_images(
 
     let messages = upload_later.lock().unwrap().to_vec();
     for message in messages {
-        let _schedule_result = postpone_image_parsing(message).await;
+        let _schedule_result =
+            postpone_image_parsing(message.0, message.1, message.2, message.3).await;
     }
 
     uploaded_urls

@@ -1,4 +1,3 @@
-mod layer;
 pub mod parse_category;
 pub mod parse_details;
 pub mod parse_image;

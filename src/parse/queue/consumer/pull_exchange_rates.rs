@@ -6,7 +6,7 @@ use tokio::runtime::Handle;
 
 use crate::local_sentry::add_category_breadcrumb;
 use crate::my_enum::CurrencyEnum;
-use crate::parse::consumer::layer::consume::consume;
+use crate::parse::queue::layer::consume::consume;
 use crate::parse::db::repository::exchange_rate::create_or_update;
 use crate::parse::service::requester::get_data;
 use crate::SETTINGS;
@@ -26,7 +26,7 @@ struct ExchangeApiRates {
 }
 
 pub async fn start() -> Result<(), ()> {
-    let _ = consume(&SETTINGS.amqp.queues.pull_exchange_rates, |message| {
+    let _ = consume(&SETTINGS.queue_broker.queues.pull_exchange_rates, |message| {
         let (snd, rcv) = channel::bounded(1);
 
         let _ = Handle::current().spawn(async move {
@@ -90,6 +90,6 @@ fn add_consumer_breadcrumb(message: &str, data: BTreeMap<&str, String>) {
     add_category_breadcrumb(
         message,
         data,
-        ["consumer.", &SETTINGS.amqp.queues.pull_exchange_rates.name].join(""),
+        ["consumer.", &SETTINGS.queue_broker.queues.pull_exchange_rates.name].join(""),
     );
 }

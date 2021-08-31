@@ -9,7 +9,7 @@ use crate::parse::db::entity::category::CategorySlug;
 use crate::parse::db::entity::source::SourceName;
 use crate::parse::service::parser::parse_page;
 use crate::SETTINGS;
-use crate::parse::consumer::layer::consume::consume;
+use crate::parse::queue::layer::consume::consume;
 
 #[derive(Serialize, Deserialize)]
 pub struct ParsePageMessage {
@@ -19,7 +19,7 @@ pub struct ParsePageMessage {
 }
 
 pub async fn start() -> core::result::Result<(), ()> {
-    let _ = consume(&SETTINGS.amqp.queues.parse_page, |message| {
+    let _ = consume(&SETTINGS.queue_broker.queues.parse_page, |message| {
         let (snd, rcv) = channel::bounded(1);
 
         let _ = Handle::current().spawn(async move {
@@ -66,6 +66,6 @@ fn add_consumer_breadcrumb(message: &str, data: BTreeMap<&str, String>) {
     add_category_breadcrumb(
         message,
         data,
-        ["consumer.", &SETTINGS.amqp.queues.parse_page.name].join(""),
+        ["consumer.", &SETTINGS.queue_broker.queues.parse_page.name].join(""),
     );
 }

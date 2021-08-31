@@ -53,6 +53,6 @@ pub async fn upload_image_to_cloud(file_path: String, image_url: String) -> bool
     success
 }
 
-pub fn add_uploader_breadcrumb(message: &str, data: BTreeMap<&str, String>) {
+fn add_uploader_breadcrumb(message: &str, data: BTreeMap<&str, String>) {
     add_category_breadcrumb(message, data, "cloud.upload".into());
 }

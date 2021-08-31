@@ -7,24 +7,24 @@ pub struct Database {
 }
 
 #[derive(Debug, Deserialize)]
-pub struct AmqpQueueSettings {
+pub struct QueueSettings {
     pub name: String,
     pub prefetch: u16,
 }
 
 #[derive(Debug, Deserialize)]
-pub struct AmqpQueues {
-    pub parse_category: AmqpQueueSettings,
-    pub pull_exchange_rates: AmqpQueueSettings,
-    pub parse_image: AmqpQueueSettings,
-    pub parse_page: AmqpQueueSettings,
-    pub parse_details: AmqpQueueSettings,
+pub struct Queues {
+    pub parse_category: QueueSettings,
+    pub pull_exchange_rates: QueueSettings,
+    pub parse_image: QueueSettings,
+    pub parse_page: QueueSettings,
+    pub parse_details: QueueSettings,
 }
 
 #[derive(Debug, Deserialize)]
-pub struct Amqp {
+pub struct QueueBroker {
     pub url: String,
-    pub queues: AmqpQueues,
+    pub queues: Queues,
 }
 
 #[derive(Debug, Deserialize)]
@@ -35,7 +35,7 @@ pub struct S3 {
 #[derive(Debug, Deserialize)]
 pub struct Settings {
     pub database: Database,
-    pub amqp: Amqp,
+    pub queue_broker: QueueBroker,
     pub s3: S3,
 }
 
@@ -57,13 +57,13 @@ impl Settings {
 
         Ok(Settings {
             database: database_settings,
-            amqp: Settings::get_amqp_settings(),
+            queue_broker: Settings::get_amqp_settings(),
             s3: s3_settings,
         })
     }
 
-    fn get_amqp_settings() -> Amqp {
-        let parse_category_settings = AmqpQueueSettings {
+    fn get_amqp_settings() -> QueueBroker {
+        let parse_category_settings = QueueSettings {
             name: dotenv::var("AMQP_PARSE_CATEGORY_QUEUE_NAME")
                 .or_else::<String, _>(|_| {
                     Ok(String::from("parse.category"))
@@ -74,7 +74,7 @@ impl Settings {
                 })
                 .unwrap().parse().unwrap(),
         };
-        let parse_upload_settings = AmqpQueueSettings {
+        let parse_upload_settings = QueueSettings {
             name: dotenv::var("AMQP_PARSE_IMAGE_QUEUE_NAME")
                 .or_else::<String, _>(|_| {
                     Ok(String::from("parse.image"))
@@ -85,7 +85,7 @@ impl Settings {
                 })
                 .unwrap().parse().unwrap(),
         };
-        let parse_page_settings = AmqpQueueSettings {
+        let parse_page_settings = QueueSettings {
             name: dotenv::var("AMQP_PARSE_PAGE_QUEUE_NAME")
                 .or_else::<String, _>(|_| {
                     Ok(String::from("parse.page"))
@@ -96,7 +96,7 @@ impl Settings {
                 })
                 .unwrap().parse().unwrap(),
         };
-        let parse_details_settings = AmqpQueueSettings {
+        let parse_details_settings = QueueSettings {
             name: dotenv::var("AMQP_PARSE_DETAILS_QUEUE_NAME")
                 .or_else::<String, _>(|_| {
                     Ok(String::from("parse.details"))
@@ -108,7 +108,7 @@ impl Settings {
                 .unwrap().parse().unwrap(),
         };
 
-        let pull_exchange_rates_settings = AmqpQueueSettings {
+        let pull_exchange_rates_settings = QueueSettings {
             name: dotenv::var("AMQP_PULL_EXCHANGE_RATES_QUEUE_NAME")
                 .or_else::<String, _>(|_| {
                     Ok(String::from("pull.exchange_rates"))
@@ -120,14 +120,14 @@ impl Settings {
                 .unwrap().parse().unwrap(),
         };
 
-        let queue_settings = AmqpQueues {
+        let queue_settings = Queues {
             parse_category: parse_category_settings,
             pull_exchange_rates: pull_exchange_rates_settings,
             parse_image: parse_upload_settings,
             parse_page: parse_page_settings,
             parse_details: parse_details_settings,
         };
-        Amqp {
+        QueueBroker {
             url: dotenv::var("AMQP_ADDR")
                 .expect("AMQP_ADDR must be set"),
             queues: queue_settings,

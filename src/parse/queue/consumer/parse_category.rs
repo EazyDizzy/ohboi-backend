@@ -1,13 +1,13 @@
 use crossbeam::channel;
 use tokio::runtime::Handle;
 
-use crate::parse::consumer::layer::consume::consume;
-use crate::parse::producer::parse_category::ParseCategoryMessage;
+use crate::parse::queue::layer::consume::consume;
+use crate::parse::queue::producer::parse_category::ParseCategoryMessage;
 use crate::parse::service::parser::parse_category;
 use crate::SETTINGS;
 
 pub async fn start() -> core::result::Result<(), ()> {
-    let _ = consume(&SETTINGS.amqp.queues.parse_category, |message: String| {
+    let _ = consume(&SETTINGS.queue_broker.queues.parse_category, |message| {
         let (snd, rcv) = channel::bounded(1);
 
         let _ = Handle::current().spawn(async move {
