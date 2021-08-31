@@ -17,16 +17,16 @@ use diesel::r2d2::ConnectionManager;
 use diesel::PgConnection;
 use structopt::StructOpt;
 
-use parse::settings::Settings;
+use daemon::settings::Settings;
 
-use crate::parse::db::repository::sync_characteristic_enum;
-use crate::parse::queue::pub_api::declare::declare_all_queues;
-use crate::parse::queue::pub_api::launch::{start_consumer, start_producer};
+use crate::daemon::db::repository::sync_characteristic_enum;
+use crate::daemon::queue::pub_api::declare::declare_all_queues;
+use crate::daemon::queue::pub_api::launch::{launch_consumer, launch_producer};
 
 mod common;
 mod local_sentry;
 mod my_enum;
-mod parse;
+mod daemon;
 mod schema;
 
 #[derive(StructOpt, Debug)]
@@ -75,15 +75,15 @@ async fn main() {
     }
 
     if args.worker_type == "producer" {
-        let name = args.producer_name.expect("Failed to parse producer name.");
+        let name = args.producer_name.expect("Failed to daemon producer name.");
 
-        let _res = start_producer(name)
+        let _res = launch_producer(name)
             .await
             .expect(&format!("[{}] Failed to run producer.", &name));
     } else {
-        let name = args.consumer_name.expect("Failed to parse consumer name.");
+        let name = args.consumer_name.expect("Failed to daemon consumer name.");
 
-        let _res = start_consumer(name)
+        let _res = launch_consumer(name)
             .await
             .expect(&format!("[{}] Failed to run consumer.", &name));
     }

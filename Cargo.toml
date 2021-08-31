@@ -37,7 +37,7 @@ chrono = "0.4.19"
 bigdecimal = { version = "0.1.2", features = ["serde"] }
 r2d2 = "0.8.9" # connection pool
 # parsing
-structopt = { version = "0.3.22" } # parse command line arguments into struct
+structopt = { version = "0.3.22" } # daemon command line arguments into struct
 clap = "2.33.3" # enums from cli arguments
 lapin = "1.8.0" # rabbitmq
 scraper = "0.12.0" # html parsing
