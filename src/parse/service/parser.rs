@@ -18,7 +18,7 @@ use crate::parse::dto::parsed_product::{
     AdditionalParsedProductInfo, InternationalParsedProduct, LocalParsedProduct,
 };
 use crate::parse::queue::pub_api::postpone::{postpone_details_parsing, postpone_page_parsing};
-use crate::parse::service::requester::{get_data, get_data_s};
+use crate::parse::service::request::pub_api::{get_data, get_data_s};
 use crate::SETTINGS;
 
 pub async fn parse_page(

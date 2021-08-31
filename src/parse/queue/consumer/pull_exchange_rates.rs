@@ -6,7 +6,7 @@ use tokio::runtime::Handle;
 use crate::my_enum::CurrencyEnum;
 use crate::parse::db::repository::exchange_rate::create_or_update;
 use crate::parse::queue::layer::consume::consume;
-use crate::parse::service::requester::get_data;
+use crate::parse::service::request::pub_api::get_data;
 use crate::SETTINGS;
 
 #[derive(Deserialize)]

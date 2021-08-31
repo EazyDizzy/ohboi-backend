@@ -1,7 +1,7 @@
 use rusoto_core::Region;
 use rusoto_s3::{PutObjectRequest, S3Client, S3, StreamingBody};
 
-use crate::parse::service::requester::get_bytes;
+use crate::parse::service::request::pub_api::get_bytes;
 use crate::SETTINGS;
 
 pub async fn upload_image_to_s3(file_path: String, image_url: String) -> bool {
