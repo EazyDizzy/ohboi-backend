@@ -284,7 +284,7 @@ mod tests {
     use scraper::{Html, Selector};
 
     use crate::my_enum::CurrencyEnum;
-    use crate::daemon::crawler::crawler::Crawler;
+    use crate::daemon::parse::crawler::crawler::Crawler;
     use crate::daemon::db::entity::category::CategorySlug;
     use crate::daemon::db::entity::source::SourceName;
     use crate::daemon::dto::parsed_product::{AdditionalParsedProductInfo, LocalParsedProduct};

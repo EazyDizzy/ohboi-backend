@@ -1,7 +1,7 @@
 use futures::future::join_all;
 use maplit::btreemap;
 
-use crate::daemon::crawler::get_crawler;
+use crate::daemon::parse::crawler::get_crawler;
 use crate::daemon::db::entity::category::CategorySlug;
 use crate::daemon::db::entity::source::SourceName;
 use crate::daemon::dto::parsed_product::LocalParsedProduct;

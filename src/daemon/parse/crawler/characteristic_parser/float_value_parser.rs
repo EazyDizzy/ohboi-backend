@@ -1,5 +1,5 @@
 use bigdecimal::Num;
-use crate::daemon::crawler::util::CharacteristicParsingContext;
+use crate::daemon::parse::crawler::characteristic_parser::CharacteristicParsingContext;
 
 pub fn float_android_version_value(context: &CharacteristicParsingContext, value: &str) -> Option<f32> {
     float_version_value(
@@ -85,7 +85,7 @@ pub fn float_value(context: &CharacteristicParsingContext, value: &str) -> Optio
 
 #[cfg(test)]
 mod tests {
-    use crate::daemon::crawler::util::*;
+    use crate::daemon::parse::crawler::util::*;
 
     fn get_context() -> CharacteristicParsingContext {
         CharacteristicParsingContext {

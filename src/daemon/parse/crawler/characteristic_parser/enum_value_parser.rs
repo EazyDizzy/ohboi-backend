@@ -1,5 +1,5 @@
 use crate::common::dto::characteristic::enum_characteristic::*;
-use crate::daemon::crawler::util::string_value;
+use crate::daemon::parse::crawler::characteristic_parser::string_value;
 
 pub fn enum_media_format_value(value: &str) -> Option<MediaFormat> {
     match string_value(value).as_str() {

@@ -1,4 +1,4 @@
-use crate::daemon::crawler::util::CharacteristicParsingContext;
+use crate::daemon::parse::crawler::characteristic_parser::CharacteristicParsingContext;
 
 /// It skips additional cameras
 /// `64Мп + 8Мп + 6Мп` will result in just `64`

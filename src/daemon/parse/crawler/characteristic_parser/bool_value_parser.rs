@@ -1,4 +1,4 @@
-use crate::daemon::crawler::util::CharacteristicParsingContext;
+use crate::daemon::parse::crawler::characteristic_parser::CharacteristicParsingContext;
 
 pub fn bool_value(context: &CharacteristicParsingContext, value: &str) -> Option<bool> {
     match value.trim() {

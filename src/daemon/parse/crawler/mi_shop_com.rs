@@ -12,10 +12,10 @@ use crate::common::dto::characteristic::int_characteristic::IntCharacteristic;
 use crate::common::dto::characteristic::string_characteristic::StringCharacteristic;
 use crate::common::dto::characteristic::TypedCharacteristic;
 use crate::my_enum::CurrencyEnum;
-use crate::daemon::crawler::crawler::{
+use crate::daemon::parse::crawler::crawler::{
     get_html_nodes, Crawler, ProductHtmlSelectors,
 };
-use crate::daemon::crawler::util::*;
+use crate::daemon::parse::crawler::characteristic_parser::*;
 use crate::daemon::db::entity::category::CategorySlug;
 use crate::daemon::db::entity::source::SourceName;
 use crate::daemon::dto::parsed_product::{AdditionalParsedProductInfo, LocalParsedProduct};
@@ -796,8 +796,8 @@ fn multiple_string_media_format_value(
 #[cfg(test)]
 mod tests {
     use crate::common::dto::characteristic::enum_characteristic::MediaFormat;
-    use crate::daemon::crawler::mi_shop_com::multiple_string_media_format_value;
-    use crate::daemon::crawler::util::CharacteristicParsingContext;
+    use crate::daemon::parse::crawler::mi_shop_com::multiple_string_media_format_value;
+    use crate::daemon::parse::crawler::characteristic_parser::CharacteristicParsingContext;
     use crate::daemon::db::entity::source::SourceName;
 
     fn get_context() -> CharacteristicParsingContext {

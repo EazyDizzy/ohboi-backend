@@ -1,11 +1,12 @@
-use crate::daemon::db::entity::source::SourceName;
-use crate::daemon::db::entity::category::CategorySlug;
-use crate::daemon::crawler::get_crawler;
-use crate::daemon::service::request::pub_api::get_data;
 use maplit::btreemap;
+
+use crate::daemon::parse::crawler::get_crawler;
+use crate::daemon::db::entity::category::CategorySlug;
+use crate::daemon::db::entity::source::SourceName;
 use crate::daemon::parse::layer::save::save_parsed_products;
 use crate::daemon::parse::util::dedup::dedup_products;
-use crate::daemon::parse::util::{parse_html, add_parse_breadcrumb};
+use crate::daemon::parse::util::{add_parse_breadcrumb, parse_html};
+use crate::daemon::service::request::pub_api::get_data;
 
 pub async fn parse_category_page(
     url: &str,
@@ -41,7 +42,7 @@ pub async fn parse_category_page(
         products,
         category,
     )
-        .await;
+    .await;
 
     Ok(())
 }
