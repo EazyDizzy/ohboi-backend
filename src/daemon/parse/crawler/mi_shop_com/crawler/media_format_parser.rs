@@ -107,7 +107,7 @@ mod tests {
     use crate::common::dto::characteristic::enum_characteristic::MediaFormat;
     use crate::daemon::db::entity::source::SourceName;
     use crate::daemon::parse::crawler::characteristic_parser::CharacteristicParsingContext;
-    use crate::daemon::parse::crawler::mi_shop_com::crawler::media_format::multiple_string_media_format_value;
+    use crate::daemon::parse::crawler::mi_shop_com::crawler::media_format_parser::multiple_string_media_format_value;
 
     fn get_context() -> CharacteristicParsingContext<'static> {
         CharacteristicParsingContext {

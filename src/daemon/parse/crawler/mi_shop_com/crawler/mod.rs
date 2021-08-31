@@ -1,5 +1,5 @@
 mod characteristics;
-mod media_format;
+mod media_format_parser;
 
 use std::time::Instant;
 
