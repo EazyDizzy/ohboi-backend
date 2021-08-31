@@ -22,7 +22,7 @@ lto = "fat"
 
 [dependencies]
 # http
-actix-web = { version = "3.3.2", features = ["compress", "rustls"] }
+actix-web = { version = "3.3.2", features = ["compress"] }
 actix-web-httpauth = "0.5.0"
 actix-web-validator = { git = "https://github.com/Vitaliy-Svinchyak/actix-web-validator", branch = "custom-message-fix" }
 validator = { version = "0.12", features = ["derive"] }
@@ -41,7 +41,7 @@ structopt = { version = "0.3.22" } # parse command line arguments into struct
 clap = "2.33.3" # enums from cli arguments
 lapin = "1.8.0" # rabbitmq
 scraper = "0.12.0" # html parsing
-reqwest = { version = "0.11.4", features = ["gzip", "rustls-tls"] }
+reqwest = { version = "0.11.4"}
 rusoto_core = "0.45.0"
 rusoto_s3 = "0.45.0"
 # util
@@ -52,8 +52,7 @@ Inflector = "0.11.4" # string manipulations
 lazy_static = "1.4.0"
 futures = "0.3.8"
 termion = "1.5.5" # terminal colors etc
-regex = "1.4.2"
-async-trait = "0.1.51" # to allow async functions in traits
+regex = "1.4.2" # todo replace with nom
 sentry = { version = "0.22.0", features = ["debug-images"] }
 log = "0.4.13"
 env_logger = "0.8.2" # configuration for logger via env

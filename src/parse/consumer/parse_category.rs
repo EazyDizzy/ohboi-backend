@@ -1,27 +1,24 @@
 use crossbeam::channel;
 use tokio::runtime::Handle;
 
-use crate::parse::consumer::retrieve_queue_messages;
+use crate::parse::consumer::layer::consume::consume;
 use crate::parse::producer::parse_category::ParseCategoryMessage;
 use crate::parse::service::parser::parse_category;
 use crate::SETTINGS;
 
 pub async fn start() -> core::result::Result<(), ()> {
-    let _ = retrieve_queue_messages(
-        &SETTINGS.amqp.queues.parse_category,
-        |message: String| {
-            let (snd, rcv) = channel::bounded(1);
+    let _ = consume(&SETTINGS.amqp.queues.parse_category, |message: String| {
+        let (snd, rcv) = channel::bounded(1);
 
-            let _ = Handle::current().spawn(async move {
-                let message: ParseCategoryMessage = serde_json::from_str(&message).unwrap();
+        let _ = Handle::current().spawn(async move {
+            let message: ParseCategoryMessage = serde_json::from_str(&message).unwrap();
 
-                let rs = execute(message).await;
-                let _ = snd.send(rs);
-            });
+            let rs = execute(message).await;
+            let _ = snd.send(rs);
+        });
 
-            rcv.recv().unwrap()
-        },
-    )
+        rcv.recv().unwrap()
+    })
     .await;
 
     Ok(())

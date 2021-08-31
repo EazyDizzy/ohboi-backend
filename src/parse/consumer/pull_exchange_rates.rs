@@ -1,13 +1,12 @@
 use crossbeam::channel;
-use futures::StreamExt;
 use sentry::protocol::map::BTreeMap;
 use serde::Deserialize;
-use tokio::runtime::Handle;
 use serde_json::error::Result as SerdeResult;
+use tokio::runtime::Handle;
 
 use crate::local_sentry::add_category_breadcrumb;
 use crate::my_enum::CurrencyEnum;
-use crate::parse::consumer::retrieve_queue_messages;
+use crate::parse::consumer::layer::consume::consume;
 use crate::parse::db::repository::exchange_rate::create_or_update;
 use crate::parse::service::requester::get_data;
 use crate::SETTINGS;
@@ -27,7 +26,7 @@ struct ExchangeApiRates {
 }
 
 pub async fn start() -> Result<(), ()> {
-    let _ = retrieve_queue_messages(&SETTINGS.amqp.queues.pull_exchange_rates, |message| {
+    let _ = consume(&SETTINGS.amqp.queues.pull_exchange_rates, |message| {
         let (snd, rcv) = channel::bounded(1);
 
         let _ = Handle::current().spawn(async move {

@@ -1,6 +1,5 @@
 use std::time::Instant;
 
-use async_trait::async_trait;
 use maplit::btreemap;
 use regex::Regex;
 use scraper::html::Select;

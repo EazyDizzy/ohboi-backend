@@ -1,16 +1,15 @@
 use crossbeam::channel;
-use futures::StreamExt;
 use maplit::btreemap;
 use sentry::protocol::map::BTreeMap;
 use serde::{Deserialize, Serialize};
 use tokio::runtime::Handle;
 
 use crate::local_sentry::add_category_breadcrumb;
-use crate::parse::consumer::retrieve_queue_messages;
 use crate::parse::db::entity::category::CategorySlug;
 use crate::parse::db::entity::source::SourceName;
 use crate::parse::service::parser::parse_page;
 use crate::SETTINGS;
+use crate::parse::consumer::layer::consume::consume;
 
 #[derive(Serialize, Deserialize)]
 pub struct ParsePageMessage {
@@ -20,7 +19,7 @@ pub struct ParsePageMessage {
 }
 
 pub async fn start() -> core::result::Result<(), ()> {
-    let _ = retrieve_queue_messages(&SETTINGS.amqp.queues.parse_page, |message| {
+    let _ = consume(&SETTINGS.amqp.queues.parse_page, |message| {
         let (snd, rcv) = channel::bounded(1);
 
         let _ = Handle::current().spawn(async move {

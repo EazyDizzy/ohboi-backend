@@ -1,8 +1,6 @@
 use std::sync::Mutex;
 
-use async_trait::async_trait;
-use futures::future::join_all;
-use futures::future::{err, ok};
+use futures::future::{err, ok, join_all};
 use futures::FutureExt;
 use inflector::Inflector;
 use maplit::btreemap;
