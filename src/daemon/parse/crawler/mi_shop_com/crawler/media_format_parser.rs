@@ -87,7 +87,7 @@ pub fn multiple_string_media_format_value(
         } else {
             sentry::capture_message(
                 format!(
-                    "[{source}] Can't daemon media format characteristic ({title}) with value ({value}) for [{external_id}]: Unknown value",
+                    "[{source}] Can't parse media format characteristic ({title}) with value ({value}) for [{external_id}]: Unknown value",
                     source = context.source,
                     title = context.title,
                     value = v,

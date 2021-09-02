@@ -1,5 +1,5 @@
 use rusoto_core::Region;
-use rusoto_s3::{PutObjectRequest, S3Client, S3, StreamingBody};
+use rusoto_s3::{PutObjectRequest, S3Client, StreamingBody, S3};
 
 use crate::daemon::service::request::pub_api::get_bytes;
 use crate::SETTINGS;
@@ -25,7 +25,9 @@ pub async fn upload_image_to_s3(file_path: String, image_url: String) -> bool {
         bucket: { &SETTINGS.s3.bucket }.to_string(),
         key: file_path,
         // TODO stream directly from http
-        body: Some(StreamingBody::from(data.unwrap())),
+        body: Some(StreamingBody::from(
+            data.expect(&format!("Failed to get bytes from {}", &image_url)),
+        )),
         ..Default::default()
     };
 
@@ -36,7 +38,7 @@ pub async fn upload_image_to_s3(file_path: String, image_url: String) -> bool {
         let message = format!(
             "[cloud::image::upload] Image can't be uploaded to cloud! {url} {error:?}",
             url = image_url,
-            error = result.err()
+            error = result.err().unwrap()
         );
         sentry::capture_message(message.as_str(), sentry::Level::Error);
     }

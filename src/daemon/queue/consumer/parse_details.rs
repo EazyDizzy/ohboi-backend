@@ -2,12 +2,12 @@ use crossbeam::channel;
 use serde::{Deserialize, Serialize};
 use tokio::runtime::Handle;
 
-use crate::daemon::parse::crawler::crawler::upload_extracted_images;
-use crate::daemon::parse::crawler::get_crawler;
 use crate::daemon::db::entity::source::SourceName;
 use crate::daemon::db::repository::product::update_details;
-use crate::daemon::queue::layer::consume::consume;
+use crate::daemon::parse::crawler::crawler::upload_extracted_images;
+use crate::daemon::parse::crawler::get_crawler;
 use crate::daemon::parse::pub_api::parse_details::parse_details;
+use crate::daemon::queue::layer::consume::consume;
 use crate::SETTINGS;
 
 #[derive(Serialize, Deserialize)]
@@ -67,6 +67,7 @@ async fn execute(message: ParseDetailsMessage) -> Result<(), ()> {
             details.image_urls = uploaded_urls;
 
             update_details(message.product_id, &details);
+            panic!("her");
 
             Ok(())
         }

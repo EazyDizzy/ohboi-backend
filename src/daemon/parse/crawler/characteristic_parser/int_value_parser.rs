@@ -93,7 +93,7 @@ pub fn int_value(context: &CharacteristicParsingContext, value: &str) -> Option<
         Err(e) => {
             sentry::capture_message(
                 format!(
-                    "[{source}] Can't daemon int characteristic ({title}) with value ({value}) for [{external_id}]: {error:?}",
+                    "[{source}] Can't parse int characteristic ({title}) with value ({value}) for [{external_id}]: {error:?}",
                     source = context.source,
                     title = context.title,
                     value = value,

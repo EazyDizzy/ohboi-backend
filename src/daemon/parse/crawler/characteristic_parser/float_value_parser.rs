@@ -68,7 +68,7 @@ pub fn float_value(context: &CharacteristicParsingContext, value: &str) -> Optio
         Err(e) => {
             sentry::capture_message(
                 format!(
-                    "[{source}] Can't daemon float characteristic ({title}) with value ({value}) for [{external_id}]: {error:?}",
+                    "[{source}] Can't parse float characteristic ({title}) with value ({value}) for [{external_id}]: {error:?}",
                     source = context.source,
                     title = context.title,
                     value = value,
