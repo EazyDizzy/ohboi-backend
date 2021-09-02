@@ -11,8 +11,7 @@ pub async fn upload_image_to_cloud(file_path: String, image_url: String) -> bool
     };
     add_uploader_breadcrumb("uploading image", breadcrumb_data.clone());
 
-    // let success = upload_image_to_s3(file_path, image_url).await;
-    let success = true;
+    let success = upload_image_to_s3(file_path, image_url).await;
 
     add_uploader_breadcrumb("uploaded image", breadcrumb_data);
 
