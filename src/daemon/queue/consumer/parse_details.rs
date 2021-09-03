@@ -31,7 +31,7 @@ async fn execute(message: ParseDetailsMessage) -> Result<(), ()> {
         None => {
             sentry::capture_message(
                 format!(
-                    "No additional info found [{source}] for: {id}",
+                    "[parse_details] No additional info found [{source}] for: {id}",
                     source = crawler.get_source().to_string(),
                     id = &message.external_id
                 )

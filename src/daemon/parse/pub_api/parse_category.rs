@@ -7,7 +7,7 @@ use crate::daemon::db::entity::source::SourceName;
 use crate::daemon::dto::parsed_product::LocalParsedProduct;
 use crate::daemon::queue::pub_api::postpone::postpone_page_parsing;
 
-use crate::daemon::service::request::pub_api::get_data_s;
+use crate::daemon::service::request::pub_api::get_s;
 use crate::daemon::parse::layer::save::save_parsed_products;
 use crate::daemon::parse::util::dedup::dedup_products;
 use crate::daemon::parse::util::{parse_html, add_parse_breadcrumb};
@@ -35,7 +35,7 @@ pub async fn parse_category(
             for page in page..page + concurrent_pages {
                 let url = url.replace("{page}", (page).to_string().as_ref());
 
-                page_requests.push(get_data_s(url));
+                page_requests.push(get_s(url));
             }
 
             let page_responses = join_all(page_requests).await;

@@ -3,7 +3,7 @@ use scraper::Html;
 
 use crate::daemon::parse::crawler::crawler::Crawler;
 use crate::daemon::dto::parsed_product::AdditionalParsedProductInfo;
-use crate::daemon::service::request::pub_api::get_data;
+use crate::daemon::service::request::pub_api::get;
 use crate::daemon::parse::util::add_parse_breadcrumb;
 
 pub async fn parse_details(
@@ -11,7 +11,7 @@ pub async fn parse_details(
     crawler: &dyn Crawler,
 ) -> Option<AdditionalParsedProductInfo> {
     add_parse_breadcrumb(
-        "extracting additional info",
+        "[parse_details] extracting additional info",
         btreemap! {
             "crawler" => crawler.get_source().to_string(),
             "external_id" => external_id.to_string()
@@ -19,7 +19,7 @@ pub async fn parse_details(
     );
 
     let url = crawler.get_additional_info_url(&external_id);
-    let data = get_data(&url).await;
+    let data = get(&url).await;
 
     match data {
         Ok(data) => {
@@ -29,7 +29,7 @@ pub async fn parse_details(
         }
         Err(e) => {
             let message = format!(
-                "Request for additional data failed! [{source}] {error:?}",
+                "[parse_details] Request for additional data failed! [{source}] {error:?}",
                 source = crawler.get_source().to_string(),
                 error = e,
             );

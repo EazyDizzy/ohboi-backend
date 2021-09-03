@@ -1,10 +1,11 @@
 use crate::daemon::service::request::layer::get_request;
 
-pub async fn get_data_s(url: String) -> Result<String, reqwest::Error> {
-    get_data(&url).await
+// TODO remove
+pub async fn get_s(url: String) -> Result<String, reqwest::Error> {
+    get(&url).await
 }
 
-pub async fn get_data(url: &str) -> Result<String, reqwest::Error> {
+pub async fn get(url: &str) -> Result<String, reqwest::Error> {
     let response = get_request(url).await?;
 
     let text = response.text().await?;

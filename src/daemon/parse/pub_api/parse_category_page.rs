@@ -6,7 +6,7 @@ use crate::daemon::db::entity::source::SourceName;
 use crate::daemon::parse::layer::save::save_parsed_products;
 use crate::daemon::parse::util::dedup::dedup_products;
 use crate::daemon::parse::util::{add_parse_breadcrumb, parse_html};
-use crate::daemon::service::request::pub_api::get_data;
+use crate::daemon::service::request::pub_api::get;
 
 pub async fn parse_category_page(
     url: &str,
@@ -22,7 +22,7 @@ pub async fn parse_category_page(
         },
     );
 
-    let response = get_data(url).await?;
+    let response = get(url).await?;
     let mut products = parse_html(&response, crawler);
 
     dedup_products(&mut products, source);

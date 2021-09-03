@@ -3,7 +3,7 @@ use serde_json::error::Result as SerdeResult;
 
 use crate::daemon::db::repository::exchange_rate::create_or_update;
 use crate::daemon::queue::layer::consume::consume;
-use crate::daemon::service::request::pub_api::get_data;
+use crate::daemon::service::request::pub_api::get;
 use crate::my_enum::CurrencyEnum;
 use crate::SETTINGS;
 
@@ -31,7 +31,7 @@ pub async fn start() -> Result<(), ()> {
 
 async fn execute(_message: String) -> Result<(), ()> {
     let response =
-        get_data("https://api.exchangerate.host/latest?base=EUR&symbols=UAH,USD,RUB").await;
+        get("https://api.exchangerate.host/latest?base=EUR&symbols=UAH,USD,RUB").await;
 
     if response.is_err() {
         let message = format!(
