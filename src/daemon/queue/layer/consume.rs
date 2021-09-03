@@ -26,8 +26,8 @@ pub async fn consume(settings: &QueueSettings, consumer_callback: ConsumerCallBa
         let job_result = consumer_callback(message.to_string());
 
         match job_result {
-            Ok(_) => job_success(delivery).await,
-            Err(_) => job_failed(delivery).await,
+            Ok(_) => job_success(&delivery).await,
+            Err(_) => job_failed(&delivery).await,
         };
     }
 
@@ -65,14 +65,14 @@ async fn get_consumer(settings: &QueueSettings) -> Consumer {
         .expect("Failed to get consumer")
 }
 
-async fn job_success(delivery: Delivery) {
+async fn job_success(delivery: &Delivery) {
     delivery
         .ack(BasicAckOptions { multiple: false })
         .await
         .expect("acknowledgment failed");
 }
 
-async fn job_failed(delivery: Delivery) {
+async fn job_failed(delivery: &Delivery) {
     // TODO requeue with delay https://blog.rabbitmq.com/posts/2015/04/scheduling-messages-with-rabbitmq
 
     delivery

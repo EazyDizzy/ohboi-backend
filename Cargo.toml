@@ -19,7 +19,7 @@ codegen-units = 1256
 overflow-checks = true
 codegen-units = 1
 lto = "fat"
-
+# TODO update actix-web & google-jwt-verify(switch to oauth2-rs) when they will add support of tokio v1+
 [dependencies]
 # http
 actix-web = { version = "3.3.2", features = ["compress"] }
@@ -42,8 +42,8 @@ clap = "2.33.3" # enums from cli arguments
 lapin = "1.8.0" # rabbitmq
 scraper = "0.12.0" # html parsing
 reqwest = { version = "0.11.4" }
-rusoto_core = "0.45.0"
-rusoto_s3 = "0.45.0"
+rusoto_core = "0.47.0"
+rusoto_s3 = "0.47.0"
 # util
 crossbeam = "0.8.1"
 tokio = { version = "1.0.2", features = ["macros"] }
