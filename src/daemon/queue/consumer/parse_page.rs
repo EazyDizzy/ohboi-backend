@@ -1,13 +1,11 @@
-use crossbeam::channel;
 use maplit::btreemap;
 use sentry::protocol::map::BTreeMap;
 use serde::{Deserialize, Serialize};
-use tokio::runtime::Handle;
 
 use crate::daemon::db::entity::category::CategorySlug;
 use crate::daemon::db::entity::source::SourceName;
-use crate::daemon::queue::layer::consume::consume;
 use crate::daemon::parse::pub_api::parse_category_page::parse_category_page;
+use crate::daemon::queue::layer::consume::consume;
 use crate::local_sentry::add_category_breadcrumb;
 use crate::SETTINGS;
 
@@ -19,27 +17,16 @@ pub struct ParsePageMessage {
 }
 
 pub async fn start() -> core::result::Result<(), ()> {
-    let _ = consume(&SETTINGS.queue_broker.queues.parse_page, |message| {
-        let (snd, rcv) = channel::bounded(1);
-
-        let _ = Handle::current().spawn(async move {
-            let message: ParsePageMessage =
-                serde_json::from_str(&message).expect("Failed to parse ParsePageMessage");
-
-            let rs = execute(message).await;
-            let _ = snd.send(rs);
-        });
-
-        rcv.recv()
-            .expect("Failed to receive result of thread execution")
-    })
-    .await
-    .expect("Can't launch consumer");
+    let _ = consume(&SETTINGS.queue_broker.queues.parse_page, execute)
+        .await
+        .expect("Can't launch consumer");
 
     Ok(())
 }
 
-async fn execute(message: ParsePageMessage) -> Result<(), ()> {
+async fn execute(message: String) -> Result<(), ()> {
+    let message: ParsePageMessage =
+        serde_json::from_str(&message).expect("Failed to parse ParsePageMessage");
     add_consumer_breadcrumb(
         "got message",
         btreemap! {

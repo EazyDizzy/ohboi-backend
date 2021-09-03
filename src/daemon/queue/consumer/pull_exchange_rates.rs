@@ -1,7 +1,5 @@
-use crossbeam::channel;
 use serde::Deserialize;
 use serde_json::error::Result as SerdeResult;
-use tokio::runtime::Handle;
 
 use crate::daemon::db::repository::exchange_rate::create_or_update;
 use crate::daemon::queue::layer::consume::consume;
@@ -24,24 +22,14 @@ struct ExchangeApiRates {
 }
 
 pub async fn start() -> Result<(), ()> {
-    let _ = consume(&SETTINGS.queue_broker.queues.pull_exchange_rates, |_| {
-        let (snd, rcv) = channel::bounded(1);
-
-        let _ = Handle::current().spawn(async move {
-            let rs = execute().await;
-            let _ = snd.send(rs);
-        });
-
-        rcv.recv()
-            .expect("Failed to receive result of thread execution")
-    })
-    .await
-    .expect("Can't launch consumer");
+    let _ = consume(&SETTINGS.queue_broker.queues.pull_exchange_rates, execute)
+        .await
+        .expect("Can't launch consumer");
 
     Ok(())
 }
 
-async fn execute() -> Result<(), ()> {
+async fn execute(_message: String) -> Result<(), ()> {
     let response =
         get_data("https://api.exchangerate.host/latest?base=EUR&symbols=UAH,USD,RUB").await;
 

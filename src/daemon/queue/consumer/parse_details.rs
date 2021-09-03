@@ -1,6 +1,4 @@
-use crossbeam::channel;
 use serde::{Deserialize, Serialize};
-use tokio::runtime::Handle;
 
 use crate::daemon::db::entity::source::SourceName;
 use crate::daemon::db::repository::product::update_details;
@@ -18,27 +16,16 @@ pub struct ParseDetailsMessage {
 }
 
 pub async fn start() -> core::result::Result<(), ()> {
-    let _ = consume(&SETTINGS.queue_broker.queues.parse_details, |message| {
-        let (snd, rcv) = channel::bounded(1);
-
-        let _ = Handle::current().spawn(async move {
-            let message: ParseDetailsMessage =
-                serde_json::from_str(&message).expect("Failed to parse ParseDetailsMessage");
-
-            let rs = execute(message).await;
-            let _ = snd.send(rs);
-        });
-
-        rcv.recv()
-            .expect("Failed to receive result of thread execution")
-    })
-    .await
-    .expect("Can't launch consumer");
+    let _ = consume(&SETTINGS.queue_broker.queues.parse_details, execute)
+        .await
+        .expect("Can't launch consumer");
 
     Ok(())
 }
 
-async fn execute(message: ParseDetailsMessage) -> Result<(), ()> {
+async fn execute(message: String) -> Result<(), ()> {
+    let message: ParseDetailsMessage =
+        serde_json::from_str(&message).expect("Failed to parse ParseDetailsMessage");
     let crawler = get_crawler(&message.source);
     let details = parse_details(&message.external_id, crawler).await;
 

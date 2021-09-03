@@ -1,4 +1,4 @@
-use futures::StreamExt;
+use futures::{Future, StreamExt};
 use lapin::message::Delivery;
 use lapin::{
     options::{BasicAckOptions, BasicConsumeOptions, BasicNackOptions, BasicQosOptions},
@@ -12,9 +12,11 @@ use crate::daemon::queue::layer::get_channel;
 use crate::daemon::settings::QueueSettings;
 use crate::local_sentry::add_category_breadcrumb;
 
-type ConsumerCallBack = fn(String) -> core::result::Result<(), ()>;
-
-pub async fn consume(settings: &QueueSettings, consumer_callback: ConsumerCallBack) -> Result<()> {
+pub async fn consume<F, Fut>(settings: &QueueSettings, consumer_callback: F) -> Result<()>
+where
+    F: Fn(String) -> Fut,
+    Fut: Future<Output = core::result::Result<(), ()>>,
+{
     let mut consumer = get_consumer(settings).await;
 
     while let Some(delivery) = consumer.next().await {
@@ -23,7 +25,7 @@ pub async fn consume(settings: &QueueSettings, consumer_callback: ConsumerCallBa
 
         let message = parse_message(&delivery, settings);
         // Todo pass &str or parsed_message
-        let job_result = consumer_callback(message.to_string());
+        let job_result = consumer_callback(message.to_string()).await;
 
         match job_result {
             Ok(_) => job_success(&delivery).await,

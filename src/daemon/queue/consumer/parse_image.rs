@@ -1,10 +1,8 @@
 use std::str;
 
-use crossbeam::channel;
 use maplit::btreemap;
 use sentry::protocol::map::BTreeMap;
 use serde::{Deserialize, Serialize};
-use tokio::runtime::Handle;
 
 use crate::daemon::db::entity::source::SourceName;
 use crate::daemon::db::repository::product::add_image_to_product_details;
@@ -23,27 +21,16 @@ pub struct UploadImageMessage {
 }
 
 pub async fn start() -> core::result::Result<(), ()> {
-    let _ = consume(&SETTINGS.queue_broker.queues.parse_image, |message| {
-        let (snd, rcv) = channel::bounded(1);
-
-        let _ = Handle::current().spawn(async move {
-            let message: UploadImageMessage =
-                serde_json::from_str(&message).expect("Failed to daemon UploadImageMessage");
-
-            let rs = execute(message).await;
-            let _ = snd.send(rs);
-        });
-
-        rcv.recv()
-            .expect("Failed to receive result of thread execution")
-    })
-    .await
-    .expect("Can't launch consumer");
+    let _ = consume(&SETTINGS.queue_broker.queues.parse_image, execute)
+        .await
+        .expect("Can't launch consumer");
 
     Ok(())
 }
 
-async fn execute(message: UploadImageMessage) -> Result<(), ()> {
+async fn execute(message: String) -> Result<(), ()> {
+    let message: UploadImageMessage =
+        serde_json::from_str(&message).expect("Failed to daemon UploadImageMessage");
     let result = upload_image_to_cloud(message.file_path.clone(), message.image_url).await;
 
     if result {

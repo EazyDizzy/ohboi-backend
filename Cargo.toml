@@ -45,7 +45,6 @@ reqwest = { version = "0.11.4" }
 rusoto_core = "0.47.0"
 rusoto_s3 = "0.47.0"
 # util
-crossbeam = "0.8.1"
 tokio = { version = "1.0.2", features = ["macros"] }
 dotenv = "0.15.0"
 Inflector = "0.11.4" # string manipulations
