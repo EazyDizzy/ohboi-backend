@@ -11,9 +11,7 @@ pub async fn start() -> core::result::Result<(), ()> {
     Ok(())
 }
 
-async fn execute(message: String) -> Result<(), ()> {
-    let message: ParseCategoryMessage =
-        serde_json::from_str(&message).expect("Failed to parse ParseCategoryMessage");
+async fn execute(message: ParseCategoryMessage) -> Result<(), ()> {
     let parse_result = parse_category(message.source, message.category).await;
 
     if parse_result.is_err() {

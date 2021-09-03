@@ -28,9 +28,7 @@ pub async fn start() -> core::result::Result<(), ()> {
     Ok(())
 }
 
-async fn execute(message: String) -> Result<(), ()> {
-    let message: UploadImageMessage =
-        serde_json::from_str(&message).expect("Failed to daemon UploadImageMessage");
+async fn execute(message: UploadImageMessage) -> Result<(), ()> {
     let result = upload_image_to_cloud(message.file_path.clone(), message.image_url).await;
 
     if result {

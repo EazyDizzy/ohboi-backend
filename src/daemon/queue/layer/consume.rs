@@ -7,15 +7,17 @@ use lapin::{
 };
 use maplit::btreemap;
 use sentry::protocol::map::BTreeMap;
+use serde::de;
 
 use crate::daemon::queue::layer::get_channel;
 use crate::daemon::settings::QueueSettings;
 use crate::local_sentry::add_category_breadcrumb;
 
-pub async fn consume<F, Fut>(settings: &QueueSettings, consumer_callback: F) -> Result<()>
+pub async fn consume<F, Fut, Message>(settings: &QueueSettings, consumer_callback: F) -> Result<()>
 where
-    F: Fn(String) -> Fut,
+    F: Fn(Message) -> Fut,
     Fut: Future<Output = core::result::Result<(), ()>>,
+    Message: de::DeserializeOwned,
 {
     let mut consumer = get_consumer(settings).await;
 
@@ -24,28 +26,29 @@ where
             delivery.expect(&format!("[{}] Can't consume queue message.", settings.name));
 
         let message = parse_message(&delivery, settings);
-        // Todo pass &str or parsed_message
-        let job_result = consumer_callback(message.to_string()).await;
+        let job_result = consumer_callback(message).await;
 
         match job_result {
-            Ok(_) => job_success(&delivery).await,
-            Err(_) => job_failed(&delivery).await,
+            Ok(_) => mark_success(&delivery).await,
+            Err(_) => requeue(&delivery).await,
         };
     }
 
     Ok(())
 }
 
-fn parse_message<'delivery>(
-    delivery: &'delivery Delivery,
-    settings: &QueueSettings,
-) -> &'delivery str {
+fn parse_message<Message>(delivery: &Delivery, settings: &QueueSettings) -> Message
+where
+    Message: de::DeserializeOwned,
+{
     add_consumer_breadcrumb("got message", btreemap! {}, &settings.name);
 
-    std::str::from_utf8(&delivery.data).expect(&format!(
+    let message = std::str::from_utf8(&delivery.data).expect(&format!(
         "[{}] Message is not a valid ut8 string.",
         settings.name
-    ))
+    ));
+
+    serde_json::from_str(&message).expect("Failed to parse message")
 }
 
 async fn get_consumer(settings: &QueueSettings) -> Consumer {
@@ -67,14 +70,14 @@ async fn get_consumer(settings: &QueueSettings) -> Consumer {
         .expect("Failed to get consumer")
 }
 
-async fn job_success(delivery: &Delivery) {
+async fn mark_success(delivery: &Delivery) {
     delivery
         .ack(BasicAckOptions { multiple: false })
         .await
         .expect("acknowledgment failed");
 }
 
-async fn job_failed(delivery: &Delivery) {
+async fn requeue(delivery: &Delivery) {
     // TODO requeue with delay https://blog.rabbitmq.com/posts/2015/04/scheduling-messages-with-rabbitmq
 
     delivery

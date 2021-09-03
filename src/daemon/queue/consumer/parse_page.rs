@@ -24,9 +24,7 @@ pub async fn start() -> core::result::Result<(), ()> {
     Ok(())
 }
 
-async fn execute(message: String) -> Result<(), ()> {
-    let message: ParsePageMessage =
-        serde_json::from_str(&message).expect("Failed to parse ParsePageMessage");
+async fn execute(message: ParsePageMessage) -> Result<(), ()> {
     add_consumer_breadcrumb(
         "got message",
         btreemap! {

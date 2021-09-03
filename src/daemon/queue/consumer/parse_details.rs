@@ -23,9 +23,7 @@ pub async fn start() -> core::result::Result<(), ()> {
     Ok(())
 }
 
-async fn execute(message: String) -> Result<(), ()> {
-    let message: ParseDetailsMessage =
-        serde_json::from_str(&message).expect("Failed to parse ParseDetailsMessage");
+async fn execute(message: ParseDetailsMessage) -> Result<(), ()> {
     let crawler = get_crawler(&message.source);
     let details = parse_details(&message.external_id, crawler).await;
 
