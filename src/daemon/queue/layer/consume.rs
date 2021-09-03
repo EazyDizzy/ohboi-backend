@@ -21,23 +21,29 @@ pub async fn consume(settings: &QueueSettings, consumer_callback: ConsumerCallBa
         let (_, delivery) =
             delivery.expect(&format!("[{}] Can't consume queue message.", settings.name));
 
-        add_consumer_breadcrumb("got message", btreemap! {}, &settings.name);
-
-        let message = std::str::from_utf8(&delivery.data).expect(&format!(
-            "[{}] Message is not a valid ut8 string.",
-            settings.name
-        ));
+        let message = parse_message(&delivery, settings);
         // Todo pass &str or parsed_message
         let job_result = consumer_callback(message.to_string());
 
-        if job_result.is_ok() {
-            job_success(delivery).await;
-        } else {
-            job_failed(delivery).await;
-        }
+        match job_result {
+            Ok(_) => job_success(delivery).await,
+            Err(_) => job_failed(delivery).await,
+        };
     }
 
     Ok(())
+}
+
+fn parse_message<'delivery>(
+    delivery: &'delivery Delivery,
+    settings: &QueueSettings,
+) -> &'delivery str {
+    add_consumer_breadcrumb("got message", btreemap! {}, &settings.name);
+
+    std::str::from_utf8(&delivery.data).expect(&format!(
+        "[{}] Message is not a valid ut8 string.",
+        settings.name
+    ))
 }
 
 async fn get_consumer(settings: &QueueSettings) -> Consumer {
