@@ -1,4 +1,4 @@
-use diesel::prelude::*;
+use lib::diesel::prelude::*;
 
 use lib::db;
 use crate::http::db::source::entity::Source;

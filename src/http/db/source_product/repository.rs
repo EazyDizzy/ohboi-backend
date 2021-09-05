@@ -1,4 +1,4 @@
-use diesel::{BoolExpressionMethods, ExpressionMethods, QueryDsl, RunQueryDsl};
+use lib::diesel::{BoolExpressionMethods, ExpressionMethods, QueryDsl, RunQueryDsl};
 
 use lib::db;
 use crate::http::db::source_product::entity::SourceProduct;

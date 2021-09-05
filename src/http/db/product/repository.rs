@@ -1,19 +1,20 @@
 use bigdecimal::BigDecimal;
-use diesel::{QueryDsl, RunQueryDsl};
 
 use lib::db;
+use lib::db::lower;
 use lib::db::repository::exchange_rate::try_get_exchange_rate_by_code;
+use lib::diesel::prelude::*;
+use lib::diesel::{QueryDsl, RunQueryDsl};
+use lib::schema::product;
+use lib::schema::product::dsl::{category, enabled, highest_price, id, lowest_price, title};
+use lib::schema::source_product;
 use lib::service::currency_converter::convert_from;
-use crate::diesel::prelude::*;
-use crate::http::db::lower;
+
 use crate::http::db::product::entity::Product;
 use crate::http::db::product_characteristic::repository::get_all_characteristics_of_product;
 use crate::http::dto::product::ProductInfo;
 use crate::http::product::{ProductFilters, ProductParams};
 use crate::http::util::product::convert_product_prices;
-use lib::schema::product;
-use lib::schema::product::dsl::{category, enabled, highest_price, id, lowest_price, title};
-use lib::schema::source_product;
 
 pub fn get_product_info(params: &ProductParams) -> Option<ProductInfo> {
     let connection = &db::establish_connection();

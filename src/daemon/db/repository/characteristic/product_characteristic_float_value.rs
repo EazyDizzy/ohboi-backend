@@ -1,8 +1,8 @@
 use bigdecimal::BigDecimal;
-use diesel::result::{DatabaseErrorKind, Error};
+use lib::diesel::result::{DatabaseErrorKind, Error};
 
 use lib::db;
-use crate::diesel::prelude::*;
+use lib::diesel::prelude::*;
 use crate::daemon::db::entity::characteristic::product_characteristic_float_value::{
     NewProductCharacteristicFloatValue, ProductCharacteristicFloatValue,
 };

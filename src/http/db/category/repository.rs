@@ -1,4 +1,4 @@
-use crate::diesel::prelude::*;
+use lib::diesel::prelude::*;
 use lib::db;
 use crate::http::db::category::entity::Category;
 

@@ -1,5 +1,5 @@
 use chrono::Utc;
-use diesel::{ExpressionMethods, QueryDsl, RunQueryDsl};
+use lib::diesel::{ExpressionMethods, QueryDsl, RunQueryDsl};
 
 use lib::db;
 use crate::http::db::user::entity::{NewUser, User};

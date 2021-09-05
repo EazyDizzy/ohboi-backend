@@ -1,6 +1,6 @@
 use bigdecimal::{BigDecimal, ToPrimitive};
 use chrono::Utc;
-use diesel::{BoolExpressionMethods, ExpressionMethods, QueryDsl, RunQueryDsl};
+use lib::diesel::{BoolExpressionMethods, ExpressionMethods, QueryDsl, RunQueryDsl};
 
 use lib::db;
 use crate::daemon::db::entity::source_product::NewSourceProduct;

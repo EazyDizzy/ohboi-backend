@@ -1,7 +1,7 @@
-use diesel::result::{DatabaseErrorKind, Error};
+use lib::diesel::result::{DatabaseErrorKind, Error};
 
 use lib::db;
-use crate::diesel::prelude::*;
+use lib::diesel::prelude::*;
 use lib::my_enum::{CharacteristicValueType, CharacteristicVisualisationType};
 use crate::daemon::db::entity::characteristic::characteristic::NewCharacteristic;
 use lib::schema::characteristic;

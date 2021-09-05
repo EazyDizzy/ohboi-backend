@@ -1,5 +1,5 @@
-use diesel::result::{DatabaseErrorKind, Error};
-use diesel::RunQueryDsl;
+use lib::diesel::result::{DatabaseErrorKind, Error};
+use lib::diesel::RunQueryDsl;
 
 use lib::db;
 use crate::daemon::db::entity::characteristic::product_characteristic::NewProductCharacteristic;

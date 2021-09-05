@@ -8,8 +8,6 @@ extern crate lazy_static;
 
 use std::env;
 
-use diesel::PgConnection;
-use diesel::r2d2::ConnectionManager;
 use log::{error, info};
 
 mod http;
@@ -26,17 +24,4 @@ async fn main() {
         Ok(_) => info!("Server started."),
         Err(e) => error!("Server failed: {:?}", e)
     }
-}
-
-pub type Pool = r2d2::Pool<ConnectionManager<PgConnection>>;
-lazy_static! {
-    static ref POOL: Pool = {
-        let database_url = env::var("DATABASE_URL")
-            .expect("DATABASE_URL must be set");
-        let manager = ConnectionManager::<PgConnection>::new(database_url);
-
-        r2d2::Pool::builder()
-                .build(manager)
-                .expect("Failed to create pool")
-    };
 }

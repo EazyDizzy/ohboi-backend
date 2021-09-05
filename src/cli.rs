@@ -13,8 +13,6 @@ extern crate diesel;
 extern crate lazy_static;
 
 use clap::arg_enum;
-use diesel::r2d2::ConnectionManager;
-use diesel::PgConnection;
 use structopt::StructOpt;
 
 use daemon::settings::Settings;
@@ -91,16 +89,4 @@ async fn main() {
 
 lazy_static! {
     static ref SETTINGS: Settings = Settings::new().unwrap();
-}
-
-pub type Pool = r2d2::Pool<ConnectionManager<PgConnection>>;
-lazy_static! {
-    static ref POOL: Pool = {
-        let database_url = &SETTINGS.database.url;
-        let manager = ConnectionManager::<PgConnection>::new(database_url);
-
-        r2d2::Pool::builder()
-            .build(manager)
-            .expect("Failed to create pool")
-    };
 }

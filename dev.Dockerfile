@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=rust:1.52.1
+ARG BASE_IMAGE=rust:1.54
 
 # Computes the recipe file
 FROM $BASE_IMAGE as planner

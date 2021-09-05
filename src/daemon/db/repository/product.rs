@@ -1,11 +1,11 @@
 use bigdecimal::{BigDecimal, ToPrimitive};
 use chrono::Utc;
-use diesel::{sql_query, QueryDsl, RunQueryDsl};
+use lib::diesel::{sql_query, QueryDsl, RunQueryDsl};
 
 use lib::db;
 use lib::dto::characteristic::TypedCharacteristic;
 use lib::util::characteristic_id::get_characteristic_id;
-use crate::diesel::prelude::*;
+use lib::diesel::prelude::*;
 use crate::daemon::db::entity::category::CategorySlug;
 use crate::daemon::db::entity::characteristic::product_characteristic::NewProductCharacteristic;
 use crate::daemon::db::entity::product::{NewProduct, Product};

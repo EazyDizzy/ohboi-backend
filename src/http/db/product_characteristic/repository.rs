@@ -2,7 +2,7 @@ use bigdecimal::ToPrimitive;
 
 use lib::db;
 use lib::dto::characteristic::TypedCharacteristic;
-use crate::diesel::prelude::*;
+use lib::diesel::prelude::*;
 use crate::http::db::product_characteristic::characteristic_id::get_characteristic_by_id;
 use crate::http::db::product_characteristic::entity::ProductCharacteristic;
 use crate::http::db::product_characteristic::product_characteristic_enum_value::ProductCharacteristicEnumValue;

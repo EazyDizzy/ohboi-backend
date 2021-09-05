@@ -28,7 +28,7 @@ pub fn parse_and_take<R>(
     characteristics: &mut Vec<(String, String)>,
     crawler: &dyn Crawler,
     external_id: &str,
-    mut predicate: fn(&str, &str, context: CharacteristicParsingContext) -> Option<R>,
+    predicate: fn(&str, &str, context: CharacteristicParsingContext) -> Option<R>,
 ) -> Vec<R> {
     let mut result: Vec<R> = vec![];
     let mut indexes_to_remove = vec![];
@@ -60,7 +60,7 @@ pub fn parse_and_take_multiple<R>(
     characteristics: &mut Vec<(String, String)>,
     crawler: &dyn Crawler,
     external_id: &str,
-    mut predicate: fn(&str, &str, context: CharacteristicParsingContext) -> Vec<R>,
+    predicate: fn(&str, &str, context: CharacteristicParsingContext) -> Vec<R>,
 ) -> Vec<R> {
     let mut result: Vec<R> = vec![];
     let mut indexes_to_remove = vec![];

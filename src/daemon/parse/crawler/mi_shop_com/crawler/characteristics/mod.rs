@@ -10,7 +10,7 @@ use crate::daemon::parse::crawler::mi_shop_com::crawler::characteristics::int::e
 use crate::daemon::parse::crawler::mi_shop_com::crawler::characteristics::skip::skip_unneeded_characteristics;
 use crate::daemon::parse::crawler::mi_shop_com::crawler::characteristics::strings::extract_string_characteristic;
 use crate::daemon::parse::crawler::mi_shop_com::crawler::characteristics::technology::{
-    extract_technology_characteristic, extract_technology_characteristics,
+    extract_technology_characteristic,
 };
 use crate::daemon::parse::crawler::mi_shop_com::crawler::MiShopComCrawler;
 use crate::daemon::service::html_cleaner::inner_text;

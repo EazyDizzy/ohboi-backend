@@ -1,7 +1,7 @@
 use inflector::Inflector;
 
 use lib::db;
-use crate::diesel::prelude::*;
+use lib::diesel::prelude::*;
 use crate::daemon::db::entity::category::{Category, CategorySlug};
 
 pub fn get_category(name: CategorySlug) -> Category {

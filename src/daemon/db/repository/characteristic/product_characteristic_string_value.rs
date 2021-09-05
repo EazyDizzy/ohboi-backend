@@ -1,7 +1,7 @@
-use diesel::result::{DatabaseErrorKind, Error};
+use lib::diesel::result::{DatabaseErrorKind, Error};
 
 use lib::db;
-use crate::diesel::prelude::*;
+use lib::diesel::prelude::*;
 use crate::daemon::db::entity::characteristic::product_characteristic_string_value::{
     NewProductCharacteristicStringValue, ProductCharacteristicStringValue,
 };

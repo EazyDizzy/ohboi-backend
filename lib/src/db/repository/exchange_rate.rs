@@ -19,12 +19,13 @@ pub fn get_exchange_rate_by_code(sought_currency: CurrencyEnum) -> Option<Exchan
 
     results.into_iter().next()
 }
+
 pub fn try_get_exchange_rate_by_code(sought_currency: CurrencyEnum) -> f64 {
     if let Some(db_rate) = get_exchange_rate_by_code(sought_currency) {
         db_rate.rate.to_f64().unwrap()
     } else {
         // TODO not in prod
-        log::error!("No exchange rate found in db for {:?}. Probably, exchange rates pulling job was not executed.", &sought_currency);
+        println!("No exchange rate found in db for {:?}. Probably, exchange rates pulling job was not executed.", &sought_currency);
         1.00
     }
 }

@@ -4,7 +4,7 @@ use lib::db;
 use lib::db::entity::characteristic::Characteristic;
 use lib::dto::characteristic::enum_characteristic::*;
 use lib::util::all_characteristics::*;
-use crate::diesel::prelude::*;
+use lib::diesel::prelude::*;
 use crate::daemon::db::entity::category::CategorySlug;
 use crate::daemon::db::entity::characteristic::category_characteristic::{
     CategoryCharacteristic, NewCategoryCharacteristic,

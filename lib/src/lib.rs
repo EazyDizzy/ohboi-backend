@@ -1,19 +1,19 @@
 #[macro_use]
-extern crate diesel;
+pub extern crate diesel;
 #[macro_use]
 extern crate lazy_static;
 
 use std::env;
 
 use diesel::r2d2::ConnectionManager;
-use diesel::PgConnection;
+use diesel::{PgConnection, r2d2};
 
 pub mod db;
 pub mod dto;
-pub mod service;
-pub mod util;
 pub mod my_enum;
 pub mod schema;
+pub mod service;
+pub mod util;
 
 pub type Pool = r2d2::Pool<ConnectionManager<PgConnection>>;
 

@@ -1,11 +1,11 @@
 use bigdecimal::BigDecimal;
 use chrono::Utc;
-use diesel::{QueryDsl, RunQueryDsl};
+use lib::diesel::{QueryDsl, RunQueryDsl};
 
 use lib::db;
 use lib::db::entity::exchange_rate::{ExchangeRate, NewExchangeRate};
 use lib::db::repository::exchange_rate::get_exchange_rate_by_code;
-use crate::diesel::prelude::*;
+use lib::diesel::prelude::*;
 use lib::my_enum::CurrencyEnum;
 use lib::schema::exchange_rate;
 
