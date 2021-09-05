@@ -1,4 +1,4 @@
-use crate::common::dto::characteristic::int_characteristic::IntCharacteristic;
+use lib::dto::characteristic::int_characteristic::IntCharacteristic;
 use crate::daemon::parse::crawler::characteristic_parser::*;
 
 pub fn extract_int_characteristic(

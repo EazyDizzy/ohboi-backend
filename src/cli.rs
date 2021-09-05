@@ -23,11 +23,8 @@ use crate::daemon::db::repository::sync_characteristic_enum;
 use crate::daemon::queue::pub_api::declare::declare_all_queues;
 use crate::daemon::queue::pub_api::launch::{launch_consumer, launch_producer};
 
-mod common;
 mod local_sentry;
-mod my_enum;
 mod daemon;
-mod schema;
 
 #[derive(StructOpt, Debug)]
 struct Cli {

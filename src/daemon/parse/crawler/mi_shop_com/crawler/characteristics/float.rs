@@ -1,4 +1,4 @@
-use crate::common::dto::characteristic::float_characteristic::FloatCharacteristic;
+use lib::dto::characteristic::float_characteristic::FloatCharacteristic;
 use crate::daemon::parse::crawler::characteristic_parser::*;
 
 pub fn extract_float_characteristic(title: &str, value: &str, context: CharacteristicParsingContext) -> Option<FloatCharacteristic> {

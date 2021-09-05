@@ -1,6 +1,6 @@
 use regex::Regex;
 
-use crate::common::dto::characteristic::enum_characteristic::EnumCharacteristic;
+use lib::dto::characteristic::enum_characteristic::EnumCharacteristic;
 use crate::daemon::parse::crawler::characteristic_parser::*;
 use crate::daemon::parse::crawler::mi_shop_com::crawler::media_format_parser::multiple_string_media_format_value;
 

@@ -1,8 +1,8 @@
 use bigdecimal::ToPrimitive;
 use diesel::{QueryDsl, RunQueryDsl};
 
-use crate::common::db;
-use crate::common::db::entity::exchange_rate::ExchangeRate;
+use crate::db;
+use crate::db::entity::exchange_rate::ExchangeRate;
 use crate::diesel::prelude::*;
 use crate::my_enum::CurrencyEnum;
 

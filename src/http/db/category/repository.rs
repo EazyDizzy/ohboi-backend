@@ -1,9 +1,9 @@
 use crate::diesel::prelude::*;
-use crate::common::db;
+use lib::db;
 use crate::http::db::category::entity::Category;
 
 pub fn get_all() -> Vec<Category> {
-    use crate::schema::category::dsl::category;
+    use lib::schema::category::dsl::category;
 
     let connection = &db::establish_connection();
 

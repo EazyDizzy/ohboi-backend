@@ -9,7 +9,7 @@ use scraper::html::Select;
 use scraper::{ElementRef, Html, Selector};
 
 use crate::local_sentry::add_category_breadcrumb;
-use crate::my_enum::CurrencyEnum;
+use lib::my_enum::CurrencyEnum;
 use crate::daemon::db::entity::category::CategorySlug;
 use crate::daemon::db::entity::source::SourceName;
 use crate::daemon::dto::parsed_product::{AdditionalParsedProductInfo, LocalParsedProduct};
@@ -283,7 +283,7 @@ mod tests {
     use regex::Regex;
     use scraper::{Html, Selector};
 
-    use crate::my_enum::CurrencyEnum;
+    use lib::my_enum::CurrencyEnum;
     use crate::daemon::parse::crawler::crawler::Crawler;
     use crate::daemon::db::entity::category::CategorySlug;
     use crate::daemon::db::entity::source::SourceName;

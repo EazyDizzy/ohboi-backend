@@ -10,7 +10,7 @@ use crate::daemon::db::entity::category::CategorySlug;
 use crate::daemon::db::entity::source::SourceName;
 use crate::daemon::dto::parsed_product::{AdditionalParsedProductInfo, LocalParsedProduct};
 use crate::daemon::parse::crawler::crawler::{get_html_nodes, Crawler, ProductHtmlSelectors};
-use crate::my_enum::CurrencyEnum;
+use lib::my_enum::CurrencyEnum;
 use crate::daemon::parse::crawler::mi_shop_com::crawler::characteristics::extract_characteristics;
 
 static SITE_BASE: &str = "https://mi-shop.com";

@@ -1,9 +1,9 @@
 use diesel::result::{DatabaseErrorKind, Error};
 use diesel::RunQueryDsl;
 
-use crate::common::db;
+use lib::db;
 use crate::daemon::db::entity::characteristic::product_characteristic::NewProductCharacteristic;
-use crate::schema::product_characteristic;
+use lib::schema::product_characteristic;
 
 pub fn create_many_if_not_exists(product_chars: Vec<NewProductCharacteristic>) {
     let connection = &db::establish_connection();

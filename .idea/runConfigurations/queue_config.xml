@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="queue config" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
+  <configuration default="false" name="queue_config" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
     <option name="command" value="run --bin daemon queue_config" />
     <option name="workingDirectory" value="file://$PROJECT_DIR$" />
     <option name="channel" value="DEFAULT" />

@@ -1,11 +1,11 @@
 use diesel::result::{DatabaseErrorKind, Error};
 
-use crate::common::db;
+use lib::db;
 use crate::diesel::prelude::*;
-use crate::my_enum::{CharacteristicValueType, CharacteristicVisualisationType};
+use lib::my_enum::{CharacteristicValueType, CharacteristicVisualisationType};
 use crate::daemon::db::entity::characteristic::characteristic::NewCharacteristic;
-use crate::schema::characteristic;
-use crate::common::db::entity::characteristic::Characteristic;
+use lib::schema::characteristic;
+use lib::db::entity::characteristic::Characteristic;
 
 pub fn create_if_not_exists(
     id: i16,

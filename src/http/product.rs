@@ -3,10 +3,10 @@ use actix_web_validator::{Json, Query};
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::common::db::repository::exchange_rate::try_get_exchange_rate_by_code;
+use lib::db::repository::exchange_rate::try_get_exchange_rate_by_code;
 use crate::http::db::product::repository::{get_filtered_products, get_product_info};
 use crate::http::util::product::convert_product_prices;
-use crate::my_enum::CurrencyEnum;
+use lib::my_enum::CurrencyEnum;
 // TODO add hostname to the image urls to remove these dependency from fe
 pub async fn get_product(params: Query<ProductParams>) -> HttpResponse {
     let product = get_product_info(params.as_ref());

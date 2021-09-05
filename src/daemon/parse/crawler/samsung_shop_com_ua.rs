@@ -1,7 +1,7 @@
 use regex::Regex;
 use scraper::{Html, Selector};
 
-use crate::my_enum::CurrencyEnum;
+use lib::my_enum::CurrencyEnum;
 use crate::daemon::parse::crawler::crawler::{get_html_nodes, Crawler, ProductHtmlSelectors};
 use crate::daemon::db::entity::category::CategorySlug;
 use crate::daemon::db::entity::source::SourceName;

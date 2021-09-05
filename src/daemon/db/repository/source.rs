@@ -1,11 +1,11 @@
 use inflector::Inflector;
 
-use crate::common::db;
+use lib::db;
 use crate::diesel::prelude::*;
 use crate::daemon::db::entity::source::{Source, SourceName};
 
 pub fn get_source(name: SourceName) -> Source {
-    use crate::schema::source::dsl::{site_name, source};
+    use lib::schema::source::dsl::{site_name, source};
     let connection = &db::establish_connection();
 
     let filter = site_name.eq(name.to_string().to_snake_case());

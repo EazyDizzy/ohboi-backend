@@ -1,4 +1,4 @@
-use crate::schema::source_product_price_history;
+use lib::schema::source_product_price_history;
 
 use chrono::NaiveDateTime;
 use serde::{Serialize};

@@ -2,7 +2,7 @@ use bigdecimal::BigDecimal;
 use chrono::Utc;
 use diesel::{BoolExpressionMethods, ExpressionMethods, QueryDsl, RunQueryDsl};
 
-use crate::common::db;
+use lib::db;
 use crate::daemon::db::entity::product::Product;
 use crate::daemon::db::entity::source::SourceName;
 use crate::daemon::db::entity::source_product::{NewSourceProduct, SourceProduct};
@@ -10,10 +10,10 @@ use crate::daemon::db::repository::product::update_price_range_if_needed;
 use crate::daemon::db::repository::source::get_source;
 use crate::daemon::db::repository::source_product_price_history::add_to_history_if_not_exists;
 use crate::daemon::dto::parsed_product::InternationalParsedProduct;
-use crate::schema::source_product;
+use lib::schema::source_product;
 
 pub fn get_by_source_and_external_id(source: SourceName, expected_external_id: &str) -> Option<SourceProduct> {
-    use crate::schema::source_product::dsl::{external_id, source_id, source_product};
+    use lib::schema::source_product::dsl::{external_id, source_id, source_product};
 
     let connection = &db::establish_connection();
     let source = get_source(source);

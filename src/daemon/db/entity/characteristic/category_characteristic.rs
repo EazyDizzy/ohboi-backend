@@ -1,5 +1,5 @@
 use serde::Serialize;
-use crate::schema::category_characteristic;
+use lib::schema::category_characteristic;
 
 #[derive(Serialize, Queryable)]
 pub struct CategoryCharacteristic {

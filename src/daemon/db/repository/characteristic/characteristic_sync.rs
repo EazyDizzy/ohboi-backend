@@ -1,9 +1,9 @@
 use strum::VariantNames;
 
-use crate::common::db;
-use crate::common::db::entity::characteristic::Characteristic;
-use crate::common::dto::characteristic::enum_characteristic::*;
-use crate::common::util::all_characteristics::*;
+use lib::db;
+use lib::db::entity::characteristic::Characteristic;
+use lib::dto::characteristic::enum_characteristic::*;
+use lib::util::all_characteristics::*;
 use crate::diesel::prelude::*;
 use crate::daemon::db::entity::category::CategorySlug;
 use crate::daemon::db::entity::characteristic::category_characteristic::{
@@ -13,7 +13,7 @@ use crate::daemon::db::repository::category::get_category;
 use crate::daemon::db::repository::characteristic::{
     characteristic, product_characteristic_enum_value,
 };
-use crate::schema::category_characteristic;
+use lib::schema::category_characteristic;
 
 // TODO update if sth changed
 // TODO delete removed

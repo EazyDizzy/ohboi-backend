@@ -4,7 +4,7 @@ use serde_json::error::Result as SerdeResult;
 use crate::daemon::db::repository::exchange_rate::create_or_update;
 use crate::daemon::queue::layer::consume::consume;
 use crate::daemon::service::request::pub_api::get;
-use crate::my_enum::CurrencyEnum;
+use lib::my_enum::CurrencyEnum;
 use crate::SETTINGS;
 
 #[derive(Deserialize)]

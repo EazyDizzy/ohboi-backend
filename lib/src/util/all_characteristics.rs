@@ -1,13 +1,13 @@
 use strum::IntoEnumIterator;
 use strum::VariantNames;
 
-use crate::common::db::entity::characteristic::Characteristic;
-use crate::common::dto::characteristic::enum_characteristic::EnumCharacteristic;
-use crate::common::dto::characteristic::float_characteristic::FloatCharacteristic;
-use crate::common::dto::characteristic::int_characteristic::IntCharacteristic;
-use crate::common::dto::characteristic::string_characteristic::StringCharacteristic;
-use crate::common::dto::characteristic::TypedCharacteristic;
-use crate::common::util::characteristic_id::get_characteristic_id;
+use crate::db::entity::characteristic::Characteristic;
+use crate::dto::characteristic::enum_characteristic::EnumCharacteristic;
+use crate::dto::characteristic::float_characteristic::FloatCharacteristic;
+use crate::dto::characteristic::int_characteristic::IntCharacteristic;
+use crate::dto::characteristic::string_characteristic::StringCharacteristic;
+use crate::dto::characteristic::TypedCharacteristic;
+use crate::util::characteristic_id::get_characteristic_id;
 use crate::my_enum::{CharacteristicValueType, CharacteristicVisualisationType};
 
 pub fn get_all_characteristics_dto() -> Vec<Characteristic> {

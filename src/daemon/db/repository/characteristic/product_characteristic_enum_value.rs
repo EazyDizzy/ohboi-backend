@@ -1,14 +1,14 @@
 use diesel::result::{DatabaseErrorKind, Error};
 
-use crate::common::db;
+use lib::db;
 use crate::diesel::prelude::*;
 use crate::daemon::db::entity::characteristic::product_characteristic_enum_value::{
     NewProductCharacteristicEnumValue, ProductCharacteristicEnumValue,
 };
-use crate::common::dto::characteristic::enum_characteristic::EnumCharacteristic;
+use lib::dto::characteristic::enum_characteristic::EnumCharacteristic;
 
 pub fn get_value_by_enum(enm: EnumCharacteristic) -> ProductCharacteristicEnumValue {
-    use crate::schema::product_characteristic_enum_value::dsl::{
+    use lib::schema::product_characteristic_enum_value::dsl::{
         product_characteristic_enum_value, value,
     };
     let v = enm.full_name();
@@ -26,7 +26,7 @@ pub fn get_value_by_enum(enm: EnumCharacteristic) -> ProductCharacteristicEnumVa
 }
 
 pub fn create_if_not_exists(value: String) {
-    use crate::schema::product_characteristic_enum_value;
+    use lib::schema::product_characteristic_enum_value;
     let connection = &db::establish_connection();
 
     let new_enum_char_value = NewProductCharacteristicEnumValue { value };

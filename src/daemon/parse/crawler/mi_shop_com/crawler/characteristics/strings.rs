@@ -1,4 +1,4 @@
-use crate::common::dto::characteristic::string_characteristic::StringCharacteristic;
+use lib::dto::characteristic::string_characteristic::StringCharacteristic;
 use crate::daemon::parse::crawler::characteristic_parser::*;
 
 pub fn extract_string_characteristic(title: &str, value: &str, context: CharacteristicParsingContext) -> Option<StringCharacteristic> {

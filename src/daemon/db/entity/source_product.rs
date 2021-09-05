@@ -1,4 +1,4 @@
-use crate::schema::source_product;
+use lib::schema::source_product;
 
 use chrono::NaiveDateTime;
 use serde::{Serialize};

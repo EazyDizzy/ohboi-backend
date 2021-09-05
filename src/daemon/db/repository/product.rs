@@ -2,9 +2,9 @@ use bigdecimal::{BigDecimal, ToPrimitive};
 use chrono::Utc;
 use diesel::{sql_query, QueryDsl, RunQueryDsl};
 
-use crate::common::db;
-use crate::common::dto::characteristic::TypedCharacteristic;
-use crate::common::util::characteristic_id::get_characteristic_id;
+use lib::db;
+use lib::dto::characteristic::TypedCharacteristic;
+use lib::util::characteristic_id::get_characteristic_id;
 use crate::diesel::prelude::*;
 use crate::daemon::db::entity::category::CategorySlug;
 use crate::daemon::db::entity::characteristic::product_characteristic::NewProductCharacteristic;
@@ -16,7 +16,7 @@ use crate::daemon::db::repository::characteristic::{
     product_characteristic_string_value,
 };
 use crate::daemon::dto::parsed_product::{AdditionalParsedProductInfo, InternationalParsedProduct};
-use crate::schema::product;
+use lib::schema::product;
 
 pub fn add_image_to_product_details(existent_product_id: i32, file_path: &str) {
     let connection = &db::establish_connection();
@@ -32,7 +32,7 @@ pub fn add_image_to_product_details(existent_product_id: i32, file_path: &str) {
 }
 
 pub fn update_details(existent_product_id: i32, additional_info: &AdditionalParsedProductInfo) {
-    use crate::schema::product::dsl::{description, enabled, id, images, product};
+    use lib::schema::product::dsl::{description, enabled, id, images, product};
 
     let connection = &db::establish_connection();
     let target = product.filter(id.eq(existent_product_id));
@@ -121,7 +121,7 @@ pub fn create_if_not_exists(
 }
 
 pub fn update_price_range_if_needed(product_id: i32, new_price: f64) {
-    use crate::schema::product::dsl::{highest_price, id, lowest_price, product, updated_at};
+    use lib::schema::product::dsl::{highest_price, id, lowest_price, product, updated_at};
     let now = Utc::now();
 
     let connection = &db::establish_connection();
@@ -185,7 +185,7 @@ fn create(parsed_product: &InternationalParsedProduct, product_category: Categor
 }
 
 fn enable_product(product_id: i32) {
-    use crate::schema::product::dsl::{enabled, id, product, updated_at};
+    use lib::schema::product::dsl::{enabled, id, product, updated_at};
     let connection = &db::establish_connection();
     let now = Utc::now();
 
@@ -198,7 +198,7 @@ fn enable_product(product_id: i32) {
 }
 
 fn get_product_by_title(product_title: &str) -> Option<Product> {
-    use crate::schema::product::dsl::{product, title};
+    use lib::schema::product::dsl::{product, title};
 
     let connection = &db::establish_connection();
 
@@ -212,7 +212,7 @@ fn get_product_by_title(product_title: &str) -> Option<Product> {
 }
 
 fn get_product_by_id(product_id: i32) -> Option<Product> {
-    use crate::schema::product::dsl::{id, product};
+    use lib::schema::product::dsl::{id, product};
 
     let connection = &db::establish_connection();
 

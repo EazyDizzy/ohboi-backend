@@ -1,5 +1,5 @@
-use crate::my_enum::UserRegistrationType;
-use crate::schema::user_registration;
+use lib::my_enum::UserRegistrationType;
+use lib::schema::user_registration;
 
 #[derive(Queryable)]
 pub struct UserRegistration {

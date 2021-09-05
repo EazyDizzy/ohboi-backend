@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::schema::product_characteristic_string_value;
+use lib::schema::product_characteristic_string_value;
 
 #[derive(Serialize, Queryable)]
 pub struct ProductCharacteristicStringValue {

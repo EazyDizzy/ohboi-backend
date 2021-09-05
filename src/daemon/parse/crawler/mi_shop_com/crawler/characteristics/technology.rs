@@ -1,4 +1,4 @@
-use crate::common::dto::characteristic::enum_characteristic::{EnumCharacteristic, Technology};
+use lib::dto::characteristic::enum_characteristic::{EnumCharacteristic, Technology};
 use crate::daemon::parse::crawler::characteristic_parser::*;
 use crate::daemon::parse::crawler::crawler::Crawler;
 use crate::daemon::parse::crawler::mi_shop_com::crawler::MiShopComCrawler;

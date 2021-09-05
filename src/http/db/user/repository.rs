@@ -1,9 +1,9 @@
 use chrono::Utc;
 use diesel::{ExpressionMethods, QueryDsl, RunQueryDsl};
 
-use crate::common::db;
+use lib::db;
 use crate::http::db::user::entity::{NewUser, User};
-use crate::schema::users;
+use lib::schema::users;
 
 pub fn create(username: &str) -> User {
     let connection = &db::establish_connection();
@@ -22,7 +22,7 @@ pub fn create(username: &str) -> User {
 }
 
 pub fn get_by_id(user_id: i32) -> User {
-    use crate::schema::users::dsl::{id, users};
+    use lib::schema::users::dsl::{id, users};
 
     let connection = &db::establish_connection();
 

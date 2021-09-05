@@ -1,10 +1,10 @@
 use diesel::prelude::*;
 
-use crate::common::db;
+use lib::db;
 use crate::http::db::source::entity::Source;
 
 pub fn get_all_enabled() -> Vec<Source> {
-    use crate::schema::source::dsl::{enabled, source};
+    use lib::schema::source::dsl::{enabled, source};
     let connection = &db::establish_connection();
 
     source

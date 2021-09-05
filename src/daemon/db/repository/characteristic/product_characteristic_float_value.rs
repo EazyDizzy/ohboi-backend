@@ -1,14 +1,14 @@
 use bigdecimal::BigDecimal;
 use diesel::result::{DatabaseErrorKind, Error};
 
-use crate::common::db;
+use lib::db;
 use crate::diesel::prelude::*;
 use crate::daemon::db::entity::characteristic::product_characteristic_float_value::{
     NewProductCharacteristicFloatValue, ProductCharacteristicFloatValue,
 };
 
 pub fn create_if_not_exists(value: f32) -> Option<ProductCharacteristicFloatValue> {
-    use crate::schema::product_characteristic_float_value;
+    use lib::schema::product_characteristic_float_value;
     let existed_value = get_product_value_by_value(value);
     if existed_value.is_some() {
         return existed_value;
@@ -45,7 +45,7 @@ pub fn create_if_not_exists(value: f32) -> Option<ProductCharacteristicFloatValu
 }
 
 fn get_product_value_by_value(v: f32) -> Option<ProductCharacteristicFloatValue> {
-    use crate::schema::product_characteristic_float_value::dsl::{
+    use lib::schema::product_characteristic_float_value::dsl::{
         product_characteristic_float_value, value,
     };
     let connection = &db::establish_connection();

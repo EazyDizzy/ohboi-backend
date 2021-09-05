@@ -1,13 +1,13 @@
 use diesel::result::{DatabaseErrorKind, Error};
 
-use crate::common::db;
+use lib::db;
 use crate::diesel::prelude::*;
 use crate::daemon::db::entity::characteristic::product_characteristic_string_value::{
     NewProductCharacteristicStringValue, ProductCharacteristicStringValue,
 };
 
 pub fn create_if_not_exists(value: String) -> Option<ProductCharacteristicStringValue> {
-    use crate::schema::product_characteristic_string_value;
+    use lib::schema::product_characteristic_string_value;
     let existed_value = get_product_value_by_value(&value);
     if existed_value.is_some() {
         return existed_value;
@@ -44,7 +44,7 @@ pub fn create_if_not_exists(value: String) -> Option<ProductCharacteristicString
 }
 
 fn get_product_value_by_value(v: &str) -> Option<ProductCharacteristicStringValue> {
-    use crate::schema::product_characteristic_string_value::dsl::{
+    use lib::schema::product_characteristic_string_value::dsl::{
         product_characteristic_string_value, value,
     };
     let connection = &db::establish_connection();

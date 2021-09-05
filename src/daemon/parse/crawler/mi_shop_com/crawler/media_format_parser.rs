@@ -1,7 +1,7 @@
 use maplit::btreemap;
 use regex::Regex;
 
-use crate::common::dto::characteristic::enum_characteristic::MediaFormat;
+use lib::dto::characteristic::enum_characteristic::MediaFormat;
 use crate::daemon::parse::crawler::characteristic_parser::{
     enum_media_format_value, string_value, CharacteristicParsingContext,
 };
@@ -104,7 +104,7 @@ pub fn multiple_string_media_format_value(
 
 #[cfg(test)]
 mod tests {
-    use crate::common::dto::characteristic::enum_characteristic::MediaFormat;
+    use lib::dto::characteristic::enum_characteristic::MediaFormat;
     use crate::daemon::db::entity::source::SourceName;
     use crate::daemon::parse::crawler::characteristic_parser::CharacteristicParsingContext;
     use crate::daemon::parse::crawler::mi_shop_com::crawler::media_format_parser::multiple_string_media_format_value;

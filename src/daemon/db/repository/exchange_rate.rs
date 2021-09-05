@@ -2,12 +2,12 @@ use bigdecimal::BigDecimal;
 use chrono::Utc;
 use diesel::{QueryDsl, RunQueryDsl};
 
-use crate::common::db;
-use crate::common::db::entity::exchange_rate::{ExchangeRate, NewExchangeRate};
-use crate::common::db::repository::exchange_rate::get_exchange_rate_by_code;
+use lib::db;
+use lib::db::entity::exchange_rate::{ExchangeRate, NewExchangeRate};
+use lib::db::repository::exchange_rate::get_exchange_rate_by_code;
 use crate::diesel::prelude::*;
-use crate::my_enum::CurrencyEnum;
-use crate::schema::exchange_rate;
+use lib::my_enum::CurrencyEnum;
+use lib::schema::exchange_rate;
 
 pub fn create_or_update(currency: CurrencyEnum, rate: f32) -> bool {
     let existed_rate = get_exchange_rate_by_code(currency);
@@ -43,7 +43,7 @@ fn create(currency: CurrencyEnum, rate: f32) -> bool {
 }
 
 fn update(sought_currency: CurrencyEnum, new_rate: f32) -> bool {
-    use crate::schema::exchange_rate::dsl::{currency, exchange_rate, rate, updated_at};
+    use lib::schema::exchange_rate::dsl::{currency, exchange_rate, rate, updated_at};
 
     let connection = &db::establish_connection();
     let now = Utc::now();

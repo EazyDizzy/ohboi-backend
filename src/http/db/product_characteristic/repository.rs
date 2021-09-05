@@ -1,7 +1,7 @@
 use bigdecimal::ToPrimitive;
 
-use crate::common::db;
-use crate::common::dto::characteristic::TypedCharacteristic;
+use lib::db;
+use lib::dto::characteristic::TypedCharacteristic;
 use crate::diesel::prelude::*;
 use crate::http::db::product_characteristic::characteristic_id::get_characteristic_by_id;
 use crate::http::db::product_characteristic::entity::ProductCharacteristic;
@@ -9,10 +9,10 @@ use crate::http::db::product_characteristic::product_characteristic_enum_value::
 use crate::http::db::product_characteristic::product_characteristic_float_value::ProductCharacteristicFloatValue;
 use crate::http::db::product_characteristic::product_characteristic_string_value::ProductCharacteristicStringValue;
 use crate::http::dto::product::*;
-use crate::schema::product_characteristic;
-use crate::schema::product_characteristic_enum_value;
-use crate::schema::product_characteristic_float_value;
-use crate::schema::product_characteristic_string_value;
+use lib::schema::product_characteristic;
+use lib::schema::product_characteristic_enum_value;
+use lib::schema::product_characteristic_float_value;
+use lib::schema::product_characteristic_string_value;
 
 pub fn get_all_characteristics_of_product(product_id: i32) -> ProductCharacteristicsMapped {
     let product_characteristics = get_product_characteristics(product_id);
@@ -97,7 +97,7 @@ pub fn get_all_characteristics_of_product(product_id: i32) -> ProductCharacteris
 fn get_mapped_float_values(
     values: &Vec<ProductCharacteristic>,
 ) -> Vec<ProductCharacteristicFloatValue> {
-    use crate::schema::product_characteristic_float_value::dsl::id;
+    use lib::schema::product_characteristic_float_value::dsl::id;
     let connection = &db::establish_connection();
     let ids: Vec<i32> = values.into_iter().map(|v| v.value_id).collect();
     let filter = id.eq_any(ids);
@@ -110,7 +110,7 @@ fn get_mapped_float_values(
 fn get_mapped_string_values(
     values: &Vec<ProductCharacteristic>,
 ) -> Vec<ProductCharacteristicStringValue> {
-    use crate::schema::product_characteristic_string_value::dsl::id;
+    use lib::schema::product_characteristic_string_value::dsl::id;
     let connection = &db::establish_connection();
     let ids: Vec<i32> = values.into_iter().map(|v| v.value_id).collect();
     let filter = id.eq_any(ids);
@@ -123,7 +123,7 @@ fn get_mapped_string_values(
 fn get_mapped_enum_values(
     values: &Vec<ProductCharacteristic>,
 ) -> Vec<ProductCharacteristicEnumValue> {
-    use crate::schema::product_characteristic_enum_value::dsl::id;
+    use lib::schema::product_characteristic_enum_value::dsl::id;
     let connection = &db::establish_connection();
     let ids: Vec<i32> = values.into_iter().map(|v| v.value_id).collect();
     let filter = id.eq_any(ids);
@@ -135,7 +135,7 @@ fn get_mapped_enum_values(
 }
 
 fn get_product_characteristics(id: i32) -> Vec<ProductCharacteristic> {
-    use crate::schema::product_characteristic::dsl::product_id;
+    use lib::schema::product_characteristic::dsl::product_id;
     let connection = &db::establish_connection();
 
     let filter = product_id.eq(id);

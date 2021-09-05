@@ -1,16 +1,16 @@
 use diesel::{BoolExpressionMethods, ExpressionMethods, QueryDsl, RunQueryDsl};
 
-use crate::common::db;
+use lib::db;
 use crate::http::db::user::entity::User;
 use crate::http::db::user::repository::{create, get_by_id};
 use crate::http::db::user_registration::entity::{NewUserRegistration, UserRegistration};
-use crate::my_enum::UserRegistrationType;
-use crate::schema::user_registration;
+use lib::my_enum::UserRegistrationType;
+use lib::schema::user_registration;
 
 pub fn get_user_by_auth(expected_registration_type: &UserRegistrationType,
                         expected_email: &str,
                         expected_full_name: &str) -> User {
-    use crate::schema::user_registration::dsl::{email, full_name, registration_type, user_registration};
+    use lib::schema::user_registration::dsl::{email, full_name, registration_type, user_registration};
 
     let connection = &db::establish_connection();
 

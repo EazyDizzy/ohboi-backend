@@ -1,9 +1,9 @@
 use bigdecimal::BigDecimal;
 use diesel::{QueryDsl, RunQueryDsl};
 
-use crate::common::db;
-use crate::common::db::repository::exchange_rate::try_get_exchange_rate_by_code;
-use crate::common::service::currency_converter::convert_from;
+use lib::db;
+use lib::db::repository::exchange_rate::try_get_exchange_rate_by_code;
+use lib::service::currency_converter::convert_from;
 use crate::diesel::prelude::*;
 use crate::http::db::lower;
 use crate::http::db::product::entity::Product;
@@ -11,13 +11,13 @@ use crate::http::db::product_characteristic::repository::get_all_characteristics
 use crate::http::dto::product::ProductInfo;
 use crate::http::product::{ProductFilters, ProductParams};
 use crate::http::util::product::convert_product_prices;
-use crate::schema::product;
-use crate::schema::product::dsl::{category, enabled, highest_price, id, lowest_price, title};
-use crate::schema::source_product;
+use lib::schema::product;
+use lib::schema::product::dsl::{category, enabled, highest_price, id, lowest_price, title};
+use lib::schema::source_product;
 
 pub fn get_product_info(params: &ProductParams) -> Option<ProductInfo> {
     let connection = &db::establish_connection();
-    use crate::schema::product::dsl::id;
+    use lib::schema::product::dsl::id;
 
     let targets = product::table.filter(id.eq(params.id).and(enabled.eq(true)));
 

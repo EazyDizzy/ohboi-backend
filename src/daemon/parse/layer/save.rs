@@ -1,9 +1,9 @@
 use futures::future::join_all;
 use maplit::btreemap;
 
-use crate::common::db::repository::exchange_rate::try_get_exchange_rate_by_code;
-use crate::common::service::currency_converter::convert_from_with_rate;
-use crate::my_enum::CurrencyEnum;
+use lib::db::repository::exchange_rate::try_get_exchange_rate_by_code;
+use lib::service::currency_converter::convert_from_with_rate;
+use lib::my_enum::CurrencyEnum;
 use crate::daemon::db::entity::category::CategorySlug;
 use crate::daemon::db::entity::source::SourceName;
 use crate::daemon::db::repository::product::create_if_not_exists;

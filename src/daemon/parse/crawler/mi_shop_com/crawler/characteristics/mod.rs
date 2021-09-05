@@ -1,6 +1,6 @@
 use scraper::{ElementRef, Html, Selector};
 
-use crate::common::dto::characteristic::TypedCharacteristic;
+use lib::dto::characteristic::TypedCharacteristic;
 use crate::daemon::parse::crawler::characteristic_parser::{
     combine_titles_and_values, parse_and_take, parse_and_take_multiple,
 };

@@ -13,10 +13,7 @@ use diesel::r2d2::ConnectionManager;
 use log::{error, info};
 
 mod http;
-mod schema;
-mod my_enum;
 mod local_sentry;
-mod common;
 
 #[actix_web::main]
 async fn main() {

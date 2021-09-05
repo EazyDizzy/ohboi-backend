@@ -1,4 +1,4 @@
-use crate::common::dto::characteristic::enum_characteristic::*;
+use lib::dto::characteristic::enum_characteristic::*;
 use crate::daemon::parse::crawler::characteristic_parser::string_value;
 
 pub fn enum_media_format_value(value: &str) -> Option<MediaFormat> {

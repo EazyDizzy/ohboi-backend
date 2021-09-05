@@ -1,11 +1,11 @@
 use inflector::Inflector;
 
-use crate::common::db;
+use lib::db;
 use crate::diesel::prelude::*;
 use crate::daemon::db::entity::category::{Category, CategorySlug};
 
 pub fn get_category(name: CategorySlug) -> Category {
-    use crate::schema::category::dsl::{category, slug};
+    use lib::schema::category::dsl::{category, slug};
     let connection = &db::establish_connection();
 
     let filter = slug.eq(name.to_string().to_snake_case());

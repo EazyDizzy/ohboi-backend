@@ -1,5 +1,5 @@
-use crate::my_enum::{CharacteristicValueType, CharacteristicVisualisationType};
-use crate::schema::characteristic;
+use lib::my_enum::{CharacteristicValueType, CharacteristicVisualisationType};
+use lib::schema::characteristic;
 
 #[derive(Insertable, Debug)]
 #[table_name = "characteristic"]

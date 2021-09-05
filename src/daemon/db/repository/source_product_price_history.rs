@@ -2,13 +2,13 @@ use bigdecimal::{BigDecimal, ToPrimitive};
 use chrono::Utc;
 use diesel::{BoolExpressionMethods, ExpressionMethods, QueryDsl, RunQueryDsl};
 
-use crate::common::db;
+use lib::db;
 use crate::daemon::db::entity::source_product::NewSourceProduct;
 use crate::daemon::db::entity::source_product_price_history::{NewSourceProductPriceHistory, SourceProductPriceHistory};
-use crate::schema::source_product_price_history;
+use lib::schema::source_product_price_history;
 
 pub fn add_to_history_if_not_exists(source_product: &NewSourceProduct) {
-    use crate::schema::source_product_price_history::dsl::{external_id, id, product_id, source_id, source_product_price_history};
+    use lib::schema::source_product_price_history::dsl::{external_id, id, product_id, source_id, source_product_price_history};
 
     let connection = &db::establish_connection();
 

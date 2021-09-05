@@ -3,7 +3,7 @@ use std::fmt;
 use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
 
-use crate::my_enum::CurrencyEnum;
+use lib::my_enum::CurrencyEnum;
 
 #[derive(Serialize, Queryable, Debug)]
 pub struct Source {

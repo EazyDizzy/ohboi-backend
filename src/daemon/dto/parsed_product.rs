@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::common::dto::characteristic::TypedCharacteristic;
+use lib::dto::characteristic::TypedCharacteristic;
 
 #[derive(Serialize, Debug, PartialEq, Clone)]
 pub struct LocalParsedProduct {
