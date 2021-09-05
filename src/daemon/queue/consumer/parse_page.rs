@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::daemon::db::entity::category::CategorySlug;
 use crate::daemon::db::entity::source::SourceName;
-use crate::daemon::parse::pub_api::parse_category_page::parse_category_page;
+use crate::daemon::parse::parse_category_page;
 use crate::daemon::queue::layer::consume::consume;
 use crate::local_sentry::add_category_breadcrumb;
 use crate::SETTINGS;

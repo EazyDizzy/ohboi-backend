@@ -5,9 +5,9 @@ use crate::daemon::parse::crawler::get_crawler;
 use crate::daemon::db::entity::category::CategorySlug;
 use crate::daemon::db::entity::source::SourceName;
 use crate::daemon::dto::parsed_product::LocalParsedProduct;
-use crate::daemon::queue::pub_api::postpone::postpone_page_parsing;
+use crate::daemon::queue::postpone::postpone_page_parsing;
 
-use crate::daemon::service::request::pub_api::get_s;
+use crate::daemon::service::request::get_s;
 use crate::daemon::parse::layer::save::save_parsed_products;
 use crate::daemon::parse::util::dedup::dedup_products;
 use crate::daemon::parse::util::{parse_html, add_parse_breadcrumb};

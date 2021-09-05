@@ -1,4 +1,6 @@
+pub use pub_api::*;
+
 mod consumer;
 mod layer;
 mod producer;
-pub mod pub_api;
+mod pub_api;

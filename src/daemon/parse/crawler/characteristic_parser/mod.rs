@@ -4,7 +4,7 @@ pub use crate::daemon::parse::crawler::characteristic_parser::enum_value_parser:
 pub use crate::daemon::parse::crawler::characteristic_parser::float_value_parser::*;
 pub use crate::daemon::parse::crawler::characteristic_parser::int_value_parser::*;
 pub use crate::daemon::parse::crawler::characteristic_parser::string_value_parser::*;
-use crate::daemon::parse::crawler::crawler::Crawler;
+use crate::daemon::parse::crawler::Crawler;
 
 mod bool_value_parser;
 mod enum_value_parser;

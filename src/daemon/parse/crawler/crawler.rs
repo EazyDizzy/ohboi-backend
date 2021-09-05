@@ -13,8 +13,8 @@ use lib::my_enum::CurrencyEnum;
 use crate::daemon::db::entity::category::CategorySlug;
 use crate::daemon::db::entity::source::SourceName;
 use crate::daemon::dto::parsed_product::{AdditionalParsedProductInfo, LocalParsedProduct};
-use crate::daemon::queue::pub_api::postpone::postpone_image_parsing;
-use crate::daemon::service::cloud::pub_api::upload_image_to_cloud;
+use crate::daemon::queue::postpone::postpone_image_parsing;
+use crate::daemon::service::cloud::upload_image_to_cloud;
 use crate::daemon::service::html_cleaner::clean_html;
 use crate::SETTINGS;
 
@@ -284,7 +284,7 @@ mod tests {
     use scraper::{Html, Selector};
 
     use lib::my_enum::CurrencyEnum;
-    use crate::daemon::parse::crawler::crawler::Crawler;
+    use crate::daemon::parse::crawler::Crawler;
     use crate::daemon::db::entity::category::CategorySlug;
     use crate::daemon::db::entity::source::SourceName;
     use crate::daemon::dto::parsed_product::{AdditionalParsedProductInfo, LocalParsedProduct};

@@ -6,7 +6,7 @@ use crate::daemon::db::entity::source::SourceName;
 use crate::daemon::parse::layer::save::save_parsed_products;
 use crate::daemon::parse::util::dedup::dedup_products;
 use crate::daemon::parse::util::{add_parse_breadcrumb, parse_html};
-use crate::daemon::service::request::pub_api::get;
+use crate::daemon::service::request::get;
 
 pub async fn parse_category_page(
     url: &str,

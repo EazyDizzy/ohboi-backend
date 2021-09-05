@@ -9,7 +9,7 @@ use crate::daemon::db::entity::source::SourceName;
 use crate::daemon::db::repository::product::create_if_not_exists;
 use crate::daemon::db::repository::source_product::link_to_product;
 use crate::daemon::dto::parsed_product::{InternationalParsedProduct, LocalParsedProduct};
-use crate::daemon::queue::pub_api::postpone::postpone_details_parsing;
+use crate::daemon::queue::postpone::postpone_details_parsing;
 use crate::SETTINGS;
 use crate::daemon::parse::util::add_parse_breadcrumb;
 

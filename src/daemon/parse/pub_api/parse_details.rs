@@ -1,9 +1,9 @@
 use maplit::btreemap;
 use scraper::Html;
 
-use crate::daemon::parse::crawler::crawler::Crawler;
+use crate::daemon::parse::crawler::Crawler;
 use crate::daemon::dto::parsed_product::AdditionalParsedProductInfo;
-use crate::daemon::service::request::pub_api::get;
+use crate::daemon::service::request::get;
 use crate::daemon::parse::util::add_parse_breadcrumb;
 
 pub async fn parse_details(

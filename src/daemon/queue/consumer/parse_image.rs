@@ -8,7 +8,7 @@ use crate::daemon::db::entity::source::SourceName;
 use crate::daemon::db::repository::product::add_image_to_product_details;
 use crate::daemon::db::repository::source_product::get_by_source_and_external_id;
 use crate::daemon::queue::layer::consume::consume;
-use crate::daemon::service::cloud::pub_api::upload_image_to_cloud;
+use crate::daemon::service::cloud::upload_image_to_cloud;
 use crate::local_sentry::add_category_breadcrumb;
 use crate::SETTINGS;
 

@@ -18,8 +18,8 @@ use structopt::StructOpt;
 use daemon::settings::Settings;
 
 use crate::daemon::db::repository::sync_characteristic_enum;
-use crate::daemon::queue::pub_api::declare::declare_all_queues;
-use crate::daemon::queue::pub_api::launch::{launch_consumer, launch_producer};
+use crate::daemon::queue::declare::declare_all_queues;
+use crate::daemon::queue::launch::{launch_consumer, launch_producer};
 
 mod local_sentry;
 mod daemon;

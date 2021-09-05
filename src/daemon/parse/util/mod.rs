@@ -2,7 +2,7 @@ use scraper::Html;
 use sentry::types::protocol::latest::map::BTreeMap;
 
 use crate::local_sentry::add_category_breadcrumb;
-use crate::daemon::parse::crawler::crawler::Crawler;
+use crate::daemon::parse::crawler::Crawler;
 use crate::daemon::dto::parsed_product::LocalParsedProduct;
 
 pub mod dedup;

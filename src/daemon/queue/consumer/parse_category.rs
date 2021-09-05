@@ -1,4 +1,4 @@
-use crate::daemon::parse::pub_api::parse_category::parse_category;
+use crate::daemon::parse::parse_category;
 use crate::daemon::queue::layer::consume::consume;
 use crate::daemon::queue::producer::parse_category::ParseCategoryMessage;
 use crate::SETTINGS;
