@@ -11,6 +11,7 @@ use crate::service::request::get_s;
 use crate::parse::layer::save::save_parsed_products;
 use crate::parse::util::dedup::dedup_products;
 use crate::parse::util::{parse_html, add_parse_breadcrumb};
+use lib::local_sentry;
 
 pub async fn parse_category(
     source: SourceName,
@@ -69,14 +70,14 @@ pub async fn parse_category(
                     }
                     Err(e) => {
                         amount_of_fails += 1;
-                        sentry::capture_message(
+                        local_sentry::capture_message(
                             format!(
                                 "Request for page failed[{source}]: {error:?}",
                                 source = source,
                                 error = e
                             )
                             .as_str(),
-                            sentry::Level::Warning,
+                            local_sentry::Level::Warning,
                         );
 
                         let _result = postpone_page_parsing(

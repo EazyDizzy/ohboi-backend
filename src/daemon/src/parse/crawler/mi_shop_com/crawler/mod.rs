@@ -12,6 +12,7 @@ use crate::dto::parsed_product::{AdditionalParsedProductInfo, LocalParsedProduct
 use crate::parse::crawler::{get_html_nodes, Crawler, ProductHtmlSelectors};
 use lib::my_enum::CurrencyEnum;
 use crate::parse::crawler::mi_shop_com::crawler::characteristics::extract_characteristics;
+use lib::local_sentry;
 
 static SITE_BASE: &str = "https://mi-shop.com";
 
@@ -111,7 +112,7 @@ impl Crawler for MiShopComCrawler {
                         source = self.get_source(),
                         error = price_text.err(),
                     );
-                    sentry::capture_message(message.as_str(), sentry::Level::Warning);
+                    local_sentry::capture_message(message.as_str(), local_sentry::Level::Warning);
                     continue;
                 }
 
@@ -129,7 +130,7 @@ impl Crawler for MiShopComCrawler {
                     title = title,
                     id = external_id,
                 );
-                sentry::capture_message(message.as_str(), sentry::Level::Warning);
+                local_sentry::capture_message(message.as_str(), local_sentry::Level::Warning);
                 continue;
             }
             parsed_products.push(LocalParsedProduct {

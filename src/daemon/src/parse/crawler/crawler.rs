@@ -8,7 +8,7 @@ use regex::Regex;
 use scraper::html::Select;
 use scraper::{ElementRef, Html, Selector};
 
-use crate::local_sentry::add_category_breadcrumb;
+use lib::local_sentry;
 use lib::my_enum::CurrencyEnum;
 use crate::db::entity::category::CategorySlug;
 use crate::db::entity::source::SourceName;
@@ -63,7 +63,7 @@ pub trait Crawler: Sync + Send {
                     "both src & lazy tags not found! [{source}]",
                     source = self.get_source()
                 );
-                sentry::capture_message(message.as_str(), sentry::Level::Warning);
+                local_sentry::capture_message(message.as_str(), local_sentry::Level::Warning);
                 continue;
             }
 
@@ -89,7 +89,7 @@ pub trait Crawler: Sync + Send {
                 "description_node not found! [{source}]",
                 source = self.get_source()
             );
-            sentry::capture_message(message.as_str(), sentry::Level::Warning);
+            local_sentry::capture_message(message.as_str(), local_sentry::Level::Warning);
 
             return None;
         }
@@ -130,7 +130,7 @@ pub trait Crawler: Sync + Send {
                 "both buy_button_node & unavailable_button_node not found! [{source}]",
                 source = self.get_source()
             );
-            sentry::capture_message(message.as_str(), sentry::Level::Warning);
+            local_sentry::capture_message(message.as_str(), local_sentry::Level::Warning);
 
             return None;
         }
@@ -145,7 +145,7 @@ pub async fn upload_extracted_images(
     external_id: &str,
     base: &str,
 ) -> Vec<String> {
-    add_category_breadcrumb(
+    local_sentry::add_category_breadcrumb(
         "updating product",
         btreemap! {
             "external_id" => external_id.to_string(),
@@ -225,18 +225,18 @@ pub fn get_html_nodes<'result>(
 
     if id_node.is_none() {
         let message = format!("id_node not found! [{source}]", source = source);
-        sentry::capture_message(message.as_str(), sentry::Level::Warning);
+        local_sentry::capture_message(message.as_str(), local_sentry::Level::Warning);
         valid = false;
     }
 
     if title_node.is_none() {
         let message = format!("title_node not found! [{source}]", source = source);
-        sentry::capture_message(message.as_str(), sentry::Level::Warning);
+        local_sentry::capture_message(message.as_str(), local_sentry::Level::Warning);
         valid = false;
     }
     if price_node.is_none() {
         let message = format!("price_node not found! [{source}]", source = source);
-        sentry::capture_message(message.as_str(), sentry::Level::Warning);
+        local_sentry::capture_message(message.as_str(), local_sentry::Level::Warning);
         valid = false;
     }
 
@@ -245,7 +245,7 @@ pub fn get_html_nodes<'result>(
             "both available_node & unavailable_node not found! [{source}]",
             source = source
         );
-        sentry::capture_message(message.as_str(), sentry::Level::Warning);
+        local_sentry::capture_message(message.as_str(), local_sentry::Level::Warning);
         valid = false;
     }
 

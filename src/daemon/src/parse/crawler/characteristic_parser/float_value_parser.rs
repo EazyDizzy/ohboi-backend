@@ -1,5 +1,6 @@
 use bigdecimal::Num;
 use crate::parse::crawler::characteristic_parser::CharacteristicParsingContext;
+use lib::local_sentry;
 
 pub fn float_android_version_value(context: &CharacteristicParsingContext, value: &str) -> Option<f32> {
     float_version_value(
@@ -66,7 +67,7 @@ pub fn float_value(context: &CharacteristicParsingContext, value: &str) -> Optio
     match f32::from_str_radix(value.replace(",", ".").trim(), 10) {
         Ok(v) => Some(v),
         Err(e) => {
-            sentry::capture_message(
+            local_sentry::capture_message(
                 format!(
                     "[{source}] Can't parse float characteristic ({title}) with value ({value}) for [{external_id}]: {error:?}",
                     source = context.source,
@@ -76,7 +77,7 @@ pub fn float_value(context: &CharacteristicParsingContext, value: &str) -> Optio
                     error = e,
                 )
                     .as_str(),
-                sentry::Level::Warning,
+                local_sentry::Level::Warning,
             );
             None
         }

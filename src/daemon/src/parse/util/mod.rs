@@ -1,9 +1,9 @@
 use scraper::Html;
-use sentry::types::protocol::latest::map::BTreeMap;
 
-use crate::local_sentry::add_category_breadcrumb;
+use lib::local_sentry::add_category_breadcrumb;
 use crate::parse::crawler::Crawler;
 use crate::dto::parsed_product::LocalParsedProduct;
+use std::collections::BTreeMap;
 
 pub mod dedup;
 

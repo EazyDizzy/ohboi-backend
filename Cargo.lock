@@ -816,13 +816,11 @@ dependencies = [
  "rusoto_core",
  "rusoto_s3",
  "scraper",
- "sentry",
  "serde",
  "serde_json",
  "structopt",
  "strum",
  "strum_macros",
- "termion",
  "tokio 1.0.2",
 ]
 
@@ -1415,13 +1413,11 @@ dependencies = [
  "log",
  "maplit",
  "rand 0.8.4",
- "sentry",
  "sentry-actix",
  "serde",
  "serde_json",
  "strum",
  "strum_macros",
- "termion",
  "validator",
 ]
 
@@ -1674,12 +1670,16 @@ dependencies = [
  "diesel",
  "diesel-derive-enum",
  "dotenv",
+ "env_logger",
  "lazy_static",
+ "log",
  "r2d2",
+ "sentry",
  "serde",
  "serde_json",
  "strum",
  "strum_macros",
+ "termion",
 ]
 
 [[package]]

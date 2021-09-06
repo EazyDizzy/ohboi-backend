@@ -1,7 +1,6 @@
 use std::str;
 
 use maplit::btreemap;
-use sentry::protocol::map::BTreeMap;
 use serde::{Deserialize, Serialize};
 
 use crate::db::entity::source::SourceName;
@@ -9,8 +8,9 @@ use crate::db::repository::product::add_image_to_product_details;
 use crate::db::repository::source_product::get_by_source_and_external_id;
 use crate::queue::layer::consume::consume;
 use crate::service::cloud::upload_image_to_cloud;
-use crate::local_sentry::add_category_breadcrumb;
+use lib::local_sentry::add_category_breadcrumb;
 use crate::SETTINGS;
+use std::collections::BTreeMap;
 
 #[derive(Serialize, Deserialize, Clone)]
 pub struct UploadImageMessage {

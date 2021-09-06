@@ -1,8 +1,7 @@
 use lapin::Result;
 use maplit::btreemap;
-use sentry::types::protocol::latest::map::BTreeMap;
 
-use crate::local_sentry::add_category_breadcrumb;
+use lib::local_sentry::add_category_breadcrumb;
 use crate::db::entity::category::CategorySlug;
 use crate::db::entity::source::SourceName;
 use crate::queue::consumer::parse_details::ParseDetailsMessage;
@@ -10,6 +9,7 @@ use crate::queue::consumer::parse_image::UploadImageMessage;
 use crate::queue::consumer::parse_page::ParsePageMessage;
 use crate::queue::layer::produce::produce;
 use crate::SETTINGS;
+use std::collections::BTreeMap;
 
 pub async fn postpone_page_parsing(
     url: String,

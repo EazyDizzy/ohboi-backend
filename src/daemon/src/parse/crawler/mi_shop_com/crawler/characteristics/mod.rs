@@ -14,6 +14,7 @@ use crate::parse::crawler::mi_shop_com::crawler::characteristics::technology::{
 };
 use crate::parse::crawler::mi_shop_com::crawler::MiShopComCrawler;
 use crate::service::html_cleaner::inner_text;
+use lib::local_sentry;
 
 mod enums;
 mod float;
@@ -109,7 +110,7 @@ pub fn extract_characteristics(
     );
 
     for (title, value) in characteristics.into_iter() {
-        sentry::capture_message(
+        local_sentry::capture_message(
             format!(
                 "Unknown characteristic ({title}) with value ({value}) for [{external_id}]",
                 title = title,
@@ -117,7 +118,7 @@ pub fn extract_characteristics(
                 external_id = external_id,
             )
             .as_str(),
-            sentry::Level::Warning,
+            local_sentry::Level::Warning,
         );
     }
 

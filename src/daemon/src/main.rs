@@ -27,7 +27,6 @@ mod dto;
 mod parse;
 mod queue;
 mod service;
-mod local_sentry;
 
 #[derive(StructOpt, Debug)]
 struct Cli {
@@ -61,7 +60,7 @@ arg_enum! {
 async fn main() {
  std::env::set_var("RUST_LOG", "daemon");
  env_logger::init();
- let guard = local_sentry::init_sentry();
+ let guard = lib::local_sentry::init_sentry();
 
  let args: Cli = Cli::from_args();
 

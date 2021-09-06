@@ -1,6 +1,6 @@
 use strum::VariantNames;
 
-use lib::db;
+use lib::{db, local_sentry};
 use lib::db::entity::characteristic::Characteristic;
 use lib::dto::characteristic::enum_characteristic::*;
 use lib::util::all_characteristics::*;
@@ -149,13 +149,13 @@ fn connect_char_to_category(char: Characteristic, category: CategorySlug) {
             );
         }
         Err(e) => {
-            sentry::capture_message(
+            local_sentry::capture_message(
                 format!(
                     "Characteristic {} can't be matched to {} category. {:?}",
                     char.slug, category, e
                 )
                 .as_str(),
-                sentry::Level::Warning,
+                local_sentry::Level::Warning,
             );
         }
     }

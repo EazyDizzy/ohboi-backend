@@ -5,6 +5,7 @@ use crate::parse::crawler::Crawler;
 use crate::dto::parsed_product::AdditionalParsedProductInfo;
 use crate::service::request::get;
 use crate::parse::util::add_parse_breadcrumb;
+use lib::local_sentry;
 
 pub async fn parse_details(
     external_id: &str,
@@ -33,7 +34,7 @@ pub async fn parse_details(
                 source = crawler.get_source().to_string(),
                 error = e,
             );
-            sentry::capture_message(message.as_str(), sentry::Level::Warning);
+            local_sentry::capture_message(message.as_str(), local_sentry::Level::Warning);
 
             None
         }

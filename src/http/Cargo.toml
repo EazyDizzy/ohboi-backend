@@ -22,8 +22,6 @@ chrono = "0.4.19"
 bigdecimal = { version = "0.1.2", features = ["serde"] }
 # util
 dotenv = "0.15.0"
-termion = "1.5.5" # terminal colors etc
-sentry = { version = "0.22.0", features = ["debug-images"] }
 log = "0.4.13"
 env_logger = "0.8.2" # configuration for logger via env
 maplit = "1.0.2" # btreemap macros

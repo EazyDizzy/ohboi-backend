@@ -6,6 +6,7 @@ use google_jwt_verify::Client;
 
 use crate::db::user_registration::repository::get_user_by_auth;
 use lib::my_enum::UserRegistrationType;
+use lib::local_sentry;
 
 pub async fn validator(req: ServiceRequest, credentials: BearerAuth) -> Result<ServiceRequest, Error> {
     let client_id = dotenv::var("GOOGLE_CLIENT_ID").unwrap();
@@ -24,7 +25,7 @@ pub async fn validator(req: ServiceRequest, credentials: BearerAuth) -> Result<S
         }
         Err(e) => {
             let message = format!("google auth failed: {error:?}", error = e);
-            sentry::capture_message(message.as_str(), sentry::Level::Warning);
+            local_sentry::capture_message(message.as_str(), local_sentry::Level::Warning);
 
             let config = req
                 .app_data::<Config>()

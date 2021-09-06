@@ -6,6 +6,7 @@ use crate::queue::layer::consume::consume;
 use crate::service::request::get;
 use lib::my_enum::CurrencyEnum;
 use crate::SETTINGS;
+use lib::local_sentry;
 
 #[derive(Deserialize)]
 struct ExchangeApiResponse {
@@ -38,7 +39,7 @@ async fn execute(_message: String) -> Result<(), ()> {
             "Request for exchange rates failed!  {error:?}",
             error = response.err()
         );
-        sentry::capture_message(message.as_str(), sentry::Level::Warning);
+        local_sentry::capture_message(message.as_str(), local_sentry::Level::Warning);
         return Err(());
     }
 
@@ -52,7 +53,7 @@ async fn execute(_message: String) -> Result<(), ()> {
             "Parsing of response failed!  {error:?}",
             error = api_response.err()
         );
-        sentry::capture_message(message.as_str(), sentry::Level::Warning);
+        local_sentry::capture_message(message.as_str(), local_sentry::Level::Warning);
         return Err(());
     }
 
@@ -60,7 +61,7 @@ async fn execute(_message: String) -> Result<(), ()> {
     let response = api_response.expect("");
 
     if !response.success {
-        sentry::capture_message("Response from api is not success!", sentry::Level::Warning);
+        local_sentry::capture_message("Response from api is not success!", local_sentry::Level::Warning);
         return Err(());
     }
 
@@ -72,7 +73,7 @@ async fn execute(_message: String) -> Result<(), ()> {
     if save_result {
         Ok(())
     } else {
-        sentry::capture_message("Saving of exchange rate failed!", sentry::Level::Warning);
+        local_sentry::capture_message("Saving of exchange rate failed!", local_sentry::Level::Warning);
         Err(())
     }
 }

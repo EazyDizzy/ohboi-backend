@@ -6,12 +6,12 @@ use lapin::{
     Consumer, Result,
 };
 use maplit::btreemap;
-use sentry::protocol::map::BTreeMap;
+use std::collections::BTreeMap;
 use serde::de;
 
 use crate::queue::layer::get_channel;
 use crate::settings::QueueSettings;
-use crate::local_sentry::add_category_breadcrumb;
+use lib::local_sentry::add_category_breadcrumb;
 
 pub async fn consume<F, Fut, Message>(settings: &QueueSettings, consumer_callback: F) -> Result<()>
 where

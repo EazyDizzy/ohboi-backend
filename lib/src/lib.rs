@@ -15,6 +15,8 @@ pub mod my_enum;
 pub mod schema;
 pub mod service;
 pub mod util;
+// replace with own layer
+pub mod local_sentry;
 
 pub type Pool = r2d2::Pool<ConnectionManager<PgConnection>>;
 

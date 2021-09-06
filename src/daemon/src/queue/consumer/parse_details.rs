@@ -7,6 +7,7 @@ use crate::parse::crawler::get_crawler;
 use crate::parse::parse_details;
 use crate::queue::layer::consume::consume;
 use crate::SETTINGS;
+use lib::local_sentry;
 
 #[derive(Serialize, Deserialize)]
 pub struct ParseDetailsMessage {
@@ -29,14 +30,14 @@ async fn execute(message: ParseDetailsMessage) -> Result<(), ()> {
 
     match details {
         None => {
-            sentry::capture_message(
+            local_sentry::capture_message(
                 format!(
                     "[parse_details] No additional info found [{source}] for: {id}",
                     source = crawler.get_source().to_string(),
                     id = &message.external_id
                 )
                 .as_str(),
-                sentry::Level::Warning,
+                local_sentry::Level::Warning,
             );
 
             Err(())

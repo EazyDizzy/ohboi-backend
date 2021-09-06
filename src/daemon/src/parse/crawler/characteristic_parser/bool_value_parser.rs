@@ -1,11 +1,12 @@
 use crate::parse::crawler::characteristic_parser::CharacteristicParsingContext;
+use lib::local_sentry;
 
 pub fn bool_value(context: &CharacteristicParsingContext, value: &str) -> Option<bool> {
     match value.trim() {
         "Да" => Some(true),
         "Нет" => Some(false),
         _ => {
-            sentry::capture_message(
+            local_sentry::capture_message(
                 format!(
                     "[{source}] Can't parse bool characteristic ({title}) with value ({value}) for [{external_id}]",
                     source = context.source,
@@ -14,7 +15,7 @@ pub fn bool_value(context: &CharacteristicParsingContext, value: &str) -> Option
                     external_id = context.external_id,
                 )
                     .as_str(),
-                sentry::Level::Warning,
+                local_sentry::Level::Warning,
             );
             None
         }

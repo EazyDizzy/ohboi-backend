@@ -1,6 +1,6 @@
-use sentry::types::protocol::latest::map::BTreeMap;
+use std::collections::BTreeMap;
 
-use crate::local_sentry::add_category_breadcrumb;
+use lib::local_sentry::add_category_breadcrumb;
 
 pub mod parse_category;
 pub mod pull_exchange_rates;

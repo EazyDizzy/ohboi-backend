@@ -1,6 +1,8 @@
 use rusoto_core::Region;
 use rusoto_s3::{PutObjectRequest, S3Client, StreamingBody, S3};
 
+use lib::local_sentry;
+
 use crate::service::request::get_bytes;
 use crate::SETTINGS;
 
@@ -14,7 +16,7 @@ pub async fn upload_image_to_s3(file_path: String, image_url: String) -> bool {
             error = data.err().unwrap()
         );
 
-        sentry::capture_message(message.as_str(), sentry::Level::Error);
+        local_sentry::capture_message(message.as_str(), local_sentry::Level::Error);
 
         return false;
     }
@@ -40,7 +42,7 @@ pub async fn upload_image_to_s3(file_path: String, image_url: String) -> bool {
             url = image_url,
             error = result.err().unwrap()
         );
-        sentry::capture_message(message.as_str(), sentry::Level::Error);
+        local_sentry::capture_message(message.as_str(), local_sentry::Level::Error);
     }
 
     success

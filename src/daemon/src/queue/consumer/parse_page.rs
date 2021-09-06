@@ -1,13 +1,13 @@
 use maplit::btreemap;
-use sentry::protocol::map::BTreeMap;
+use std::collections::BTreeMap;
 use serde::{Deserialize, Serialize};
 
 use crate::db::entity::category::CategorySlug;
 use crate::db::entity::source::SourceName;
 use crate::parse::parse_category_page;
 use crate::queue::layer::consume::consume;
-use crate::local_sentry::add_category_breadcrumb;
 use crate::SETTINGS;
+use lib::local_sentry;
 
 #[derive(Serialize, Deserialize)]
 pub struct ParsePageMessage {
@@ -43,7 +43,7 @@ async fn execute(message: ParsePageMessage) -> Result<(), ()> {
             category = message.category,
             error = parse_result.err()
         );
-        sentry::capture_message(message.as_str(), sentry::Level::Warning);
+        local_sentry::capture_message(message.as_str(), local_sentry::Level::Warning);
         Err(())
     } else {
         Ok(())
@@ -51,7 +51,7 @@ async fn execute(message: ParsePageMessage) -> Result<(), ()> {
 }
 
 fn add_consumer_breadcrumb(message: &str, data: BTreeMap<&str, String>) {
-    add_category_breadcrumb(
+    local_sentry::add_category_breadcrumb(
         message,
         data,
         ["consumer.", &SETTINGS.queue_broker.queues.parse_page.name].join(""),

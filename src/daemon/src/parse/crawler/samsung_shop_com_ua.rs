@@ -6,6 +6,7 @@ use crate::parse::crawler::{get_html_nodes, Crawler, ProductHtmlSelectors};
 use crate::db::entity::category::CategorySlug;
 use crate::db::entity::source::SourceName;
 use crate::dto::parsed_product::{AdditionalParsedProductInfo, LocalParsedProduct};
+use lib::local_sentry;
 
 static SITE_BASE: &str = "https://samsungshop.com.ua";
 
@@ -94,7 +95,7 @@ impl Crawler for SamsungShopComUaCrawler {
                         source = self.get_source(),
                         error = price_text.err(),
                     );
-                    sentry::capture_message(message.as_str(), sentry::Level::Warning);
+                    local_sentry::capture_message(message.as_str(), local_sentry::Level::Warning);
                     continue;
                 }
 
@@ -112,7 +113,7 @@ impl Crawler for SamsungShopComUaCrawler {
                     title = title,
                     id = external_id,
                 );
-                sentry::capture_message(message.as_str(), sentry::Level::Warning);
+                local_sentry::capture_message(message.as_str(), local_sentry::Level::Warning);
                 continue;
             }
 

@@ -1,6 +1,6 @@
 use lib::diesel::result::{DatabaseErrorKind, Error};
 
-use lib::db;
+use lib::{db, local_sentry};
 use lib::diesel::prelude::*;
 use lib::my_enum::{CharacteristicValueType, CharacteristicVisualisationType};
 use crate::db::entity::characteristic::characteristic::NewCharacteristic;
@@ -46,13 +46,13 @@ pub fn create_if_not_exists(
                 );
                 None
             } else {
-                sentry::capture_message(
+                local_sentry::capture_message(
                     format!(
                         "{:?} {} characteristic has an error: {:?}",
                         value_type, new_char.slug, e
                     )
                     .as_str(),
-                    sentry::Level::Warning,
+                    local_sentry::Level::Warning,
                 );
                 None
             }
