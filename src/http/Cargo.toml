@@ -1,5 +1,5 @@
 [package]
-name = "ohboi_http"
+name = "http"
 version = "0.1.0"
 authors = ["e33 <vitaliy.svinchyak@gmail.com>"]
 edition = "2018"
@@ -20,22 +20,9 @@ diesel = { version = "1.4.7", features = ["postgres", "chrono", "numeric", "r2d2
 diesel-derive-enum = { version = "1.1", features = ["postgres"] }
 chrono = "0.4.19"
 bigdecimal = { version = "0.1.2", features = ["serde"] }
-# parsing
-structopt = { version = "0.3.22" } # daemon command line arguments into struct
-clap = "2.33.3" # enums from cli arguments
-lapin = "1.8.0" # rabbitmq
-scraper = "0.12.0" # html parsing
-reqwest = { version = "0.11.4" }
-rusoto_core = "0.47.0"
-rusoto_s3 = "0.47.0"
 # util
-tokio = { version = "1.0.2", features = ["macros"] }
 dotenv = "0.15.0"
-Inflector = "0.11.4" # string manipulations
-lazy_static = "1.4.0"
-futures = "0.3.8"
 termion = "1.5.5" # terminal colors etc
-regex = "1.4.2" # todo replace with nom
 sentry = { version = "0.22.0", features = ["debug-images"] }
 log = "0.4.13"
 env_logger = "0.8.2" # configuration for logger via env

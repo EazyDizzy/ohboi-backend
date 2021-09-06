@@ -41,7 +41,7 @@ dependencies = [
  "derive_more",
  "either",
  "futures-util",
- "http",
+ "http 0.2.1",
  "log",
  "trust-dns-proto",
  "trust-dns-resolver",
@@ -74,7 +74,7 @@ dependencies = [
  "futures-util",
  "fxhash",
  "h2 0.2.7",
- "http",
+ "http 0.2.1",
  "httparse",
  "indexmap",
  "itoa",
@@ -111,7 +111,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bbd1f7dbda1645bf7da33554db60891755f6c01c1b2169e2f4c492098d30c235"
 dependencies = [
  "bytestring",
- "http",
+ "http 0.2.1",
  "log",
  "regex",
  "serde",
@@ -793,6 +793,40 @@ dependencies = [
 ]
 
 [[package]]
+name = "daemon"
+version = "0.1.0"
+dependencies = [
+ "Inflector",
+ "bigdecimal",
+ "chrono",
+ "clap",
+ "diesel",
+ "diesel-derive-enum",
+ "dotenv",
+ "env_logger",
+ "futures",
+ "lapin",
+ "lazy_static",
+ "lib",
+ "log",
+ "maplit",
+ "rand 0.8.4",
+ "regex",
+ "reqwest 0.11.4",
+ "rusoto_core",
+ "rusoto_s3",
+ "scraper",
+ "sentry",
+ "serde",
+ "serde_json",
+ "structopt",
+ "strum",
+ "strum_macros",
+ "termion",
+ "tokio 1.0.2",
+]
+
+[[package]]
 name = "debugid"
 version = "0.7.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1244,7 +1278,7 @@ dependencies = [
  "futures-core",
  "futures-sink",
  "futures-util",
- "http",
+ "http 0.2.1",
  "indexmap",
  "slab",
  "tokio 0.2.23",
@@ -1264,7 +1298,7 @@ dependencies = [
  "futures-core",
  "futures-sink",
  "futures-util",
- "http",
+ "http 0.2.1",
  "indexmap",
  "slab",
  "tokio 1.0.2",
@@ -1289,7 +1323,7 @@ dependencies = [
  "bitflags",
  "bytes 0.5.6",
  "headers-core",
- "http",
+ "http 0.2.1",
  "mime",
  "sha-1 0.8.2",
  "time 0.1.44",
@@ -1301,7 +1335,7 @@ version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e7f66481bfee273957b1f20485a4ff3362987f85b2c236580d81b4eb7a326429"
 dependencies = [
- "http",
+ "http 0.2.1",
 ]
 
 [[package]]
@@ -1365,6 +1399,34 @@ dependencies = [
 
 [[package]]
 name = "http"
+version = "0.1.0"
+dependencies = [
+ "actix-web",
+ "actix-web-httpauth",
+ "actix-web-validator",
+ "bigdecimal",
+ "chrono",
+ "diesel",
+ "diesel-derive-enum",
+ "dotenv",
+ "env_logger",
+ "google-jwt-verify",
+ "lib",
+ "log",
+ "maplit",
+ "rand 0.8.4",
+ "sentry",
+ "sentry-actix",
+ "serde",
+ "serde_json",
+ "strum",
+ "strum_macros",
+ "termion",
+ "validator",
+]
+
+[[package]]
+name = "http"
 version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "28d569972648b2c512421b5f2a405ad6ac9666547189d0c5477a3f200f3e02f9"
@@ -1381,7 +1443,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "13d5ff830006f7646652e057693569bfe0d51760c0085a071769d142a205111b"
 dependencies = [
  "bytes 0.5.6",
- "http",
+ "http 0.2.1",
 ]
 
 [[package]]
@@ -1391,7 +1453,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2861bd27ee074e5ee891e8b539837a9430012e249d7f0ca2d795650f579c1994"
 dependencies = [
  "bytes 1.0.1",
- "http",
+ "http 0.2.1",
 ]
 
 [[package]]
@@ -1423,7 +1485,7 @@ dependencies = [
  "futures-core",
  "futures-util",
  "h2 0.2.7",
- "http",
+ "http 0.2.1",
  "http-body 0.3.1",
  "httparse",
  "httpdate",
@@ -1447,7 +1509,7 @@ dependencies = [
  "futures-core",
  "futures-util",
  "h2 0.3.0",
- "http",
+ "http 0.2.1",
  "http-body 0.4.0",
  "httparse",
  "httpdate",
@@ -1926,86 +1988,6 @@ name = "object"
 version = "0.22.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8d3b63360ec3cb337817c2dbd47ab4a0f170d285d8e5a2064600f3def1402397"
-
-[[package]]
-name = "ohboi_daemon"
-version = "0.1.0"
-dependencies = [
- "Inflector",
- "actix-web",
- "actix-web-httpauth",
- "actix-web-validator",
- "bigdecimal",
- "chrono",
- "clap",
- "diesel",
- "diesel-derive-enum",
- "dotenv",
- "env_logger",
- "futures",
- "google-jwt-verify",
- "lapin",
- "lazy_static",
- "lib",
- "log",
- "maplit",
- "rand 0.8.4",
- "regex",
- "reqwest 0.11.4",
- "rusoto_core",
- "rusoto_s3",
- "scraper",
- "sentry",
- "sentry-actix",
- "serde",
- "serde_json",
- "structopt",
- "strum",
- "strum_macros",
- "termion",
- "tokio 1.0.2",
- "validator",
-]
-
-[[package]]
-name = "ohboi_http"
-version = "0.1.0"
-dependencies = [
- "Inflector",
- "actix-web",
- "actix-web-httpauth",
- "actix-web-validator",
- "bigdecimal",
- "chrono",
- "clap",
- "diesel",
- "diesel-derive-enum",
- "dotenv",
- "env_logger",
- "futures",
- "google-jwt-verify",
- "lapin",
- "lazy_static",
- "lib",
- "log",
- "maplit",
- "rand 0.8.4",
- "regex",
- "reqwest 0.11.4",
- "rusoto_core",
- "rusoto_s3",
- "scraper",
- "sentry",
- "sentry-actix",
- "serde",
- "serde_json",
- "structopt",
- "strum",
- "strum_macros",
- "termion",
- "tokio 1.0.2",
- "validator",
-]
 
 [[package]]
 name = "once_cell"
@@ -2494,7 +2476,7 @@ dependencies = [
  "encoding_rs",
  "futures-core",
  "futures-util",
- "http",
+ "http 0.2.1",
  "http-body 0.3.1",
  "hyper 0.13.9",
  "hyper-tls 0.4.3",
@@ -2530,7 +2512,7 @@ dependencies = [
  "encoding_rs",
  "futures-core",
  "futures-util",
- "http",
+ "http 0.2.1",
  "http-body 0.4.0",
  "hyper 0.14.2",
  "hyper-tls 0.5.0",
@@ -2575,7 +2557,7 @@ dependencies = [
  "bytes 1.0.1",
  "crc32fast",
  "futures",
- "http",
+ "http 0.2.1",
  "hyper 0.14.2",
  "hyper-tls 0.5.0",
  "lazy_static",
@@ -2633,7 +2615,7 @@ dependencies = [
  "futures",
  "hex",
  "hmac",
- "http",
+ "http 0.2.1",
  "hyper 0.14.2",
  "log",
  "md-5",
