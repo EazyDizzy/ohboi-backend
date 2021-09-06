@@ -1604,6 +1604,23 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
 
 [[package]]
+name = "lib"
+version = "0.0.0"
+dependencies = [
+ "bigdecimal",
+ "chrono",
+ "diesel",
+ "diesel-derive-enum",
+ "dotenv",
+ "lazy_static",
+ "r2d2",
+ "serde",
+ "serde_json",
+ "strum",
+ "strum_macros",
+]
+
+[[package]]
 name = "libc"
 version = "0.2.98"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1911,7 +1928,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8d3b63360ec3cb337817c2dbd47ab4a0f170d285d8e5a2064600f3def1402397"
 
 [[package]]
-name = "ohboi_backend"
+name = "ohboi_daemon"
 version = "0.1.0"
 dependencies = [
  "Inflector",
@@ -1929,6 +1946,7 @@ dependencies = [
  "google-jwt-verify",
  "lapin",
  "lazy_static",
+ "lib",
  "log",
  "maplit",
  "rand 0.8.4",

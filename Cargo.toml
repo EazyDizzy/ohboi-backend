@@ -1,20 +1,8 @@
-[package]
-name = "ohboi_backend"
-version = "0.1.0"
-authors = ["e33 <vitaliy.svinchyak@gmail.com>"]
-edition = "2018"
-
-[lib]
-name = "lib"
-path = "lib/src/lib.rs"
-
-[[bin]]
-name = "daemon"
-path = "src/cli.rs"
-
-[[bin]]
-name = "http"
-path = "src/main.rs"
+[workspace]
+members = [
+    "src/daemon",
+    "lib",
+]
 
 [profile.dev]
 codegen-units = 1256
@@ -23,42 +11,3 @@ codegen-units = 1256
 overflow-checks = true
 codegen-units = 1
 lto = "fat"
-# TODO update actix-web & google-jwt-verify(switch to oauth2-rs) when they will add support of tokio v1+
-[dependencies]
-# http
-actix-web = { version = "3.3.2", features = ["compress"] }
-actix-web-httpauth = "0.5.0"
-actix-web-validator = { git = "https://github.com/Vitaliy-Svinchyak/actix-web-validator", branch = "custom-message-fix" }
-validator = { version = "0.12", features = ["derive"] }
-serde = { version = "1.0.126", features = ["derive"] }
-sentry-actix = "0.22.0"
-serde_json = "1.0"
-google-jwt-verify = { version = "0.3.0", features = ["async"] }
-# db
-diesel = { version = "1.4.7", features = ["postgres", "chrono", "numeric", "r2d2"] }
-diesel-derive-enum = { version = "1.1", features = ["postgres"] }
-chrono = "0.4.19"
-bigdecimal = { version = "0.1.2", features = ["serde"] }
-# parsing
-structopt = { version = "0.3.22" } # daemon command line arguments into struct
-clap = "2.33.3" # enums from cli arguments
-lapin = "1.8.0" # rabbitmq
-scraper = "0.12.0" # html parsing
-reqwest = { version = "0.11.4" }
-rusoto_core = "0.47.0"
-rusoto_s3 = "0.47.0"
-# util
-tokio = { version = "1.0.2", features = ["macros"] }
-dotenv = "0.15.0"
-Inflector = "0.11.4" # string manipulations
-lazy_static = "1.4.0"
-futures = "0.3.8"
-termion = "1.5.5" # terminal colors etc
-regex = "1.4.2" # todo replace with nom
-sentry = { version = "0.22.0", features = ["debug-images"] }
-log = "0.4.13"
-env_logger = "0.8.2" # configuration for logger via env
-maplit = "1.0.2" # btreemap macros
-rand = "0.8.3"
-strum = { version = "0.21", features = ["derive"] } # enum iterators
-strum_macros = "0.21"

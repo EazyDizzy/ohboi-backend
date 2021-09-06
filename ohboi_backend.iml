@@ -6,6 +6,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/daemon/queue_configurator/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/lib/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/daemon/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
       <excludeFolder url="file://$MODULE_DIR$/src/daemon/queue_configurator/target" />
       <excludeFolder url="file://$MODULE_DIR$/lib/target" />
