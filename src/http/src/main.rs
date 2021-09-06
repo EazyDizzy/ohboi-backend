@@ -10,8 +10,12 @@ use std::env;
 
 use log::{error, info};
 
-mod http;
 mod local_sentry;
+mod endpoint;
+mod db;
+mod auth;
+mod dto;
+mod util;
 
 #[actix_web::main]
 async fn main() {
@@ -19,7 +23,7 @@ async fn main() {
     env_logger::init();
     let _guard = local_sentry::init_sentry();
 
-    let result = http::run_server().await;
+    let result = endpoint::run_server().await;
     match result {
         Ok(_) => info!("Server started."),
         Err(e) => error!("Server failed: {:?}", e)

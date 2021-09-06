@@ -1968,6 +1968,46 @@ dependencies = [
 ]
 
 [[package]]
+name = "ohboi_http"
+version = "0.1.0"
+dependencies = [
+ "Inflector",
+ "actix-web",
+ "actix-web-httpauth",
+ "actix-web-validator",
+ "bigdecimal",
+ "chrono",
+ "clap",
+ "diesel",
+ "diesel-derive-enum",
+ "dotenv",
+ "env_logger",
+ "futures",
+ "google-jwt-verify",
+ "lapin",
+ "lazy_static",
+ "lib",
+ "log",
+ "maplit",
+ "rand 0.8.4",
+ "regex",
+ "reqwest 0.11.4",
+ "rusoto_core",
+ "rusoto_s3",
+ "scraper",
+ "sentry",
+ "sentry-actix",
+ "serde",
+ "serde_json",
+ "structopt",
+ "strum",
+ "strum_macros",
+ "termion",
+ "tokio 1.0.2",
+ "validator",
+]
+
+[[package]]
 name = "once_cell"
 version = "1.5.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"

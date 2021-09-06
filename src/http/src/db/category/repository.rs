@@ -1,6 +1,6 @@
 use lib::diesel::prelude::*;
 use lib::db;
-use crate::http::db::category::entity::Category;
+use crate::db::category::entity::Category;
 
 pub fn get_all() -> Vec<Category> {
     use lib::schema::category::dsl::category;

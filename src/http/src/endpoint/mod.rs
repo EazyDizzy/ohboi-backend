@@ -1,16 +1,13 @@
 use actix_web::{App, guard, HttpResponse, HttpServer, middleware, web};
 use actix_web_httpauth::middleware::HttpAuthentication;
+use crate::auth;
 
-mod auth;
-mod db;
-mod user;
-mod product;
-mod source_product;
-mod category;
-mod source;
-mod util;
-mod dto;
-mod characteristic;
+pub mod user;
+pub mod product;
+pub mod source_product;
+pub mod category;
+pub mod source;
+pub mod characteristic;
 
 pub async fn run_server() -> std::io::Result<()> {
     HttpServer::new(|| {

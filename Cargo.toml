@@ -1,6 +1,7 @@
 [workspace]
 members = [
     "src/daemon",
+    "src/http",
     "lib",
 ]
 

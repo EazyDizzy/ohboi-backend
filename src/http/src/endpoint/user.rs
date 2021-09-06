@@ -3,7 +3,7 @@ use actix_web_validator::Json;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::http::db::user;
+use crate::db::user;
 
 pub async fn create(item: Json<User>) -> HttpResponse {
     let created_user = user::repository::create(&item.username);

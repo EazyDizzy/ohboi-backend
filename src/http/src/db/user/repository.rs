@@ -2,7 +2,7 @@ use chrono::Utc;
 use lib::diesel::{ExpressionMethods, QueryDsl, RunQueryDsl};
 
 use lib::db;
-use crate::http::db::user::entity::{NewUser, User};
+use crate::db::user::entity::{NewUser, User};
 use lib::schema::users;
 
 pub fn create(username: &str) -> User {

@@ -10,11 +10,11 @@ use lib::schema::product::dsl::{category, enabled, highest_price, id, lowest_pri
 use lib::schema::source_product;
 use lib::service::currency_converter::convert_from;
 
-use crate::http::db::product::entity::Product;
-use crate::http::db::product_characteristic::repository::get_all_characteristics_of_product;
-use crate::http::dto::product::ProductInfo;
-use crate::http::product::{ProductFilters, ProductParams};
-use crate::http::util::product::convert_product_prices;
+use crate::db::product::entity::Product;
+use crate::db::product_characteristic::repository::get_all_characteristics_of_product;
+use crate::dto::product::ProductInfo;
+use crate::endpoint::product::{ProductFilters, ProductParams};
+use crate::util::product::convert_product_prices;
 
 pub fn get_product_info(params: &ProductParams) -> Option<ProductInfo> {
     let connection = &db::establish_connection();

@@ -1,7 +1,7 @@
 use lib::diesel::{BoolExpressionMethods, ExpressionMethods, QueryDsl, RunQueryDsl};
 
 use lib::db;
-use crate::http::db::source_product::entity::SourceProduct;
+use crate::db::source_product::entity::SourceProduct;
 
 pub fn get_all_for_product(requested_product_id: i32) -> Vec<SourceProduct> {
     use lib::schema::source_product::dsl::{enabled, product_id, source_product};

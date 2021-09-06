@@ -1,4 +1,4 @@
-use crate::http::db::product::entity::Product;
+use crate::db::product::entity::Product;
 use bigdecimal::{BigDecimal, ToPrimitive};
 use lib::service::currency_converter::convert_to_with_rate;
 

@@ -1,7 +1,7 @@
 use lib::diesel::prelude::*;
 
 use lib::db;
-use crate::http::db::source::entity::Source;
+use crate::db::source::entity::Source;
 
 pub fn get_all_enabled() -> Vec<Source> {
     use lib::schema::source::dsl::{enabled, source};

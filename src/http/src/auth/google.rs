@@ -4,7 +4,7 @@ use actix_web_httpauth::extractors::AuthenticationError;
 use actix_web_httpauth::extractors::bearer::{BearerAuth, Config};
 use google_jwt_verify::Client;
 
-use crate::http::db::user_registration::repository::get_user_by_auth;
+use crate::db::user_registration::repository::get_user_by_auth;
 use lib::my_enum::UserRegistrationType;
 
 pub async fn validator(req: ServiceRequest, credentials: BearerAuth) -> Result<ServiceRequest, Error> {
