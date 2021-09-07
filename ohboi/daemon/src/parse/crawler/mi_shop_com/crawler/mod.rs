@@ -1,18 +1,21 @@
-mod characteristics;
-mod media_format_parser;
-
 use std::time::Instant;
 
 use regex::Regex;
 use scraper::{Html, Selector};
 
+use lib::error_reporting;
+use lib::error_reporting::ReportingContext;
+use lib::my_enum::CurrencyEnum;
+
 use crate::db::entity::category::CategorySlug;
 use crate::db::entity::source::SourceName;
 use crate::dto::parsed_product::{AdditionalParsedProductInfo, LocalParsedProduct};
-use crate::parse::crawler::{get_html_nodes, Crawler, ProductHtmlSelectors};
-use lib::my_enum::CurrencyEnum;
 use crate::parse::crawler::mi_shop_com::crawler::characteristics::extract_characteristics;
-use lib::local_sentry;
+use crate::parse::crawler::{get_html_nodes, Crawler, ProductHtmlSelectors};
+use crate::ConsumerName;
+
+mod characteristics;
+mod media_format_parser;
 
 static SITE_BASE: &str = "https://mi-shop.com";
 
@@ -77,6 +80,10 @@ impl Crawler for MiShopComCrawler {
             available: Selector::parse(".btn-buy").unwrap(),
             unavailable: Selector::parse(".btn-buy.disabled").unwrap(),
         };
+        let context = ReportingContext {
+            executor: &ConsumerName::ParseCategory,
+            action: "extract_products",
+        };
 
         for element in document.select(&items_selector) {
             let nodes = get_html_nodes(&selectors, &element, self.get_source());
@@ -107,12 +114,12 @@ impl Crawler for MiShopComCrawler {
 
                 if price_text.is_err() {
                     let message = format!(
-                        "price_text({html}) can't be parsed![{source}] {error:?}",
+                        "[{source}] price_text({html}) can't be parsed! {error:?}",
                         html = price_html,
                         source = self.get_source(),
                         error = price_text.err(),
                     );
-                    local_sentry::capture_message(message.as_str(), local_sentry::Level::Warning);
+                    error_reporting::warning(message.as_str(), &context);
                     continue;
                 }
 
@@ -125,12 +132,12 @@ impl Crawler for MiShopComCrawler {
 
             if title.is_empty() || external_id.is_empty() {
                 let message = format!(
-                    "Some param is invalid [{source}]: title - {title}, external_id - {id}",
+                    "[{source}] Some param is invalid: title - {title}, external_id - {id}",
                     source = self.get_source(),
                     title = title,
                     id = external_id,
                 );
-                local_sentry::capture_message(message.as_str(), local_sentry::Level::Warning);
+                error_reporting::warning(message.as_str(), &context);
                 continue;
             }
             parsed_products.push(LocalParsedProduct {

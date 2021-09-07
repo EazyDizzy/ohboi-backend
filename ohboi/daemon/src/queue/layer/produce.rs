@@ -4,7 +4,9 @@ use serde::Serialize;
 
 use crate::queue::layer::get_channel;
 use crate::settings::QueueSettings;
-use lib::local_sentry;
+use lib::error_reporting;
+use lib::error_reporting::ReportingContext;
+use crate::queue::Executor;
 
 pub async fn produce<Message>(settings: &QueueSettings, message: &Message) -> Result<()>
 where
@@ -29,7 +31,10 @@ where
             "Message is not acknowledged! Queue: {queue_name}",
             queue_name = &settings.name
         );
-        local_sentry::capture_message(message.as_str(), local_sentry::Level::Warning);
+        error_reporting::warning(message.as_str(), &ReportingContext {
+            executor: &Executor::Queue,
+            action: "produce"
+        });
     } else {
         log::info!("Message acknowledged");
     }

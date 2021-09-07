@@ -1,14 +1,12 @@
 use lapin::Result;
-use maplit::btreemap;
 use serde::{Deserialize, Serialize};
 
+use crate::db::entity::category::CategorySlug;
+use crate::db::entity::source::SourceName;
 use crate::parse::crawler::Crawler;
 use crate::parse::crawler::MiShopComCrawler;
 use crate::parse::crawler::SamsungShopComUaCrawler;
-use crate::db::entity::category::CategorySlug;
-use crate::db::entity::source::SourceName;
 use crate::queue::layer::produce::produce;
-use crate::queue::producer::add_producer_breadcrumb;
 use crate::SETTINGS;
 
 #[derive(Serialize, Deserialize)]
@@ -35,14 +33,6 @@ where
             category,
             source: crawler.get_source(),
         };
-        add_producer_breadcrumb(
-            "creating",
-            btreemap! {
-                "category" => category.to_string(),
-                "source" => crawler.get_source().to_string()
-            },
-            &SETTINGS.queue_broker.queues.parse_category.name,
-        );
 
         produce(&SETTINGS.queue_broker.queues.parse_category, &payload).await?;
     }

@@ -1,5 +1,8 @@
+use lib::error_reporting;
+use lib::error_reporting::ReportingContext;
+
 use crate::parse::crawler::characteristic_parser::CharacteristicParsingContext;
-use lib::local_sentry;
+use crate::ConsumerName;
 
 /// It skips additional cameras
 /// `64Мп + 8Мп + 6Мп` will result in just `64`
@@ -92,7 +95,7 @@ pub fn int_value(context: &CharacteristicParsingContext, value: &str) -> Option<
     match i32::from_str_radix(value.trim(), 10) {
         Ok(v) => Some(v),
         Err(e) => {
-            local_sentry::capture_message(
+            error_reporting::warning(
                 format!(
                     "[{source}] Can't parse int characteristic ({title}) with value ({value}) for [{external_id}]: {error:?}",
                     source = context.source,
@@ -102,7 +105,10 @@ pub fn int_value(context: &CharacteristicParsingContext, value: &str) -> Option<
                     error = e,
                 )
                     .as_str(),
-                local_sentry::Level::Warning,
+                &ReportingContext {
+                    executor: &ConsumerName::ParseDetails,
+                    action: "parse_int"
+                }
             );
             None
         }

@@ -6,7 +6,9 @@ use crate::parse::crawler::{get_html_nodes, Crawler, ProductHtmlSelectors};
 use crate::db::entity::category::CategorySlug;
 use crate::db::entity::source::SourceName;
 use crate::dto::parsed_product::{AdditionalParsedProductInfo, LocalParsedProduct};
-use lib::local_sentry;
+use lib::error_reporting;
+use lib::error_reporting::ReportingContext;
+use crate::ConsumerName;
 
 static SITE_BASE: &str = "https://samsungshop.com.ua";
 
@@ -60,6 +62,10 @@ impl Crawler for SamsungShopComUaCrawler {
             available: Selector::parse(".product-button_buy").unwrap(),
             unavailable: Selector::parse(".product-button_buy.null").unwrap(),
         };
+        let context = ReportingContext {
+            executor: &ConsumerName::ParseCategory,
+            action: "extract_products"
+        };
 
         for element in document.select(&items_selector) {
             let nodes = get_html_nodes(&selectors, &element, self.get_source());
@@ -95,7 +101,7 @@ impl Crawler for SamsungShopComUaCrawler {
                         source = self.get_source(),
                         error = price_text.err(),
                     );
-                    local_sentry::capture_message(message.as_str(), local_sentry::Level::Warning);
+                    error_reporting::warning(message.as_str(), &context);
                     continue;
                 }
 
@@ -113,7 +119,7 @@ impl Crawler for SamsungShopComUaCrawler {
                     title = title,
                     id = external_id,
                 );
-                local_sentry::capture_message(message.as_str(), local_sentry::Level::Warning);
+                error_reporting::warning(message.as_str(), &context);
                 continue;
             }
 

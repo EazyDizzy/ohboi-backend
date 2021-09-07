@@ -1,6 +1,8 @@
 use crate::dto::parsed_product::LocalParsedProduct;
 use crate::db::entity::source::SourceName;
-use lib::local_sentry;
+use lib::error_reporting;
+use lib::error_reporting::ReportingContext;
+use crate::ConsumerName;
 
 pub fn dedup_products(products: &mut Vec<LocalParsedProduct>, source: SourceName) {
     let error_margin = f64::EPSILON;
@@ -14,7 +16,10 @@ pub fn dedup_products(products: &mut Vec<LocalParsedProduct>, source: SourceName
                 price1 = a.price.to_string(),
                 price2 = b.price.to_string()
             );
-            local_sentry::capture_message(message.as_str(), local_sentry::Level::Warning);
+            error_reporting::warning(message.as_str(), &ReportingContext {
+                executor: &ConsumerName::ParseCategory,
+                action: "dedup_products"
+            });
         }
 
         a.external_id == b.external_id

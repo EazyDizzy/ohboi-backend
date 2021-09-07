@@ -6,8 +6,9 @@ use crate::parse::crawler::upload_extracted_images;
 use crate::parse::crawler::get_crawler;
 use crate::parse::parse_details;
 use crate::queue::layer::consume::consume;
-use crate::SETTINGS;
-use lib::local_sentry;
+use crate::{SETTINGS, ConsumerName};
+use lib::error_reporting;
+use lib::error_reporting::ReportingContext;
 
 #[derive(Serialize, Deserialize)]
 pub struct ParseDetailsMessage {
@@ -30,14 +31,17 @@ async fn execute(message: ParseDetailsMessage) -> Result<(), ()> {
 
     match details {
         None => {
-            local_sentry::capture_message(
+            error_reporting::error(
                 format!(
                     "[parse_details] No additional info found [{source}] for: {id}",
                     source = crawler.get_source().to_string(),
                     id = &message.external_id
                 )
                 .as_str(),
-                local_sentry::Level::Warning,
+                &ReportingContext {
+                    executor: &ConsumerName::ParseDetails,
+                    action: "execute"
+                }
             );
 
             Err(())
@@ -53,7 +57,6 @@ async fn execute(message: ParseDetailsMessage) -> Result<(), ()> {
             details.image_urls = uploaded_urls;
 
             update_details(message.product_id, &details);
-            panic!("her");
 
             Ok(())
         }

@@ -1,30 +1,23 @@
 use futures::future::join_all;
-use maplit::btreemap;
 
-use crate::parse::crawler::get_crawler;
+use lib::error_reporting;
+use lib::error_reporting::ReportingContext;
+
 use crate::db::entity::category::CategorySlug;
 use crate::db::entity::source::SourceName;
 use crate::dto::parsed_product::LocalParsedProduct;
-use crate::queue::postpone::postpone_page_parsing;
-
-use crate::service::request::get_s;
+use crate::parse::crawler::get_crawler;
 use crate::parse::layer::save::save_parsed_products;
 use crate::parse::util::dedup::dedup_products;
-use crate::parse::util::{parse_html, add_parse_breadcrumb};
-use lib::local_sentry;
+use crate::parse::util::parse_html;
+use crate::queue::postpone::postpone_page_parsing;
+use crate::service::request::get_s;
+use crate::ConsumerName;
 
 pub async fn parse_category(
     source: SourceName,
     category: CategorySlug,
 ) -> Result<(), reqwest::Error> {
-    add_parse_breadcrumb(
-        "in progress",
-        btreemap! {
-            "crawler" => source.to_string(),
-            "category" => category.to_string(),
-        },
-    );
-
     let mut products: Vec<LocalParsedProduct> = vec![];
     let concurrent_pages = 1; // TODO move to the db settings of specific crawler
 
@@ -70,14 +63,17 @@ pub async fn parse_category(
                     }
                     Err(e) => {
                         amount_of_fails += 1;
-                        local_sentry::capture_message(
+                        error_reporting::warning(
                             format!(
                                 "Request for page failed[{source}]: {error:?}",
                                 source = source,
                                 error = e
                             )
                             .as_str(),
-                            local_sentry::Level::Warning,
+                            &ReportingContext {
+                                executor: &ConsumerName::ParseCategory,
+                                action: "parse_category",
+                            },
                         );
 
                         let _result = postpone_page_parsing(
@@ -99,15 +95,6 @@ pub async fn parse_category(
         }
     }
     dedup_products(&mut products, source);
-
-    add_parse_breadcrumb(
-        "parsed",
-        btreemap! {
-            "crawler" => source.to_string(),
-            "category" => category.to_string(),
-            "length" => products.len().to_string()
-        },
-    );
 
     save_parsed_products(source, crawler.get_currency(), products, category).await;
 

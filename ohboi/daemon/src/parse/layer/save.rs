@@ -1,9 +1,9 @@
 use futures::future::join_all;
-use maplit::btreemap;
 
 use lib::db::repository::exchange_rate::try_get_exchange_rate_by_code;
-use lib::service::currency_converter::convert_from_with_rate;
 use lib::my_enum::CurrencyEnum;
+use lib::service::currency_converter::convert_from_with_rate;
+
 use crate::db::entity::category::CategorySlug;
 use crate::db::entity::source::SourceName;
 use crate::db::repository::product::create_if_not_exists;
@@ -11,7 +11,6 @@ use crate::db::repository::source_product::link_to_product;
 use crate::dto::parsed_product::{InternationalParsedProduct, LocalParsedProduct};
 use crate::queue::postpone::postpone_details_parsing;
 use crate::SETTINGS;
-use crate::parse::util::add_parse_breadcrumb;
 
 pub async fn save_parsed_products(
     source: SourceName,
@@ -32,13 +31,6 @@ pub async fn save_parsed_products(
     }
 
     join_all(savings_in_progress).await;
-    add_parse_breadcrumb(
-        "saved",
-        btreemap! {
-            "source" => source.to_string(),
-            "category" => category.to_string(),
-        },
-    );
 }
 
 async fn save_parsed_product(

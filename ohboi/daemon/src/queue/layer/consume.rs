@@ -5,13 +5,10 @@ use lapin::{
     types::FieldTable,
     Consumer, Result,
 };
-use maplit::btreemap;
-use std::collections::BTreeMap;
 use serde::de;
 
 use crate::queue::layer::get_channel;
 use crate::settings::QueueSettings;
-use lib::local_sentry::add_category_breadcrumb;
 
 pub async fn consume<F, Fut, Message>(settings: &QueueSettings, consumer_callback: F) -> Result<()>
 where
@@ -41,8 +38,6 @@ fn parse_message<Message>(delivery: &Delivery, settings: &QueueSettings) -> Mess
 where
     Message: de::DeserializeOwned,
 {
-    add_consumer_breadcrumb("got message", btreemap! {}, &settings.name);
-
     let message = std::str::from_utf8(&delivery.data).expect(&format!(
         "[{}] Message is not a valid ut8 string.",
         settings.name
@@ -87,8 +82,4 @@ async fn requeue(delivery: &Delivery) {
         })
         .await
         .expect("not-acknowledgment failed");
-}
-
-fn add_consumer_breadcrumb(message: &str, data: BTreeMap<&str, String>, consumer_name: &str) {
-    add_category_breadcrumb(message, data, ["consumer.", consumer_name].join(""));
 }

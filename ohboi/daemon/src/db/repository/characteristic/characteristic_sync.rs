@@ -1,19 +1,20 @@
 use strum::VariantNames;
 
-use lib::{db, local_sentry};
 use lib::db::entity::characteristic::Characteristic;
-use lib::dto::characteristic::enum_characteristic::*;
-use lib::util::all_characteristics::*;
 use lib::diesel::prelude::*;
+use lib::dto::characteristic::enum_characteristic::*;
+use lib::error_reporting::ReportingContext;
+use lib::schema::category_characteristic;
+use lib::util::all_characteristics::*;
+use lib::{db, error_reporting};
+
 use crate::db::entity::category::CategorySlug;
 use crate::db::entity::characteristic::category_characteristic::{
     CategoryCharacteristic, NewCategoryCharacteristic,
 };
 use crate::db::repository::category::get_category;
-use crate::db::repository::characteristic::{
-    characteristic, product_characteristic_enum_value,
-};
-use lib::schema::category_characteristic;
+use crate::db::repository::characteristic::{characteristic, product_characteristic_enum_value};
+use crate::db::Executor;
 
 // TODO update if sth changed
 // TODO delete removed
@@ -149,13 +150,16 @@ fn connect_char_to_category(char: Characteristic, category: CategorySlug) {
             );
         }
         Err(e) => {
-            local_sentry::capture_message(
+            error_reporting::fatal(
                 format!(
                     "Characteristic {} can't be matched to {} category. {:?}",
                     char.slug, category, e
                 )
                 .as_str(),
-                local_sentry::Level::Warning,
+                &ReportingContext {
+                    executor: &Executor::Characteristic,
+                    action: "save_characteristic_value",
+                },
             );
         }
     }

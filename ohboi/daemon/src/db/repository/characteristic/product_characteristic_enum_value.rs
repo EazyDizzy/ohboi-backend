@@ -1,11 +1,13 @@
 use lib::diesel::result::{DatabaseErrorKind, Error};
 
-use lib::{db, local_sentry};
+use lib::{db, error_reporting};
 use lib::diesel::prelude::*;
 use crate::db::entity::characteristic::product_characteristic_enum_value::{
     NewProductCharacteristicEnumValue, ProductCharacteristicEnumValue,
 };
 use lib::dto::characteristic::enum_characteristic::EnumCharacteristic;
+use lib::error_reporting::ReportingContext;
+use crate::db::Executor;
 
 pub fn get_value_by_enum(enm: EnumCharacteristic) -> ProductCharacteristicEnumValue {
     use lib::schema::product_characteristic_enum_value::dsl::{
@@ -49,13 +51,16 @@ pub fn create_if_not_exists(value: String) {
                     new_enum_char_value.value
                 );
             } else {
-                local_sentry::capture_message(
+                error_reporting::warning(
                     format!(
                         "Enum characteristic value {} has an error: {:?}",
                         new_enum_char_value.value, e
                     )
                     .as_str(),
-                    local_sentry::Level::Warning,
+                    &ReportingContext{
+                        executor: &Executor::Characteristic,
+                        action: "save_characteristic_value::enum",
+                    }
                 );
             }
         }

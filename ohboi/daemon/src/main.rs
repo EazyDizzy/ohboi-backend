@@ -59,7 +59,7 @@ arg_enum! {
 async fn main() {
     std::env::set_var("RUST_LOG", "daemon");
     env_logger::init();
-    let guard = lib::local_sentry::init_sentry();
+    let guard = lib::error_reporting::init();
 
     let args: Cli = Cli::from_args();
 

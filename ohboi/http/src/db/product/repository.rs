@@ -18,7 +18,6 @@ use crate::util::product::convert_product_prices;
 
 pub fn get_product_info(params: &ProductParams) -> Option<ProductInfo> {
     let connection = &db::establish_connection();
-    use lib::schema::product::dsl::id;
 
     let targets = product::table.filter(id.eq(params.id).and(enabled.eq(true)));
 

@@ -8,19 +8,20 @@ use regex::Regex;
 use scraper::html::Select;
 use scraper::{ElementRef, Html, Selector};
 
-use lib::local_sentry;
+use lib::error_reporting;
+use lib::error_reporting::ReportingContext;
 use lib::my_enum::CurrencyEnum;
+
 use crate::db::entity::category::CategorySlug;
 use crate::db::entity::source::SourceName;
 use crate::dto::parsed_product::{AdditionalParsedProductInfo, LocalParsedProduct};
 use crate::queue::postpone::postpone_image_parsing;
 use crate::service::cloud::upload_image_to_cloud;
 use crate::service::html_cleaner::clean_html;
-use crate::SETTINGS;
+use crate::ConsumerName;
 
 #[derive(Clone)]
 struct UploadImageLaterMessage(String, String, String, SourceName);
-
 
 pub trait Crawler: Sync + Send {
     fn get_site_base(&self) -> String;
@@ -63,7 +64,13 @@ pub trait Crawler: Sync + Send {
                     "both src & lazy tags not found! [{source}]",
                     source = self.get_source()
                 );
-                local_sentry::capture_message(message.as_str(), local_sentry::Level::Warning);
+                error_reporting::warning(
+                    message.as_str(),
+                    &ReportingContext {
+                        executor: &ConsumerName::ParseImage,
+                        action: "extract_image_urls",
+                    },
+                );
                 continue;
             }
 
@@ -89,7 +96,13 @@ pub trait Crawler: Sync + Send {
                 "description_node not found! [{source}]",
                 source = self.get_source()
             );
-            local_sentry::capture_message(message.as_str(), local_sentry::Level::Warning);
+            error_reporting::warning(
+                message.as_str(),
+                &ReportingContext {
+                    executor: &ConsumerName::ParseDetails,
+                    action: "extract_description",
+                },
+            );
 
             return None;
         }
@@ -130,7 +143,10 @@ pub trait Crawler: Sync + Send {
                 "both buy_button_node & unavailable_button_node not found! [{source}]",
                 source = self.get_source()
             );
-            local_sentry::capture_message(message.as_str(), local_sentry::Level::Warning);
+            error_reporting::warning(message.as_str(), &ReportingContext {
+                executor: &ConsumerName::ParseDetails,
+                action: "parse_availability"
+            });
 
             return None;
         }
@@ -145,18 +161,17 @@ pub async fn upload_extracted_images(
     external_id: &str,
     base: &str,
 ) -> Vec<String> {
-    local_sentry::add_category_breadcrumb(
+    error_reporting::add_breadcrumb(
         "updating product",
         btreemap! {
             "external_id" => external_id.to_string(),
             "image_urls" => format!("{:?}", &image_urls),
             "source" => source.to_string(),
         },
-        [
-            "consumer.",
-            &SETTINGS.queue_broker.queues.parse_category.name,
-        ]
-        .join(""),
+        &ReportingContext {
+            executor: &ConsumerName::ParseDetails,
+            action: "upload_extracted_images"
+        },
     );
 
     let mut uploaded_urls: Vec<String> = vec![];
@@ -222,21 +237,25 @@ pub fn get_html_nodes<'result>(
     let available_node = element.select(&selectors.available).next();
     let unavailable_node = element.select(&selectors.unavailable).next();
     let mut valid = true;
+    let context = ReportingContext {
+        executor: &ConsumerName::ParseCategory,
+        action: "get_html_nodes"
+    };
 
     if id_node.is_none() {
         let message = format!("id_node not found! [{source}]", source = source);
-        local_sentry::capture_message(message.as_str(), local_sentry::Level::Warning);
+        error_reporting::warning(message.as_str(), &context);
         valid = false;
     }
 
     if title_node.is_none() {
         let message = format!("title_node not found! [{source}]", source = source);
-        local_sentry::capture_message(message.as_str(), local_sentry::Level::Warning);
+        error_reporting::warning(message.as_str(), &context);
         valid = false;
     }
     if price_node.is_none() {
         let message = format!("price_node not found! [{source}]", source = source);
-        local_sentry::capture_message(message.as_str(), local_sentry::Level::Warning);
+        error_reporting::warning(message.as_str(), &context);
         valid = false;
     }
 
@@ -245,7 +264,7 @@ pub fn get_html_nodes<'result>(
             "both available_node & unavailable_node not found! [{source}]",
             source = source
         );
-        local_sentry::capture_message(message.as_str(), local_sentry::Level::Warning);
+        error_reporting::warning(message.as_str(), &context);
         valid = false;
     }
 
@@ -284,10 +303,11 @@ mod tests {
     use scraper::{Html, Selector};
 
     use lib::my_enum::CurrencyEnum;
-    use crate::parse::crawler::Crawler;
+
     use crate::db::entity::category::CategorySlug;
     use crate::db::entity::source::SourceName;
     use crate::dto::parsed_product::{AdditionalParsedProductInfo, LocalParsedProduct};
+    use crate::parse::crawler::Crawler;
 
     #[derive(Clone)]
     pub struct EmptyCrawler {}

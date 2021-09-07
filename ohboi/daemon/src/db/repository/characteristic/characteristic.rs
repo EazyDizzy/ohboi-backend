@@ -1,11 +1,13 @@
-use lib::diesel::result::{DatabaseErrorKind, Error};
-
-use lib::{db, local_sentry};
-use lib::diesel::prelude::*;
-use lib::my_enum::{CharacteristicValueType, CharacteristicVisualisationType};
-use crate::db::entity::characteristic::characteristic::NewCharacteristic;
-use lib::schema::characteristic;
 use lib::db::entity::characteristic::Characteristic;
+use lib::diesel::prelude::*;
+use lib::diesel::result::{DatabaseErrorKind, Error};
+use lib::error_reporting::ReportingContext;
+use lib::my_enum::{CharacteristicValueType, CharacteristicVisualisationType};
+use lib::schema::characteristic;
+use lib::{db, error_reporting};
+
+use crate::db::entity::characteristic::characteristic::NewCharacteristic;
+use crate::db::Executor;
 
 pub fn create_if_not_exists(
     id: i16,
@@ -46,13 +48,16 @@ pub fn create_if_not_exists(
                 );
                 None
             } else {
-                local_sentry::capture_message(
+                error_reporting::warning(
                     format!(
                         "{:?} {} characteristic has an error: {:?}",
                         value_type, new_char.slug, e
                     )
                     .as_str(),
-                    local_sentry::Level::Warning,
+                    &ReportingContext {
+                        executor: &Executor::Characteristic,
+                        action: "save_characteristic",
+                    },
                 );
                 None
             }

@@ -1,14 +1,21 @@
 use bigdecimal::Num;
-use crate::parse::crawler::characteristic_parser::CharacteristicParsingContext;
-use lib::local_sentry;
 
-pub fn float_android_version_value(context: &CharacteristicParsingContext, value: &str) -> Option<f32> {
-    float_version_value(
-        context,
-        &value.replace("Android", "").replace("OS, v", ""),
-    )
+use lib::error_reporting;
+use lib::error_reporting::ReportingContext;
+
+use crate::parse::crawler::characteristic_parser::CharacteristicParsingContext;
+use crate::ConsumerName;
+
+pub fn float_android_version_value(
+    context: &CharacteristicParsingContext,
+    value: &str,
+) -> Option<f32> {
+    float_version_value(context, &value.replace("Android", "").replace("OS, v", ""))
 }
-pub fn float_miui_version_value(context: &CharacteristicParsingContext, value: &str) -> Option<f32> {
+pub fn float_miui_version_value(
+    context: &CharacteristicParsingContext,
+    value: &str,
+) -> Option<f32> {
     float_version_value(context, &value.replace("MIUI", ""))
 }
 
@@ -67,7 +74,7 @@ pub fn float_value(context: &CharacteristicParsingContext, value: &str) -> Optio
     match f32::from_str_radix(value.replace(",", ".").trim(), 10) {
         Ok(v) => Some(v),
         Err(e) => {
-            local_sentry::capture_message(
+            error_reporting::warning(
                 format!(
                     "[{source}] Can't parse float characteristic ({title}) with value ({value}) for [{external_id}]: {error:?}",
                     source = context.source,
@@ -77,7 +84,10 @@ pub fn float_value(context: &CharacteristicParsingContext, value: &str) -> Optio
                     error = e,
                 )
                     .as_str(),
-                local_sentry::Level::Warning,
+                &ReportingContext {
+                    executor: &ConsumerName::ParseDetails,
+                    action: "parse_float"
+                }
             );
             None
         }
@@ -92,7 +102,7 @@ mod tests {
         CharacteristicParsingContext {
             title: "_",
             external_id: "_",
-            source: SourceName::MiShopCom
+            source: SourceName::MiShopCom,
         }
     }
 
@@ -102,17 +112,26 @@ mod tests {
             float_android_version_value(&get_context(), "Android 11"),
             Some(11.0)
         );
-        assert_eq!(float_android_version_value(&get_context(), "OS, v6.2"), Some(6.2));
+        assert_eq!(
+            float_android_version_value(&get_context(), "OS, v6.2"),
+            Some(6.2)
+        );
         assert_eq!(
             float_android_version_value(&get_context(), "OS, v6.0.1"),
             Some(6.0)
         );
-        assert_eq!(float_android_version_value(&get_context(), "OS, v6,2"), Some(6.2));
+        assert_eq!(
+            float_android_version_value(&get_context(), "OS, v6,2"),
+            Some(6.2)
+        );
     }
 
     #[test]
     fn it_parses_miui_version() {
-        assert_eq!(float_miui_version_value(&get_context(), "MIUI 11"), Some(11.0));
+        assert_eq!(
+            float_miui_version_value(&get_context(), "MIUI 11"),
+            Some(11.0)
+        );
         assert_eq!(
             float_miui_version_value(&get_context(), "MIUI 11.2.3"),
             Some(11.2)

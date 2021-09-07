@@ -5,7 +5,9 @@ use lib::dto::characteristic::enum_characteristic::MediaFormat;
 use crate::parse::crawler::characteristic_parser::{
     enum_media_format_value, string_value, CharacteristicParsingContext,
 };
-use lib::local_sentry;
+use lib::error_reporting;
+use lib::error_reporting::ReportingContext;
+use crate::ConsumerName;
 
 lazy_static! {
     static ref NO_DESCRIPTION_RE: Regex = Regex::new(r"(?ms)[A-Za-z./ 0-9\-+–]{2,}").unwrap();
@@ -86,7 +88,7 @@ pub fn multiple_string_media_format_value(
                 }
             }
         } else {
-            local_sentry::capture_message(
+            error_reporting::warning(
                 format!(
                     "[{source}] Can't parse media format characteristic ({title}) with value ({value}) for [{external_id}]: Unknown value",
                     source = context.source,
@@ -95,7 +97,10 @@ pub fn multiple_string_media_format_value(
                     external_id = context.external_id
                 )
                     .as_str(),
-                local_sentry::Level::Warning,
+                &ReportingContext {
+                    executor: &ConsumerName::ParseDetails,
+                    action: "multiple_string_media_format_value"
+                }
             );
         }
     }

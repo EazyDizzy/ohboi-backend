@@ -1,16 +1,18 @@
+use std::collections::BTreeMap;
 use std::str;
 
 use maplit::btreemap;
 use serde::{Deserialize, Serialize};
+
+use lib::error_reporting;
+use lib::error_reporting::ReportingContext;
 
 use crate::db::entity::source::SourceName;
 use crate::db::repository::product::add_image_to_product_details;
 use crate::db::repository::source_product::get_by_source_and_external_id;
 use crate::queue::layer::consume::consume;
 use crate::service::cloud::upload_image_to_cloud;
-use lib::local_sentry::add_category_breadcrumb;
-use crate::SETTINGS;
-use std::collections::BTreeMap;
+use crate::{ConsumerName, SETTINGS};
 
 #[derive(Serialize, Deserialize, Clone)]
 pub struct UploadImageMessage {
@@ -29,6 +31,13 @@ pub async fn start() -> core::result::Result<(), ()> {
 }
 
 async fn execute(message: UploadImageMessage) -> Result<(), ()> {
+    add_consumer_breadcrumb(
+        "downloading image",
+        btreemap! {
+                "url" => message.image_url.clone(),
+            },
+        "upload_image"
+    );
     let result = upload_image_to_cloud(message.file_path.clone(), message.image_url).await;
 
     if result {
@@ -42,6 +51,7 @@ async fn execute(message: UploadImageMessage) -> Result<(), ()> {
             btreemap! {
                 "id" => source_product.product_id.to_string(),
             },
+            "update_product"
         );
         add_image_to_product_details(source_product.product_id, &message.file_path);
 
@@ -51,10 +61,13 @@ async fn execute(message: UploadImageMessage) -> Result<(), ()> {
     }
 }
 
-fn add_consumer_breadcrumb(message: &str, data: BTreeMap<&str, String>) {
-    add_category_breadcrumb(
+fn add_consumer_breadcrumb(message: &str, data: BTreeMap<&str, String>, action: &str) {
+    error_reporting::add_breadcrumb(
         message,
         data,
-        ["consumer.", &SETTINGS.queue_broker.queues.parse_image.name].join(""),
+        &ReportingContext {
+            executor: &ConsumerName::ParseImage,
+            action,
+        },
     );
 }

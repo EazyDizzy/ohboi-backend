@@ -1,11 +1,13 @@
 use bigdecimal::BigDecimal;
 use lib::diesel::result::{DatabaseErrorKind, Error};
 
-use lib::{db, local_sentry};
+use lib::{db, error_reporting};
 use lib::diesel::prelude::*;
 use crate::db::entity::characteristic::product_characteristic_float_value::{
     NewProductCharacteristicFloatValue, ProductCharacteristicFloatValue,
 };
+use lib::error_reporting::ReportingContext;
+use crate::db::Executor;
 
 pub fn create_if_not_exists(value: f32) -> Option<ProductCharacteristicFloatValue> {
     use lib::schema::product_characteristic_float_value;
@@ -30,13 +32,16 @@ pub fn create_if_not_exists(value: f32) -> Option<ProductCharacteristicFloatValu
             if let Error::DatabaseError(DatabaseErrorKind::UniqueViolation, _) = e {
                 get_product_value_by_value(value)
             } else {
-                local_sentry::capture_message(
+                error_reporting::warning(
                     format!(
                         "ProductCharacteristicFloatValue with value {} can't be created: {:?}",
                         value, e
                     )
                     .as_str(),
-                    local_sentry::Level::Warning,
+                    &ReportingContext{
+                        executor: &Executor::Characteristic,
+                        action: "save_characteristic_value::float",
+                    }
                 );
                 None
             }

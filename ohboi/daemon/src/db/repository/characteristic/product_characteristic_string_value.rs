@@ -1,10 +1,12 @@
-use lib::diesel::result::{DatabaseErrorKind, Error};
-
-use lib::{db, local_sentry};
 use lib::diesel::prelude::*;
+use lib::diesel::result::{DatabaseErrorKind, Error};
+use lib::error_reporting::ReportingContext;
+use lib::{db, error_reporting};
+
 use crate::db::entity::characteristic::product_characteristic_string_value::{
     NewProductCharacteristicStringValue, ProductCharacteristicStringValue,
 };
+use crate::db::Executor;
 
 pub fn create_if_not_exists(value: String) -> Option<ProductCharacteristicStringValue> {
     use lib::schema::product_characteristic_string_value;
@@ -29,13 +31,16 @@ pub fn create_if_not_exists(value: String) -> Option<ProductCharacteristicString
             if let Error::DatabaseError(DatabaseErrorKind::UniqueViolation, _) = e {
                 get_product_value_by_value(&value)
             } else {
-                local_sentry::capture_message(
+                error_reporting::warning(
                     format!(
-                        "ProductCharacteristicStringValue with value {} can't be created: {:?}",
+                        "String characteristic with value {} can't be created: {:?}",
                         value, e
                     )
                     .as_str(),
-                    local_sentry::Level::Warning,
+                    &ReportingContext {
+                        executor: &Executor::Characteristic,
+                        action: "save_characteristic_value::string",
+                    },
                 );
                 None
             }

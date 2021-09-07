@@ -1,3 +1,6 @@
+use lib::error_reporting;
+use lib::error_reporting::ReportingContext;
+
 use crate::db::entity::source::SourceName;
 pub use crate::parse::crawler::characteristic_parser::bool_value_parser::*;
 pub use crate::parse::crawler::characteristic_parser::enum_value_parser::*;
@@ -5,7 +8,7 @@ pub use crate::parse::crawler::characteristic_parser::float_value_parser::*;
 pub use crate::parse::crawler::characteristic_parser::int_value_parser::*;
 pub use crate::parse::crawler::characteristic_parser::string_value_parser::*;
 use crate::parse::crawler::Crawler;
-use lib::local_sentry;
+use crate::ConsumerName;
 
 mod bool_value_parser;
 mod enum_value_parser;
@@ -123,16 +126,19 @@ pub fn parse_and_capture<SomeEnum>(
     let parsed = parser(value);
 
     if parsed.is_none() {
-        local_sentry::capture_message(
+        error_reporting::warning(
             format!(
-                "[{source}] Can't parse string characteristic ({title}) with value ({value}) for [{external_id}]: Unknown value",
+                "[{source}] Can't parse characteristic ({title}) with value ({value}) for [{external_id}]: Unknown value",
                 source = context.source,
                 title = context.title,
                 value = value,
                 external_id = context.external_id,
             )
                 .as_str(),
-            local_sentry::Level::Warning,
+            &ReportingContext {
+                executor: &ConsumerName::ParseDetails,
+                action: "parse_generic"
+            }
         );
     }
 

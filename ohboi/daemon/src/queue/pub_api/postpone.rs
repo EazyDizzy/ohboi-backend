@@ -1,14 +1,14 @@
 use lapin::Result;
 use maplit::btreemap;
 
-use lib::local_sentry::add_category_breadcrumb;
+use lib::error_reporting::{add_breadcrumb, ReportingContext};
 use crate::db::entity::category::CategorySlug;
 use crate::db::entity::source::SourceName;
 use crate::queue::consumer::parse_details::ParseDetailsMessage;
 use crate::queue::consumer::parse_image::UploadImageMessage;
 use crate::queue::consumer::parse_page::ParsePageMessage;
 use crate::queue::layer::produce::produce;
-use crate::SETTINGS;
+use crate::{SETTINGS, ConsumerName};
 use std::collections::BTreeMap;
 
 pub async fn postpone_page_parsing(
@@ -29,7 +29,7 @@ pub async fn postpone_page_parsing(
     add_consumer_breadcrumb(
         "postponing page parsing",
         breadcrumb_data,
-        &SETTINGS.queue_broker.queues.parse_page.name,
+        ConsumerName::ParsePage,
     );
 
     produce(&SETTINGS.queue_broker.queues.parse_page, &message).await
@@ -51,7 +51,7 @@ pub async fn postpone_details_parsing(
     add_consumer_breadcrumb(
         "postponing details parsing",
         breadcrumb_data,
-        &SETTINGS.queue_broker.queues.parse_details.name,
+        ConsumerName::ParseDetails,
     );
     produce(&SETTINGS.queue_broker.queues.parse_details, &message).await
 }
@@ -76,12 +76,15 @@ pub async fn postpone_image_parsing(
     add_consumer_breadcrumb(
         "postponing image uploading",
         breadcrumb_data,
-        &SETTINGS.queue_broker.queues.parse_image.name,
+        ConsumerName::ParseImage,
     );
 
     produce(&SETTINGS.queue_broker.queues.parse_image, &message).await
 }
 
-fn add_consumer_breadcrumb(message: &str, data: BTreeMap<&str, String>, consumer_name: &str) {
-    add_category_breadcrumb(message, data, ["consumer.", consumer_name].join(""));
+fn add_consumer_breadcrumb(message: &str, data: BTreeMap<&str, String>, consumer_name: ConsumerName) {
+    add_breadcrumb(message, data, &ReportingContext {
+        executor: &consumer_name,
+        action: "postpone",
+    },);
 }

@@ -9,11 +9,10 @@
 #[macro_use]
 extern crate diesel;
 
-use std::env;
-
 use log::{error, info};
 
-use lib::local_sentry;
+use lib::error_reporting;
+use lib::error_reporting::DisplayString;
 
 mod auth;
 mod db;
@@ -25,11 +24,22 @@ mod util;
 async fn main() {
     std::env::set_var("RUST_LOG", "http,actix_web=debug");
     env_logger::init();
-    let _guard = local_sentry::init_sentry();
+    let _guard = error_reporting::init();
 
     let result = endpoint::run_server().await;
     match result {
         Ok(_) => info!("Server started."),
         Err(e) => error!("Server failed: {:?}", e),
+    }
+}
+
+#[derive(Debug)]
+enum Executor {
+    GoogleAuth,
+}
+
+impl DisplayString for Executor {
+    fn to_display_string(&self) -> String {
+        format!("http::{}", format!("{:?}", self))
     }
 }

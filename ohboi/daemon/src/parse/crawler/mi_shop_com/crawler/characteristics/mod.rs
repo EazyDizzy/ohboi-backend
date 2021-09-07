@@ -1,6 +1,9 @@
 use scraper::{ElementRef, Html, Selector};
 
 use lib::dto::characteristic::TypedCharacteristic;
+use lib::error_reporting;
+use lib::error_reporting::ReportingContext;
+
 use crate::parse::crawler::characteristic_parser::{
     combine_titles_and_values, parse_and_take, parse_and_take_multiple,
 };
@@ -9,12 +12,10 @@ use crate::parse::crawler::mi_shop_com::crawler::characteristics::float::extract
 use crate::parse::crawler::mi_shop_com::crawler::characteristics::int::extract_int_characteristic;
 use crate::parse::crawler::mi_shop_com::crawler::characteristics::skip::skip_unneeded_characteristics;
 use crate::parse::crawler::mi_shop_com::crawler::characteristics::strings::extract_string_characteristic;
-use crate::parse::crawler::mi_shop_com::crawler::characteristics::technology::{
-    extract_technology_characteristic,
-};
+use crate::parse::crawler::mi_shop_com::crawler::characteristics::technology::extract_technology_characteristic;
 use crate::parse::crawler::mi_shop_com::crawler::MiShopComCrawler;
 use crate::service::html_cleaner::inner_text;
-use lib::local_sentry;
+use crate::ConsumerName;
 
 mod enums;
 mod float;
@@ -110,7 +111,7 @@ pub fn extract_characteristics(
     );
 
     for (title, value) in characteristics.into_iter() {
-        local_sentry::capture_message(
+        error_reporting::info(
             format!(
                 "Unknown characteristic ({title}) with value ({value}) for [{external_id}]",
                 title = title,
@@ -118,7 +119,10 @@ pub fn extract_characteristics(
                 external_id = external_id,
             )
             .as_str(),
-            local_sentry::Level::Warning,
+            &ReportingContext {
+                executor: &ConsumerName::ParseDetails,
+                action: "parse_characteristics",
+            },
         );
     }
 

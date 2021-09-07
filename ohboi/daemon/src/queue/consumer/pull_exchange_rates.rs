@@ -6,7 +6,9 @@ use crate::queue::layer::consume::consume;
 use crate::service::request::get;
 use lib::my_enum::CurrencyEnum;
 use crate::SETTINGS;
-use lib::local_sentry;
+use lib::error_reporting;
+use lib::error_reporting::ReportingContext;
+use crate::queue::Executor;
 
 #[derive(Deserialize)]
 struct ExchangeApiResponse {
@@ -34,12 +36,16 @@ async fn execute(_message: String) -> Result<(), ()> {
     let response =
         get("https://api.exchangerate.host/latest?base=EUR&symbols=UAH,USD,RUB").await;
 
+    let context = ReportingContext {
+        executor: &Executor::PullExchangeRates,
+        action: "execute"
+    };
     if response.is_err() {
         let message = format!(
             "Request for exchange rates failed!  {error:?}",
             error = response.err()
         );
-        local_sentry::capture_message(message.as_str(), local_sentry::Level::Warning);
+        error_reporting::warning(message.as_str(), &context);
         return Err(());
     }
 
@@ -53,7 +59,7 @@ async fn execute(_message: String) -> Result<(), ()> {
             "Parsing of response failed!  {error:?}",
             error = api_response.err()
         );
-        local_sentry::capture_message(message.as_str(), local_sentry::Level::Warning);
+        error_reporting::warning(message.as_str(), &context);
         return Err(());
     }
 
@@ -61,7 +67,7 @@ async fn execute(_message: String) -> Result<(), ()> {
     let response = api_response.expect("");
 
     if !response.success {
-        local_sentry::capture_message("Response from api is not success!", local_sentry::Level::Warning);
+        error_reporting::warning("Response from api is not success!",  &context);
         return Err(());
     }
 
@@ -73,7 +79,7 @@ async fn execute(_message: String) -> Result<(), ()> {
     if save_result {
         Ok(())
     } else {
-        local_sentry::capture_message("Saving of exchange rate failed!", local_sentry::Level::Warning);
+        error_reporting::warning("Saving of exchange rate failed!",  &context);
         Err(())
     }
 }
