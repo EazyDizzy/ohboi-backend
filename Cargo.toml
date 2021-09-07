@@ -1,7 +1,7 @@
 [workspace]
 members = [
-    "src/daemon",
-    "src/http",
+    "ohboi/daemon",
+    "ohboi/http",
     "lib",
 ]
 
@@ -12,3 +12,4 @@ codegen-units = 1256
 overflow-checks = true
 codegen-units = 1
 lto = "fat"
+# TODO idea coverage config

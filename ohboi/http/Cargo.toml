@@ -24,8 +24,6 @@ bigdecimal = { version = "0.1.2", features = ["serde"] }
 dotenv = "0.15.0"
 log = "0.4.13"
 env_logger = "0.8.2" # configuration for logger via env
-maplit = "1.0.2" # btreemap macros
-rand = "0.8.3"
 strum = { version = "0.21", features = ["derive"] } # enum iterators
 strum_macros = "0.21"
 

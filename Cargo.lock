@@ -1411,8 +1411,6 @@ dependencies = [
  "google-jwt-verify",
  "lib",
  "log",
- "maplit",
- "rand 0.8.4",
  "sentry-actix",
  "serde",
  "serde_json",
