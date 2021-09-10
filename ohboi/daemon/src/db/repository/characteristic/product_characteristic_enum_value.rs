@@ -9,6 +9,7 @@ use lib::dto::characteristic::enum_characteristic::EnumCharacteristic;
 use lib::error_reporting::ReportingContext;
 use crate::db::Executor;
 
+// TODO cache
 pub fn get_value_by_enum(enm: EnumCharacteristic) -> ProductCharacteristicEnumValue {
     use lib::schema::product_characteristic_enum_value::dsl::{
         product_characteristic_enum_value, value,

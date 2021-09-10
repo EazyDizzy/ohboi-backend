@@ -35,8 +35,6 @@ where
             executor: &Executor::Queue,
             action: "produce"
         });
-    } else {
-        log::info!("Message acknowledged");
     }
 
     Ok(())

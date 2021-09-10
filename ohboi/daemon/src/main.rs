@@ -86,8 +86,7 @@ async fn main() {
             .expect(&format!("[{}] Failed to run consumer.", &name));
     }
 
-    let close_result = guard.close(None);
-    println!("sentry closed {}", close_result);
+    let _close_result = guard.close(None);
 }
 
 lazy_static! {

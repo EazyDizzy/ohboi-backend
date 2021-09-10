@@ -3,14 +3,14 @@ ARG BASE_IMAGE=rust:1.54
 # Computes the recipe file
 FROM $BASE_IMAGE as planner
 WORKDIR /app
-RUN cargo install cargo-chef --version 0.1.21
+RUN cargo install cargo-chef --version 0.1.31
 COPY . .
 RUN cargo chef prepare --recipe-path recipe.json
 
 # Caches dependencies
 FROM $BASE_IMAGE as cacher
 WORKDIR /app
-RUN cargo install cargo-chef --version 0.1.21
+RUN cargo install cargo-chef --version 0.1.31
 COPY --from=planner /app/recipe.json recipe.json
 RUN cargo install diesel_cli --no-default-features --features postgres
 RUN cargo chef cook --recipe-path recipe.json
@@ -50,7 +50,6 @@ RUN rm -rf /var/lib/apt/lists/* \
 WORKDIR /app
 COPY run.sh .
 COPY migrations ./migrations
-COPY src/daemon/src/service/request/cache ./cache
 # Copying only compiled binaries
 COPY --from=builder /app/target/debug/daemon ./daemon
 COPY --from=builder /app/target/debug/http ./http
