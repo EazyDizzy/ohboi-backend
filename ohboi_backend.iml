@@ -3,10 +3,14 @@
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
     <content url="file://$MODULE_DIR$">
-      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/parse/queue_configurator/src" isTestSource="false" />
-      <excludeFolder url="file://$MODULE_DIR$/src/parse/queue_configurator/target" />
+      <sourceFolder url="file://$MODULE_DIR$/lib/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/ohboi" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/ohboi/daemon/queue_configurator/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/ohboi/daemon/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/ohboi/http/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
+      <excludeFolder url="file://$MODULE_DIR$/lib/target" />
+      <excludeFolder url="file://$MODULE_DIR$/ohboi/daemon/queue_configurator/target" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

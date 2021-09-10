@@ -50,7 +50,7 @@ RUN rm -rf /var/lib/apt/lists/* \
 WORKDIR /app
 COPY run.sh .
 COPY migrations ./migrations
-COPY cache ./cache
+COPY src/daemon/src/service/request/cache ./cache
 # Copying only compiled binaries
 COPY --from=builder /app/target/release/daemon ./daemon
 COPY --from=builder /app/target/release/http ./http

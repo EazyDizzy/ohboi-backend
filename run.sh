@@ -11,6 +11,7 @@ sleep 20
 
 ./daemon consumer -c ParseCategory 2>&1 | tee /app/logs/ParseCategoryConsumer.log &
 ./daemon consumer -c ParsePage 2>&1 | tee /app/logs/ParsePageConsumer.log &
+./daemon consumer -c ParseDetails 2>&1 | tee /app/logs/ParseDetailsConsumer.log &
 ./daemon consumer -c ParseImage 2>&1 | tee /app/logs/ParseImageConsumer.log &
 ./daemon consumer -c PullExchangeRates 2>&1 | tee /app/logs/PullExchangeRatesConsumer.log &
 # TODO auto restart panicky and died processes

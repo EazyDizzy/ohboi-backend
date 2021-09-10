@@ -7,7 +7,7 @@
     <option name="allFeatures" value="false" />
     <option name="emulateTerminal" value="false" />
     <option name="withSudo" value="false" />
-    <option name="backtrace" value="SHORT" />
+    <option name="backtrace" value="FULL" />
     <envs>
       <env name="AWS_ACCESS_KEY_ID" value="AKIAIWQAIEO2WRAUNW7Q" />
       <env name="AWS_SECRET_ACCESS_KEY" value="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" />
