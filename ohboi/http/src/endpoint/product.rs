@@ -9,7 +9,7 @@ use crate::util::product::convert_product_prices;
 use lib::my_enum::CurrencyEnum;
 // TODO add hostname to the image urls to remove these dependency from fe
 pub async fn get_product(params: Query<ProductParams>) -> HttpResponse {
-    let product = get_product_info(params.as_ref());
+    let product = get_product_info(&params);
     if product.is_none() {
         return HttpResponse::NotFound().json("Not found");
     }

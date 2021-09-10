@@ -62,6 +62,7 @@ pub fn get_filtered_products(filters: &ProductFilters) -> Vec<Product> {
             product::created_at,
             product::updated_at,
         ))
+        .distinct_on(product::id)
         .into_boxed();
 
     query = query
