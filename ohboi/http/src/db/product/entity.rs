@@ -1,8 +1,10 @@
 use bigdecimal::BigDecimal;
 use chrono::NaiveDateTime;
 use serde::Serialize;
+use lib::schema::product;
 
-#[derive(Serialize, Queryable, Debug)]
+#[derive(Serialize, Queryable, QueryableByName, Debug)]
+#[table_name = "product"]
 pub struct Product {
     pub id: i32,
     pub title: String,
