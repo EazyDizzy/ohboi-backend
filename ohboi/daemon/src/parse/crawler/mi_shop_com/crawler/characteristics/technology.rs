@@ -9,30 +9,30 @@ pub fn extract_technology_characteristic(
 ) -> Option<EnumCharacteristic> {
     let characteristic = match title {
         "NFC" => {
-            bool_value(&context, &value).and_then(|v| if v { Some(Technology::NFC) } else { None })
+            bool_value(&context, value).and_then(|v| if v { Some(Technology::NFC) } else { None })
         }
-        "Автофокус" => bool_value(&context, &value).and_then(|v| {
+        "Автофокус" => bool_value(&context, value).and_then(|v| {
             if v {
                 Some(Technology::Autofocus)
             } else {
                 None
             }
         }),
-        "Быстрая зарядка" => bool_value(&context, &value).and_then(|v| {
+        "Быстрая зарядка" => bool_value(&context, value).and_then(|v| {
             if v {
                 Some(Technology::FastCharging)
             } else {
                 None
             }
         }),
-        "ИК-порт" => bool_value(&context, &value).and_then(|v| {
+        "ИК-порт" => bool_value(&context, value).and_then(|v| {
             if v {
                 Some(Technology::InfraredPort)
             } else {
                 None
             }
         }),
-        "Беспроводная зарядка" => bool_value(&context, &value).and_then(|v| {
+        "Беспроводная зарядка" => bool_value(&context, value).and_then(|v| {
             if v {
                 Some(Technology::WirelessCharger)
             } else {
@@ -42,5 +42,5 @@ pub fn extract_technology_characteristic(
         _ => None,
     };
 
-    characteristic.and_then(|v| Some(EnumCharacteristic::TechnologySupport(v)))
+    characteristic.map(|v| EnumCharacteristic::TechnologySupport(v))
 }

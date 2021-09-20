@@ -44,7 +44,7 @@ where
         settings.name
     ));
 
-    serde_json::from_str(&message).expect("Failed to parse message")
+    serde_json::from_str(message).expect("Failed to parse message")
 }
 
 async fn get_consumer(settings: &QueueSettings) -> Consumer {

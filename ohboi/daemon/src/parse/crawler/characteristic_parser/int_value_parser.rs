@@ -29,6 +29,7 @@ pub fn int_max_memory_card_size_value(
 ) -> Option<i32> {
     int_value(context, &value.replace("до", "").replace("ГБ", ""))
 }
+
 pub fn int_guarantee_value(context: &CharacteristicParsingContext, value: &str) -> Option<i32> {
     int_value(
         context,
@@ -40,7 +41,7 @@ pub fn int_hz_value(context: &CharacteristicParsingContext, value: &str) -> Opti
 }
 pub fn int_memory_value(context: &CharacteristicParsingContext, value: &str) -> Option<i32> {
     let is_tb = value.contains("ТБ");
-    int_value(context, &value.replace("ГБ", "").replace("до", "")).map_or(None, |v| {
+    int_value(context, &value.replace("ГБ", "").replace("до", "")).and_then(|v| {
         if is_tb {
             Some(v * 1000)
         } else {

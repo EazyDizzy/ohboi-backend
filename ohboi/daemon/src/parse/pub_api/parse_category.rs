@@ -45,8 +45,9 @@ pub async fn parse_category(
                     Ok(response_data) => {
                         let parsed = parse_html(&response_data, crawler);
                         let mut amount_of_duplicates = 0;
+                        let parsed_amount = parsed.len();
 
-                        parsed.iter().for_each(|parsed_product| {
+                        parsed.into_iter().for_each(|parsed_product| {
                             let will_be_duplicated = products
                                 .iter()
                                 .any(|p| p.external_id == parsed_product.external_id);
@@ -54,12 +55,12 @@ pub async fn parse_category(
                             if will_be_duplicated {
                                 amount_of_duplicates += 1;
                             } else {
-                                products.push(parsed_product.clone());
+                                products.push(parsed_product);
                             }
                         });
                         all_successful = all_successful
-                            && !parsed.is_empty() // Some sites return empty page
-                            && amount_of_duplicates != parsed.len(); // But some return the last page (samsung)
+                            && parsed_amount != 0 // Some sites return empty page
+                            && amount_of_duplicates != parsed_amount; // But some return the last page (samsung)
                     }
                     Err(e) => {
                         amount_of_fails += 1;
@@ -76,12 +77,13 @@ pub async fn parse_category(
                             },
                         );
 
-                        let _result = postpone_page_parsing(
+                        postpone_page_parsing(
                             url.replace("{page}", (current_page).to_string().as_ref()),
                             source,
                             category,
                         )
-                        .await;
+                        .await
+                        .expect("Failed to postpone page parsing");
                     }
                 }
 

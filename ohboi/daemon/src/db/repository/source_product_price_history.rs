@@ -25,12 +25,12 @@ pub fn add_to_history_if_not_exists(source_product: &NewSourceProduct) {
         .expect("Error loading product");
 
     if results.is_empty() {
-        create(&source_product);
+        create(source_product);
     } else {
         let last_history_price = results.into_iter().next().unwrap();
 
         if !last_history_price.price.eq(&source_product.price) {
-            create(&source_product);
+            create(source_product);
         }
     }
 }

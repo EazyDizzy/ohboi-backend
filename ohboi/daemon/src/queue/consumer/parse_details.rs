@@ -18,7 +18,7 @@ pub struct ParseDetailsMessage {
 }
 
 pub async fn start() -> core::result::Result<(), ()> {
-    let _ = consume(&SETTINGS.queue_broker.queues.parse_details, execute)
+    consume(&SETTINGS.queue_broker.queues.parse_details, execute)
         .await
         .expect("Can't launch consumer");
 

@@ -4,7 +4,10 @@
     clippy::default_trait_access,
     clippy::module_inception,
     clippy::too_many_lines,
-    clippy::await_holding_lock
+    clippy::await_holding_lock,
+    clippy::expect_fun_call,
+    clippy::semicolon_if_nothing_returned,
+    clippy::non_ascii_literal
 )]
 #![warn(unused_extern_crates)]
 #[macro_use]
@@ -75,18 +78,18 @@ async fn main() {
     if args.worker_type == "producer" {
         let name = args.producer_name.expect("Failed to daemon producer name.");
 
-        let _res = launch_producer(name)
+        launch_producer(name)
             .await
             .expect(&format!("[{}] Failed to run producer.", &name));
     } else {
         let name = args.consumer_name.expect("Failed to daemon consumer name.");
 
-        let _res = launch_consumer(name)
+        launch_consumer(name)
             .await
             .expect(&format!("[{}] Failed to run consumer.", &name));
     }
 
-    let _close_result = guard.close(None);
+    guard.close(None);
 }
 
 lazy_static! {

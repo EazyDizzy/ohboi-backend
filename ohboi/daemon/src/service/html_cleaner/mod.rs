@@ -1,5 +1,3 @@
-use std::ops::Deref;
-
 use regex::Regex;
 use serde::Deserialize;
 
@@ -30,7 +28,7 @@ pub fn clean_html(html: &str) -> String {
 }
 
 fn replace_html_entities(mut html: String) -> String {
-    for symbol_mapping in SPEC_SYMBOLS_MAPPING_TYPED.deref() {
+    for symbol_mapping in &*SPEC_SYMBOLS_MAPPING_TYPED {
         let names_list = symbol_mapping.named.split(' ');
 
         for name in names_list {

@@ -20,7 +20,6 @@ use crate::service::cloud::upload_image_to_cloud;
 use crate::service::html_cleaner::clean_html;
 use crate::ConsumerName;
 
-#[derive(Clone)]
 struct UploadImageLaterMessage(String, String, String, SourceName);
 
 pub trait Crawler: Sync + Send {
@@ -143,10 +142,13 @@ pub trait Crawler: Sync + Send {
                 "both buy_button_node & unavailable_button_node not found! [{source}]",
                 source = self.get_source()
             );
-            error_reporting::warning(message.as_str(), &ReportingContext {
-                executor: &ConsumerName::ParseDetails,
-                action: "parse_availability"
-            });
+            error_reporting::warning(
+                message.as_str(),
+                &ReportingContext {
+                    executor: &ConsumerName::ParseDetails,
+                    action: "parse_availability",
+                },
+            );
 
             return None;
         }
@@ -170,7 +172,7 @@ pub async fn upload_extracted_images(
         },
         &ReportingContext {
             executor: &ConsumerName::ParseDetails,
-            action: "upload_extracted_images"
+            action: "upload_extracted_images",
         },
     );
 
@@ -213,10 +215,15 @@ pub async fn upload_extracted_images(
         }
     }
 
-    let messages = upload_later.lock().unwrap().to_vec();
-    for message in messages {
-        let _schedule_result =
-            postpone_image_parsing(message.0, message.1, message.2, message.3).await;
+    for message in upload_later.lock().unwrap().iter() {
+        postpone_image_parsing(
+            message.0.clone(),
+            message.1.clone(),
+            message.2.clone(),
+            message.3,
+        )
+        .await
+        .expect("Failed to postpone image parsing");
     }
 
     uploaded_urls
@@ -239,7 +246,7 @@ pub fn get_html_nodes<'result>(
     let mut valid = true;
     let context = ReportingContext {
         executor: &ConsumerName::ParseCategory,
-        action: "get_html_nodes"
+        action: "get_html_nodes",
     };
 
     if id_node.is_none() {

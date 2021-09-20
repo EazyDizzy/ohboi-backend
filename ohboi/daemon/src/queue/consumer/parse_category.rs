@@ -7,7 +7,7 @@ use crate::queue::producer::parse_category::ParseCategoryMessage;
 use crate::{ConsumerName, SETTINGS};
 
 pub async fn start() -> core::result::Result<(), ()> {
-    let _ = consume(&SETTINGS.queue_broker.queues.parse_category, execute)
+    consume(&SETTINGS.queue_broker.queues.parse_category, execute)
         .await
         .expect("Can't launch consumer");
 

@@ -110,7 +110,7 @@ pub fn extract_characteristics(
         skip_unneeded_characteristics,
     );
 
-    for (title, value) in characteristics.into_iter() {
+    for (title, value) in characteristics {
         error_reporting::info(
             format!(
                 "Unknown characteristic ({title}) with value ({value}) for [{external_id}]",

@@ -20,7 +20,7 @@ pub fn float_miui_version_value(
 }
 
 pub fn float_version_value(context: &CharacteristicParsingContext, mut value: &str) -> Option<f32> {
-    let dots: Vec<(usize, &str)> = value.match_indices(".").into_iter().collect();
+    let dots: Vec<(usize, &str)> = value.match_indices('.').into_iter().collect();
     if dots.len() > 1 {
         value = &value[0..dots.get(1).unwrap().0];
     }
@@ -41,8 +41,7 @@ pub fn float_ghz_value(context: &CharacteristicParsingContext, value: &str) -> O
             .replace("mhz", "")
             .replace("ghz", "")
             .as_str(),
-    )
-    .map_or(None, |v| {
+    ).and_then(|v| {
         if was_in_mgz {
             Some(v / 1000.0)
         } else {
@@ -59,11 +58,11 @@ pub fn float_diagonal_value(context: &CharacteristicParsingContext, value: &str)
 pub fn float_aperture_value(context: &CharacteristicParsingContext, value: &str) -> Option<f32> {
     float_value(
         context,
-        &value
+        value
             .replace("f", "")
             .replace("ƒ", "")
             .replace("/", "")
-            .split("+")
+            .split('+')
             .into_iter()
             .next()
             .unwrap(),

@@ -9,8 +9,6 @@ pub mod repository;
 #[derive(Debug)]
 enum Executor {
     Characteristic,
-    Product,
-    User,
 }
 
 impl DisplayString for Executor {

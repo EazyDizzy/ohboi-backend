@@ -32,9 +32,9 @@ pub fn get_filtered_products(filters: &ProductFilters) -> Vec<Product> {
     let (joins, filter, group_by, having) =
         filter_by_title(joins, filter, group_by, having, &filters.title);
     let (joins, filter, group_by, having) =
-        filter_by_category_and_source(joins, filter, group_by, having, &filters);
+        filter_by_category_and_source(joins, filter, group_by, having, filters);
     let (joins, filter, group_by, having) =
-        filter_by_price(joins, filter, group_by, having, &filters);
+        filter_by_price(joins, filter, group_by, having, filters);
     let (joins, filter, group_by, having) =
         filter_by_characteristics(joins, filter, group_by, having, &filters.characteristics);
 
@@ -46,7 +46,10 @@ pub fn get_filtered_products(filters: &ProductFilters) -> Vec<Product> {
 
     if filters.title.is_some() {
         sql_query(query)
-            .bind::<Text, _>(format!("%{}%", filters.title.as_ref().unwrap().to_lowercase()))
+            .bind::<Text, _>(format!(
+                "%{}%",
+                filters.title.as_ref().unwrap().to_lowercase()
+            ))
             .load::<Product>(connection)
             .expect("Error loading products")
     } else {
@@ -88,7 +91,7 @@ fn filter_by_characteristics(
         all_values.push(values);
     }
 
-    if all_values.is_empty() == false {
+    if !all_values.is_empty() {
         joins.push_str(
             " INNER JOIN product_characteristic c
                     ON (c.product_id = p.id) ",
@@ -108,7 +111,7 @@ fn filter_by_characteristics(
 
         group_by.push_str(" GROUP BY p.id ");
 
-        having.push_str(&get_having_for_characteristic_filter(&chars));
+        having.push_str(&get_having_for_characteristic_filter(chars));
     }
 
     (joins, filter, group_by, having)
@@ -130,7 +133,7 @@ fn get_having_for_characteristic_filter(chars: &ProductCharacteristicsMapped) ->
         grouped_filters.push(char.characteristic_id);
     }
 
-    grouped_filters.sort();
+    grouped_filters.sort_unstable();
     grouped_filters.dedup();
     let amount_of_unique_chars = grouped_filters.len();
 
@@ -173,14 +176,17 @@ fn filter_by_category_and_source(
 ) -> (String, String, String, String) {
     if let Some(filtered_category) = &filters.category {
         let ids: Vec<String> = filtered_category
-            .into_iter()
-            .map(|v| v.to_string())
+            .iter()
+            .map(std::string::ToString::to_string)
             .collect();
         filter.push_str(&format!(" AND p.category IN ({}) ", ids.join(",")));
     }
 
     if let Some(source) = &filters.source {
-        let ids: Vec<String> = source.into_iter().map(|v| v.to_string()).collect();
+        let ids: Vec<String> = source
+            .iter()
+            .map(std::string::ToString::to_string)
+            .collect();
         filter.push_str(&format!(" AND sp.source_id IN ({}) ", ids.join(",")));
 
         joins.push_str(" INNER JOIN source_product sp on p.id = sp.product_id ");
@@ -196,14 +202,14 @@ fn filter_by_title(
     having: String,
     title: &Option<String>,
 ) -> (String, String, String, String) {
-    if let Some(_) = title {
+    if title.is_some() {
         filter.push_str(" AND LOWER(p.title) LIKE $1 ");
     }
 
     (joins, filter, group_by, having)
 }
 
-fn get_enum_values_expression(values: &Vec<CharacteristicEnumValue>) -> Option<String> {
+fn get_enum_values_expression(values: &[CharacteristicEnumValue]) -> Option<String> {
     if values.is_empty() {
         return None;
     }
@@ -226,7 +232,7 @@ fn get_enum_values_expression(values: &Vec<CharacteristicEnumValue>) -> Option<S
 
     get_id_values_expression(&converted_to_ids)
 }
-fn get_string_values_expression(values: &Vec<CharacteristicStringValue>) -> Option<String> {
+fn get_string_values_expression(values: &[CharacteristicStringValue]) -> Option<String> {
     if values.is_empty() {
         return None;
     }
@@ -249,7 +255,7 @@ fn get_string_values_expression(values: &Vec<CharacteristicStringValue>) -> Opti
 
     get_id_values_expression(&converted_to_ids)
 }
-fn get_float_values_expression(values: &Vec<CharacteristicFloatValue>) -> Option<String> {
+fn get_float_values_expression(values: &[CharacteristicFloatValue]) -> Option<String> {
     if values.is_empty() {
         return None;
     }

@@ -49,12 +49,13 @@ async fn save_parsed_product(
     let product = create_if_not_exists(&international_parsed_product, category);
 
     if product.description.is_none() || product.images.is_none() {
-        let _res = postpone_details_parsing(
+        postpone_details_parsing(
             international_parsed_product.external_id.clone(),
             source,
             product.id,
         )
-        .await;
+        .await
+            .expect("Can't postpone deatils parsing");
     }
 
     link_to_product(&product, &international_parsed_product, source);
