@@ -4,18 +4,18 @@ use std::fmt::{Debug, Display};
 use bigdecimal::ToPrimitive;
 
 use lib::db;
+use lib::diesel::{RunQueryDsl, sql_query};
 use lib::diesel::prelude::*;
-use lib::diesel::{sql_query, RunQueryDsl};
 use lib::service::currency_converter::convert_from;
 
 use crate::db::product::entity::Product;
-use crate::db::product_characteristic::product_characteristic_string_value;
 use crate::db::product_characteristic::{
     product_characteristic_enum_value, product_characteristic_float_value,
 };
+use crate::db::product_characteristic::product_characteristic_string_value;
 use crate::dto::product::{
     CharacteristicEnumValue, CharacteristicFloatValue, CharacteristicIntValue,
-    CharacteristicStringValue,
+    CharacteristicStringValue, ProductCharacteristicsMapped,
 };
 use crate::endpoint::product::ProductFilters;
 
@@ -25,12 +25,20 @@ pub fn get_filtered_products(filters: &ProductFilters) -> Vec<Product> {
     DISTINCT(p.id), p.title, p.description, p.lowest_price, p.highest_price, p.images, p.category, p.enabled, p.created_at, p.updated_at
     FROM product p".to_owned();
 
-    let filter = get_filter_query(&filters);
-    let joins = get_join_query(&filters);
-    let having = get_having_query(&filters);
-    let group_by = get_group_by_query(&filters);
+    let joins = "".to_owned();
+    let filter = "WHERE p.enabled = true".to_owned();
+    let group_by = "".to_owned();
+    let having = "".to_owned();
 
-    // TODO group by filters, not by types of query
+    let (joins, filter, group_by, having) =
+        filter_by_title(joins, filter, group_by, having, &filters.title);
+    let (joins, filter, group_by, having) =
+        filter_by_category_and_source(joins, filter, group_by, having, &filters);
+    let (joins, filter, group_by, having) =
+        filter_by_price(joins, filter, group_by, having, &filters);
+    let (joins, filter, group_by, having) =
+        filter_by_characteristics(joins, filter, group_by, having, &filters.characteristics);
+
     query.push_str(&joins);
     query.push_str(&filter);
     query.push_str(&group_by);
@@ -43,96 +51,156 @@ pub fn get_filtered_products(filters: &ProductFilters) -> Vec<Product> {
         .expect("Error loading products")
 }
 
-fn get_group_by_query(filters: &&ProductFilters) -> String {
-    let mut group_by = "".to_owned();
-
-    if let Some(chars) = &filters.characteristics {
-        // TODO check in not empty chars
-        group_by.push_str(" GROUP BY p.id ");
+fn filter_by_characteristics(
+    mut joins: String,
+    mut filter: String,
+    mut group_by: String,
+    mut having: String,
+    filters: &Option<ProductCharacteristicsMapped>,
+) -> (String, String, String, String) {
+    if filters.is_none() {
+        return (joins, filter, group_by, having);
     }
 
-    group_by
-}
+    let chars = filters.as_ref().unwrap();
+    let int_values = get_int_values_expression(&chars.int);
+    let float_values = get_float_values_expression(&chars.float);
+    let string_values = get_string_values_expression(&chars.string);
+    let enum_values = get_enum_values_expression(&chars.enums);
+    let mut all_values = vec![];
 
-fn get_having_query(filters: &&ProductFilters) -> String {
-    let mut having = "".to_owned();
-
-    if let Some(chars) = &filters.characteristics {
-        let mut grouped_filters = vec![];
-
-        for char in &chars.int {
-            grouped_filters.push(char.characteristic_id);
-        }
-        for char in &chars.float {
-            grouped_filters.push(char.characteristic_id);
-        }
-        for char in &chars.enums {
-            grouped_filters.push(char.characteristic_id);
-        }
-        for char in &chars.string {
-            grouped_filters.push(char.characteristic_id);
-        }
-
-        grouped_filters.sort();
-        grouped_filters.dedup();
-        let amount_of_unique_chars = grouped_filters.len();
-        having.push_str(&format!(
-            " HAVING ARRAY_LENGTH(ARRAY_AGG(DISTINCT (c.characteristic_id)), 1) = {} ",
-            amount_of_unique_chars
-        ));
+    if let Some(values) = int_values {
+        all_values.push(values);
+    }
+    if let Some(values) = float_values {
+        all_values.push(values);
+    }
+    if let Some(values) = string_values {
+        all_values.push(values);
+    }
+    if let Some(values) = enum_values {
+        all_values.push(values);
     }
 
-    having
-}
-
-fn get_join_query(filters: &ProductFilters) -> String {
-    let mut joins = "".to_owned();
-
-    if filters.source.is_some() {
-        joins.push_str(" INNER JOIN source_product sp on p.id = sp.product_id ");
-    }
-
-    if let Some(chars) = &filters.characteristics {
-        let int_values = get_int_values_expression(&chars.int);
-        let float_values = get_float_values_expression(&chars.float);
-        let string_values = get_string_values_expression(&chars.string);
-        let enum_values = get_enum_values_expression(&chars.enums);
-        let mut all_values = vec![];
-
-        if let Some(values) = int_values {
-            all_values.push(values);
-        }
-        if let Some(values) = float_values {
-            all_values.push(values);
-        }
-        if let Some(values) = string_values {
-            all_values.push(values);
-        }
-        if let Some(values) = enum_values {
-            all_values.push(values);
-        }
-
-        if all_values.is_empty() == false {
-            joins.push_str(
-                " INNER JOIN product_characteristic c
+    if all_values.is_empty() == false {
+        joins.push_str(
+            " INNER JOIN product_characteristic c
                     ON (c.product_id = p.id) ",
-            );
+        );
 
-            let values_str = all_values.join(",");
+        let values_str = all_values.join(",");
 
-            joins.push_str(&format!(
-                " INNER JOIN (
+        joins.push_str(&format!(
+            " INNER JOIN (
                        VALUES
                            {}
                    ) f (characteristic_id, value_id)
                    ON (f.characteristic_id = c.characteristic_id AND
                        c.value_id = ANY (f.value_id)) ",
-                values_str
-            ))
-        }
+            values_str
+        ));
+
+        group_by.push_str(" GROUP BY p.id ");
+
+        having.push_str(&get_having_for_characteristic_filter(&chars));
     }
 
-    joins
+    (joins, filter, group_by, having)
+}
+
+fn get_having_for_characteristic_filter(chars: &ProductCharacteristicsMapped) -> String {
+    let mut grouped_filters = vec![];
+
+    for char in &chars.int {
+        grouped_filters.push(char.characteristic_id);
+    }
+    for char in &chars.float {
+        grouped_filters.push(char.characteristic_id);
+    }
+    for char in &chars.enums {
+        grouped_filters.push(char.characteristic_id);
+    }
+    for char in &chars.string {
+        grouped_filters.push(char.characteristic_id);
+    }
+
+    grouped_filters.sort();
+    grouped_filters.dedup();
+    let amount_of_unique_chars = grouped_filters.len();
+
+   format!(
+        " HAVING ARRAY_LENGTH(ARRAY_AGG(DISTINCT (c.characteristic_id)), 1) = {} ",
+        amount_of_unique_chars
+    )
+}
+
+fn filter_by_price(
+    mut joins: String,
+    mut filter: String,
+    mut group_by: String,
+    mut having: String,
+    filters: &ProductFilters,
+) -> (String, String, String, String) {
+    if let Some(min_price) = filters.min_price {
+        filter.push_str(&format!(
+            " AND p.highest_price >= {} ",
+            convert_from(min_price, filters.currency)
+        ));
+    }
+
+    if let Some(max_price) = filters.max_price {
+        filter.push_str(&format!(
+            " AND p.lowest_price <= {} ",
+            convert_from(max_price, filters.currency)
+        ));
+    }
+
+    (joins, filter, group_by, having)
+}
+
+fn filter_by_category_and_source(
+    mut joins: String,
+    mut filter: String,
+    mut group_by: String,
+    mut having: String,
+    filters: &ProductFilters,
+) -> (String, String, String, String) {
+    if let Some(filtered_category) = &filters.category {
+        let ids: Vec<String> = filtered_category
+            .into_iter()
+            .map(|v| v.to_string())
+            .collect();
+        filter.push_str(&format!(" AND p.category IN ({}) ", ids.join(",")));
+    }
+
+    if let Some(source) = &filters.source {
+        let ids: Vec<String> = source.into_iter().map(|v| v.to_string()).collect();
+        filter.push_str(&format!(" AND sp.source_id IN ({}) ", ids.join(",")));
+
+        joins.push_str(" INNER JOIN source_product sp on p.id = sp.product_id ");
+    }
+
+    (joins, filter, group_by, having)
+}
+
+fn filter_by_title(
+    mut joins: String,
+    mut filter: String,
+    mut group_by: String,
+    mut having: String,
+    title: &Option<String>,
+) -> (String, String, String, String) {
+    // TODO sanitize
+    if let Some(filtered_title) = title {
+        let requested_title = filtered_title.to_lowercase();
+
+        filter.push_str(&format!(
+            " AND LOWER(p.title) LIKE '%{}%' ",
+            requested_title
+        ));
+    }
+
+    (joins, filter, group_by, having)
 }
 
 fn get_enum_values_expression(values: &Vec<CharacteristicEnumValue>) -> Option<String> {
@@ -239,86 +307,9 @@ fn group_values_to_string(grouped_values: BTreeMap<i16, Vec<String>>) -> String 
     v.join(", ")
 }
 
-fn get_filter_query(filters: &ProductFilters) -> String {
-    let mut filter = "WHERE p.enabled = true".to_owned();
-
-    // TODO params sanitization
-    if let Some(filtered_title) = &filters.title {
-        let requested_title = filtered_title.to_lowercase();
-        filter.push_str(&format!(
-            " AND LOWER(p.title) LIKE '%{}%' ",
-            requested_title
-        ));
-    }
-
-    if let Some(filtered_category) = &filters.category {
-        let ids: Vec<String> = filtered_category
-            .into_iter()
-            .map(|v| v.to_string())
-            .collect();
-        filter.push_str(&format!(" AND p.category IN ({}) ", ids.join(",")));
-    }
-
-    if let Some(source) = &filters.source {
-        let ids: Vec<String> = source.into_iter().map(|v| v.to_string()).collect();
-        filter.push_str(&format!(" AND sp.source_id IN ({}) ", ids.join(",")));
-    }
-
-    if let Some(min_price) = filters.min_price {
-        filter.push_str(&format!(
-            " AND p.highest_price >= {} ",
-            convert_from(min_price, filters.currency)
-        ));
-    }
-
-    if let Some(max_price) = filters.max_price {
-        filter.push_str(&format!(
-            " AND p.lowest_price <= {} ",
-            convert_from(max_price, filters.currency)
-        ));
-    }
-
-    filter
-}
-
 mod tests {
-    use crate::db::product::repository::search::get_filter_query;
     use crate::db::product::repository::search::get_int_values_expression;
     use crate::dto::product::CharacteristicIntValue;
-    use crate::endpoint::product::ProductFilters;
-
-    #[test]
-    fn it_filters_by_title() {
-        assert_eq!(
-            get_filter_query(&ProductFilters {
-                title: Some("title_value".to_owned()),
-                ..Default::default()
-            }),
-            "WHERE p.enabled = true AND LOWER(p.title) LIKE '%title_value%' ".to_owned()
-        );
-    }
-
-    #[test]
-    fn it_filters_by_category() {
-        assert_eq!(
-            get_filter_query(&ProductFilters {
-                category: Some(vec![1, 2]),
-                ..Default::default()
-            }),
-            "WHERE p.enabled = true AND p.category IN (1,2) ".to_owned()
-        );
-    }
-
-    #[test]
-    fn it_filters_by_source() {
-        assert_eq!(
-            get_filter_query(&ProductFilters {
-                source: Some(vec![1, 2]),
-                ..Default::default()
-            }),
-            "WHERE p.enabled = true AND sp.source_id IN (1,2) ".to_owned()
-        );
-    }
 
     #[test]
     fn it_creates_int_value_expression() {
