@@ -1,3 +1,4 @@
+use serde::Deserialize;
 use serde::Serialize;
 
 use crate::dto::characteristic::enum_characteristic::EnumCharacteristic;
@@ -10,7 +11,7 @@ pub mod float_characteristic;
 pub mod int_characteristic;
 pub mod string_characteristic;
 
-#[derive(Serialize, Debug, PartialEq, Clone)]
+#[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
 pub enum TypedCharacteristic {
     Float(FloatCharacteristic),
     Int(IntCharacteristic),

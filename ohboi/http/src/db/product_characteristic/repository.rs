@@ -107,6 +107,7 @@ fn get_mapped_float_values(
         .load::<ProductCharacteristicFloatValue>(connection)
         .expect("Cannot load product product_characteristic_float_value")
 }
+
 fn get_mapped_string_values(
     values: &Vec<ProductCharacteristic>,
 ) -> Vec<ProductCharacteristicStringValue> {

@@ -7,6 +7,9 @@ use lib::db::repository::exchange_rate::try_get_exchange_rate_by_code;
 use crate::db::product::repository::{get_filtered_products, get_product_info};
 use crate::util::product::convert_product_prices;
 use lib::my_enum::CurrencyEnum;
+use lib::dto::characteristic::TypedCharacteristic;
+use crate::dto::product::ProductCharacteristicsMapped;
+
 // TODO add hostname to the image urls to remove these dependency from fe
 pub async fn get_product(params: Query<ProductParams>) -> HttpResponse {
     let product = get_product_info(&params);
@@ -41,7 +44,7 @@ pub async fn get_products(filters: Json<ProductFilters>) -> HttpResponse {
     HttpResponse::Ok().json(products)
 }
 
-#[derive(Debug, Serialize, Deserialize, Validate)]
+#[derive(Debug, Serialize, Deserialize, Validate, Default)]
 pub struct ProductFilters {
     #[validate(length(min = 1, max = 1000, message = "should have length from 1 to 1000"))]
     pub title: Option<String>,
@@ -67,4 +70,6 @@ pub struct ProductFilters {
         range(max = 4294967295, message = "should be less than 4294967295")
     )]
     pub max_price: Option<f64>,
+
+    pub characteristics: Option<ProductCharacteristicsMapped>,
 }

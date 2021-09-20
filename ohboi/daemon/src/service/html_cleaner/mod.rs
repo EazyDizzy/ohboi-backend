@@ -13,7 +13,7 @@ lazy_static! {
     static ref SCRIPTS_AND_STYES_REGEX: Regex = Regex::new(r"(?im)>[^<]+</(script|style)").unwrap();
     static ref HTML_TAGS_REGEX: Regex = Regex::new(r"(?im)<[^>]*>").unwrap();
 }
-
+// TODO remove empty tags
 pub fn inner_text(html: &str) -> String {
     let no_new_lines_html = NEW_LINES_REGEX.replace_all(html, "").to_string();
     let no_scripts_html = SCRIPTS_AND_STYES_REGEX

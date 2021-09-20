@@ -1,9 +1,10 @@
 use std::fmt;
 
+use serde::Deserialize;
 use serde::Serialize;
 use strum_macros::EnumIter;
 
-#[derive(Serialize, Debug, PartialEq, EnumIter, Clone)]
+#[derive(Serialize, Deserialize, Debug, PartialEq, EnumIter, Clone)]
 pub enum StringCharacteristic {
     Processor(String),
     VideoProcessor(String),
