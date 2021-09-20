@@ -8,7 +8,7 @@ pub mod float_characteristic;
 pub mod int_characteristic;
 pub mod string_characteristic;
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum TypedCharacteristic {
     Float(FloatCharacteristic),
     Int(IntCharacteristic),

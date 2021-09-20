@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 
 use lib::my_enum::CurrencyEnum;
 
-#[derive(Serialize, Queryable, Debug)]
+#[derive(Queryable, Debug)]
 pub struct Source {
     pub id: i32,
     pub site_name: String,
@@ -13,9 +13,7 @@ pub struct Source {
     pub currency: CurrencyEnum,
     pub enabled: bool,
 
-    #[serde(skip)]
     pub created_at: NaiveDateTime,
-    #[serde(skip)]
     pub updated_at: NaiveDateTime,
 }
 

@@ -41,7 +41,7 @@ pub fn update_details(existent_product_id: i32, additional_info: &AdditionalPars
         .characteristics
         .iter()
         .map(|tc| {
-            let characteristic_id = get_characteristic_id(tc.clone());
+            let characteristic_id = get_characteristic_id(&tc);
 
             let value_id = match tc {
                 TypedCharacteristic::Float(v) => {
@@ -63,7 +63,7 @@ pub fn update_details(existent_product_id: i32, additional_info: &AdditionalPars
                     product_value.and_then(|v| Some(v.id))
                 }
                 TypedCharacteristic::Enum(v) => {
-                    let product_value = product_characteristic_enum_value::get_value_by_enum(*v);
+                    let product_value = product_characteristic_enum_value::get_value_by_enum(v);
 
                     Some(product_value.id)
                 }

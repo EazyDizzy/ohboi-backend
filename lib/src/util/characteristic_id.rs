@@ -4,7 +4,7 @@ use crate::dto::characteristic::int_characteristic::IntCharacteristic;
 use crate::dto::characteristic::string_characteristic::StringCharacteristic;
 use crate::dto::characteristic::TypedCharacteristic;
 
-pub fn get_characteristic_id(char: TypedCharacteristic) -> i16 {
+pub fn get_characteristic_id(char: &TypedCharacteristic) -> i16 {
     match char {
         TypedCharacteristic::Float(v) => match v {
             FloatCharacteristic::Width_mm(_) => 1,

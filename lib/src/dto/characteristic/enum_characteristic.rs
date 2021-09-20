@@ -4,7 +4,7 @@ use std::fmt;
 
 use strum_macros::EnumVariantNames;
 
-#[derive(Debug, Clone, Copy, EnumVariantNames)]
+#[derive(Debug, EnumVariantNames)]
 pub enum EnumCharacteristic {
     ChargingConnectorType(ChargingConnectorType),
     BatteryType(BatteryType),
@@ -89,13 +89,13 @@ impl EnumCharacteristic {
     }
 }
 
-#[derive(Debug, Copy, Clone, EnumVariantNames)]
+#[derive(Debug, EnumVariantNames)]
 pub enum BatteryType {
     LithiumIon,
     LithiumPolymer,
 }
 
-#[derive(Debug, Copy, Clone, EnumVariantNames)]
+#[derive(Debug, EnumVariantNames)]
 pub enum Material {
     Metal,
     Glass,
@@ -104,7 +104,7 @@ pub enum Material {
     Ceramics,
 }
 
-#[derive(Debug, Copy, Clone, EnumVariantNames)]
+#[derive(Debug, EnumVariantNames)]
 pub enum SimCard {
     FullSize,
     Mini,
@@ -112,14 +112,14 @@ pub enum SimCard {
     Nano,
     Embedded,
 }
-#[derive(Debug, Copy, Clone, EnumVariantNames)]
+#[derive(Debug, EnumVariantNames)]
 pub enum DisplayType {
     Oled,
     Amoled,
     IPS,
 }
 
-#[derive(Debug, Copy, Clone, EnumVariantNames)]
+#[derive(Debug, EnumVariantNames)]
 pub enum InternetConnectionTechnology {
     GPRS,
     EDGE,
@@ -128,7 +128,7 @@ pub enum InternetConnectionTechnology {
     _5G,
 }
 
-#[derive(Debug, Copy, Clone, EnumVariantNames)]
+#[derive(Debug, EnumVariantNames)]
 pub enum SatelliteNavigation {
     GPS,
     A_GPS,
@@ -137,7 +137,7 @@ pub enum SatelliteNavigation {
     GLONASS,
 }
 
-#[derive(Debug, Copy, Clone, EnumVariantNames)]
+#[derive(Debug, EnumVariantNames)]
 pub enum WifiStandard {
     _4,
     _5,
@@ -149,18 +149,18 @@ pub enum WifiStandard {
     GC,
 }
 
-#[derive(Debug, Copy, Clone, EnumVariantNames)]
+#[derive(Debug, EnumVariantNames)]
 pub enum ChargingConnectorType {
     USBTypeC,
     MicroUSB,
 }
-#[derive(Debug, Copy, Clone, EnumVariantNames)]
+#[derive(Debug, EnumVariantNames)]
 pub enum AudioJack {
     _3_5mm,
     USBTypeC,
 }
 
-#[derive(Debug, Copy, Clone, EnumVariantNames)]
+#[derive(Debug, EnumVariantNames)]
 pub enum Technology {
     NFC,
     FastCharging,
@@ -169,12 +169,12 @@ pub enum Technology {
     Autofocus,
 }
 
-#[derive(Debug, Copy, Clone, EnumVariantNames)]
+#[derive(Debug, EnumVariantNames)]
 pub enum Country {
     China,
 }
 
-#[derive(Debug, Copy, Clone, EnumVariantNames)]
+#[derive(Debug, EnumVariantNames)]
 pub enum MemoryCardSlot {
     Hybrid,
     Separate,
