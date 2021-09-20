@@ -1,18 +1,17 @@
 use std::collections::BTreeMap;
-use std::fmt::{Debug, Display};
 
 use bigdecimal::ToPrimitive;
 
 use lib::db;
-use lib::diesel::{RunQueryDsl, sql_query};
-use lib::diesel::prelude::*;
+use lib::diesel::sql_types::Text;
+use lib::diesel::{sql_query, RunQueryDsl};
 use lib::service::currency_converter::convert_from;
 
 use crate::db::product::entity::Product;
+use crate::db::product_characteristic::product_characteristic_string_value;
 use crate::db::product_characteristic::{
     product_characteristic_enum_value, product_characteristic_float_value,
 };
-use crate::db::product_characteristic::product_characteristic_string_value;
 use crate::dto::product::{
     CharacteristicEnumValue, CharacteristicFloatValue, CharacteristicIntValue,
     CharacteristicStringValue, ProductCharacteristicsMapped,
@@ -25,10 +24,10 @@ pub fn get_filtered_products(filters: &ProductFilters) -> Vec<Product> {
     DISTINCT(p.id), p.title, p.description, p.lowest_price, p.highest_price, p.images, p.category, p.enabled, p.created_at, p.updated_at
     FROM product p".to_owned();
 
-    let joins = "".to_owned();
-    let filter = "WHERE p.enabled = true".to_owned();
-    let group_by = "".to_owned();
-    let having = "".to_owned();
+    let joins = "\n ".to_owned();
+    let filter = "\n WHERE p.enabled = true ".to_owned();
+    let group_by = "\n ".to_owned();
+    let having = "\n ".to_owned();
 
     let (joins, filter, group_by, having) =
         filter_by_title(joins, filter, group_by, having, &filters.title);
@@ -43,7 +42,7 @@ pub fn get_filtered_products(filters: &ProductFilters) -> Vec<Product> {
     query.push_str(&filter);
     query.push_str(&group_by);
     query.push_str(&having);
-    query.push_str(" ORDER BY p.id ASC LIMIT 20");
+    query.push_str("\n ORDER BY p.id ASC LIMIT 20");
     println!("{}", query);
 
     sql_query(query)
@@ -53,7 +52,7 @@ pub fn get_filtered_products(filters: &ProductFilters) -> Vec<Product> {
 
 fn filter_by_characteristics(
     mut joins: String,
-    mut filter: String,
+    filter: String,
     mut group_by: String,
     mut having: String,
     filters: &Option<ProductCharacteristicsMapped>,
@@ -128,17 +127,17 @@ fn get_having_for_characteristic_filter(chars: &ProductCharacteristicsMapped) ->
     grouped_filters.dedup();
     let amount_of_unique_chars = grouped_filters.len();
 
-   format!(
+    format!(
         " HAVING ARRAY_LENGTH(ARRAY_AGG(DISTINCT (c.characteristic_id)), 1) = {} ",
         amount_of_unique_chars
     )
 }
 
 fn filter_by_price(
-    mut joins: String,
+    joins: String,
     mut filter: String,
-    mut group_by: String,
-    mut having: String,
+    group_by: String,
+    having: String,
     filters: &ProductFilters,
 ) -> (String, String, String, String) {
     if let Some(min_price) = filters.min_price {
@@ -161,8 +160,8 @@ fn filter_by_price(
 fn filter_by_category_and_source(
     mut joins: String,
     mut filter: String,
-    mut group_by: String,
-    mut having: String,
+    group_by: String,
+    having: String,
     filters: &ProductFilters,
 ) -> (String, String, String, String) {
     if let Some(filtered_category) = &filters.category {
@@ -184,10 +183,10 @@ fn filter_by_category_and_source(
 }
 
 fn filter_by_title(
-    mut joins: String,
+    joins: String,
     mut filter: String,
-    mut group_by: String,
-    mut having: String,
+    group_by: String,
+    having: String,
     title: &Option<String>,
 ) -> (String, String, String, String) {
     // TODO sanitize

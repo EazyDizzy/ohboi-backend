@@ -7,7 +7,6 @@ use lib::db::repository::exchange_rate::try_get_exchange_rate_by_code;
 use crate::db::product::repository::{get_filtered_products, get_product_info};
 use crate::util::product::convert_product_prices;
 use lib::my_enum::CurrencyEnum;
-use lib::dto::characteristic::TypedCharacteristic;
 use crate::dto::product::ProductCharacteristicsMapped;
 
 // TODO add hostname to the image urls to remove these dependency from fe
