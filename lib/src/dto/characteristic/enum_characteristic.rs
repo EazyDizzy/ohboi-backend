@@ -2,11 +2,9 @@
 
 use std::fmt;
 
-use serde::Deserialize;
-use serde::Serialize;
 use strum_macros::EnumVariantNames;
 
-#[derive(Serialize, Deserialize, Debug, PartialEq, Clone, Copy, EnumVariantNames)]
+#[derive(Debug, Clone, Copy, EnumVariantNames)]
 pub enum EnumCharacteristic {
     ChargingConnectorType(ChargingConnectorType),
     BatteryType(BatteryType),
@@ -91,13 +89,13 @@ impl EnumCharacteristic {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug, PartialEq, Copy, Clone, EnumVariantNames)]
+#[derive(Debug, Copy, Clone, EnumVariantNames)]
 pub enum BatteryType {
     LithiumIon,
     LithiumPolymer,
 }
 
-#[derive(Serialize, Deserialize, Debug, PartialEq, Copy, Clone, EnumVariantNames)]
+#[derive(Debug, Copy, Clone, EnumVariantNames)]
 pub enum Material {
     Metal,
     Glass,
@@ -106,7 +104,7 @@ pub enum Material {
     Ceramics,
 }
 
-#[derive(Serialize, Deserialize, Debug, PartialEq, Copy, Clone, EnumVariantNames)]
+#[derive(Debug, Copy, Clone, EnumVariantNames)]
 pub enum SimCard {
     FullSize,
     Mini,
@@ -114,14 +112,14 @@ pub enum SimCard {
     Nano,
     Embedded,
 }
-#[derive(Serialize, Deserialize, Debug, PartialEq, Copy, Clone, EnumVariantNames)]
+#[derive(Debug, Copy, Clone, EnumVariantNames)]
 pub enum DisplayType {
     Oled,
     Amoled,
     IPS,
 }
 
-#[derive(Serialize, Deserialize, Debug, PartialEq, Copy, Clone, EnumVariantNames)]
+#[derive(Debug, Copy, Clone, EnumVariantNames)]
 pub enum InternetConnectionTechnology {
     GPRS,
     EDGE,
@@ -130,7 +128,7 @@ pub enum InternetConnectionTechnology {
     _5G,
 }
 
-#[derive(Serialize, Deserialize, Debug, PartialEq, Copy, Clone, EnumVariantNames)]
+#[derive(Debug, Copy, Clone, EnumVariantNames)]
 pub enum SatelliteNavigation {
     GPS,
     A_GPS,
@@ -139,7 +137,7 @@ pub enum SatelliteNavigation {
     GLONASS,
 }
 
-#[derive(Serialize, Deserialize, Debug, PartialEq, Copy, Clone, EnumVariantNames)]
+#[derive(Debug, Copy, Clone, EnumVariantNames)]
 pub enum WifiStandard {
     _4,
     _5,
@@ -151,18 +149,18 @@ pub enum WifiStandard {
     GC,
 }
 
-#[derive(Serialize, Deserialize, Debug, PartialEq, Copy, Clone, EnumVariantNames)]
+#[derive(Debug, Copy, Clone, EnumVariantNames)]
 pub enum ChargingConnectorType {
     USBTypeC,
     MicroUSB,
 }
-#[derive(Serialize, Deserialize, Debug, PartialEq, Copy, Clone, EnumVariantNames)]
+#[derive(Debug, Copy, Clone, EnumVariantNames)]
 pub enum AudioJack {
     _3_5mm,
     USBTypeC,
 }
 
-#[derive(Serialize, Deserialize, Debug, PartialEq, Copy, Clone, EnumVariantNames)]
+#[derive(Debug, Copy, Clone, EnumVariantNames)]
 pub enum Technology {
     NFC,
     FastCharging,
@@ -171,18 +169,18 @@ pub enum Technology {
     Autofocus,
 }
 
-#[derive(Serialize, Deserialize, Debug, PartialEq, Copy, Clone, EnumVariantNames)]
+#[derive(Debug, Copy, Clone, EnumVariantNames)]
 pub enum Country {
     China,
 }
 
-#[derive(Serialize, Deserialize, Debug, PartialEq, Copy, Clone, EnumVariantNames)]
+#[derive(Debug, Copy, Clone, EnumVariantNames)]
 pub enum MemoryCardSlot {
     Hybrid,
     Separate,
     None,
 }
-#[derive(Serialize, Deserialize, Debug, PartialEq, Copy, Clone, EnumVariantNames)]
+#[derive(Debug, PartialEq, Copy, Clone, EnumVariantNames)]
 pub enum MediaFormat {
     MP4,
     M4V,

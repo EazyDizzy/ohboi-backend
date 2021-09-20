@@ -68,7 +68,8 @@ fn filter_by_characteristics(
     }
 
     let chars = filters.as_ref().unwrap();
-    let int_values = get_int_values_expression(&chars.int);
+    // Int values don't have ids and are stored directly as value.
+    let int_values = get_id_values_expression(&chars.int);
     let float_values = get_float_values_expression(&chars.float);
     let string_values = get_string_values_expression(&chars.string);
     let enum_values = get_enum_values_expression(&chars.enums);
@@ -223,7 +224,7 @@ fn get_enum_values_expression(values: &Vec<CharacteristicEnumValue>) -> Option<S
         })
         .collect();
 
-    get_int_values_expression(&converted_to_ids)
+    get_id_values_expression(&converted_to_ids)
 }
 fn get_string_values_expression(values: &Vec<CharacteristicStringValue>) -> Option<String> {
     if values.is_empty() {
@@ -246,7 +247,7 @@ fn get_string_values_expression(values: &Vec<CharacteristicStringValue>) -> Opti
         })
         .collect();
 
-    get_int_values_expression(&converted_to_ids)
+    get_id_values_expression(&converted_to_ids)
 }
 fn get_float_values_expression(values: &Vec<CharacteristicFloatValue>) -> Option<String> {
     if values.is_empty() {
@@ -269,12 +270,10 @@ fn get_float_values_expression(values: &Vec<CharacteristicFloatValue>) -> Option
         })
         .collect();
 
-    get_int_values_expression(&converted_to_ids)
+    get_id_values_expression(&converted_to_ids)
 }
 
-/// Int values don't have ids and are stored directly as value.
-/// So this function can be reused by any other type after some mapping
-fn get_int_values_expression(values: &Vec<CharacteristicIntValue>) -> Option<String> {
+fn get_id_values_expression(values: &Vec<CharacteristicIntValue>) -> Option<String> {
     if values.is_empty() {
         return None;
     }
@@ -307,13 +306,13 @@ fn group_values_to_string(grouped_values: BTreeMap<i16, Vec<String>>) -> String 
 }
 
 mod tests {
-    use crate::db::product::repository::search::get_int_values_expression;
+    use crate::db::product::repository::search::get_id_values_expression;
     use crate::dto::product::CharacteristicIntValue;
 
     #[test]
     fn it_creates_int_value_expression() {
         assert_eq!(
-            get_int_values_expression(&vec![
+            get_id_values_expression(&vec![
                 CharacteristicIntValue {
                     characteristic_id: 1,
                     value: 2

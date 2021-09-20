@@ -2,11 +2,9 @@
 
 use std::fmt;
 
-use serde::Deserialize;
-use serde::Serialize;
 use strum_macros::EnumIter;
 
-#[derive(Serialize, Deserialize, Debug, PartialEq, EnumIter, Copy, Clone)]
+#[derive(Debug, EnumIter, Copy, Clone)]
 pub enum IntCharacteristic {
     BatteryCapacity_mA_h(i32),
     NumberOfProcessorCores(i32),

@@ -19,7 +19,7 @@ pub struct InternationalParsedProduct {
     pub external_id: String,
 }
 
-#[derive(Serialize, Debug, PartialEq)]
+#[derive(Debug)]
 pub struct AdditionalParsedProductInfo {
     pub image_urls: Vec<String>,
     pub description: String,
