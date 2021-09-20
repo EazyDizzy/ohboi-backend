@@ -43,11 +43,17 @@ pub fn get_filtered_products(filters: &ProductFilters) -> Vec<Product> {
     query.push_str(&group_by);
     query.push_str(&having);
     query.push_str("\n ORDER BY p.id ASC LIMIT 20");
-    println!("{}", query);
 
-    sql_query(query)
-        .load::<Product>(connection)
-        .expect("Error loading products")
+    if filters.title.is_some() {
+        sql_query(query)
+            .bind::<Text, _>(format!("%{}%", filters.title.as_ref().unwrap().to_lowercase()))
+            .load::<Product>(connection)
+            .expect("Error loading products")
+    } else {
+        sql_query(query)
+            .load::<Product>(connection)
+            .expect("Error loading products")
+    }
 }
 
 fn filter_by_characteristics(
@@ -189,14 +195,8 @@ fn filter_by_title(
     having: String,
     title: &Option<String>,
 ) -> (String, String, String, String) {
-    // TODO sanitize
-    if let Some(filtered_title) = title {
-        let requested_title = filtered_title.to_lowercase();
-
-        filter.push_str(&format!(
-            " AND LOWER(p.title) LIKE '%{}%' ",
-            requested_title
-        ));
+    if let Some(_) = title {
+        filter.push_str(" AND LOWER(p.title) LIKE $1 ");
     }
 
     (joins, filter, group_by, having)
