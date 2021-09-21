@@ -1,6 +1,7 @@
 <a href="https://github.com/EazyDizzy/ohboi-backend/actions/workflows/verify.yml">
   <img src="https://github.com/EazyDizzy/ohboi-backend/actions/workflows/verify.yml/badge.svg/"/>
 </a>
+
 ## Docker
 
 ### Inside
