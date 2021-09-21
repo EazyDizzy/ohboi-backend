@@ -1,8 +1,13 @@
+<a href="https://github.com/EazyDizzy/ohboi-backend/actions/workflows/ci.yml">
+  <img src="https://github.com/EazyDizzy/ohboi-backend/actions/workflows/ci.yml/badge.svg/"/>
+</a>
+
 ## Docker
 
 ### Inside
 
 To enter container
+
 ```
 docker exec -ti ohboi bash
 ```
