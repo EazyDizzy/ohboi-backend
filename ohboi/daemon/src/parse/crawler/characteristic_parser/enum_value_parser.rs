@@ -1,4 +1,5 @@
 use lib::dto::characteristic::enum_characteristic::*;
+
 use crate::parse::crawler::characteristic_parser::string_value;
 
 pub fn enum_media_format_value(value: &str) -> Option<MediaFormat> {
@@ -15,7 +16,8 @@ pub fn enum_media_format_value(value: &str) -> Option<MediaFormat> {
         "APE" => Some(MediaFormat::APE),
         "AAC+" | "AAC +" => Some(MediaFormat::AAC_plus),
         "eAAC+" | "eAAC +" => Some(MediaFormat::eAAC_plus),
-        "AMR-NB" | "AMR - NB" => Some(MediaFormat::AMR_NB),
+        // yes, they are different
+        "AMR-NB" | "AMR–NB" | "AMR - NB" => Some(MediaFormat::AMR_NB),
         "WB" => Some(MediaFormat::WB),
         "PCM" => Some(MediaFormat::PCM),
         "H.263" | "H263" => Some(MediaFormat::H263),
