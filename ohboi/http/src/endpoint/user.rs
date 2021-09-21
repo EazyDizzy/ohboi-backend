@@ -5,6 +5,7 @@ use validator::Validate;
 
 use crate::db::user;
 
+#[allow(clippy::needless_pass_by_value)]
 pub fn create(item: Json<User>) -> HttpResponse {
     let created_user = user::repository::create(&item.username);
     HttpResponse::Ok().json(created_user)

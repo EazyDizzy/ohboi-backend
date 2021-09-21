@@ -77,11 +77,10 @@ pub fn pix_int_value(context: &CharacteristicParsingContext, value: &str) -> Opt
 }
 
 pub fn multiple_int_value(context: &CharacteristicParsingContext, value: &str) -> Vec<i32> {
-    let parsed_values: Vec<Option<i32>> = value
+    let parsed_values = value
         .split(',')
         .into_iter()
-        .map(|v| int_value(context, v))
-        .collect();
+        .map(|v| int_value(context, v));
 
     let mut int_values = vec![];
     for v in parsed_values.into_iter().flatten() {

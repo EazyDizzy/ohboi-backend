@@ -10,6 +10,7 @@ use lib::my_enum::CurrencyEnum;
 use crate::dto::product::ProductCharacteristicsMapped;
 
 // TODO add hostname to the image urls to remove these dependency from fe
+#[allow(clippy::needless_pass_by_value)]
 pub fn get_product(params: Query<ProductParams>) -> HttpResponse {
     let product = get_product_info(&params);
     if product.is_none() {
@@ -32,6 +33,7 @@ pub struct ProductParams {
     pub currency: CurrencyEnum,
 }
 
+#[allow(clippy::needless_pass_by_value)]
 pub fn get_products(filters: Json<ProductFilters>) -> HttpResponse {
     let mut products = get_filtered_products(&filters);
     let rate = try_get_exchange_rate_by_code(filters.currency);
