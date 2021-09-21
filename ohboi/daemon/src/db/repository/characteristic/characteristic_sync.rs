@@ -20,7 +20,7 @@ use crate::db::entity::characteristic::category_characteristic::{
     CategoryCharacteristic, NewCategoryCharacteristic,
 };
 use crate::db::repository::category::get_category;
-use crate::db::repository::characteristic::{characteristic, product_characteristic_enum_value};
+use crate::db::repository::characteristic::{create, product_characteristic_enum_value};
 use crate::db::Executor;
 
 // TODO update if sth changed
@@ -34,7 +34,7 @@ pub fn sync_characteristic_enum() {
 
 fn sync_float_chars() {
     for item in get_float_characteristics() {
-        let created_char = characteristic::create_if_not_exists(
+        let created_char = create::create_if_not_exists(
             item.id,
             item.slug,
             item.visualisation_type,
@@ -48,7 +48,7 @@ fn sync_float_chars() {
 
 fn sync_int_chars() {
     for item in get_int_characteristics() {
-        let created_char = characteristic::create_if_not_exists(
+        let created_char = create::create_if_not_exists(
             item.id,
             item.slug,
             item.visualisation_type,
@@ -62,7 +62,7 @@ fn sync_int_chars() {
 
 fn sync_string_chars() {
     for item in get_string_characteristics() {
-        let created_char = characteristic::create_if_not_exists(
+        let created_char = create::create_if_not_exists(
             item.id,
             item.slug,
             item.visualisation_type,
@@ -76,7 +76,7 @@ fn sync_string_chars() {
 
 fn sync_enum_chars() {
     for item in get_enum_characteristics() {
-        let created_char = characteristic::create_if_not_exists(
+        let created_char = create::create_if_not_exists(
             item.id,
             item.slug,
             item.visualisation_type,

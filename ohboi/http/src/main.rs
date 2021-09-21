@@ -1,8 +1,6 @@
 #![deny(clippy::all, clippy::pedantic, clippy::cognitive_complexity)]
 #![allow(
     clippy::module_name_repetitions,
-    clippy::default_trait_access,
-    clippy::module_inception,
     clippy::too_many_lines
 )]
 #![warn(unused_extern_crates)]

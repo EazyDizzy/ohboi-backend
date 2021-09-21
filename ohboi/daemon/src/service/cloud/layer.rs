@@ -36,7 +36,7 @@ pub async fn upload_image_to_s3(file_path: String, image_url: String) -> bool {
         body: Some(StreamingBody::from(
             data.expect(&format!("Failed to get bytes from {}", &image_url)),
         )),
-        ..Default::default()
+        ..PutObjectRequest::default()
     };
 
     let result = client.put_object(request).await;
