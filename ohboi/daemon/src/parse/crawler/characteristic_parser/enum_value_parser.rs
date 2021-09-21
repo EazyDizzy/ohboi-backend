@@ -1,4 +1,9 @@
-use lib::dto::characteristic::enum_characteristic::*;
+use lib::dto::characteristic::enum_characteristic::{
+    AudioJack, BatteryType, ChargingConnectorType, Country, DisplayType,
+    InternetConnectionTechnology, Material, MediaFormat, MemoryCardSlot, SatelliteNavigation,
+    SimCard, WifiStandard,
+};
+
 use crate::parse::crawler::characteristic_parser::string_value;
 
 pub fn enum_media_format_value(value: &str) -> Option<MediaFormat> {
@@ -15,7 +20,8 @@ pub fn enum_media_format_value(value: &str) -> Option<MediaFormat> {
         "APE" => Some(MediaFormat::APE),
         "AAC+" | "AAC +" => Some(MediaFormat::AAC_plus),
         "eAAC+" | "eAAC +" => Some(MediaFormat::eAAC_plus),
-        "AMR-NB" | "AMR - NB" => Some(MediaFormat::AMR_NB),
+        // yes, they are different
+        "AMR-NB" | "AMR–NB" | "AMR - NB" => Some(MediaFormat::AMR_NB),
         "WB" => Some(MediaFormat::WB),
         "PCM" => Some(MediaFormat::PCM),
         "H.263" | "H263" => Some(MediaFormat::H263),
@@ -31,7 +37,6 @@ pub fn enum_media_format_value(value: &str) -> Option<MediaFormat> {
         "WAVE" => Some(MediaFormat::WAVE),
         "Opus" => Some(MediaFormat::Opus),
         "VC-1" => Some(MediaFormat::VC1),
-        "AMR–NB" => Some(MediaFormat::AMR_NB),
         "DSF" => Some(MediaFormat::DSF),
         "M4A" => Some(MediaFormat::M4A),
         "OGG" => Some(MediaFormat::OGG),

@@ -1,5 +1,5 @@
-/target
-/logs/*
-/coverage/*
+./target
+./logs/*
+./coverage/*
 .env
 trivy_security.txt

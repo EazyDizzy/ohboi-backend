@@ -1668,7 +1668,6 @@ dependencies = [
  "diesel",
  "diesel-derive-enum",
  "dotenv",
- "env_logger",
  "lazy_static",
  "log",
  "r2d2",

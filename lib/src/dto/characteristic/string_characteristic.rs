@@ -1,9 +1,8 @@
 use std::fmt;
 
-use serde::Serialize;
 use strum_macros::EnumIter;
 
-#[derive(Serialize, Debug, PartialEq, EnumIter, Clone)]
+#[derive(Debug, EnumIter, Clone)]
 pub enum StringCharacteristic {
     Processor(String),
     VideoProcessor(String),
@@ -23,7 +22,7 @@ impl StringCharacteristic {
     pub fn name(&self) -> String {
         let name = self.to_string();
 
-        name[0..name.find("(").unwrap()].to_string()
+        name[0..name.find('(').unwrap()].to_string()
     }
 
     pub fn value(&self) -> String {

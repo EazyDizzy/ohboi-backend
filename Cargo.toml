@@ -2,6 +2,7 @@
 members = [
     "ohboi/daemon",
     "ohboi/http",
+#    "ohboi/experiment",
     "lib",
 ]
 

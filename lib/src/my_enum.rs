@@ -17,6 +17,12 @@ pub enum CurrencyEnum {
     USD,
 }
 
+impl Default for CurrencyEnum {
+    fn default() -> Self {
+        CurrencyEnum::EUR
+    }
+}
+
 #[derive(diesel_derive_enum::DbEnum, Debug, Serialize, Deserialize, Copy, Clone)]
 #[DieselType = "Characteristic_value_type"]
 pub enum CharacteristicValueType {

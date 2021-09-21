@@ -5,10 +5,8 @@ use lib::error_reporting::ReportingContext;
 use crate::ConsumerName;
 
 pub fn dedup_products(products: &mut Vec<LocalParsedProduct>, source: SourceName) {
-    let error_margin = f64::EPSILON;
-
     products.dedup_by(|a, b| {
-        if a.external_id == b.external_id && (a.price - b.price).abs() > error_margin {
+        if a.external_id == b.external_id && (a.price - b.price).abs() > f64::EPSILON {
             let message = format!(
                 "Warning! Same external_id, different prices. Parser: {source}, id: {id}, price1: {price1}, price2: {price2}",
                 source = source.to_string(),

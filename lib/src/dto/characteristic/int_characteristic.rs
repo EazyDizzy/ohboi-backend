@@ -2,10 +2,9 @@
 
 use std::fmt;
 
-use serde::Serialize;
 use strum_macros::EnumIter;
 
-#[derive(Serialize, Debug, PartialEq, EnumIter, Copy, Clone)]
+#[derive(Debug, EnumIter, Copy, Clone)]
 pub enum IntCharacteristic {
     BatteryCapacity_mA_h(i32),
     NumberOfProcessorCores(i32),
@@ -36,7 +35,7 @@ impl IntCharacteristic {
     pub fn name(&self) -> String {
         let name = self.to_string();
 
-        name[0..name.find("(").unwrap()].to_string()
+        name[0..name.find('(').unwrap()].to_string()
     }
 
     pub fn value(&self) -> i32 {

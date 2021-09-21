@@ -1,8 +1,6 @@
-use serde::Serialize;
-
 use lib::dto::characteristic::TypedCharacteristic;
 
-#[derive(Serialize, Debug, PartialEq, Clone)]
+#[derive(Debug)]
 pub struct LocalParsedProduct {
     pub title: String,
     pub price: f64,
@@ -10,7 +8,7 @@ pub struct LocalParsedProduct {
     pub external_id: String,
 }
 
-#[derive(Serialize, Debug, PartialEq, Clone)]
+#[derive(Debug)]
 pub struct InternationalParsedProduct {
     pub title: String,
     pub price: f64,
@@ -19,7 +17,7 @@ pub struct InternationalParsedProduct {
     pub external_id: String,
 }
 
-#[derive(Serialize, Debug, PartialEq)]
+#[derive(Debug)]
 pub struct AdditionalParsedProductInfo {
     pub image_urls: Vec<String>,
     pub description: String,

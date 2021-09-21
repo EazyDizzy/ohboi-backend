@@ -24,7 +24,7 @@ pub fn get_float_characteristics() -> Vec<Characteristic> {
     for item in FloatCharacteristic::iter() {
         let value_type = CharacteristicValueType::Float;
         let visualisation_type = get_float_char_vis_type(item);
-        let id = get_characteristic_id(TypedCharacteristic::Float(item));
+        let id = get_characteristic_id(&TypedCharacteristic::Float(item));
 
         characteristics.push(Characteristic {
             id,
@@ -42,7 +42,7 @@ pub fn get_int_characteristics() -> Vec<Characteristic> {
     for item in IntCharacteristic::iter() {
         let value_type = CharacteristicValueType::Int;
         let visualisation_type = get_int_char_vis_type(item);
-        let id = get_characteristic_id(TypedCharacteristic::Int(item));
+        let id = get_characteristic_id(&TypedCharacteristic::Int(item));
 
         characteristics.push(Characteristic {
             id,
@@ -60,7 +60,7 @@ pub fn get_string_characteristics() -> Vec<Characteristic> {
     for item in StringCharacteristic::iter() {
         let value_type = CharacteristicValueType::String;
         let visualisation_type = CharacteristicVisualisationType::MultiSelector;
-        let id = get_characteristic_id(TypedCharacteristic::String(item.clone()));
+        let id = get_characteristic_id(&TypedCharacteristic::String(item.clone()));
 
         characteristics.push(Characteristic {
             id,
@@ -79,7 +79,7 @@ pub fn get_enum_characteristics() -> Vec<Characteristic> {
     for item in EnumCharacteristic::VARIANTS {
         let value_type = CharacteristicValueType::Enum;
         let visualisation_type = CharacteristicVisualisationType::MultiSelector;
-        let id = get_characteristic_id(TypedCharacteristic::Enum(
+        let id = get_characteristic_id(&TypedCharacteristic::Enum(
             EnumCharacteristic::type_from_name(item),
         ));
 

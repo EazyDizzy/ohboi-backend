@@ -20,7 +20,7 @@ pub fn float_miui_version_value(
 }
 
 pub fn float_version_value(context: &CharacteristicParsingContext, mut value: &str) -> Option<f32> {
-    let dots: Vec<(usize, &str)> = value.match_indices(".").into_iter().collect();
+    let dots: Vec<(usize, &str)> = value.match_indices('.').into_iter().collect();
     if dots.len() > 1 {
         value = &value[0..dots.get(1).unwrap().0];
     }
@@ -42,13 +42,7 @@ pub fn float_ghz_value(context: &CharacteristicParsingContext, value: &str) -> O
             .replace("ghz", "")
             .as_str(),
     )
-    .map_or(None, |v| {
-        if was_in_mgz {
-            Some(v / 1000.0)
-        } else {
-            Some(v)
-        }
-    })
+    .map(|v| if was_in_mgz { v / 1000.0 } else { v })
 }
 pub fn float_diagonal_value(context: &CharacteristicParsingContext, value: &str) -> Option<f32> {
     float_value(context, value.replace('"', "").as_str())
@@ -59,11 +53,11 @@ pub fn float_diagonal_value(context: &CharacteristicParsingContext, value: &str)
 pub fn float_aperture_value(context: &CharacteristicParsingContext, value: &str) -> Option<f32> {
     float_value(
         context,
-        &value
+        value
             .replace("f", "")
             .replace("ƒ", "")
             .replace("/", "")
-            .split("+")
+            .split('+')
             .into_iter()
             .next()
             .unwrap(),
@@ -96,7 +90,10 @@ pub fn float_value(context: &CharacteristicParsingContext, value: &str) -> Optio
 
 #[cfg(test)]
 mod tests {
-    use crate::parse::crawler::characteristic_parser::*;
+    use crate::parse::crawler::characteristic_parser::{
+        float_android_version_value, float_ghz_value, float_miui_version_value, float_value,
+        float_version_value, CharacteristicParsingContext, SourceName,
+    };
 
     fn get_context() -> CharacteristicParsingContext<'static> {
         CharacteristicParsingContext {

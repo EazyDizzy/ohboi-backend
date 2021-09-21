@@ -6,7 +6,7 @@ use lib::my_enum::{CharacteristicValueType, CharacteristicVisualisationType};
 use lib::schema::characteristic;
 use lib::{db, error_reporting};
 
-use crate::db::entity::characteristic::characteristic::NewCharacteristic;
+use crate::db::entity::characteristic::new::NewCharacteristic;
 use crate::db::Executor;
 
 pub fn create_if_not_exists(

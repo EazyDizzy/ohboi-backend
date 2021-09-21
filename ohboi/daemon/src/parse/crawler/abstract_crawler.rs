@@ -20,7 +20,6 @@ use crate::service::cloud::upload_image_to_cloud;
 use crate::service::html_cleaner::clean_html;
 use crate::ConsumerName;
 
-#[derive(Clone)]
 struct UploadImageLaterMessage(String, String, String, SourceName);
 
 pub trait Crawler: Sync + Send {
@@ -113,10 +112,8 @@ pub trait Crawler: Sync + Send {
         let matches = re.captures_iter(description_html.as_str());
 
         for capture in matches {
-            for text in capture.iter() {
-                if let Some(text) = text {
-                    description_sanitized.push(text.as_str());
-                }
+            for text in capture.iter().flatten() {
+                description_sanitized.push(text.as_str());
             }
         }
 
@@ -143,10 +140,13 @@ pub trait Crawler: Sync + Send {
                 "both buy_button_node & unavailable_button_node not found! [{source}]",
                 source = self.get_source()
             );
-            error_reporting::warning(message.as_str(), &ReportingContext {
-                executor: &ConsumerName::ParseDetails,
-                action: "parse_availability"
-            });
+            error_reporting::warning(
+                message.as_str(),
+                &ReportingContext {
+                    executor: &ConsumerName::ParseDetails,
+                    action: "parse_availability",
+                },
+            );
 
             return None;
         }
@@ -170,7 +170,7 @@ pub async fn upload_extracted_images(
         },
         &ReportingContext {
             executor: &ConsumerName::ParseDetails,
-            action: "upload_extracted_images"
+            action: "upload_extracted_images",
         },
     );
 
@@ -213,10 +213,15 @@ pub async fn upload_extracted_images(
         }
     }
 
-    let messages = upload_later.lock().unwrap().to_vec();
-    for message in messages {
-        let _schedule_result =
-            postpone_image_parsing(message.0, message.1, message.2, message.3).await;
+    for message in upload_later.lock().unwrap().iter() {
+        postpone_image_parsing(
+            message.0.clone(),
+            message.1.clone(),
+            message.2.clone(),
+            message.3,
+        )
+        .await
+        .expect("Failed to postpone image parsing");
     }
 
     uploaded_urls
@@ -239,7 +244,7 @@ pub fn get_html_nodes<'result>(
     let mut valid = true;
     let context = ReportingContext {
         executor: &ConsumerName::ParseCategory,
-        action: "get_html_nodes"
+        action: "get_html_nodes",
     };
 
     if id_node.is_none() {
@@ -329,29 +334,29 @@ mod tests {
             vec![]
         }
 
-        fn get_next_page_urls(&self, category: CategorySlug) -> Vec<String> {
+        fn get_next_page_urls(&self, _: CategorySlug) -> Vec<String> {
             vec![]
         }
 
-        fn extract_products(&self, document: &Html) -> Vec<LocalParsedProduct> {
+        fn extract_products(&self, _: &Html) -> Vec<LocalParsedProduct> {
             vec![]
         }
 
-        fn get_additional_info_url(&self, external_id: &str) -> String {
+        fn get_additional_info_url(&self, _: &str) -> String {
             "todo".to_string()
         }
 
         fn extract_additional_info(
             &self,
-            document: &Html,
-            external_id: &str,
+            _: &Html,
+            _: &str,
         ) -> Option<AdditionalParsedProductInfo> {
             None
         }
     }
 
     impl EmptyCrawler {
-        fn extract_image_urls(&self, document: &Html, external_id: &str) -> Vec<String> {
+        fn extract_image_urls(&self, document: &Html, _: &str) -> Vec<String> {
             let images_selector = Selector::parse("img").unwrap();
             let image_nodes = document.select(&images_selector);
             self.abstract_extract_image_urls(image_nodes, "data-lazy")

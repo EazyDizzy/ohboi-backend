@@ -41,7 +41,7 @@ pub struct Settings {
 }
 
 impl Settings {
-    pub fn new() -> Result<Self, ()> {
+    pub fn new() -> Self {
         let database_settings = Database {
             url: dotenv::var("DATABASE_URL").expect("DATABASE_URL must be set"),
             product_save_concurrency: dotenv::var("DATABASE_PRODUCT_SAVE_CONCURRENCY")
@@ -54,11 +54,11 @@ impl Settings {
             bucket: dotenv::var("S3_BUCKET").expect("S3_BUCKET must be set"),
         };
 
-        Ok(Settings {
+       Settings {
             database: database_settings,
             queue_broker: Settings::get_amqp_settings(),
             s3: s3_settings,
-        })
+        }
     }
 
     fn get_amqp_settings() -> QueueBroker {

@@ -2,10 +2,9 @@
 
 use std::fmt;
 
-use serde::Serialize;
 use strum_macros::EnumIter;
 
-#[derive(Serialize, Debug, PartialEq, EnumIter, Copy, Clone)]
+#[derive(Debug, EnumIter, Copy, Clone)]
 pub enum FloatCharacteristic {
     Width_mm(f32),
     Height_mm(f32),
@@ -29,7 +28,7 @@ impl FloatCharacteristic {
     pub fn name(&self) -> String {
         let name = self.to_string();
 
-        name[0..name.find("(").unwrap()].to_string()
+        name[0..name.find('(').unwrap()].to_string()
     }
 
     pub fn value(&self) -> f32 {

@@ -2,11 +2,12 @@ use maplit::btreemap;
 use regex::Regex;
 
 use lib::dto::characteristic::enum_characteristic::MediaFormat;
+use lib::error_reporting;
+use lib::error_reporting::ReportingContext;
+
 use crate::parse::crawler::characteristic_parser::{
     enum_media_format_value, string_value, CharacteristicParsingContext,
 };
-use lib::error_reporting;
-use lib::error_reporting::ReportingContext;
 use crate::ConsumerName;
 
 lazy_static! {
@@ -18,28 +19,28 @@ pub fn multiple_string_media_format_value(
 ) -> Vec<MediaFormat> {
     let mut formats: Vec<MediaFormat> = vec![];
     let mut values: Vec<&str>;
-    if value.ends_with(".") {
+    if value.ends_with('.') {
         value = &value[0..value.len() - 1]
     }
 
-    if value.contains(";") {
-        values = value.split(";").collect();
+    if value.contains(';') {
+        values = value.split(';').collect();
     } else {
-        values = value.split(",").collect();
+        values = value.split(',').collect();
     }
 
     let mut index_bonus = 0;
     let mut values_copy = values.clone();
     for (i, v) in values.into_iter().enumerate() {
         let mut additional_values: Vec<&str> = vec![];
-        if v.contains("/") {
-            additional_values = v.split("/").collect();
+        if v.contains('/') {
+            additional_values = v.split('/').collect();
         }
         if v.contains(" and ") {
             additional_values = v.split("and").collect();
         }
         if v.contains(" и ") {
-            additional_values = v.split("и").collect();
+            additional_values = v.split('и').collect();
         }
 
         if !additional_values.is_empty() {
@@ -55,18 +56,12 @@ pub fn multiple_string_media_format_value(
     }
     values = values_copy;
     values = values
-        .iter()
-        .map(|v| {
+        .iter().filter_map(|v| {
             let parsed = NO_DESCRIPTION_RE.captures_iter(v).next();
-            match parsed {
-                None => None,
-                Some(e) => Some(e.get(0).unwrap().as_str()),
-            }
+            parsed.map(|e| e.get(0).unwrap().as_str())
         })
-        .filter(|v| v.is_some())
-        .map(|v| v.unwrap())
         .collect::<Vec<&str>>()
-        .to_vec();
+        .clone();
 
     for v in values {
         let mapped = enum_media_format_value(v);
@@ -83,7 +78,7 @@ pub fn multiple_string_media_format_value(
             }
         } else if let Some(exception_values) = exceptions.get(string_value(v).as_str()) {
             for exception_format in exception_values {
-                if !formats.contains(&exception_format) {
+                if !formats.contains(exception_format) {
                     formats.push(*exception_format);
                 }
             }
@@ -111,6 +106,7 @@ pub fn multiple_string_media_format_value(
 #[cfg(test)]
 mod tests {
     use lib::dto::characteristic::enum_characteristic::MediaFormat;
+
     use crate::db::entity::source::SourceName;
     use crate::parse::crawler::characteristic_parser::CharacteristicParsingContext;
     use crate::parse::crawler::mi_shop_com::crawler::media_format_parser::multiple_string_media_format_value;

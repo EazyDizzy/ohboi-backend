@@ -1,7 +1,14 @@
 use regex::Regex;
 
 use lib::dto::characteristic::enum_characteristic::EnumCharacteristic;
-use crate::parse::crawler::characteristic_parser::*;
+
+use crate::parse::crawler::characteristic_parser::{
+    enum_audio_jack_value, enum_battery_type_value, enum_charging_connector_type_value,
+    enum_country_value, enum_display_type_value, enum_internet_connection_technology_value,
+    enum_material_value, enum_memory_card_slot_value, enum_satellite_navigation_value,
+    enum_sim_card_value, enum_wifi_standard_value, multiple_parse_and_capture, parse_and_capture,
+    CharacteristicParsingContext,
+};
 use crate::parse::crawler::mi_shop_com::crawler::media_format_parser::multiple_string_media_format_value;
 
 lazy_static! {
@@ -11,13 +18,13 @@ lazy_static! {
 pub fn extract_enum_characteristic(
     title: &str,
     value: &str,
-    context: CharacteristicParsingContext,
+    context: &CharacteristicParsingContext,
 ) -> Vec<EnumCharacteristic> {
-    match extract_single_enum_characteristic(title, value, &context) {
+    match extract_single_enum_characteristic(title, value, context) {
         Some(v) => {
             vec![v]
         }
-        None => extract_multiple_enum_characteristic(title, value, &context),
+        None => extract_multiple_enum_characteristic(title, value, context),
     }
 }
 
@@ -28,33 +35,32 @@ fn extract_single_enum_characteristic(
 ) -> Option<EnumCharacteristic> {
     match title {
         "Тип разъема для зарядки" => {
-            parse_and_capture(&context, &value, enum_charging_connector_type_value)
-                .and_then(|v| Some(EnumCharacteristic::ChargingConnectorType(v)))
+            parse_and_capture(context, value, enum_charging_connector_type_value)
+                .map(EnumCharacteristic::ChargingConnectorType)
         }
         "Слот для карты памяти" => {
-            parse_and_capture(&context, &value, enum_memory_card_slot_value)
-                .and_then(|v| Some(EnumCharacteristic::MemoryCardSlot(v)))
+            parse_and_capture(context, value, enum_memory_card_slot_value)
+                .map(EnumCharacteristic::MemoryCardSlot)
         }
         "Страна производитель" => {
-            parse_and_capture(&context, &value, enum_country_value)
-                .and_then(|v| Some(EnumCharacteristic::ProducingCountry(v)))
+            parse_and_capture(context, value, enum_country_value)
+                .map(EnumCharacteristic::ProducingCountry)
         }
-        "Аудиоразъем" | "Вход аудио" => {
-            if let Some(value) = NO_DESCRIPTION_RE.captures_iter(value).next() {
+        "Аудиоразъем" | "Вход аудио" => NO_DESCRIPTION_RE
+            .captures_iter(value)
+            .next()
+            .and_then(|value| {
                 parse_and_capture(
-                    &context,
-                    &value.get(0).unwrap().as_str(),
+                    context,
+                    value.get(0).unwrap().as_str(),
                     enum_audio_jack_value,
                 )
-                .and_then(|v| Some(EnumCharacteristic::AudioJack(v)))
-            } else {
-                None
-            }
-        }
-        "Аккумулятор" => parse_and_capture(&context, &value, enum_battery_type_value)
-            .and_then(|v| Some(EnumCharacteristic::BatteryType(v))),
-        "Тип дисплея" => parse_and_capture(&context, &value, enum_display_type_value)
-            .and_then(|v| Some(EnumCharacteristic::DisplayType(v))),
+                .map(EnumCharacteristic::AudioJack)
+            }),
+        "Аккумулятор" => parse_and_capture(context, value, enum_battery_type_value)
+            .map(EnumCharacteristic::BatteryType),
+        "Тип дисплея" => parse_and_capture(context, value, enum_display_type_value)
+            .map(EnumCharacteristic::DisplayType),
         _ => None,
     }
 }
@@ -65,35 +71,35 @@ fn extract_multiple_enum_characteristic(
     context: &CharacteristicParsingContext,
 ) -> Vec<EnumCharacteristic> {
     match title {
-        "SIM-карта" => multiple_parse_and_capture(&context, value, enum_sim_card_value)
+        "SIM-карта" => multiple_parse_and_capture(context, value, enum_sim_card_value)
             .into_iter()
-            .map(|v| EnumCharacteristic::SimCard(v))
+            .map(EnumCharacteristic::SimCard)
             .collect(),
         "Поддерживаемые медиа форматы" => {
-            multiple_string_media_format_value(&context, value)
+            multiple_string_media_format_value(context, value)
                 .into_iter()
-                .map(|v| EnumCharacteristic::SupportedMediaFormat(v))
+                .map(EnumCharacteristic::SupportedMediaFormat)
                 .collect()
         }
         "Интернет" => {
-            multiple_parse_and_capture(&context, value, enum_internet_connection_technology_value)
+            multiple_parse_and_capture(context, value, enum_internet_connection_technology_value)
                 .into_iter()
-                .map(|v| EnumCharacteristic::InternetConnectionTechnology(v))
+                .map(EnumCharacteristic::InternetConnectionTechnology)
                 .collect()
         }
         "Спутниковая навигация" => {
-            multiple_parse_and_capture(&context, value, enum_satellite_navigation_value)
+            multiple_parse_and_capture(context, value, enum_satellite_navigation_value)
                 .into_iter()
-                .map(|v| EnumCharacteristic::SatelliteNavigation(v))
+                .map(EnumCharacteristic::SatelliteNavigation)
                 .collect()
         }
-        "Wi-Fi (802.11)" => multiple_parse_and_capture(&context, value, enum_wifi_standard_value)
+        "Wi-Fi (802.11)" => multiple_parse_and_capture(context, value, enum_wifi_standard_value)
             .into_iter()
-            .map(|v| EnumCharacteristic::WifiStandard(v))
+            .map(EnumCharacteristic::WifiStandard)
             .collect(),
-        "Материал" => multiple_parse_and_capture(&context, value, enum_material_value)
+        "Материал" => multiple_parse_and_capture(context, value, enum_material_value)
             .into_iter()
-            .map(|v| EnumCharacteristic::Material(v))
+            .map(EnumCharacteristic::Material)
             .collect(),
         _ => vec![],
     }

@@ -10,7 +10,7 @@ use serde::de;
 use crate::queue::layer::get_channel;
 use crate::settings::QueueSettings;
 
-// TODO parallel with a help of set_delegate
+// TODO parallel with a help of set_delegate or tokio.spawn threads
 pub async fn consume<F, Fut, Message>(settings: &QueueSettings, consumer_callback: F) -> Result<()>
 where
     F: Fn(Message) -> Fut,
@@ -44,7 +44,7 @@ where
         settings.name
     ));
 
-    serde_json::from_str(&message).expect("Failed to parse message")
+    serde_json::from_str(message).expect("Failed to parse message")
 }
 
 async fn get_consumer(settings: &QueueSettings) -> Consumer {

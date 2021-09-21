@@ -7,9 +7,12 @@ use lib::db::repository::exchange_rate::try_get_exchange_rate_by_code;
 use crate::db::product::repository::{get_filtered_products, get_product_info};
 use crate::util::product::convert_product_prices;
 use lib::my_enum::CurrencyEnum;
+use crate::dto::product::ProductCharacteristicsMapped;
+
 // TODO add hostname to the image urls to remove these dependency from fe
-pub async fn get_product(params: Query<ProductParams>) -> HttpResponse {
-    let product = get_product_info(params.as_ref());
+#[allow(clippy::needless_pass_by_value)]
+pub fn get_product(params: Query<ProductParams>) -> HttpResponse {
+    let product = get_product_info(&params);
     if product.is_none() {
         return HttpResponse::NotFound().json("Not found");
     }
@@ -30,7 +33,8 @@ pub struct ProductParams {
     pub currency: CurrencyEnum,
 }
 
-pub async fn get_products(filters: Json<ProductFilters>) -> HttpResponse {
+#[allow(clippy::needless_pass_by_value)]
+pub fn get_products(filters: Json<ProductFilters>) -> HttpResponse {
     let mut products = get_filtered_products(&filters);
     let rate = try_get_exchange_rate_by_code(filters.currency);
 
@@ -41,7 +45,7 @@ pub async fn get_products(filters: Json<ProductFilters>) -> HttpResponse {
     HttpResponse::Ok().json(products)
 }
 
-#[derive(Debug, Serialize, Deserialize, Validate)]
+#[derive(Debug, Serialize, Deserialize, Validate, Default)]
 pub struct ProductFilters {
     #[validate(length(min = 1, max = 1000, message = "should have length from 1 to 1000"))]
     pub title: Option<String>,
@@ -67,4 +71,6 @@ pub struct ProductFilters {
         range(max = 4294967295, message = "should be less than 4294967295")
     )]
     pub max_price: Option<f64>,
+
+    pub characteristics: Option<ProductCharacteristicsMapped>,
 }

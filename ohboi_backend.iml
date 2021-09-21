@@ -8,6 +8,7 @@
       <sourceFolder url="file://$MODULE_DIR$/ohboi/daemon/queue_configurator/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ohboi/daemon/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ohboi/http/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/ohboi/experiment/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
       <excludeFolder url="file://$MODULE_DIR$/lib/target" />
       <excludeFolder url="file://$MODULE_DIR$/ohboi/daemon/queue_configurator/target" />

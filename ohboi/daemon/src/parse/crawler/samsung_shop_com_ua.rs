@@ -1,13 +1,14 @@
 use regex::Regex;
 use scraper::{Html, Selector};
 
+use lib::error_reporting;
+use lib::error_reporting::ReportingContext;
 use lib::my_enum::CurrencyEnum;
-use crate::parse::crawler::{get_html_nodes, Crawler, ProductHtmlSelectors};
+
 use crate::db::entity::category::CategorySlug;
 use crate::db::entity::source::SourceName;
 use crate::dto::parsed_product::{AdditionalParsedProductInfo, LocalParsedProduct};
-use lib::error_reporting;
-use lib::error_reporting::ReportingContext;
+use crate::parse::crawler::{get_html_nodes, Crawler, ProductHtmlSelectors};
 use crate::ConsumerName;
 
 static SITE_BASE: &str = "https://samsungshop.com.ua";
@@ -64,7 +65,7 @@ impl Crawler for SamsungShopComUaCrawler {
         };
         let context = ReportingContext {
             executor: &ConsumerName::ParseCategory,
-            action: "extract_products"
+            action: "extract_products",
         };
 
         for element in document.select(&items_selector) {
@@ -145,7 +146,7 @@ impl Crawler for SamsungShopComUaCrawler {
         external_id: &str,
     ) -> Option<AdditionalParsedProductInfo> {
         let description = self.abstract_extract_description(
-            &document,
+            document,
             Selector::parse(".acardeon-item-content-main").unwrap(),
             &DESCRIPTION_RE,
         );
@@ -155,17 +156,15 @@ impl Crawler for SamsungShopComUaCrawler {
             Selector::parse(".product-button_buy.null").unwrap(),
         );
 
-        if description.is_none() || available.is_none() {
-            None
-        } else {
+        if let (Some(description), Some(available)) = (description, available) {
             let image_urls = self.extract_images(document, external_id);
             Some(AdditionalParsedProductInfo {
                 image_urls,
-                description: description.unwrap(),
-                available: available.unwrap(),
+                description,
+                available,
                 characteristics: vec![],
             })
-        }
+        } else { None }
     }
 }
 
@@ -173,11 +172,10 @@ lazy_static! {
     static ref DESCRIPTION_RE: Regex = Regex::new(r"(?ms)<big>.*?</big>|<h3>.*?</h3>").unwrap();
 }
 impl SamsungShopComUaCrawler {
-    fn extract_images(&self, document: &Html, external_id: &str) -> Vec<String> {
+    fn extract_images(&self, document: &Html, _: &str) -> Vec<String> {
         let images_selector = Selector::parse(".sp-slide img.sp-image").unwrap();
         let image_nodes = document.select(&images_selector);
-        let images_urls = self.abstract_extract_image_urls(image_nodes, "data-src");
 
-        images_urls
+        self.abstract_extract_image_urls(image_nodes, "data-src")
     }
 }

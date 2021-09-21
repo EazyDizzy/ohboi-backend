@@ -12,14 +12,14 @@ pub async fn parse_details(
     external_id: &str,
     crawler: &dyn Crawler,
 ) -> Option<AdditionalParsedProductInfo> {
-    let url = crawler.get_additional_info_url(&external_id);
+    let url = crawler.get_additional_info_url(external_id);
     let data = get(&url).await;
 
     match data {
         Ok(data) => {
             let document = Html::parse_document(&data);
 
-            crawler.extract_additional_info(&document, &external_id)
+            crawler.extract_additional_info(&document, external_id)
         }
         Err(e) => {
             let message = format!(

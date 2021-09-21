@@ -1,14 +1,15 @@
 use serde::Deserialize;
 use serde_json::error::Result as SerdeResult;
 
-use crate::db::repository::exchange_rate::create_or_update;
-use crate::queue::layer::consume::consume;
-use crate::service::request::get;
-use lib::my_enum::CurrencyEnum;
-use crate::SETTINGS;
 use lib::error_reporting;
 use lib::error_reporting::ReportingContext;
+use lib::my_enum::CurrencyEnum;
+
+use crate::db::repository::exchange_rate::create_or_update;
+use crate::queue::layer::consume::consume;
 use crate::queue::Executor;
+use crate::service::request::get;
+use crate::SETTINGS;
 
 #[derive(Deserialize)]
 struct ExchangeApiResponse {
@@ -25,7 +26,7 @@ struct ExchangeApiRates {
 }
 
 pub async fn start() -> Result<(), ()> {
-    let _ = consume(&SETTINGS.queue_broker.queues.pull_exchange_rates, execute)
+    consume(&SETTINGS.queue_broker.queues.pull_exchange_rates, execute)
         .await
         .expect("Can't launch consumer");
 
@@ -33,12 +34,11 @@ pub async fn start() -> Result<(), ()> {
 }
 
 async fn execute(_message: String) -> Result<(), ()> {
-    let response =
-        get("https://api.exchangerate.host/latest?base=EUR&symbols=UAH,USD,RUB").await;
+    let response = get("https://api.exchangerate.host/latest?base=EUR&symbols=UAH,USD,RUB").await;
 
     let context = ReportingContext {
         executor: &Executor::PullExchangeRates,
-        action: "execute"
+        action: "execute",
     };
     if response.is_err() {
         let message = format!(
@@ -67,7 +67,7 @@ async fn execute(_message: String) -> Result<(), ()> {
     let response = api_response.expect("");
 
     if !response.success {
-        error_reporting::warning("Response from api is not success!",  &context);
+        error_reporting::warning("Response from api is not success!", &context);
         return Err(());
     }
 
@@ -79,7 +79,7 @@ async fn execute(_message: String) -> Result<(), ()> {
     if save_result {
         Ok(())
     } else {
-        error_reporting::warning("Saving of exchange rate failed!",  &context);
+        error_reporting::warning("Saving of exchange rate failed!", &context);
         Err(())
     }
 }

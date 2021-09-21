@@ -11,7 +11,7 @@ pub mod characteristic;
 
 pub async fn run_server() -> std::io::Result<()> {
     HttpServer::new(|| {
-        let google_auth = HttpAuthentication::bearer(auth::google::validator);
+        let _google_auth = HttpAuthentication::bearer(auth::google::validator);
 
         log::info!("Starting server...");
         App::new()
@@ -43,7 +43,7 @@ pub async fn run_server() -> std::io::Result<()> {
         .await
 }
 
-async fn p404() -> HttpResponse {
+fn p404() -> HttpResponse {
     HttpResponse::Ok()
         .content_type("text/plain")
         .body(String::from("404 not found"))

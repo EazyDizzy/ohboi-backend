@@ -9,9 +9,9 @@ use crate::ConsumerName;
 pub fn int_mp_value(context: &CharacteristicParsingContext, value: &str) -> Option<i32> {
     int_value(
         context,
-        &value
+        value
             .replace("Мп", "")
-            .split("+")
+            .split('+')
             .into_iter()
             .next()
             .unwrap(),
@@ -29,6 +29,7 @@ pub fn int_max_memory_card_size_value(
 ) -> Option<i32> {
     int_value(context, &value.replace("до", "").replace("ГБ", ""))
 }
+
 pub fn int_guarantee_value(context: &CharacteristicParsingContext, value: &str) -> Option<i32> {
     int_value(
         context,
@@ -40,11 +41,11 @@ pub fn int_hz_value(context: &CharacteristicParsingContext, value: &str) -> Opti
 }
 pub fn int_memory_value(context: &CharacteristicParsingContext, value: &str) -> Option<i32> {
     let is_tb = value.contains("ТБ");
-    int_value(context, &value.replace("ГБ", "").replace("до", "")).map_or(None, |v| {
+    int_value(context, &value.replace("ГБ", "").replace("до", "")).map(|v| {
         if is_tb {
-            Some(v * 1000)
+            v * 1000
         } else {
-            Some(v)
+            v
         }
     })
 }
@@ -58,11 +59,11 @@ pub fn int_fps_value(context: &CharacteristicParsingContext, value: &str) -> Opt
 pub fn pix_int_value(context: &CharacteristicParsingContext, value: &str) -> Option<i32> {
     let mut cut_value = value;
 
-    if cut_value.contains("x") {
-        cut_value = cut_value.split("x").into_iter().next().unwrap();
+    if cut_value.contains('x') {
+        cut_value = cut_value.split('x').into_iter().next().unwrap();
     }
-    if cut_value.contains("/") {
-        cut_value = cut_value.split("/").into_iter().next().unwrap();
+    if cut_value.contains('/') {
+        cut_value = cut_value.split('/').into_iter().next().unwrap();
     }
 
     int_value(
@@ -76,23 +77,20 @@ pub fn pix_int_value(context: &CharacteristicParsingContext, value: &str) -> Opt
 }
 
 pub fn multiple_int_value(context: &CharacteristicParsingContext, value: &str) -> Vec<i32> {
-    let parsed_values: Vec<Option<i32>> = value
-        .split(",")
+    let parsed_values = value
+        .split(',')
         .into_iter()
-        .map(|v| int_value(context, v))
-        .collect();
+        .map(|v| int_value(context, v));
 
     let mut int_values = vec![];
-    for v in parsed_values {
-        if v.is_some() {
-            int_values.push(v.unwrap())
-        }
+    for v in parsed_values.into_iter().flatten() {
+        int_values.push(v)
     }
 
     int_values
 }
 pub fn int_value(context: &CharacteristicParsingContext, value: &str) -> Option<i32> {
-    match i32::from_str_radix(value.trim(), 10) {
+    match value.trim().parse::<i32>() {
         Ok(v) => Some(v),
         Err(e) => {
             error_reporting::warning(

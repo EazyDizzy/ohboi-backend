@@ -8,16 +8,16 @@ use crate::db::entity::characteristic::product_characteristic_string_value::{
 };
 use crate::db::Executor;
 
-pub fn create_if_not_exists(value: String) -> Option<ProductCharacteristicStringValue> {
+pub fn create_if_not_exists(value: &str) -> Option<ProductCharacteristicStringValue> {
     use lib::schema::product_characteristic_string_value;
-    let existed_value = get_product_value_by_value(&value);
+    let existed_value = get_product_value_by_value(value);
     if existed_value.is_some() {
         return existed_value;
     }
 
     let connection = &db::establish_connection();
     let new_char_value = NewProductCharacteristicStringValue {
-        value: value.clone(),
+        value: value.to_owned(),
     };
 
     let insert_result: Result<ProductCharacteristicStringValue, diesel::result::Error> =
@@ -29,7 +29,7 @@ pub fn create_if_not_exists(value: String) -> Option<ProductCharacteristicString
         Ok(new_char) => Some(new_char),
         Err(e) => {
             if let Error::DatabaseError(DatabaseErrorKind::UniqueViolation, _) = e {
-                get_product_value_by_value(&value)
+                get_product_value_by_value(value)
             } else {
                 error_reporting::warning(
                     format!(

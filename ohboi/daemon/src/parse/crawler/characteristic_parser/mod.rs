@@ -17,8 +17,8 @@ mod int_value_parser;
 mod string_value_parser;
 
 pub fn combine_titles_and_values(
-    titles: Vec<String>,
-    values: Vec<String>,
+    titles: &[String],
+    values: &[String],
 ) -> Vec<(String, String)> {
     titles
         .iter()
@@ -32,20 +32,20 @@ pub fn parse_and_take<R>(
     characteristics: &mut Vec<(String, String)>,
     crawler: &dyn Crawler,
     external_id: &str,
-    predicate: fn(&str, &str, context: CharacteristicParsingContext) -> Option<R>,
+    predicate: fn(&str, &str, context: &CharacteristicParsingContext) -> Option<R>,
 ) -> Vec<R> {
     let mut result: Vec<R> = vec![];
     let mut indexes_to_remove = vec![];
     let source = crawler.get_source();
 
-    for (index, (title, value)) in characteristics.into_iter().enumerate() {
+    for (index, (title, value)) in characteristics.iter().enumerate() {
         let context = CharacteristicParsingContext {
-            title: &title,
+            title,
             external_id,
             source,
         };
 
-        if let Some(v) = predicate(title, value, context) {
+        if let Some(v) = predicate(title, value, &context) {
             result.push(v);
             indexes_to_remove.push(index);
         }
@@ -64,21 +64,21 @@ pub fn parse_and_take_multiple<R>(
     characteristics: &mut Vec<(String, String)>,
     crawler: &dyn Crawler,
     external_id: &str,
-    predicate: fn(&str, &str, context: CharacteristicParsingContext) -> Vec<R>,
+    predicate: fn(&str, &str, context: &CharacteristicParsingContext) -> Vec<R>,
 ) -> Vec<R> {
     let mut result: Vec<R> = vec![];
     let mut indexes_to_remove = vec![];
     let source = crawler.get_source();
 
-    for (index, (title, value)) in characteristics.into_iter().enumerate() {
+    for (index, (title, value)) in characteristics.iter().enumerate() {
         let context = CharacteristicParsingContext {
-            title: &title,
+            title,
             external_id,
             source,
         };
 
-        let values = predicate(title, value, context);
-        if values.is_empty() == false {
+        let values = predicate(title, value, &context);
+        if !values.is_empty() {
             for v in values {
                 result.push(v);
             }
@@ -102,17 +102,14 @@ pub fn multiple_parse_and_capture<SomeEnum>(
     value: &str,
     parser: Parser<SomeEnum>,
 ) -> Vec<SomeEnum> {
-    let parsed_values: Vec<Option<SomeEnum>> = value
-        .split(",")
+    let parsed_values = value
+        .split(',')
         .into_iter()
-        .map(|v| parse_and_capture(context, v, parser))
-        .collect();
+        .map(|v| parse_and_capture(context, v, parser));
 
     let mut values = vec![];
-    for v in parsed_values {
-        if v.is_some() {
-            values.push(v.unwrap())
-        }
+    for v in parsed_values.into_iter().flatten() {
+        values.push(v)
     }
 
     values

@@ -1,11 +1,13 @@
 use bigdecimal::{BigDecimal, ToPrimitive};
 use chrono::Utc;
-use lib::diesel::{sql_query, QueryDsl, RunQueryDsl};
 
 use lib::db;
-use lib::dto::characteristic::TypedCharacteristic;
-use lib::util::characteristic_id::get_characteristic_id;
 use lib::diesel::prelude::*;
+use lib::diesel::{sql_query, QueryDsl, RunQueryDsl};
+use lib::dto::characteristic::TypedCharacteristic;
+use lib::schema::product;
+use lib::util::characteristic_id::get_characteristic_id;
+
 use crate::db::entity::category::CategorySlug;
 use crate::db::entity::characteristic::product_characteristic::NewProductCharacteristic;
 use crate::db::entity::product::{NewProduct, Product};
@@ -16,7 +18,6 @@ use crate::db::repository::characteristic::{
     product_characteristic_string_value,
 };
 use crate::dto::parsed_product::{AdditionalParsedProductInfo, InternationalParsedProduct};
-use lib::schema::product;
 
 pub fn add_image_to_product_details(existent_product_id: i32, file_path: &str) {
     let connection = &db::establish_connection();
@@ -37,53 +38,46 @@ pub fn update_details(existent_product_id: i32, additional_info: &AdditionalPars
     let connection = &db::establish_connection();
     let target = product.filter(id.eq(existent_product_id));
 
-    let product_characteristics: Vec<Option<NewProductCharacteristic>> = additional_info
-        .characteristics
-        .iter()
-        .map(|tc| {
-            let characteristic_id = get_characteristic_id(tc.clone());
+    let product_characteristics = additional_info.characteristics.iter().map(|tc| {
+        let characteristic_id = get_characteristic_id(tc);
 
-            let value_id = match tc {
-                TypedCharacteristic::Float(v) => {
-                    let char_value = v.value();
-                    let product_value =
-                        product_characteristic_float_value::create_if_not_exists(char_value);
+        let value_id = match tc {
+            TypedCharacteristic::Float(v) => {
+                let char_value = v.value();
+                let product_value =
+                    product_characteristic_float_value::create_if_not_exists(char_value);
 
-                    product_value.and_then(|v| Some(v.id))
-                }
-                TypedCharacteristic::Int(v) => {
-                    // Use raw int value as value_id, without additional join
-                    Some(v.value())
-                }
-                TypedCharacteristic::String(v) => {
-                    let char_value = v.value();
-                    let product_value =
-                        product_characteristic_string_value::create_if_not_exists(char_value);
+                product_value.map(|v| v.id)
+            }
+            TypedCharacteristic::Int(v) => {
+                // Use raw int value as value_id, without additional join
+                Some(v.value())
+            }
+            TypedCharacteristic::String(v) => {
+                let char_value = v.value();
+                let product_value =
+                    product_characteristic_string_value::create_if_not_exists(&char_value);
 
-                    product_value.and_then(|v| Some(v.id))
-                }
-                TypedCharacteristic::Enum(v) => {
-                    let product_value = product_characteristic_enum_value::get_value_by_enum(*v);
+                product_value.map(|v| v.id)
+            }
+            TypedCharacteristic::Enum(v) => {
+                let product_value = product_characteristic_enum_value::get_value_by_enum(v);
 
-                    Some(product_value.id)
-                }
-            };
+                Some(product_value.id)
+            }
+        };
 
-            value_id.map_or(None, |v| {
-                Some(NewProductCharacteristic {
-                    product_id: existent_product_id,
-                    characteristic_id,
-                    value_id: v,
-                })
-            })
+        value_id.map(|v| NewProductCharacteristic {
+            product_id: existent_product_id,
+            characteristic_id,
+            value_id: v,
         })
-        .collect();
+    });
 
     create_many_if_not_exists(
-        product_characteristics
+        &product_characteristics
             .into_iter()
-            .filter(Option::is_some)
-            .map(Option::unwrap)
+            .flatten()
             .collect::<Vec<NewProductCharacteristic>>(),
     );
 
