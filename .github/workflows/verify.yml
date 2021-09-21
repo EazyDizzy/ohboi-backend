@@ -32,8 +32,8 @@ jobs:
         uses: Swatinem/rust-cache@v1
 
       - name: Run cargo test -no-run
-          with:
-            command: test --no-run
+        with:
+          command: test --no-run
 
       - name: Run tests
         run: cargo test --verbose
