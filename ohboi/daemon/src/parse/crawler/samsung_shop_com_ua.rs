@@ -145,7 +145,7 @@ impl Crawler for SamsungShopComUaCrawler {
         external_id: &str,
     ) -> Option<AdditionalParsedProductInfo> {
         let description = self.abstract_extract_description(
-            &document,
+            document,
             Selector::parse(".acardeon-item-content-main").unwrap(),
             &DESCRIPTION_RE,
         );

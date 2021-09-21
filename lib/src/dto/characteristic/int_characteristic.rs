@@ -35,7 +35,7 @@ impl IntCharacteristic {
     pub fn name(&self) -> String {
         let name = self.to_string();
 
-        name[0..name.find("(").unwrap()].to_string()
+        name[0..name.find('(').unwrap()].to_string()
     }
 
     pub fn value(&self) -> i32 {

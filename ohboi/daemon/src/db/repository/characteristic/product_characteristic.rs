@@ -5,11 +5,11 @@ use lib::db;
 use crate::db::entity::characteristic::product_characteristic::NewProductCharacteristic;
 use lib::schema::product_characteristic;
 
-pub fn create_many_if_not_exists(product_chars: Vec<NewProductCharacteristic>) {
+pub fn create_many_if_not_exists(product_chars: &Vec<NewProductCharacteristic>) {
     let connection = &db::establish_connection();
 
     let insert_result = diesel::insert_into(product_characteristic::table)
-        .values(&product_chars)
+        .values(product_chars)
         .execute(connection);
 
     match insert_result {

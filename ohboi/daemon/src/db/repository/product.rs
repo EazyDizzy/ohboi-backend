@@ -41,7 +41,7 @@ pub fn update_details(existent_product_id: i32, additional_info: &AdditionalPars
         .characteristics
         .iter()
         .map(|tc| {
-            let characteristic_id = get_characteristic_id(&tc);
+            let characteristic_id = get_characteristic_id(tc);
 
             let value_id = match tc {
                 TypedCharacteristic::Float(v) => {
@@ -49,7 +49,7 @@ pub fn update_details(existent_product_id: i32, additional_info: &AdditionalPars
                     let product_value =
                         product_characteristic_float_value::create_if_not_exists(char_value);
 
-                    product_value.and_then(|v| Some(v.id))
+                    product_value.map(|v| v.id)
                 }
                 TypedCharacteristic::Int(v) => {
                     // Use raw int value as value_id, without additional join
@@ -60,7 +60,7 @@ pub fn update_details(existent_product_id: i32, additional_info: &AdditionalPars
                     let product_value =
                         product_characteristic_string_value::create_if_not_exists(char_value);
 
-                    product_value.and_then(|v| Some(v.id))
+                    product_value.map(|v| v.id)
                 }
                 TypedCharacteristic::Enum(v) => {
                     let product_value = product_characteristic_enum_value::get_value_by_enum(v);
@@ -69,7 +69,7 @@ pub fn update_details(existent_product_id: i32, additional_info: &AdditionalPars
                 }
             };
 
-            value_id.map_or(None, |v| {
+            value_id.and_then(|v| {
                 Some(NewProductCharacteristic {
                     product_id: existent_product_id,
                     characteristic_id,
@@ -80,10 +80,9 @@ pub fn update_details(existent_product_id: i32, additional_info: &AdditionalPars
         .collect();
 
     create_many_if_not_exists(
-        product_characteristics
+        &product_characteristics
             .into_iter()
-            .filter(Option::is_some)
-            .map(Option::unwrap)
+            .flatten()
             .collect::<Vec<NewProductCharacteristic>>(),
     );
 

@@ -93,5 +93,5 @@ async fn main() {
 }
 
 lazy_static! {
-    static ref SETTINGS: Settings = Settings::new().unwrap();
+    static ref SETTINGS: Settings = Settings::new();
 }

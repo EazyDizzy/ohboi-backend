@@ -38,9 +38,9 @@ pub fn parse_and_take<R>(
     let mut indexes_to_remove = vec![];
     let source = crawler.get_source();
 
-    for (index, (title, value)) in characteristics.into_iter().enumerate() {
+    for (index, (title, value)) in characteristics.iter().enumerate() {
         let context = CharacteristicParsingContext {
-            title: &title,
+            title,
             external_id,
             source,
         };
@@ -72,13 +72,13 @@ pub fn parse_and_take_multiple<R>(
 
     for (index, (title, value)) in characteristics.into_iter().enumerate() {
         let context = CharacteristicParsingContext {
-            title: &title,
+            title,
             external_id,
             source,
         };
 
         let values = predicate(title, value, context);
-        if values.is_empty() == false {
+        if !values.is_empty() {
             for v in values {
                 result.push(v);
             }
@@ -103,7 +103,7 @@ pub fn multiple_parse_and_capture<SomeEnum>(
     parser: Parser<SomeEnum>,
 ) -> Vec<SomeEnum> {
     let parsed_values: Vec<Option<SomeEnum>> = value
-        .split(",")
+        .split(',')
         .into_iter()
         .map(|v| parse_and_capture(context, v, parser))
         .collect();

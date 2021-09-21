@@ -1,6 +1,6 @@
 use lib::dto::characteristic::enum_characteristic::{EnumCharacteristic, Technology};
 
-use crate::parse::crawler::characteristic_parser::*;
+use crate::parse::crawler::characteristic_parser::{CharacteristicParsingContext, bool_value};
 
 pub fn extract_technology_characteristic(
     title: &str,
@@ -42,5 +42,5 @@ pub fn extract_technology_characteristic(
         _ => None,
     };
 
-    characteristic.map(|v| EnumCharacteristic::TechnologySupport(v))
+    characteristic.map(EnumCharacteristic::TechnologySupport)
 }

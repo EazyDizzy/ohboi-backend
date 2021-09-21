@@ -31,7 +31,6 @@ pub fn enum_media_format_value(value: &str) -> Option<MediaFormat> {
         "WAVE" => Some(MediaFormat::WAVE),
         "Opus" => Some(MediaFormat::Opus),
         "VC-1" => Some(MediaFormat::VC1),
-        "AMR–NB" => Some(MediaFormat::AMR_NB),
         "DSF" => Some(MediaFormat::DSF),
         "M4A" => Some(MediaFormat::M4A),
         "OGG" => Some(MediaFormat::OGG),

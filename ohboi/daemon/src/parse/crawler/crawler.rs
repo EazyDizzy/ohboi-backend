@@ -112,10 +112,8 @@ pub trait Crawler: Sync + Send {
         let matches = re.captures_iter(description_html.as_str());
 
         for capture in matches {
-            for text in capture.iter() {
-                if let Some(text) = text {
-                    description_sanitized.push(text.as_str());
-                }
+            for text in capture.iter().flatten() {
+                description_sanitized.push(text.as_str());
             }
         }
 

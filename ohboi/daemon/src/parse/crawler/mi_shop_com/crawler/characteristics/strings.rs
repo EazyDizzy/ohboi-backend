@@ -1,5 +1,5 @@
 use lib::dto::characteristic::string_characteristic::StringCharacteristic;
-use crate::parse::crawler::characteristic_parser::*;
+use crate::parse::crawler::characteristic_parser::{CharacteristicParsingContext, string_value};
 
 pub fn extract_string_characteristic(title: &str, value: &str, context: CharacteristicParsingContext) -> Option<StringCharacteristic> {
     match title {

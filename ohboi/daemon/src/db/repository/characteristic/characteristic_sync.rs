@@ -33,7 +33,9 @@ fn sync_float_chars() {
             item.visualisation_type,
             item.value_type,
         );
-        created_char.map(|c| connect_char_to_category(c, CategorySlug::Smartphone));
+        if let Some(c) = created_char {
+            connect_char_to_category(c, CategorySlug::Smartphone)
+        }
     }
 }
 
@@ -45,7 +47,7 @@ fn sync_int_chars() {
             item.visualisation_type,
             item.value_type,
         );
-        created_char.map(|c| connect_char_to_category(c, CategorySlug::Smartphone));
+        if let Some(c) = created_char { connect_char_to_category(c, CategorySlug::Smartphone) }
     }
 }
 
@@ -57,7 +59,7 @@ fn sync_string_chars() {
             item.visualisation_type,
             item.value_type,
         );
-        created_char.map(|c| connect_char_to_category(c, CategorySlug::Smartphone));
+        if let Some(c) = created_char { connect_char_to_category(c, CategorySlug::Smartphone) }
     }
 }
 
@@ -69,7 +71,7 @@ fn sync_enum_chars() {
             item.visualisation_type,
             item.value_type,
         );
-        created_char.map(|c| connect_char_to_category(c, CategorySlug::Smartphone));
+        if let Some(c) = created_char { connect_char_to_category(c, CategorySlug::Smartphone) }
     }
 
     sync_enum_char_values();
