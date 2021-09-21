@@ -1,4 +1,8 @@
-use lib::dto::characteristic::enum_characteristic::*;
+use lib::dto::characteristic::enum_characteristic::{
+    AudioJack, BatteryType, ChargingConnectorType, Country, DisplayType,
+    InternetConnectionTechnology, Material, MediaFormat, MemoryCardSlot, SatelliteNavigation,
+    SimCard, WifiStandard,
+};
 
 use crate::parse::crawler::characteristic_parser::string_value;
 

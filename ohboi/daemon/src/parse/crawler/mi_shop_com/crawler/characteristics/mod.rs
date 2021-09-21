@@ -51,7 +51,7 @@ pub fn extract_characteristics(
         .map(|title| inner_text(&title.inner_html()))
         .collect();
 
-    let mut characteristics = combine_titles_and_values(titles, values);
+    let mut characteristics = combine_titles_and_values(&titles, &values);
 
     let string_chars = parse_and_take(
         &mut characteristics,

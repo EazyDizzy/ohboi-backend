@@ -1,17 +1,21 @@
 use lib::dto::characteristic::int_characteristic::IntCharacteristic;
 
-use crate::parse::crawler::characteristic_parser::*;
+use crate::parse::crawler::characteristic_parser::{
+    int_fps_value, int_guarantee_value, int_hz_value, int_ma_h_value, int_memory_value,
+    int_mp_value, int_nit_value, int_value, multiple_int_value, pix_int_value,
+    CharacteristicParsingContext,
+};
 
 pub fn extract_int_characteristic(
     title: &str,
     value: &str,
-    context: CharacteristicParsingContext,
+    context: &CharacteristicParsingContext,
 ) -> Vec<IntCharacteristic> {
-    match extract_single_int_characteristic(title, value, &context) {
+    match extract_single_int_characteristic(title, value, context) {
         Some(v) => {
             vec![v]
         }
-        None => extract_multiple_int_characteristic(title, value, &context),
+        None => extract_multiple_int_characteristic(title, value, context),
     }
 }
 

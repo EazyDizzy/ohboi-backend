@@ -2,7 +2,13 @@ use regex::Regex;
 
 use lib::dto::characteristic::enum_characteristic::EnumCharacteristic;
 
-use crate::parse::crawler::characteristic_parser::*;
+use crate::parse::crawler::characteristic_parser::{
+    enum_audio_jack_value, enum_battery_type_value, enum_charging_connector_type_value,
+    enum_country_value, enum_display_type_value, enum_internet_connection_technology_value,
+    enum_material_value, enum_memory_card_slot_value, enum_satellite_navigation_value,
+    enum_sim_card_value, enum_wifi_standard_value, multiple_parse_and_capture, parse_and_capture,
+    CharacteristicParsingContext,
+};
 use crate::parse::crawler::mi_shop_com::crawler::media_format_parser::multiple_string_media_format_value;
 
 lazy_static! {
@@ -12,13 +18,13 @@ lazy_static! {
 pub fn extract_enum_characteristic(
     title: &str,
     value: &str,
-    context: CharacteristicParsingContext,
+    context: &CharacteristicParsingContext,
 ) -> Vec<EnumCharacteristic> {
-    match extract_single_enum_characteristic(title, value, &context) {
+    match extract_single_enum_characteristic(title, value, context) {
         Some(v) => {
             vec![v]
         }
-        None => extract_multiple_enum_characteristic(title, value, &context),
+        None => extract_multiple_enum_characteristic(title, value, context),
     }
 }
 

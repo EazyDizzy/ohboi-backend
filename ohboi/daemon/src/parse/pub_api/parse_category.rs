@@ -47,7 +47,7 @@ pub async fn parse_category(
                         let mut amount_of_duplicates = 0;
                         let parsed_amount = parsed.len();
 
-                        for parsed_product in parsed.into_iter() {
+                        for parsed_product in parsed {
                             let will_be_duplicated = products
                                 .iter()
                                 .any(|p| p.external_id == parsed_product.external_id);

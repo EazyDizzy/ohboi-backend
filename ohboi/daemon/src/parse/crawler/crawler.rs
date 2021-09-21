@@ -334,29 +334,29 @@ mod tests {
             vec![]
         }
 
-        fn get_next_page_urls(&self, category: CategorySlug) -> Vec<String> {
+        fn get_next_page_urls(&self, _: CategorySlug) -> Vec<String> {
             vec![]
         }
 
-        fn extract_products(&self, document: &Html) -> Vec<LocalParsedProduct> {
+        fn extract_products(&self, _: &Html) -> Vec<LocalParsedProduct> {
             vec![]
         }
 
-        fn get_additional_info_url(&self, external_id: &str) -> String {
+        fn get_additional_info_url(&self, _: &str) -> String {
             "todo".to_string()
         }
 
         fn extract_additional_info(
             &self,
-            document: &Html,
-            external_id: &str,
+            _: &Html,
+            _: &str,
         ) -> Option<AdditionalParsedProductInfo> {
             None
         }
     }
 
     impl EmptyCrawler {
-        fn extract_image_urls(&self, document: &Html, external_id: &str) -> Vec<String> {
+        fn extract_image_urls(&self, document: &Html, _: &str) -> Vec<String> {
             let images_selector = Selector::parse("img").unwrap();
             let image_nodes = document.select(&images_selector);
             self.abstract_extract_image_urls(image_nodes, "data-lazy")

@@ -2,10 +2,17 @@ use strum::VariantNames;
 
 use lib::db::entity::characteristic::Characteristic;
 use lib::diesel::prelude::*;
-use lib::dto::characteristic::enum_characteristic::*;
+use lib::dto::characteristic::enum_characteristic::{
+    AudioJack, BatteryType, ChargingConnectorType, Country, DisplayType, EnumCharacteristic,
+    InternetConnectionTechnology, Material, MediaFormat, MemoryCardSlot, SatelliteNavigation,
+    SimCard, Technology, WifiStandard,
+};
 use lib::error_reporting::ReportingContext;
 use lib::schema::category_characteristic;
-use lib::util::all_characteristics::{get_enum_characteristics, get_float_characteristics, get_int_characteristics, get_string_characteristics};
+use lib::util::all_characteristics::{
+    get_enum_characteristics, get_float_characteristics, get_int_characteristics,
+    get_string_characteristics,
+};
 use lib::{db, error_reporting};
 
 use crate::db::entity::category::CategorySlug;
@@ -47,7 +54,9 @@ fn sync_int_chars() {
             item.visualisation_type,
             item.value_type,
         );
-        if let Some(c) = created_char { connect_char_to_category(c, CategorySlug::Smartphone) }
+        if let Some(c) = created_char {
+            connect_char_to_category(c, CategorySlug::Smartphone)
+        }
     }
 }
 
@@ -59,7 +68,9 @@ fn sync_string_chars() {
             item.visualisation_type,
             item.value_type,
         );
-        if let Some(c) = created_char { connect_char_to_category(c, CategorySlug::Smartphone) }
+        if let Some(c) = created_char {
+            connect_char_to_category(c, CategorySlug::Smartphone)
+        }
     }
 }
 
@@ -71,7 +82,9 @@ fn sync_enum_chars() {
             item.visualisation_type,
             item.value_type,
         );
-        if let Some(c) = created_char { connect_char_to_category(c, CategorySlug::Smartphone) }
+        if let Some(c) = created_char {
+            connect_char_to_category(c, CategorySlug::Smartphone)
+        }
     }
 
     sync_enum_char_values();

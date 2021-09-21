@@ -11,7 +11,7 @@ pub fn int_mp_value(context: &CharacteristicParsingContext, value: &str) -> Opti
         context,
         value
             .replace("Мп", "")
-            .split("+")
+            .split('+')
             .into_iter()
             .next()
             .unwrap(),
@@ -41,11 +41,11 @@ pub fn int_hz_value(context: &CharacteristicParsingContext, value: &str) -> Opti
 }
 pub fn int_memory_value(context: &CharacteristicParsingContext, value: &str) -> Option<i32> {
     let is_tb = value.contains("ТБ");
-    int_value(context, &value.replace("ГБ", "").replace("до", "")).and_then(|v| {
+    int_value(context, &value.replace("ГБ", "").replace("до", "")).map(|v| {
         if is_tb {
-            Some(v * 1000)
+            v * 1000
         } else {
-            Some(v)
+            v
         }
     })
 }
@@ -84,10 +84,8 @@ pub fn multiple_int_value(context: &CharacteristicParsingContext, value: &str) -
         .collect();
 
     let mut int_values = vec![];
-    for v in parsed_values {
-        if v.is_some() {
-            int_values.push(v.unwrap())
-        }
+    for v in parsed_values.into_iter().flatten() {
+        int_values.push(v)
     }
 
     int_values

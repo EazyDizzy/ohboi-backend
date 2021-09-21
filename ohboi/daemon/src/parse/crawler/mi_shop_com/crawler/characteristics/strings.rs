@@ -1,7 +1,7 @@
 use lib::dto::characteristic::string_characteristic::StringCharacteristic;
 use crate::parse::crawler::characteristic_parser::{CharacteristicParsingContext, string_value};
 
-pub fn extract_string_characteristic(title: &str, value: &str, context: CharacteristicParsingContext) -> Option<StringCharacteristic> {
+pub fn extract_string_characteristic(title: &str, value: &str, _: &CharacteristicParsingContext) -> Option<StringCharacteristic> {
     match title {
         "Процессор" => Some(StringCharacteristic::Processor(string_value(value))),
         "Модель" => Some(StringCharacteristic::Model(string_value(value))),
