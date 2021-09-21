@@ -1,7 +1,7 @@
 use lib::db;
 use lib::db::repository::exchange_rate::try_get_exchange_rate_by_code;
-use lib::diesel::prelude::*;
 use lib::diesel::{QueryDsl, RunQueryDsl};
+use lib::diesel::prelude::*;
 use lib::schema::product;
 use lib::schema::product::dsl::{enabled, id};
 
@@ -26,6 +26,7 @@ pub fn get_product_info(params: &ProductParams) -> Option<ProductInfo> {
         let rate = try_get_exchange_rate_by_code(params.currency);
         convert_product_prices(&mut p, rate);
         let characteristics = get_all_characteristics_of_product(p.id);
+
         Some(ProductInfo {
             id: p.id,
             title: p.title,

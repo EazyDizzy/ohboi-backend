@@ -176,8 +176,7 @@ impl SamsungShopComUaCrawler {
     fn extract_images(&self, document: &Html, external_id: &str) -> Vec<String> {
         let images_selector = Selector::parse(".sp-slide img.sp-image").unwrap();
         let image_nodes = document.select(&images_selector);
-        let images_urls = self.abstract_extract_image_urls(image_nodes, "data-src");
 
-        images_urls
+        self.abstract_extract_image_urls(image_nodes, "data-src")
     }
 }

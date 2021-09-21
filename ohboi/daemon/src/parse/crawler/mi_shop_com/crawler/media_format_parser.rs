@@ -56,12 +56,10 @@ pub fn multiple_string_media_format_value(
     }
     values = values_copy;
     values = values
-        .iter()
-        .map(|v| {
+        .iter().filter_map(|v| {
             let parsed = NO_DESCRIPTION_RE.captures_iter(v).next();
             parsed.map(|e| e.get(0).unwrap().as_str())
         })
-        .flatten()
         .collect::<Vec<&str>>()
         .clone();
 

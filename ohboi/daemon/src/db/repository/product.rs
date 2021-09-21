@@ -69,13 +69,11 @@ pub fn update_details(existent_product_id: i32, additional_info: &AdditionalPars
                 }
             };
 
-            value_id.and_then(|v| {
-                Some(NewProductCharacteristic {
+            value_id.map(|v| NewProductCharacteristic {
                     product_id: existent_product_id,
                     characteristic_id,
                     value_id: v,
                 })
-            })
         })
         .collect();
 

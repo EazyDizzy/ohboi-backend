@@ -70,7 +70,7 @@ pub fn parse_and_take_multiple<R>(
     let mut indexes_to_remove = vec![];
     let source = crawler.get_source();
 
-    for (index, (title, value)) in characteristics.into_iter().enumerate() {
+    for (index, (title, value)) in characteristics.iter().enumerate() {
         let context = CharacteristicParsingContext {
             title,
             external_id,

@@ -279,7 +279,7 @@ fn get_float_values_expression(values: &[CharacteristicFloatValue]) -> Option<St
     get_id_values_expression(&converted_to_ids)
 }
 
-fn get_id_values_expression(values: &Vec<CharacteristicIntValue>) -> Option<String> {
+fn get_id_values_expression(values: &[CharacteristicIntValue]) -> Option<String> {
     if values.is_empty() {
         return None;
     }

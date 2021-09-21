@@ -47,7 +47,7 @@ pub async fn parse_category(
                         let mut amount_of_duplicates = 0;
                         let parsed_amount = parsed.len();
 
-                        parsed.into_iter().for_each(|parsed_product| {
+                        for parsed_product in parsed.into_iter() {
                             let will_be_duplicated = products
                                 .iter()
                                 .any(|p| p.external_id == parsed_product.external_id);
@@ -57,7 +57,7 @@ pub async fn parse_category(
                             } else {
                                 products.push(parsed_product);
                             }
-                        });
+                        }
                         all_successful = all_successful
                             && parsed_amount != 0 // Some sites return empty page
                             && amount_of_duplicates != parsed_amount; // But some return the last page (samsung)

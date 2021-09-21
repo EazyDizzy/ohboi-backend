@@ -5,7 +5,7 @@ use lib::diesel::prelude::*;
 use lib::dto::characteristic::enum_characteristic::*;
 use lib::error_reporting::ReportingContext;
 use lib::schema::category_characteristic;
-use lib::util::all_characteristics::*;
+use lib::util::all_characteristics::{get_enum_characteristics, get_float_characteristics, get_int_characteristics, get_string_characteristics};
 use lib::{db, error_reporting};
 
 use crate::db::entity::category::CategorySlug;

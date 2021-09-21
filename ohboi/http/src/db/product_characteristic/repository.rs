@@ -95,11 +95,11 @@ pub fn get_all_characteristics_of_product(product_id: i32) -> ProductCharacteris
 }
 
 fn get_mapped_float_values(
-    values: &Vec<ProductCharacteristic>,
+    values: &[ProductCharacteristic],
 ) -> Vec<ProductCharacteristicFloatValue> {
     use lib::schema::product_characteristic_float_value::dsl::id;
     let connection = &db::establish_connection();
-    let ids: Vec<i32> = values.into_iter().map(|v| v.value_id).collect();
+    let ids: Vec<i32> = values.iter().map(|v| v.value_id).collect();
     let filter = id.eq_any(ids);
 
     product_characteristic_float_value::table
@@ -109,11 +109,11 @@ fn get_mapped_float_values(
 }
 
 fn get_mapped_string_values(
-    values: &Vec<ProductCharacteristic>,
+    values: &[ProductCharacteristic],
 ) -> Vec<ProductCharacteristicStringValue> {
     use lib::schema::product_characteristic_string_value::dsl::id;
     let connection = &db::establish_connection();
-    let ids: Vec<i32> = values.into_iter().map(|v| v.value_id).collect();
+    let ids: Vec<i32> = values.iter().map(|v| v.value_id).collect();
     let filter = id.eq_any(ids);
 
     product_characteristic_string_value::table
@@ -122,11 +122,11 @@ fn get_mapped_string_values(
         .expect("Cannot load product product_characteristic_string_value")
 }
 fn get_mapped_enum_values(
-    values: &Vec<ProductCharacteristic>,
+    values: &[ProductCharacteristic],
 ) -> Vec<ProductCharacteristicEnumValue> {
     use lib::schema::product_characteristic_enum_value::dsl::id;
     let connection = &db::establish_connection();
-    let ids: Vec<i32> = values.into_iter().map(|v| v.value_id).collect();
+    let ids: Vec<i32> = values.iter().map(|v| v.value_id).collect();
     let filter = id.eq_any(ids);
 
     product_characteristic_enum_value::table

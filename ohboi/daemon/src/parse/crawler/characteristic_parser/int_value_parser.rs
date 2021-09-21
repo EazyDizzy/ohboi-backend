@@ -9,7 +9,7 @@ use crate::ConsumerName;
 pub fn int_mp_value(context: &CharacteristicParsingContext, value: &str) -> Option<i32> {
     int_value(
         context,
-        &value
+        value
             .replace("Мп", "")
             .split("+")
             .into_iter()
@@ -59,11 +59,11 @@ pub fn int_fps_value(context: &CharacteristicParsingContext, value: &str) -> Opt
 pub fn pix_int_value(context: &CharacteristicParsingContext, value: &str) -> Option<i32> {
     let mut cut_value = value;
 
-    if cut_value.contains("x") {
-        cut_value = cut_value.split("x").into_iter().next().unwrap();
+    if cut_value.contains('x') {
+        cut_value = cut_value.split('x').into_iter().next().unwrap();
     }
-    if cut_value.contains("/") {
-        cut_value = cut_value.split("/").into_iter().next().unwrap();
+    if cut_value.contains('/') {
+        cut_value = cut_value.split('/').into_iter().next().unwrap();
     }
 
     int_value(
@@ -78,7 +78,7 @@ pub fn pix_int_value(context: &CharacteristicParsingContext, value: &str) -> Opt
 
 pub fn multiple_int_value(context: &CharacteristicParsingContext, value: &str) -> Vec<i32> {
     let parsed_values: Vec<Option<i32>> = value
-        .split(",")
+        .split(',')
         .into_iter()
         .map(|v| int_value(context, v))
         .collect();
@@ -93,7 +93,7 @@ pub fn multiple_int_value(context: &CharacteristicParsingContext, value: &str) -
     int_values
 }
 pub fn int_value(context: &CharacteristicParsingContext, value: &str) -> Option<i32> {
-    match i32::from_str_radix(value.trim(), 10) {
+    match value.trim().parse::<i32>() {
         Ok(v) => Some(v),
         Err(e) => {
             error_reporting::warning(
