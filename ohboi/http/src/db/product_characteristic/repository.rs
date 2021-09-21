@@ -1,18 +1,22 @@
 use bigdecimal::ToPrimitive;
 
 use lib::db;
-use lib::dto::characteristic::TypedCharacteristic;
 use lib::diesel::prelude::*;
+use lib::dto::characteristic::TypedCharacteristic;
+use lib::schema::product_characteristic;
+use lib::schema::product_characteristic_enum_value;
+use lib::schema::product_characteristic_float_value;
+use lib::schema::product_characteristic_string_value;
+
 use crate::db::product_characteristic::characteristic_id::get_characteristic_by_id;
 use crate::db::product_characteristic::entity::ProductCharacteristic;
 use crate::db::product_characteristic::product_characteristic_enum_value::ProductCharacteristicEnumValue;
 use crate::db::product_characteristic::product_characteristic_float_value::ProductCharacteristicFloatValue;
 use crate::db::product_characteristic::product_characteristic_string_value::ProductCharacteristicStringValue;
-use crate::dto::product::*;
-use lib::schema::product_characteristic;
-use lib::schema::product_characteristic_enum_value;
-use lib::schema::product_characteristic_float_value;
-use lib::schema::product_characteristic_string_value;
+use crate::dto::product::{
+    CharacteristicEnumValue, CharacteristicFloatValue, CharacteristicIntValue,
+    CharacteristicStringValue, ProductCharacteristicsMapped,
+};
 
 pub fn get_all_characteristics_of_product(product_id: i32) -> ProductCharacteristicsMapped {
     let product_characteristics = get_product_characteristics(product_id);
@@ -71,7 +75,8 @@ pub fn get_all_characteristics_of_product(product_id: i32) -> ProductCharacteris
                 .iter()
                 .find(|p| p.id == v.value_id)
                 .unwrap()
-                .value.clone(),
+                .value
+                .clone(),
         })
         .collect();
     let enum_values = enum_characteristics
@@ -82,7 +87,8 @@ pub fn get_all_characteristics_of_product(product_id: i32) -> ProductCharacteris
                 .iter()
                 .find(|p| p.id == v.value_id)
                 .unwrap()
-                .value.clone(),
+                .value
+                .clone(),
         })
         .collect();
 
@@ -121,9 +127,7 @@ fn get_mapped_string_values(
         .load::<ProductCharacteristicStringValue>(connection)
         .expect("Cannot load product product_characteristic_string_value")
 }
-fn get_mapped_enum_values(
-    values: &[ProductCharacteristic],
-) -> Vec<ProductCharacteristicEnumValue> {
+fn get_mapped_enum_values(values: &[ProductCharacteristic]) -> Vec<ProductCharacteristicEnumValue> {
     use lib::schema::product_characteristic_enum_value::dsl::id;
     let connection = &db::establish_connection();
     let ids: Vec<i32> = values.iter().map(|v| v.value_id).collect();

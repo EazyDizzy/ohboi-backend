@@ -6,7 +6,7 @@ use lib::schema::product_characteristic_float_value;
 
 use crate::db::product_characteristic::product_characteristic_float_value::ProductCharacteristicFloatValue;
 
-pub fn get_ids_of_values(values: Vec<f32>) -> Vec<ProductCharacteristicFloatValue> {
+pub fn get_ids_of_values(values: &Vec<f32>) -> Vec<ProductCharacteristicFloatValue> {
     use lib::schema::product_characteristic_float_value::dsl::value;
     let connection = &db::establish_connection();
     let filter = value.eq_any(

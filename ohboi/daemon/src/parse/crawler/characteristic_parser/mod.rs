@@ -102,11 +102,10 @@ pub fn multiple_parse_and_capture<SomeEnum>(
     value: &str,
     parser: Parser<SomeEnum>,
 ) -> Vec<SomeEnum> {
-    let parsed_values: Vec<Option<SomeEnum>> = value
+    let parsed_values = value
         .split(',')
         .into_iter()
-        .map(|v| parse_and_capture(context, v, parser))
-        .collect();
+        .map(|v| parse_and_capture(context, v, parser));
 
     let mut values = vec![];
     for v in parsed_values.into_iter().flatten() {

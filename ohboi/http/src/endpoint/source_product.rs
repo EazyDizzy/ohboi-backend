@@ -5,7 +5,7 @@ use validator::Validate;
 
 use crate::db::source_product::repository::get_all_for_product;
 
-pub async fn get_source_products(filters: Json<SourceProductFilters>) -> HttpResponse {
+pub fn get_source_products(filters: Json<SourceProductFilters>) -> HttpResponse {
     let products = get_all_for_product(filters.id);
 
     HttpResponse::Ok().json(products)

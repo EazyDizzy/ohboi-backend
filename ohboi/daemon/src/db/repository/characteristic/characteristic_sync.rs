@@ -41,7 +41,7 @@ fn sync_float_chars() {
             item.value_type,
         );
         if let Some(c) = created_char {
-            connect_char_to_category(c, CategorySlug::Smartphone)
+            connect_char_to_category(&c, CategorySlug::Smartphone)
         }
     }
 }
@@ -55,7 +55,7 @@ fn sync_int_chars() {
             item.value_type,
         );
         if let Some(c) = created_char {
-            connect_char_to_category(c, CategorySlug::Smartphone)
+            connect_char_to_category(&c, CategorySlug::Smartphone)
         }
     }
 }
@@ -69,7 +69,7 @@ fn sync_string_chars() {
             item.value_type,
         );
         if let Some(c) = created_char {
-            connect_char_to_category(c, CategorySlug::Smartphone)
+            connect_char_to_category(&c, CategorySlug::Smartphone)
         }
     }
 }
@@ -83,7 +83,7 @@ fn sync_enum_chars() {
             item.value_type,
         );
         if let Some(c) = created_char {
-            connect_char_to_category(c, CategorySlug::Smartphone)
+            connect_char_to_category(&c, CategorySlug::Smartphone)
         }
     }
 
@@ -91,32 +91,32 @@ fn sync_enum_chars() {
 }
 
 fn sync_enum_char_values() {
-    sync_one_enum_char_values(EnumCharacteristic::ChargingConnectorType(
+    sync_one_enum_char_values(&EnumCharacteristic::ChargingConnectorType(
         ChargingConnectorType::USBTypeC,
     ));
-    sync_one_enum_char_values(EnumCharacteristic::BatteryType(BatteryType::LithiumIon));
-    sync_one_enum_char_values(EnumCharacteristic::SimCard(SimCard::Mini));
-    sync_one_enum_char_values(EnumCharacteristic::Material(Material::Plastic));
-    sync_one_enum_char_values(EnumCharacteristic::DisplayType(DisplayType::Oled));
-    sync_one_enum_char_values(EnumCharacteristic::InternetConnectionTechnology(
+    sync_one_enum_char_values(&EnumCharacteristic::BatteryType(BatteryType::LithiumIon));
+    sync_one_enum_char_values(&EnumCharacteristic::SimCard(SimCard::Mini));
+    sync_one_enum_char_values(&EnumCharacteristic::Material(Material::Plastic));
+    sync_one_enum_char_values(&EnumCharacteristic::DisplayType(DisplayType::Oled));
+    sync_one_enum_char_values(&EnumCharacteristic::InternetConnectionTechnology(
         InternetConnectionTechnology::_4G,
     ));
-    sync_one_enum_char_values(EnumCharacteristic::SatelliteNavigation(
+    sync_one_enum_char_values(&EnumCharacteristic::SatelliteNavigation(
         SatelliteNavigation::Galileo,
     ));
-    sync_one_enum_char_values(EnumCharacteristic::WifiStandard(WifiStandard::_5));
-    sync_one_enum_char_values(EnumCharacteristic::AudioJack(AudioJack::USBTypeC));
-    sync_one_enum_char_values(EnumCharacteristic::TechnologySupport(
+    sync_one_enum_char_values(&EnumCharacteristic::WifiStandard(WifiStandard::_5));
+    sync_one_enum_char_values(&EnumCharacteristic::AudioJack(AudioJack::USBTypeC));
+    sync_one_enum_char_values(&EnumCharacteristic::TechnologySupport(
         Technology::FastCharging,
     ));
-    sync_one_enum_char_values(EnumCharacteristic::ProducingCountry(Country::China));
-    sync_one_enum_char_values(EnumCharacteristic::MemoryCardSlot(MemoryCardSlot::Separate));
-    sync_one_enum_char_values(EnumCharacteristic::SupportedMediaFormat(MediaFormat::H264));
+    sync_one_enum_char_values(&EnumCharacteristic::ProducingCountry(Country::China));
+    sync_one_enum_char_values(&EnumCharacteristic::MemoryCardSlot(MemoryCardSlot::Separate));
+    sync_one_enum_char_values(&EnumCharacteristic::SupportedMediaFormat(MediaFormat::H264));
 }
 
-/// This code was moved to separate function just to force compiler to fail when new variant was added
-/// Don't forget to add new variant to sync_enum_char_values when adding below
-fn sync_one_enum_char_values(char: EnumCharacteristic) {
+// This code was moved to separate function just to force compiler to fail when new variant was added
+// Don't forget to add new variant to sync_enum_char_values when adding below
+fn sync_one_enum_char_values(char: &EnumCharacteristic) {
     let values = match char {
         EnumCharacteristic::ChargingConnectorType(_) => ChargingConnectorType::VARIANTS,
         EnumCharacteristic::BatteryType(_) => BatteryType::VARIANTS,
@@ -142,7 +142,7 @@ fn sync_one_enum_char_values(char: EnumCharacteristic) {
     }
 }
 
-fn connect_char_to_category(char: Characteristic, category: CategorySlug) {
+fn connect_char_to_category(char: &Characteristic, category: CategorySlug) {
     let connection = &db::establish_connection();
     let category_id = get_category(category).id;
 

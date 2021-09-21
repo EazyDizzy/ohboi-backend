@@ -218,7 +218,7 @@ fn get_enum_values_expression(values: &[CharacteristicEnumValue]) -> Option<Stri
         values.iter().map(|v| v.value.clone()).collect(),
     );
 
-    let converted_to_ids = values
+    let converted_to_ids: Vec<CharacteristicIntValue> = values
         .iter()
         .map(|char| CharacteristicIntValue {
             characteristic_id: char.characteristic_id,
@@ -241,7 +241,7 @@ fn get_string_values_expression(values: &[CharacteristicStringValue]) -> Option<
         values.iter().map(|v| v.value.clone()).collect(),
     );
 
-    let converted_to_ids = values
+    let converted_to_ids: Vec<CharacteristicIntValue> = values
         .iter()
         .map(|char| CharacteristicIntValue {
             characteristic_id: char.characteristic_id,
@@ -261,16 +261,16 @@ fn get_float_values_expression(values: &[CharacteristicFloatValue]) -> Option<St
     }
 
     let float_value_ids = product_characteristic_float_value::get_ids_of_values(
-        values.iter().map(|v| v.value).collect(),
+        &values.iter().map(|v| v.value).collect(),
     );
 
-    let converted_to_ids = values
+    let converted_to_ids: Vec<CharacteristicIntValue> = values
         .iter()
         .map(|char| CharacteristicIntValue {
             characteristic_id: char.characteristic_id,
             value: float_value_ids
                 .iter()
-                .find(|v| v.value.to_f32().unwrap() == char.value)
+                .find(|v| (v.value.to_f32().unwrap() - char.value).abs() < f32::EPSILON)
                 .expect("Not-existed in db float value")
                 .id,
         })
@@ -318,8 +318,7 @@ mod tests {
     #[test]
     fn it_creates_int_value_expression() {
         assert_eq!(
-            get_id_values_expression(&vec![
-                CharacteristicIntValue {
+            get_id_values_expression(&[CharacteristicIntValue {
                     characteristic_id: 1,
                     value: 2
                 },
@@ -330,8 +329,7 @@ mod tests {
                 CharacteristicIntValue {
                     characteristic_id: 4,
                     value: 4
-                }
-            ]),
+                }]),
             Some("(1, '{2, 3}'::int[]), (4, '{4}'::int[])".to_owned())
         );
     }

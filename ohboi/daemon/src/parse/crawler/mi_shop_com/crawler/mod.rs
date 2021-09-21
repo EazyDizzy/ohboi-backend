@@ -172,9 +172,7 @@ impl Crawler for MiShopComCrawler {
         );
 
         // We should not upload images if it is not valid product
-        if description.is_none() || available.is_none() {
-            None
-        } else {
+        if let (Some(description), Some(available)) = (description, available) {
             let image_urls = self.extract_images(document);
             let start = Instant::now();
             let characteristics = extract_characteristics(self, document, external_id);
@@ -185,10 +183,12 @@ impl Crawler for MiShopComCrawler {
             );
             Some(AdditionalParsedProductInfo {
                 image_urls,
-                description: description.unwrap(),
-                available: available.unwrap(),
+                description,
+                available,
                 characteristics,
             })
+        } else {
+            None
         }
     }
 }
