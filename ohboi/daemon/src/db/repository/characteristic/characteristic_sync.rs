@@ -34,11 +34,13 @@ pub fn sync_characteristic_enum() {
 
 fn sync_float_chars() {
     for item in get_float_characteristics() {
-        let created_char = create::create_if_not_exists(
+        let created_char = create::upsert(
             item.id,
             item.slug,
             item.visualisation_type,
             item.value_type,
+            item.sort_key,
+            item.group_slug,
         );
         if let Some(c) = created_char {
             connect_char_to_category(&c, CategorySlug::Smartphone)
@@ -48,11 +50,13 @@ fn sync_float_chars() {
 
 fn sync_int_chars() {
     for item in get_int_characteristics() {
-        let created_char = create::create_if_not_exists(
+        let created_char = create::upsert(
             item.id,
             item.slug,
             item.visualisation_type,
             item.value_type,
+            item.sort_key,
+            item.group_slug,
         );
         if let Some(c) = created_char {
             connect_char_to_category(&c, CategorySlug::Smartphone)
@@ -62,11 +66,13 @@ fn sync_int_chars() {
 
 fn sync_string_chars() {
     for item in get_string_characteristics() {
-        let created_char = create::create_if_not_exists(
+        let created_char = create::upsert(
             item.id,
             item.slug,
             item.visualisation_type,
             item.value_type,
+            item.sort_key,
+            item.group_slug,
         );
         if let Some(c) = created_char {
             connect_char_to_category(&c, CategorySlug::Smartphone)
@@ -76,11 +82,13 @@ fn sync_string_chars() {
 
 fn sync_enum_chars() {
     for item in get_enum_characteristics() {
-        let created_char = create::create_if_not_exists(
+        let created_char = create::upsert(
             item.id,
             item.slug,
             item.visualisation_type,
             item.value_type,
+            item.sort_key,
+            item.group_slug,
         );
         if let Some(c) = created_char {
             connect_char_to_category(&c, CategorySlug::Smartphone)
