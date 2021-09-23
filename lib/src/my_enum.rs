@@ -41,3 +41,17 @@ pub enum CharacteristicVisualisationType {
     SingleSelector,
     Bool,
 }
+
+#[derive(diesel_derive_enum::DbEnum, Debug, Serialize, Deserialize, Copy, Clone)]
+#[DieselType = "Characteristic_group_slug"]
+pub enum CharacteristicGroupSlug {
+    Processor,
+    Memory,
+    Connection,
+    Display,
+    Camera,
+    Sensors,
+    Power,
+    Appearance,
+    General
+}

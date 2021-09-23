@@ -30,6 +30,8 @@ table! {
         enabled -> Bool,
         visualisation_type -> Characteristic_visualisation_type,
         value_type -> Characteristic_value_type,
+        sort_key -> Int2,
+        group_slug -> Characteristic_group_slug,
     }
 }
 
