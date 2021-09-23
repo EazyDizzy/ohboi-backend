@@ -21,7 +21,7 @@ fn get_group_order() -> Vec<CharacteristicGroupSlugOrder> {
         groups_order.push(CharacteristicGroupSlugOrder {
             group_slug,
             sort_key: get_group_sort_key(group_slug),
-        })
+        });
     }
 
     groups_order

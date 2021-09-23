@@ -11,6 +11,7 @@ use lib::{db, error_reporting};
 use crate::db::entity::characteristic::new::NewCharacteristic;
 use crate::db::Executor;
 
+#[allow(clippy::too_many_arguments)]
 pub fn upsert(
     id: i16,
     slug: String,
