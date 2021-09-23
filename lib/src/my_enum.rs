@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use strum_macros::EnumIter;
 
 #[derive(diesel_derive_enum::DbEnum, Debug)]
 #[DieselType = "User_registration_type"]
@@ -42,7 +43,7 @@ pub enum CharacteristicVisualisationType {
     Bool,
 }
 
-#[derive(diesel_derive_enum::DbEnum, Debug, Serialize, Deserialize, Copy, Clone)]
+#[derive(diesel_derive_enum::DbEnum, EnumIter, Serialize, Deserialize, Debug, Copy, Clone)]
 #[DieselType = "Characteristic_group_slug"]
 pub enum CharacteristicGroupSlug {
     Processor,
@@ -53,5 +54,5 @@ pub enum CharacteristicGroupSlug {
     Sensors,
     Power,
     Appearance,
-    General
+    General,
 }
