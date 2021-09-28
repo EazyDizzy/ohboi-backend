@@ -16,7 +16,7 @@ use crate::dto::product::{
     CharacteristicEnumValue, CharacteristicFloatValue, CharacteristicIntValue,
     CharacteristicStringValue, ProductCharacteristicsMapped,
 };
-use crate::endpoint::product::ProductFilters;
+use crate::endpoint::product::{ProductFilters, SearchSortKey};
 
 pub fn get_filtered_products(filters: &ProductFilters) -> Vec<Product> {
     let connection = &db::establish_connection();
@@ -28,6 +28,7 @@ pub fn get_filtered_products(filters: &ProductFilters) -> Vec<Product> {
     let filter = "\n WHERE p.enabled = true ".to_owned();
     let group_by = "\n ".to_owned();
     let having = "\n ".to_owned();
+    let order_by = order_by(filters);
 
     let (joins, filter, group_by, having) =
         filter_by_title(joins, filter, group_by, having, &filters.title);
@@ -42,7 +43,8 @@ pub fn get_filtered_products(filters: &ProductFilters) -> Vec<Product> {
     query.push_str(&filter);
     query.push_str(&group_by);
     query.push_str(&having);
-    query.push_str("\n ORDER BY p.id ASC LIMIT 20");
+    query.push_str(&order_by);
+    query.push_str("\n LIMIT 20");
 
     if filters.title.is_some() {
         sql_query(query)
@@ -57,6 +59,28 @@ pub fn get_filtered_products(filters: &ProductFilters) -> Vec<Product> {
             .load::<Product>(connection)
             .expect("Error loading products")
     }
+}
+
+fn order_by(filters: &ProductFilters) -> String {
+    let mut order_by = "\n ORDER BY ".to_owned();
+
+    match filters.sort_by.as_ref() {
+        None => {
+            order_by.push_str("p.id ASC");
+        }
+        Some(key) => {
+            let sort_key = match key {
+                SearchSortKey::PriceAsc => "p.lowest_price ASC",
+                SearchSortKey::PriceDesc => "p.lowest_price DESC",
+                SearchSortKey::UpdateDateAsc => "p.updated_at ASC",
+                SearchSortKey::UpdateDateDesc => "p.updated_at DESC",
+            };
+
+            order_by.push_str(sort_key);
+        }
+    }
+
+    order_by
 }
 
 fn filter_by_characteristics(
@@ -318,7 +342,8 @@ mod tests {
     #[test]
     fn it_creates_int_value_expression() {
         assert_eq!(
-            get_id_values_expression(&[CharacteristicIntValue {
+            get_id_values_expression(&[
+                CharacteristicIntValue {
                     characteristic_id: 1,
                     value: 2
                 },
@@ -329,7 +354,8 @@ mod tests {
                 CharacteristicIntValue {
                     characteristic_id: 4,
                     value: 4
-                }]),
+                }
+            ]),
             Some("(1, '{2, 3}'::int[]), (4, '{4}'::int[])".to_owned())
         );
     }

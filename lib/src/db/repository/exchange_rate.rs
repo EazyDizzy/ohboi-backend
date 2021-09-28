@@ -1,4 +1,5 @@
 use bigdecimal::ToPrimitive;
+use cached::proc_macro::cached;
 use diesel::{QueryDsl, RunQueryDsl};
 
 use crate::db;
@@ -20,6 +21,7 @@ pub fn get_exchange_rate_by_code(sought_currency: CurrencyEnum) -> Option<Exchan
     results.into_iter().next()
 }
 
+#[cached(size = 4, time = 600)]
 pub fn try_get_exchange_rate_by_code(sought_currency: CurrencyEnum) -> f64 {
     if let Some(db_rate) = get_exchange_rate_by_code(sought_currency) {
         db_rate.rate.to_f64().unwrap()

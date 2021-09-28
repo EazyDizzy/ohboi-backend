@@ -23,7 +23,6 @@ use crate::db::repository::category::get_category;
 use crate::db::repository::characteristic::{create, product_characteristic_enum_value};
 use crate::db::Executor;
 
-// TODO update if sth changed
 // TODO delete removed
 pub fn sync_characteristic_enum() {
     sync_float_chars();
