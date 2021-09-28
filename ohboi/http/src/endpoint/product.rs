@@ -35,7 +35,7 @@ pub struct ProductParams {
 
 #[allow(clippy::needless_pass_by_value)]
 pub fn get_products(filters: Json<ProductFilters>) -> HttpResponse {
-    let mut products = get_filtered_products(&filters);
+    let mut products = get_filtered_products(&filters.0);
     let rate = try_get_exchange_rate_by_code(filters.currency);
 
     for product in &mut products {
@@ -73,4 +73,14 @@ pub struct ProductFilters {
     pub max_price: Option<f64>,
 
     pub characteristics: Option<ProductCharacteristicsMapped>,
+
+    pub sort_by: Option<SearchSortKey>
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub enum SearchSortKey {
+    PriceAsc,
+    PriceDesc,
+    UpdateDateAsc,
+    UpdateDateDesc,
 }

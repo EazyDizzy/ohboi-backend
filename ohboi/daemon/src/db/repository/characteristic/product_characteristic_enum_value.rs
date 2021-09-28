@@ -1,12 +1,12 @@
-use lib::diesel::result::{DatabaseErrorKind, Error};
-
 use lib::{db, error_reporting};
 use lib::diesel::prelude::*;
+use lib::diesel::result::{DatabaseErrorKind, Error};
+use lib::dto::characteristic::enum_characteristic::EnumCharacteristic;
+use lib::error_reporting::ReportingContext;
+
 use crate::db::entity::characteristic::product_characteristic_enum_value::{
     NewProductCharacteristicEnumValue, ProductCharacteristicEnumValue,
 };
-use lib::dto::characteristic::enum_characteristic::EnumCharacteristic;
-use lib::error_reporting::ReportingContext;
 use crate::db::Executor;
 
 // TODO cache
@@ -58,10 +58,10 @@ pub fn create_if_not_exists(value: String) {
                         new_enum_char_value.value, e
                     )
                     .as_str(),
-                    &ReportingContext{
+                    &ReportingContext {
                         executor: &Executor::Characteristic,
                         action: "save_characteristic_value::enum",
-                    }
+                    },
                 );
             }
         }
