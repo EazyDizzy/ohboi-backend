@@ -6,7 +6,7 @@ use lib::schema::product;
 use lib::schema::product::dsl::{enabled, id};
 
 use crate::db::product::entity::Product;
-use crate::db::product_characteristic::repository::get_all_characteristics_of_product;
+use crate::db::product_characteristic::get_all_characteristics_of_product;
 use crate::dto::product::ProductInfo;
 use crate::endpoint::product::ProductParams;
 use crate::util::product::convert_product_prices;
