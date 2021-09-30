@@ -5,7 +5,7 @@ use lib::error_reporting;
 use lib::error_reporting::ReportingContext;
 use lib::my_enum::CurrencyEnum;
 
-use crate::db::repository::exchange_rate::create_or_update;
+use lib::db::exchange_rate::repository::create_or_update;
 use crate::queue::layer::consume::consume;
 use crate::queue::Executor;
 use crate::service::request::get;

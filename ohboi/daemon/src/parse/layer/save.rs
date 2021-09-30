@@ -1,6 +1,6 @@
 use futures::future::join_all;
 
-use lib::db::repository::exchange_rate::try_get_exchange_rate_by_code;
+use lib::db::exchange_rate::repository::try_get_exchange_rate_by_code;
 use lib::my_enum::CurrencyEnum;
 use lib::service::currency_converter::convert_from_with_rate;
 

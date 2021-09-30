@@ -2,7 +2,7 @@ use actix_web::HttpResponse;
 use serde::Serialize;
 use strum::IntoEnumIterator;
 
-use lib::db::entity::characteristic::Characteristic;
+use lib::db::characteristic::entity::Characteristic;
 use lib::my_enum::CharacteristicGroupSlug;
 use lib::util::all_characteristics::get_all_characteristics_dto;
 

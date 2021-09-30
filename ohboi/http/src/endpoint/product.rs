@@ -3,7 +3,7 @@ use actix_web_validator::{Json, Query};
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use lib::db::repository::exchange_rate::try_get_exchange_rate_by_code;
+use lib::db::exchange_rate::repository::try_get_exchange_rate_by_code;
 use crate::db::product::repository::{get_filtered_products, get_product_info};
 use crate::util::product::convert_product_prices;
 use lib::my_enum::CurrencyEnum;

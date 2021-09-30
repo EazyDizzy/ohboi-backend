@@ -1,4 +1,4 @@
-use crate::db::repository::exchange_rate::try_get_exchange_rate_by_code;
+use crate::db::exchange_rate::repository::try_get_exchange_rate_by_code;
 use crate::my_enum::CurrencyEnum;
 
 #[allow(dead_code)]

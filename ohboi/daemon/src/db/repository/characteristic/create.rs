@@ -1,4 +1,4 @@
-use lib::db::entity::characteristic::Characteristic;
+use lib::db::characteristic::entity::Characteristic;
 use lib::diesel::prelude::*;
 use lib::diesel::result::{DatabaseErrorKind, Error};
 use lib::error_reporting::ReportingContext;
@@ -40,7 +40,7 @@ pub fn upsert(
         .execute(connection);
 
     match upsert_result {
-        Ok(new_char) => {
+        Ok(_) => {
             log::info!(
                 "{:?} {} characteristic was created/updated",
                 value_type,
