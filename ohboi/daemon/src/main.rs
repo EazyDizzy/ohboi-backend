@@ -1,3 +1,4 @@
+#![feature(async_stream)]
 #![deny(clippy::all, clippy::pedantic, clippy::cognitive_complexity)]
 #![allow(
     clippy::module_name_repetitions,
