@@ -14,7 +14,7 @@ docker exec -ti ohboi bash
 
 - Migrations
     - Generate: `diesel migration generate <name>`
-    - Revert: `for i in {1..8}; do bin/diesel migration revert; done`
+    - Revert: `for i in {1..20}; do bin/diesel migration revert; done`
     - Run: `bin/diesel migration run`
 
 - To start parse job manually

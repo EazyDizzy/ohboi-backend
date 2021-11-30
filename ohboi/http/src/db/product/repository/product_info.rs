@@ -1,5 +1,5 @@
 use lib::db;
-use lib::db::exchange_rate::repository::try_get_exchange_rate_by_code;
+use lib::db::exchange_rate::operation::get_exchange_rate_by_code;
 use lib::diesel::prelude::*;
 use lib::diesel::{QueryDsl, RunQueryDsl};
 use lib::schema::product;
@@ -23,7 +23,7 @@ pub fn get_product_info(params: &ProductParams) -> Option<ProductInfo> {
         .next();
 
     product.map(|mut p| {
-        let rate = try_get_exchange_rate_by_code(params.currency);
+        let rate = get_exchange_rate_by_code(params.currency);
         // TODO no mutation by reference
         convert_product_prices(&mut p, rate);
         let characteristics = get_all_characteristics_of_product(p.id);

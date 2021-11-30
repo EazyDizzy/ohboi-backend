@@ -3,6 +3,7 @@ sleep 20
 
 ./daemon queue_config
 ./daemon characteristic_enum_sync
+./daemon producer -p PullExchangeRates
 (
   env
   echo "0 0 * * *  /app/daemon producer -p PullExchangeRates 2>&1 | tee /app/logs/PullExchangeRatesProducer.log &"
