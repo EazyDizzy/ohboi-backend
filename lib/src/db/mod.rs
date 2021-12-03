@@ -7,6 +7,7 @@ use crate::POOL;
 pub mod characteristic;
 pub mod product_characteristic;
 pub mod exchange_rate;
+pub mod source_product_price_history;
 
 pub fn establish_connection() -> PooledConnection<ConnectionManager<PgConnection>> {
     POOL.get().unwrap()

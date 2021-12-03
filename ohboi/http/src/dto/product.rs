@@ -8,6 +8,7 @@ use lib::dto::product_characteristic::{
     CharacteristicEnumValue, CharacteristicFloatValue, CharacteristicIntValue,
     CharacteristicStringValue,
 };
+use crate::dto::historical_price::HistoricalPrice;
 
 #[derive(Serialize, Debug)]
 pub struct ProductInfo {
@@ -19,6 +20,7 @@ pub struct ProductInfo {
     pub images: Option<Vec<String>>,
     pub category: i32,
     pub characteristics: ProductCharacteristicsMapped,
+    pub price_history: Vec<HistoricalPrice>
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
