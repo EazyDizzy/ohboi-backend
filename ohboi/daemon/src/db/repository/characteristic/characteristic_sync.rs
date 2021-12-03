@@ -1,6 +1,6 @@
 use strum::VariantNames;
 
-use lib::db::entity::characteristic::Characteristic;
+use lib::db::characteristic::entity::Characteristic;
 use lib::diesel::prelude::*;
 use lib::dto::characteristic::enum_characteristic::{
     AudioJack, BatteryType, ChargingConnectorType, Country, DisplayType, EnumCharacteristic,

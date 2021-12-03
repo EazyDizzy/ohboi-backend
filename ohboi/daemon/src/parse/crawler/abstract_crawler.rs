@@ -31,6 +31,7 @@ pub trait Crawler: Sync + Send {
 
     fn get_categories(&self) -> Vec<CategorySlug>;
 
+    // Returns a vector because we can combine multiple site categories into 1 ours
     fn get_next_page_urls(&self, category: CategorySlug) -> Vec<String>;
 
     fn extract_products(&self, document: &Html) -> Vec<LocalParsedProduct>;

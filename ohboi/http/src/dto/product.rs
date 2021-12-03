@@ -1,8 +1,14 @@
-use std::fmt::{Debug};
+use std::fmt::Debug;
 
 use bigdecimal::BigDecimal;
 use serde::Deserialize;
 use serde::Serialize;
+
+use lib::dto::product_characteristic::{
+    CharacteristicEnumValue, CharacteristicFloatValue, CharacteristicIntValue,
+    CharacteristicStringValue,
+};
+use crate::dto::historical_price::HistoricalPrice;
 
 #[derive(Serialize, Debug)]
 pub struct ProductInfo {
@@ -14,6 +20,7 @@ pub struct ProductInfo {
     pub images: Option<Vec<String>>,
     pub category: i32,
     pub characteristics: ProductCharacteristicsMapped,
+    pub price_history: Vec<HistoricalPrice>
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -22,25 +29,4 @@ pub struct ProductCharacteristicsMapped {
     pub float: Vec<CharacteristicFloatValue>,
     pub string: Vec<CharacteristicStringValue>,
     pub enums: Vec<CharacteristicEnumValue>,
-}
-// TODO generic value
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct CharacteristicIntValue {
-    pub characteristic_id: i16,
-    pub value: i32,
-}
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct CharacteristicFloatValue {
-    pub characteristic_id: i16,
-    pub value: f32,
-}
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct CharacteristicStringValue {
-    pub characteristic_id: i16,
-    pub value: String,
-}
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct CharacteristicEnumValue {
-    pub characteristic_id: i16,
-    pub value: String,
 }

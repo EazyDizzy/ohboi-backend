@@ -1,26 +1,31 @@
 use bigdecimal::BigDecimal;
 use chrono::Utc;
-use lib::diesel::{BoolExpressionMethods, ExpressionMethods, QueryDsl, RunQueryDsl};
 
 use lib::db;
+use lib::db::source_product_price_history::operation::create::add_price_to_history_if_not_exists;
+use lib::diesel::{BoolExpressionMethods, ExpressionMethods, QueryDsl, RunQueryDsl};
+use lib::schema::source_product;
+
 use crate::db::entity::product::Product;
 use crate::db::entity::source::SourceName;
 use crate::db::entity::source_product::{NewSourceProduct, SourceProduct};
 use crate::db::repository::product::update_price_range_if_needed;
 use crate::db::repository::source::get_source;
-use crate::db::repository::source_product_price_history::add_to_history_if_not_exists;
 use crate::dto::parsed_product::InternationalParsedProduct;
-use lib::schema::source_product;
 
-pub fn get_by_source_and_external_id(source: SourceName, expected_external_id: &str) -> Option<SourceProduct> {
+pub fn get_by_source_and_external_id(
+    source: SourceName,
+    expected_external_id: &str,
+) -> Option<SourceProduct> {
     use lib::schema::source_product::dsl::{external_id, source_id, source_product};
 
     let connection = &db::establish_connection();
     let source = get_source(source);
 
     let target = source_product.filter(
-        source_id.eq(source.id)
-            .and(external_id.eq(expected_external_id))
+        source_id
+            .eq(source.id)
+            .and(external_id.eq(expected_external_id)),
     );
 
     let results: Vec<SourceProduct> = target
@@ -31,7 +36,11 @@ pub fn get_by_source_and_external_id(source: SourceName, expected_external_id: &
     results.into_iter().next()
 }
 
-pub fn link_to_product(product: &Product, parsed_product: &InternationalParsedProduct, source: SourceName) {
+pub fn link_to_product(
+    product: &Product,
+    parsed_product: &InternationalParsedProduct,
+    source: SourceName,
+) {
     let source = get_source(source);
 
     let now = Utc::now();
@@ -48,7 +57,12 @@ pub fn link_to_product(product: &Product, parsed_product: &InternationalParsedPr
     create_if_not_exists(&new_link);
     update_price_range_if_needed(product.id, parsed_product.price);
 
-    add_to_history_if_not_exists(&new_link);
+    add_price_to_history_if_not_exists(
+        new_link.product_id,
+        new_link.source_id,
+        new_link.external_id,
+        new_link.price,
+    );
 }
 
 fn create_if_not_exists(new_product: &NewSourceProduct) {
@@ -56,12 +70,16 @@ fn create_if_not_exists(new_product: &NewSourceProduct) {
 
     diesel::insert_into(source_product::table)
         .values(new_product)
-        .on_conflict((source_product::source_id, source_product::product_id, source_product::external_id))
+        .on_conflict((
+            source_product::source_id,
+            source_product::product_id,
+            source_product::external_id,
+        ))
         .do_update()
         .set((
             source_product::price.eq(&new_product.price),
             source_product::updated_at.eq(&new_product.updated_at),
-            source_product::enabled.eq(&new_product.enabled)
+            source_product::enabled.eq(&new_product.enabled),
         ))
         .execute(connection)
         .expect("Error saving new source product");

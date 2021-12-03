@@ -23,8 +23,8 @@ pub async fn parse_details(
         }
         Err(e) => {
             let message = format!(
-                "[parse_details] Request for additional data failed! [{source}] {error:?}",
-                source = crawler.get_source().to_string(),
+                "Request for additional data failed! [{source}] {error:?}",
+                source = crawler.get_source(),
                 error = e,
             );
             error_reporting::error(

@@ -1,6 +1,6 @@
 use futures::future::join_all;
 
-use lib::db::repository::exchange_rate::try_get_exchange_rate_by_code;
+use lib::db::exchange_rate::operation::get_exchange_rate_by_code;
 use lib::my_enum::CurrencyEnum;
 use lib::service::currency_converter::convert_from_with_rate;
 
@@ -19,7 +19,7 @@ pub async fn save_parsed_products(
     category: CategorySlug,
 ) {
     let mut savings_in_progress = vec![];
-    let rate = try_get_exchange_rate_by_code(currency);
+    let rate = get_exchange_rate_by_code(currency);
 
     for parsed_product in products {
         savings_in_progress.push(save_parsed_product(source, parsed_product, category, rate));

@@ -8,15 +8,16 @@ use lib::diesel::{sql_query, RunQueryDsl};
 use lib::service::currency_converter::convert_from;
 
 use crate::db::product::entity::Product;
-use crate::db::product_characteristic::product_characteristic_string_value;
-use crate::db::product_characteristic::{
+use lib::db::product_characteristic::product_characteristic_string_value;
+use lib::db::product_characteristic::{
     product_characteristic_enum_value, product_characteristic_float_value,
 };
-use crate::dto::product::{
+use lib::dto::product_characteristic::{
     CharacteristicEnumValue, CharacteristicFloatValue, CharacteristicIntValue,
-    CharacteristicStringValue, ProductCharacteristicsMapped,
+    CharacteristicStringValue,
 };
 use crate::endpoint::product::{ProductFilters, SearchSortKey};
+use crate::dto::product::ProductCharacteristicsMapped;
 
 pub fn get_filtered_products(filters: &ProductFilters) -> Vec<Product> {
     let connection = &db::establish_connection();
@@ -337,7 +338,7 @@ fn group_values_to_string(grouped_values: BTreeMap<i16, Vec<String>>) -> String 
 
 mod tests {
     use crate::db::product::repository::search::get_id_values_expression;
-    use crate::dto::product::CharacteristicIntValue;
+    use lib::dto::product_characteristic::CharacteristicIntValue;
 
     #[test]
     fn it_creates_int_value_expression() {

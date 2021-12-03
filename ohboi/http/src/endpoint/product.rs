@@ -3,7 +3,7 @@ use actix_web_validator::{Json, Query};
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use lib::db::repository::exchange_rate::try_get_exchange_rate_by_code;
+use lib::db::exchange_rate::operation::get_exchange_rate_by_code;
 use crate::db::product::repository::{get_filtered_products, get_product_info};
 use crate::util::product::convert_product_prices;
 use lib::my_enum::CurrencyEnum;
@@ -36,7 +36,7 @@ pub struct ProductParams {
 #[allow(clippy::needless_pass_by_value)]
 pub fn get_products(filters: Json<ProductFilters>) -> HttpResponse {
     let mut products = get_filtered_products(&filters.0);
-    let rate = try_get_exchange_rate_by_code(filters.currency);
+    let rate = get_exchange_rate_by_code(filters.currency);
 
     for product in &mut products {
         convert_product_prices(product, rate);

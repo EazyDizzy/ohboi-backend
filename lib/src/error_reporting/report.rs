@@ -1,5 +1,6 @@
 use crate::error_reporting::ReportingContext;
 
+// move context for memoisation
 pub fn fatal(message: &str, context: &ReportingContext) {
     report(message, context, sentry::Level::Fatal);
 }

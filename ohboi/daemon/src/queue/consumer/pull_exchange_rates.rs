@@ -5,7 +5,7 @@ use lib::error_reporting;
 use lib::error_reporting::ReportingContext;
 use lib::my_enum::CurrencyEnum;
 
-use crate::db::repository::exchange_rate::create_or_update;
+use lib::db::exchange_rate::operation::upsert;
 use crate::queue::layer::consume::consume;
 use crate::queue::Executor;
 use crate::service::request::get;
@@ -71,10 +71,10 @@ async fn execute(_message: String) -> Result<(), ()> {
         return Err(());
     }
 
-    let save_result = create_or_update(CurrencyEnum::RUB, response.rates.rub)
-        && create_or_update(CurrencyEnum::UAH, response.rates.uah)
-        && create_or_update(CurrencyEnum::USD, response.rates.usd)
-        && create_or_update(CurrencyEnum::EUR, 1.0);
+    let save_result = upsert(CurrencyEnum::RUB, response.rates.rub)
+        && upsert(CurrencyEnum::UAH, response.rates.uah)
+        && upsert(CurrencyEnum::USD, response.rates.usd)
+        && upsert(CurrencyEnum::EUR, 1.0);
 
     if save_result {
         Ok(())

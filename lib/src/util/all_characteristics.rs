@@ -1,7 +1,7 @@
 use strum::IntoEnumIterator;
 use strum::VariantNames;
 
-use crate::db::entity::characteristic::Characteristic;
+use crate::db::characteristic::entity::Characteristic;
 use crate::dto::characteristic::enum_characteristic::EnumCharacteristic;
 use crate::dto::characteristic::float_characteristic::FloatCharacteristic;
 use crate::dto::characteristic::int_characteristic::IntCharacteristic;
