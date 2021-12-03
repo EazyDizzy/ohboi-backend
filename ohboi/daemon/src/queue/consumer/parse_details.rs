@@ -34,7 +34,7 @@ async fn execute(message: ParseDetailsMessage) -> Result<(), ()> {
             error_reporting::error(
                 format!(
                     "[parse_details] No additional info found [{source}] for: {id}",
-                    source = crawler.get_source().to_string(),
+                    source = crawler.get_source(),
                     id = &message.external_id
                 )
                 .as_str(),

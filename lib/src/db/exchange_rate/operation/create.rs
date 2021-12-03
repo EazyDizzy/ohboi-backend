@@ -26,9 +26,7 @@ fn create(currency: CurrencyEnum, rate: f32) -> bool {
 
     let insert_result = diesel::insert_into(exchange_rate::table)
         .values(&new_rate)
-        .on_conflict((
-            exchange_rate::currency
-        ))
+        .on_conflict(exchange_rate::currency)
         .do_update()
         .set((
             exchange_rate::rate.eq(&new_rate.rate),

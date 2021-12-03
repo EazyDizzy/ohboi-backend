@@ -9,10 +9,10 @@ pub fn dedup_products(products: &mut Vec<LocalParsedProduct>, source: SourceName
         if a.external_id == b.external_id && (a.price - b.price).abs() > f64::EPSILON {
             let message = format!(
                 "Warning! Same external_id, different prices. Parser: {source}, id: {id}, price1: {price1}, price2: {price2}",
-                source = source.to_string(),
+                source = source,
                 id = a.external_id,
-                price1 = a.price.to_string(),
-                price2 = b.price.to_string()
+                price1 = a.price,
+                price2 = b.price
             );
             error_reporting::warning(message.as_str(), &ReportingContext {
                 executor: &ConsumerName::ParseCategory,

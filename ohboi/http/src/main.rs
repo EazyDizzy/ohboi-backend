@@ -38,6 +38,6 @@ enum Executor {
 
 impl DisplayString for Executor {
     fn to_display_string(&self) -> String {
-        format!("http::{}", format!("{:?}", self))
+        format!("http::{:?}", self)
     }
 }
